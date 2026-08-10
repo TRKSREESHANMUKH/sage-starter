@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+venv/
+.venv/
+*.egg-info/
+.env
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/

@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: sage_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: sage_user
+      POSTGRES_PASSWORD: sage_dev_password
+      POSTGRES_DB: sage_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - sage_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sage_user -d sage_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  sage_pgdata:
