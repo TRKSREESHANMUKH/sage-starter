@@ -149,7 +149,7 @@ for material_id in SUPPLIERS_FOR_MATERIAL:
 # ============================================================
 
 PRODUCTION_BATCH = {
-    201: 20,
+    201: 30,
     202: 20,
 }
 
@@ -276,11 +276,17 @@ def choose_supplier(material_id):
 def production_day(current_day):
     if current_day.weekday() >= 5:
         return False
-    return random.random() < 0.28
+    # Lowered from 0.28 to 0.24 -- 30-unit batches for product 201
+    # combined with the old 0.28 frequency produced zero natural
+    # backorders (production outpaced demand). This is a smaller,
+    # continuous lever than batch size, which is constrained to
+    # multiples of 10 by the BOM and jumps too coarsely (20->30 was
+    # a 50% change with nothing in between).
+    return random.random() < 0.24
 
 
 def customer_demand(customer, product_id, current_day):
-    base = 10 if product_id == 201 else 8
+    base = 12 if product_id == 201 else 9
 
     customer_factor = {
         1: 1.20, 2: 0.85, 3: 1.35, 4: 1.00, 5: 0.70,
@@ -297,8 +303,10 @@ def customer_demand(customer, product_id, current_day):
     }[current_day.month]
 
     mean = base * customer_factor * weekday_factor * month_factor
-    demand = random.gauss(mean, max(2.0, mean * 0.25))
-    return max(0, int(round(demand)))
+
+    demand = random.gauss(mean, mean * 0.15)
+    demand = max(mean * 0.5, min(demand, mean * 1.6))
+    return max(1, int(round(demand)))
 
 
 def required_materials(product_id, quantity):
@@ -326,7 +334,7 @@ def maximum_producible(product_id, planned_quantity):
         available = get_stock(bom.raw_material_id)
         possible = int(available // bom.quantity_required)
         maximum = min(maximum, possible)
-
+    maximum = (int(maximum) // PRODUCTION_STEP[product_id]) * PRODUCTION_STEP[product_id]
     return max(0, int(maximum))
 
 
@@ -680,17 +688,7 @@ while current_day <= END_DATE:
 
 
 # ============================================================
-# FLUSH EVERYTHING BEFORE VALIDATION -- THIS IS THE FIX.
-#
-# Session was created with autoflush=False (a deliberate choice
-# early in this project), so pending inserts are NOT automatically
-# sent to the database when queried. Every event inside the loop
-# above already gets flushed individually EXCEPT there is no
-# guarantee the very last one created before the loop ends has
-# been flushed yet. Without this line, the reconciliation query
-# below can undercount the most recent movement(s) -- which is
-# exactly what caused the "expected 217, actual 205" mismatch
-# (a missing final 12-unit delivery movement on the last day).
+# FLUSH EVERYTHING BEFORE VALIDATION
 # ============================================================
 
 db.flush()
@@ -792,7 +790,6 @@ print(f"Units ordered           : {stats['purchase_units_ordered']}")
 print(f"Units received          : {stats['purchase_units_received']}")
 print(f"Sales orders            : {stats['sales_orders']}")
 print(f"Sales units ordered     : {stats['sales_units_ordered']}")
-print(f"Sales units fulfilled   : {stats['sales_units_fulfilled']}")
 print(f"Sales units backordered : {stats['sales_units_backordered']}")
 print(f"Deliveries              : {stats['deliveries']}")
 print(f"Delivery units          : {stats['delivery_units']}")
