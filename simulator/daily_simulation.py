@@ -34,6 +34,8 @@ from app.models.sales import (
     DeliveryLine,
 )
 
+from simulator.incident_engine import IncidentEngine
+
 
 # ============================================================
 # CONFIGURATION
@@ -46,6 +48,10 @@ SEED = 42
 random.seed(SEED)
 
 PRINT_DAILY_LOG = True
+
+# Set to False any time you want to reproduce the old, incident-free
+# baseline exactly (e.g. to re-confirm nothing broke).
+INCIDENTS_ENABLED = True
 
 
 # ============================================================
@@ -276,12 +282,6 @@ def choose_supplier(material_id):
 def production_day(current_day):
     if current_day.weekday() >= 5:
         return False
-    # Lowered from 0.28 to 0.24 -- 30-unit batches for product 201
-    # combined with the old 0.28 frequency produced zero natural
-    # backorders (production outpaced demand). This is a smaller,
-    # continuous lever than batch size, which is constrained to
-    # multiples of 10 by the BOM and jumps too coarsely (20->30 was
-    # a 50% change with nothing in between).
     return random.random() < 0.24
 
 
@@ -303,6 +303,7 @@ def customer_demand(customer, product_id, current_day):
     }[current_day.month]
 
     mean = base * customer_factor * weekday_factor * month_factor
+    mean *= demand_multiplier_for(product_id, current_day)
 
     demand = random.gauss(mean, mean * 0.15)
     demand = max(mean * 0.5, min(demand, mean * 1.6))
@@ -339,6 +340,219 @@ def maximum_producible(product_id, planned_quantity):
 
 
 # ============================================================
+# INCIDENTS (Stage 4)
+# ============================================================
+# Generated ONCE, before the day-by-day loop starts. This list never
+# changes while the simulation runs -- each day just checks which
+# incidents (if any) are currently "active" and adjusts an INPUT
+# (a lead time, a demand number, a capacity ceiling). The simulator's
+# existing formulas do all the real work; incidents never write a
+# stock/production/sales number directly.
+
+if INCIDENTS_ENABLED:
+    incident_engine = IncidentEngine(config_path="simulator/incidents.yaml")
+    incidents = incident_engine.generate()
+else:
+    incidents = []
+
+
+def active_incidents(current_day):
+    """All incidents whose date window covers current_day."""
+    return [inc for inc in incidents if inc["start_date"] <= current_day <= inc["end_date"]]
+
+
+def supplier_incident_effect(supplier_id, current_day):
+    """
+    Looks at every incident active today and returns:
+      extra_delay_days      -- extra days to add on top of the normal
+                                lead-time calculation for a PO placed
+                                today with this supplier
+      forced_received_fraction -- if set, the very next receipt against
+                                a PO placed today must be forced to only
+                                this fraction of the ordered quantity
+                                (used for the partial_receipt scenario)
+    """
+    extra_delay = 0
+    forced_fraction = None
+
+    for inc in active_incidents(current_day):
+        touches_this_supplier = (
+            inc.get("supplier_id") == supplier_id
+            or supplier_id in inc.get("supplier_ids", [])
+        )
+        if not touches_this_supplier:
+            continue
+
+        if inc["type"] in (
+            "supplier_delay",
+            "severe_supplier_delay_stockout",
+            "delay_absorbed_by_safety_stock",
+            "overlapping_supplier_delay",
+            "two_simultaneous_independent_causes",
+        ):
+            extra_delay += inc["duration_days"]
+
+        if inc["type"] == "partial_receipt":
+            forced_fraction = inc["received_fraction"]
+
+    return extra_delay, forced_fraction
+
+
+def product_capacity_reduction(product_id, current_day):
+    """Largest active capacity_reduction fraction (0.0-1.0) affecting
+    this finished product today. 0.0 means no reduction."""
+    reduction = 0.0
+    for inc in active_incidents(current_day):
+        if inc.get("product_id") != product_id:
+            continue
+        if inc["type"] in ("capacity_disruption", "two_simultaneous_independent_causes"):
+            reduction = max(reduction, inc.get("capacity_reduction", 0.0))
+    return reduction
+
+
+def demand_multiplier_for(product_id, current_day):
+    """Largest active demand multiplier affecting this finished product
+    today. 1.0 means no change (normal demand)."""
+    multiplier = 1.0
+    for inc in active_incidents(current_day):
+        if inc.get("product_id") != product_id:
+            continue
+        if inc["type"] in ("demand_spike", "seasonal_demand"):
+            multiplier = max(multiplier, inc.get("demand_multiplier", 1.0))
+    return multiplier
+
+
+# ------------------------------------------------------------------
+# GUARANTEED SUPPLY-SIDE INCIDENT TRIGGERING
+# ------------------------------------------------------------------
+# Problem this section solves: 5 of the 10 required scenarios only
+# have an effect if a Purchase Order for the right material happens to
+# exist during the incident's short window. Natural reorder frequency
+# for some materials can be too low for that overlap to happen by
+# chance. So: on the exact start day of a supply-side incident, we
+# guarantee a real transaction exists to carry the effect --
+# preferring to modify an ALREADY-OPEN real PO if one exists, and only
+# creating a new one if none does. This never fakes a downstream
+# number (stock/production/sales are still fully calculated as normal)
+# -- it only guarantees the upstream input (a purchase event) exists,
+# which is what the whole point of these 10 frozen scenarios requires.
+
+SUPPLY_INCIDENT_TYPES = {
+    "supplier_delay",
+    "severe_supplier_delay_stockout",
+    "delay_absorbed_by_safety_stock",
+    "overlapping_supplier_delay",
+    "partial_receipt",
+    "two_simultaneous_independent_causes",
+}
+
+SUPPLIER_TO_MATERIALS = {}
+for _material_id, _supplier_list in SUPPLIERS_FOR_MATERIAL.items():
+    for _supplier_id in _supplier_list:
+        SUPPLIER_TO_MATERIALS.setdefault(_supplier_id, []).append(_material_id)
+
+
+def material_needing_most_from_supplier(supplier_id):
+    """Of the materials this supplier provides, pick the one closest to
+    its reorder point (most realistic target for a real disruption)."""
+    candidates = SUPPLIER_TO_MATERIALS.get(supplier_id, [])
+    if not candidates:
+        return None
+
+    def urgency(material_id):
+        item = item_by_product[material_id]
+        if not item.reorder_point:
+            return float("inf")
+        return get_stock(material_id) / item.reorder_point
+
+    return min(candidates, key=urgency)
+
+
+def base_order_quantity(material_id):
+    if material_id == 101:
+        return random.randint(1600, 2600)
+    elif material_id == 102:
+        return random.randint(1000, 1900)
+    else:
+        return random.randint(1800, 3200)
+
+
+def place_new_po(material_id, current_day, forced_supplier_id=None,
+                  extra_delay=0, forced_fraction=None, is_forced=False):
+    """The single place a new Purchase Order gets created. Used by both
+    the normal reorder-point check AND the guaranteed incident trigger,
+    so there is only one code path to get right."""
+    global next_po_id, next_po_line_id
+
+    supplier_id = forced_supplier_id if forced_supplier_id is not None else choose_supplier(material_id)
+    supplier = suppliers[supplier_id]
+    order_qty = base_order_quantity(material_id)
+
+    base_lead = supplier.base_lead_time_days
+    if random.random() <= supplier.historical_on_time_rate:
+        delay = random.randint(-1, 1)
+    else:
+        delay = random.randint(2, 7)
+
+    actual_lead = max(2, base_lead + delay + extra_delay)
+    expected_date = current_day + timedelta(days=base_lead)
+    receipt_date = current_day + timedelta(days=actual_lead)
+
+    new_po = PurchaseOrder(
+        id=next_po_id, supplier_id=supplier_id, order_date=current_day,
+        expected_delivery_date=expected_date, status="Pending",
+    )
+    db.add(new_po)
+    db.flush()
+    next_po_id += 1
+
+    new_po_line = PurchaseOrderLine(
+        id=next_po_line_id, po_id=new_po.id, material_id=material_id,
+        quantity_ordered=order_qty, quantity_received=0,
+    )
+    db.add(new_po_line)
+    db.flush()
+    next_po_line_id += 1
+
+    open_purchase_orders.append({
+        "po": new_po, "material_id": material_id,
+        "remaining_qty": order_qty, "receipt_date": receipt_date,
+        "forced_fraction": forced_fraction,
+    })
+
+    stats["purchase_orders"] += 1
+    stats["purchase_units_ordered"] += order_qty
+
+    tag = "[INCIDENT-FORCED] " if is_forced else ""
+    log(f"{current_day}: {tag}PO {new_po.id} placed for material {material_id}; "
+        f"supplier={supplier_id}; qty={order_qty}; expected={expected_date}; "
+        f"actual_receipt={receipt_date}")
+
+    return new_po
+
+
+def apply_incident_to_material(material_id, supplier_id, extra_delay, forced_fraction, current_day):
+    """Route an active supply-side incident onto a real transaction:
+    extend an existing open PO if one exists for this material,
+    otherwise force a new one into existence."""
+    existing = next((po_info for po_info in open_purchase_orders
+                      if po_info["material_id"] == material_id), None)
+
+    if existing:
+        if extra_delay > 0:
+            existing["receipt_date"] = existing["receipt_date"] + timedelta(days=extra_delay)
+        if forced_fraction is not None:
+            existing["forced_fraction"] = forced_fraction
+        log(f"{current_day}: [INCIDENT] extended existing PO {existing['po'].id} "
+            f"(material {material_id}) -> new receipt {existing['receipt_date']} "
+            f"due to supplier {supplier_id} disruption")
+        return
+
+    place_new_po(material_id, current_day, forced_supplier_id=supplier_id,
+                 extra_delay=extra_delay, forced_fraction=forced_fraction, is_forced=True)
+
+
+# ============================================================
 # HEADER
 # ============================================================
 
@@ -351,6 +565,13 @@ print(f"Suppliers           : {len(suppliers)}")
 print(f"Simulation period   : {START_DATE} -> {END_DATE}")
 print(f"Random seed         : {SEED}")
 print("=" * 70)
+
+if INCIDENTS_ENABLED:
+    print("\nINCIDENTS SCHEDULED THIS RUN")
+    print("-" * 70)
+    for inc in incidents:
+        print(f"  {inc['id']:8} {inc['type']:38} {inc['start_date']} -> {inc['end_date']}")
+    print("-" * 70)
 
 
 # ============================================================
@@ -374,7 +595,14 @@ while current_day <= END_DATE:
             open_purchase_orders.remove(po_info)
             continue
 
-        if ordered_qty > 300 and random.random() < 0.25:
+        if po_info.get("forced_fraction") is not None:
+            # A partial_receipt incident was active on the day this PO
+            # was placed -- force this first receipt to that fraction,
+            # then clear it so later top-up receipts on the same PO
+            # behave normally.
+            receipt_qty = max(1, int(ordered_qty * po_info["forced_fraction"]))
+            po_info["forced_fraction"] = None
+        elif ordered_qty > 300 and random.random() < 0.25:
             receipt_qty = int(ordered_qty * random.uniform(0.55, 0.80))
         else:
             receipt_qty = ordered_qty
@@ -441,53 +669,39 @@ while current_day <= END_DATE:
 
         if stock <= item.reorder_point:
             supplier_id = choose_supplier(material_id)
-            supplier = suppliers[supplier_id]
+            extra_delay, forced_fraction = supplier_incident_effect(supplier_id, current_day)
+            if extra_delay > 0:
+                log(f"{current_day}: incident adding {extra_delay} extra delay day(s) "
+                    f"to supplier {supplier_id}'s PO for material {material_id}")
 
-            if material_id == 101:
-                order_qty = random.randint(1600, 2600)
-            elif material_id == 102:
-                order_qty = random.randint(1000, 1900)
-            else:
-                order_qty = random.randint(1800, 3200)
+            place_new_po(material_id, current_day, forced_supplier_id=supplier_id,
+                         extra_delay=extra_delay, forced_fraction=forced_fraction)
 
-            base_lead = supplier.base_lead_time_days
+    # ------------------------------------------------------------
+    # INCIDENT-TRIGGERED SUPPLY EVENTS
+    # ------------------------------------------------------------
+    # Runs once, exactly on the incident's start date -- guarantees
+    # the 5 supply-side scenarios always have a real transaction to
+    # act on, whether or not the natural reorder-point check above
+    # happened to fire for that material this year. See the
+    # apply_incident_to_material()/place_new_po() definitions above
+    # for the full reasoning.
+    for inc in incidents:
+        if inc["start_date"] != current_day:
+            continue
+        if inc["type"] not in SUPPLY_INCIDENT_TYPES:
+            continue
 
-            if random.random() <= supplier.historical_on_time_rate:
-                delay = random.randint(-1, 1)
-            else:
-                delay = random.randint(2, 7)
+        supplier_ids = inc.get("supplier_ids") or (
+            [inc["supplier_id"]] if inc.get("supplier_id") is not None else []
+        )
 
-            actual_lead = max(2, base_lead + delay)
-            expected_date = current_day + timedelta(days=base_lead)
-            receipt_date = current_day + timedelta(days=actual_lead)
-
-            new_po = PurchaseOrder(
-                id=next_po_id, supplier_id=supplier_id, order_date=current_day,
-                expected_delivery_date=expected_date, status="Pending",
-            )
-            db.add(new_po)
-            db.flush()
-            next_po_id += 1
-
-            new_po_line = PurchaseOrderLine(
-                id=next_po_line_id, po_id=new_po.id, material_id=material_id,
-                quantity_ordered=order_qty, quantity_received=0,
-            )
-            db.add(new_po_line)
-            db.flush()
-            next_po_line_id += 1
-
-            open_purchase_orders.append({
-                "po": new_po, "material_id": material_id,
-                "remaining_qty": order_qty, "receipt_date": receipt_date,
-            })
-
-            stats["purchase_orders"] += 1
-            stats["purchase_units_ordered"] += order_qty
-
-            log(f"{current_day}: PO {new_po.id} placed for material {material_id}; "
-                f"supplier={supplier_id}; qty={order_qty}; expected={expected_date}; "
-                f"actual_receipt={receipt_date}")
+        for supplier_id in supplier_ids:
+            material_id = material_needing_most_from_supplier(supplier_id)
+            if material_id is None:
+                continue
+            extra_delay, forced_fraction = supplier_incident_effect(supplier_id, current_day)
+            apply_incident_to_material(material_id, supplier_id, extra_delay, forced_fraction, current_day)
 
     if production_day(current_day):
         production_products = [201, 202]
@@ -496,6 +710,14 @@ while current_day <= END_DATE:
         for product_id in production_products:
             planned_qty = PRODUCTION_BATCH[product_id]
             max_qty = maximum_producible(product_id, planned_qty)
+
+            capacity_reduction = product_capacity_reduction(product_id, current_day)
+            if capacity_reduction > 0:
+                max_qty = int(max_qty * (1 - capacity_reduction))
+                step = PRODUCTION_STEP[product_id]
+                max_qty = (max_qty // step) * step
+                log(f"{current_day}: incident reducing product {product_id} capacity by "
+                    f"{capacity_reduction:.0%}; max producible now {max_qty}")
 
             if max_qty > 0 and random.random() < 0.15:
                 reduction = random.choice([2, 4, 6])

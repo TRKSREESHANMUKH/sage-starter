@@ -1,0 +1,196 @@
+simulation:
+  seed: 42
+
+  # This engine now ALWAYS generates exactly the 10 frozen required
+  # scenarios per run — nothing is randomly sampled/skipped.
+  min_gap_days: 10          # enforced: min days between any two incident windows
+  max_incidents_per_entity: 2   # enforced: cap on how many incidents touch the same supplier/product
+
+incidents:
+
+  # 1. Single supplier delay
+  - id: INC_01
+    type: supplier_delay
+    category: supply
+    enabled: true
+    selection:
+      entity: supplier
+    parameters:
+      duration_days: { min: 2, max: 6 }
+    causal_role:
+      root_cause: true
+      expected_path:
+        - supplier_delay
+        - receipt_delay
+        - material_inventory_pressure
+        - possible_production_impact
+        - possible_sales_impact
+
+  # 2. No incident (negative control)
+  - id: INC_02
+    type: no_incident
+    category: negative_control
+    enabled: true
+    selection: {}
+    parameters: {}
+    causal_role:
+      root_cause: false
+      expected_path: []
+
+  # 3. Demand spike, no supplier delay
+  - id: INC_03
+    type: demand_spike
+    category: demand
+    enabled: true
+    selection:
+      entity: finished_product
+    parameters:
+      demand_multiplier: { min: 1.50, max: 2.00 }
+      duration_days: { min: 2, max: 5 }
+    controls:
+      supplier_disruption: false
+    causal_role:
+      root_cause: true
+      expected_path:
+        - demand_increase
+        - faster_finished_goods_consumption
+        - inventory_pressure
+        - possible_stockout
+        - possible_sales_fulfillment_impact
+
+  # 4. Capacity disruption, independent of material shortage
+  - id: INC_04
+    type: capacity_disruption
+    category: production
+    enabled: true
+    selection:
+      entity: finished_product
+    parameters:
+      capacity_reduction: { min: 0.30, max: 0.60 }
+      duration_days: { min: 2, max: 5 }
+    controls:
+      material_shortage: false
+      supplier_disruption: false
+    causal_role:
+      root_cause: true
+      expected_path:
+        - capacity_reduction
+        - lower_production_output
+        - finished_goods_inventory_pressure
+        - possible_sales_fulfillment_impact
+
+  # 5. Overlapping supplier delays (two suppliers, overlapping windows)
+  - id: INC_05
+    type: overlapping_supplier_delay
+    category: supply
+    enabled: true
+    selection:
+      entity: multiple_suppliers
+      count: { min: 2, max: 2 }
+    parameters:
+      duration_days: { min: 2, max: 6 }
+      start_offset_days: { min: 0, max: 2 }
+    causal_role:
+      root_cause: true
+      expected_path:
+        - multiple_supplier_delays
+        - broader_material_pressure
+        - possible_production_impact
+        - possible_sales_impact
+
+  # 6. Two simultaneous INDEPENDENT root causes (different categories,
+  # overlapping window, but no shared causal story between them —
+  # distinct from #5, which is two suppliers feeding the same pressure)
+  - id: INC_06
+    type: two_simultaneous_independent_causes
+    category: causal_contrast
+    enabled: true
+    selection:
+      entity: independent_pair   # one supplier incident + one production incident, same window
+    parameters:
+      duration_days: { min: 2, max: 5 }
+      capacity_reduction: { min: 0.25, max: 0.50 }
+    causal_role:
+      root_cause: true
+      multiple_roots: true
+      expected_paths:
+        supply_path:
+          - supplier_delay
+          - material_inventory_pressure
+        production_path:
+          - capacity_reduction
+          - finished_goods_inventory_pressure
+
+  # 7. Partial receipt
+  - id: INC_07
+    type: partial_receipt
+    category: supply
+    enabled: true
+    selection:
+      entity: supplier
+    parameters:
+      received_fraction: { min: 0.45, max: 0.80 }
+    causal_role:
+      root_cause: true
+      expected_path:
+        - partial_receipt
+        - lower_material_inflow
+        - material_inventory_pressure
+        - possible_production_impact
+
+  # 8. Delay absorbed by safety stock — should show NO downstream effect.
+  # Kept short/mild on purpose so safety stock covers it; do not widen
+  # duration/severity without re-checking this still produces no impact.
+  - id: INC_08
+    type: delay_absorbed_by_safety_stock
+    category: supply_buffer
+    enabled: true
+    selection:
+      entity: supplier
+    parameters:
+      duration_days: { min: 2, max: 4 }
+    causal_role:
+      root_cause: true
+      expected_path:
+        - supplier_delay
+        - receipt_delay
+        - inventory_buffer_absorbs_shock
+        - no_expected_production_disruption
+        - no_expected_sales_disruption
+
+  # 9. Delay causing a genuine stockout — deliberately long/severe so it
+  # WILL exceed safety stock, unlike #8.
+  - id: INC_09
+    type: severe_supplier_delay_stockout
+    category: supply
+    enabled: true
+    selection:
+      entity: supplier
+    parameters:
+      duration_days: { min: 8, max: 14 }
+    causal_role:
+      root_cause: true
+      expected_path:
+        - supplier_delay
+        - prolonged_receipt_delay
+        - material_stockout
+        - production_constraint
+        - finished_goods_shortage
+        - sales_fulfillment_impact
+
+  # 10. Seasonal demand pattern — normal fluctuation, NOT an incident
+  - id: INC_10
+    type: seasonal_demand
+    category: normal_variation
+    enabled: true
+    selection:
+      entity: finished_product
+    parameters:
+      demand_multiplier: { min: 1.15, max: 1.40 }
+      duration_days: { min: 7, max: 21 }
+    causal_role:
+      root_cause: false
+      expected_path:
+        - normal_demand_variation
+        - possible_inventory_change
+        - no_incident_attribution_expected

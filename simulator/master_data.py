@@ -34,10 +34,19 @@ db.flush()
 inventory_items = [
     InventoryItem(id=1, product_id=101, safety_stock=500, reorder_point=800,
                   opening_balance_qty=5000, opening_balance_date=date(2025, 1, 1)),
-    InventoryItem(id=2, product_id=102, safety_stock=300, reorder_point=500,
-                  opening_balance_qty=3000, opening_balance_date=date(2025, 1, 1)),
-    InventoryItem(id=3, product_id=103, safety_stock=1000, reorder_point=1500,
-                  opening_balance_qty=8000, opening_balance_date=date(2025, 1, 1)),
+    # Retuned from safety_stock=300, reorder_point=500, opening=3000 -- at the
+    # old values this material's annual consumption (~1980, from BOM x batch x
+    # production frequency) never came close to its reorder point, so it
+    # never reordered naturally in a full year. New values use the same
+    # opening/reorder/safety ratios as material 101 (which DID work
+    # correctly), applied to material 102's own consumption rate.
+    InventoryItem(id=2, product_id=102, safety_stock=150, reorder_point=240,
+                  opening_balance_qty=1520, opening_balance_date=date(2025, 1, 1)),
+    # Same fix as material 102 -- old values (safety=1000, reorder=1500,
+    # opening=8000) were 6x this material's annual consumption (~1254),
+    # so it also never reordered naturally. Retuned the same way.
+    InventoryItem(id=3, product_id=103, safety_stock=100, reorder_point=150,
+                  opening_balance_qty=960, opening_balance_date=date(2025, 1, 1)),
     InventoryItem(id=4, product_id=201, safety_stock=50, reorder_point=100,
                   opening_balance_qty=200, opening_balance_date=date(2025, 1, 1)),
     InventoryItem(id=5, product_id=202, safety_stock=80, reorder_point=150,
