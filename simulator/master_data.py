@@ -8,14 +8,16 @@ from app.models.sales import Customer
 def seed_master_data():
     db = SessionLocal()
 
-    # Truncate all transactional and master tables safely with CASCADE
+    # Truncate all transactional, intelligence, and master tables safely with CASCADE
     db.execute(text(
         "TRUNCATE purchase_orders, purchase_order_lines, goods_receipts, goods_receipt_lines, "
         "production_orders, material_issues, stock_movements, sales_orders, sales_order_lines, "
-        "deliveries, delivery_lines, bill_of_materials, inventory_items, products, suppliers, customers "
+        "deliveries, delivery_lines, bill_of_materials, inventory_items, products, suppliers, customers, "
+        "business_events, risks, causal_analysis_runs, causal_attributions "
         "RESTART IDENTITY CASCADE;"
     ))
     db.commit()
+
 
     suppliers = [
         Supplier(id=1, name="Sri Materials Pvt Ltd", region="South India",

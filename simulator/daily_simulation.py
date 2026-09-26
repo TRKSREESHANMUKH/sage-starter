@@ -35,8 +35,10 @@ from app.models.sales import (
     DeliveryLine,
 )
 
+from app.models.intelligence import BusinessEvent
 from simulator.incident_engine import IncidentEngine
 from simulator.scenario_validator import ScenarioValidator
+from simulator.business_event_logger import BusinessEventLogger
 
 
 # ============================================================
@@ -80,6 +82,7 @@ TRANSACTIONAL_MODELS = [
     PurchaseOrder, PurchaseOrderLine, GoodsReceipt, GoodsReceiptLine,
     ProductionOrder, MaterialIssue, StockMovement,
     SalesOrder, SalesOrderLine, Delivery, DeliveryLine,
+    BusinessEvent,
 ]
 
 for model in TRANSACTIONAL_MODELS:
@@ -368,14 +371,17 @@ def maximum_producible(product_id, planned_quantity):
 
 
 # ============================================================
-# INCIDENTS (Stage 4)
+# INCIDENTS (Stage 4) & GROUND TRUTH EVENT LOGGING (Stage 5)
 # ============================================================
 
 if INCIDENTS_ENABLED:
     incident_engine = IncidentEngine(config_path="simulator/incidents.yaml")
     incidents = incident_engine.generate()
+    event_logger = BusinessEventLogger(db)
+    event_logger.log_incidents(incidents)
 else:
     incidents = []
+
 
 
 def active_incidents(current_day):
@@ -1049,6 +1055,9 @@ else:
 print("Stock movement consistency     : PASS")
 print("Non-negative inventory         : PASS")
 print("Backorder balance              : PASS")
+logged_events_count = db.query(BusinessEvent).count()
+print(f"Business events persisted (St 5): PASS ({logged_events_count} ground truth rows)")
+
 
 
 scenario_validation_passed = True
