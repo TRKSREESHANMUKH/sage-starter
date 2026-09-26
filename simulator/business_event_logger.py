@@ -1,4 +1,5 @@
 import json
+from datetime import timedelta
 from app.models.intelligence import BusinessEvent
 
 
@@ -10,12 +11,11 @@ class BusinessEventLogger:
 
     def __init__(self, db):
         self.db = db
-        self.next_event_id = 1
 
     def log_incidents(self, incidents):
         """
-        Takes the generated list of incidents from IncidentEngine and logs
-        each incident as one or more BusinessEvent records in PostgreSQL.
+        Takes the generated list of incidents from IncidentEngine (post-simulation)
+        and logs each incident as one or more BusinessEvent records in PostgreSQL.
         """
         for inc in incidents:
             self._log_single_incident(inc)
@@ -33,7 +33,6 @@ class BusinessEventLogger:
             "category": inc.get("category", "operational"),
             "causal_role": causal_role,
         }
-        desc_json = json.dumps(desc_payload)
 
         if inc_type == "supplier_delay":
             supplier_id = inc["supplier_id"]
@@ -50,11 +49,11 @@ class BusinessEventLogger:
                 baseline_value=0.0,
                 threshold_value=1.0,
                 status="Logged",
-                description=desc_json,
+                description=json.dumps(desc_payload),
             )
 
         elif inc_type == "no_incident":
-            # Negative control -- omit logging or log baseline operational marker if needed
+            # Negative control -- omitted from ground truth table
             pass
 
         elif inc_type == "demand_spike":
@@ -72,7 +71,7 @@ class BusinessEventLogger:
                 baseline_value=1.0,
                 threshold_value=1.2,
                 status="Logged",
-                description=desc_json,
+                description=json.dumps(desc_payload),
             )
 
         elif inc_type == "capacity_disruption":
@@ -90,26 +89,31 @@ class BusinessEventLogger:
                 baseline_value=0.0,
                 threshold_value=0.1,
                 status="Logged",
-                description=desc_json,
+                description=json.dumps(desc_payload),
             )
 
         elif inc_type == "overlapping_supplier_delay":
             supplier_ids = inc.get("supplier_ids", [])
             duration = float(inc.get("duration_days", 0))
-            for supp_id in supplier_ids:
+            offset_days = int(inc.get("start_offset_days", 0))
+
+            for idx, supp_id in enumerate(supplier_ids):
+                # Stagger second supplier by offset_days if provided
+                supp_start = start_date + timedelta(days=idx * offset_days)
+                supp_end = end_date + timedelta(days=idx * offset_days)
                 self._create_event(
                     event_type="overlapping_supplier_delay",
                     entity_type="supplier",
                     entity_id=supp_id,
-                    start_date=start_date,
-                    end_date=end_date,
+                    start_date=supp_start,
+                    end_date=supp_end,
                     metric_name="delay_days",
                     metric_value=duration,
                     metric_unit="days",
                     baseline_value=0.0,
                     threshold_value=1.0,
                     status="Logged",
-                    description=desc_json,
+                    description=json.dumps(desc_payload),
                 )
 
         elif inc_type == "two_simultaneous_independent_causes":
@@ -131,13 +135,12 @@ class BusinessEventLogger:
                     baseline_value=0.0,
                     threshold_value=1.0,
                     status="Logged",
-                    description=desc_json,
+                    description=json.dumps(desc_payload),
                 )
             if prod_id:
                 self._create_event(
                     event_type="indep_capacity_disruption",
                     entity_type="product",
-
                     entity_id=prod_id,
                     start_date=start_date,
                     end_date=end_date,
@@ -147,7 +150,7 @@ class BusinessEventLogger:
                     baseline_value=0.0,
                     threshold_value=0.1,
                     status="Logged",
-                    description=desc_json,
+                    description=json.dumps(desc_payload),
                 )
 
         elif inc_type == "partial_receipt":
@@ -165,7 +168,7 @@ class BusinessEventLogger:
                 baseline_value=1.0,
                 threshold_value=0.9,
                 status="Logged",
-                description=desc_json,
+                description=json.dumps(desc_payload),
             )
 
         elif inc_type == "delay_absorbed_by_safety_stock":
@@ -183,30 +186,32 @@ class BusinessEventLogger:
                 baseline_value=0.0,
                 threshold_value=1.0,
                 status="Logged",
-                description=desc_json,
+                description=json.dumps(desc_payload),
             )
 
         elif inc_type == "severe_supplier_delay_stockout":
             supp_id = inc["supplier_id"]
-            duration = float(inc.get("duration_days", 0))
+            duration = float(inc.get("duration_days", 80))
+            # Calculate actual end date from trigger date + full duration days
+            actual_end_date = start_date + timedelta(days=int(duration))
             self._create_event(
                 event_type="severe_supplier_delay",
                 entity_type="supplier",
                 entity_id=supp_id,
                 start_date=start_date,
-                end_date=end_date,
+                end_date=actual_end_date,
                 metric_name="delay_days",
                 metric_value=duration,
                 metric_unit="days",
                 baseline_value=0.0,
                 threshold_value=1.0,
                 status="Logged",
-                description=desc_json,
+                description=json.dumps(desc_payload),
             )
 
         elif inc_type == "seasonal_demand":
             prod_id = inc["product_id"]
-            mult = float(inc.get("demand_multiplier", 1.3))
+            desc_payload["note"] = "Normal Q4 calendar seasonality; no artificial demand multiplier injected."
             self._create_event(
                 event_type="seasonal_demand",
                 entity_type="product",
@@ -214,19 +219,19 @@ class BusinessEventLogger:
                 start_date=start_date,
                 end_date=end_date,
                 metric_name="demand_multiplier",
-                metric_value=mult,
+                metric_value=1.0,
                 metric_unit="multiplier",
                 baseline_value=1.0,
-                threshold_value=1.1,
+                threshold_value=1.0,
                 status="Logged",
-                description=desc_json,
+                description=json.dumps(desc_payload),
             )
 
     def _create_event(self, event_type, entity_type, entity_id, start_date, end_date,
                       metric_name, metric_value, metric_unit, baseline_value,
                       threshold_value, status, description):
+        # Allow PostgreSQL auto-increment primary key sequence to assign id naturally
         event = BusinessEvent(
-            id=self.next_event_id,
             event_type=event_type,
             entity_type=entity_type,
             entity_id=entity_id,
@@ -241,4 +246,3 @@ class BusinessEventLogger:
             description=description,
         )
         self.db.add(event)
-        self.next_event_id += 1

@@ -377,10 +377,9 @@ def maximum_producible(product_id, planned_quantity):
 if INCIDENTS_ENABLED:
     incident_engine = IncidentEngine(config_path="simulator/incidents.yaml")
     incidents = incident_engine.generate()
-    event_logger = BusinessEventLogger(db)
-    event_logger.log_incidents(incidents)
 else:
     incidents = []
+
 
 
 
@@ -1009,6 +1008,15 @@ for order_info in open_sales_orders:
 
 
 # ============================================================
+# GROUND TRUTH EVENT LOGGING (STAGE 5)
+# ============================================================
+
+if INCIDENTS_ENABLED:
+    event_logger = BusinessEventLogger(db)
+    event_logger.log_incidents(incidents)
+
+
+# ============================================================
 # RECONCILIATION & SCENARIO VALIDATION
 # ============================================================
 
@@ -1016,6 +1024,7 @@ print()
 print("=" * 70)
 print("DATABASE VALIDATION")
 print("=" * 70)
+
 
 db_validation_passed = True
 
