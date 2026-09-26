@@ -1,20 +1,8 @@
 """
 IncidentEngine — Stage 4 of SAGE.
 
-Design principle (unchanged from project rules): this module ONLY decides
-WHEN incidents happen and WHAT their input parameters are (e.g. a supplier
-is delayed 5 days, demand is multiplied 1.7x). It does NOT decide, fake, or
-pre-compute any downstream effect (stock levels, production output, sales
-impact). Those must always be *calculated* by daily_simulation.py reacting
-to these parameters as it runs day by day. `expected_path` in the yaml is
-documentation for later causal-engine validation (Stage 7) — it is never
-injected into the simulation as a real effect.
-
-This engine always generates exactly the 10 frozen required scenarios
-listed in incidents.yaml — nothing is randomly skipped or subsampled.
-Only the entity assignment, exact parameter values within their configured
-ranges, and placement in the calendar year are randomized (seeded, so a
-given seed always reproduces the same incident set).
+Decides WHEN incidents happen and WHAT their input parameters are.
+Does NOT pre-compute downstream effects.
 """
 
 import random
@@ -24,14 +12,6 @@ from datetime import date, timedelta
 
 class IncidentEngine:
 
-    # Worst-case chain for a supply-side incident: supplier base_lead_time
-    # (up to 14 days) + the normal on-time/late roll (up to 7 days) + the
-    # incident's own added delay (up to 14 days) = ~35 days before a
-    # receipt even happens, plus we want some room afterward for the
-    # downstream production/sales effect to actually show up in the log
-    # before the year ends. 60 days gives real margin without meaningfully
-    # shrinking the usable scheduling window (year is 365 days; only 10
-    # incidents with 10-day gaps need to fit).
     SCHEDULING_MARGIN_DAYS = 60
 
     def __init__(self, config_path="simulator/incidents.yaml"):
@@ -51,24 +31,13 @@ class IncidentEngine:
         self.suppliers = [1, 2, 3, 4, 5]
         self.finished_products = [201, 202]
 
-        # Always ALL enabled incidents — no subsampling. Order preserved
-        # from the yaml so scenario numbering stays stable and readable.
         self.incident_types = [
             incident for incident in self.config["incidents"]
             if incident.get("enabled", True)
         ]
 
-        # Tracks how many incidents have touched each entity so far,
-        # so max_incidents_per_entity can actually be enforced.
         self._entity_usage = {}
-
-        # Tracks (start_date, end_date) of every incident placed so far,
-        # so min_gap_days can actually be enforced.
         self._placed_windows = []
-
-    # ------------------------------------------------------------------
-    # Random value / entity helpers
-    # ------------------------------------------------------------------
 
     def random_number(self, value):
         if isinstance(value, dict):
@@ -85,10 +54,6 @@ class IncidentEngine:
         self._entity_usage[entity_key] = self._usage_count(entity_key) + 1
 
     def _pick_under_cap(self, candidates, entity_prefix):
-        """Pick from candidates, preferring ones still under the
-        per-entity incident cap. Falls back to full candidate list only
-        if every candidate is already at/over cap (keeps things running
-        even with a small entity pool)."""
         under_cap = [
             c for c in candidates
             if self._usage_count(f"{entity_prefix}:{c}") < self.max_incidents_per_entity
@@ -103,7 +68,8 @@ class IncidentEngine:
         entity = selection.get("entity")
 
         if entity == "supplier":
-            return {"supplier_id": self._pick_under_cap(self.suppliers, "supplier")}
+            pool = selection.get("candidates", self.suppliers)
+            return {"supplier_id": self._pick_under_cap(pool, "supplier")}
 
         if entity == "finished_product":
             return {"product_id": self._pick_under_cap(self.finished_products, "product")}
@@ -120,20 +86,12 @@ class IncidentEngine:
             return {"supplier_ids": chosen}
 
         if entity == "independent_pair":
-            # One supplier-side root cause + one production-side root
-            # cause, deliberately unrelated to each other.
             return {
                 "supplier_id": self._pick_under_cap(self.suppliers, "supplier"),
                 "product_id": self._pick_under_cap(self.finished_products, "product"),
             }
 
-        # id 19 / no_incident and any entity-less incident
         return {}
-
-    # ------------------------------------------------------------------
-    # Scheduling: placing all 10 incidents across the year with a
-    # minimum gap between any two incident windows.
-    # ------------------------------------------------------------------
 
     def _windows_conflict(self, start, end):
         for existing_start, existing_end in self._placed_windows:
@@ -143,36 +101,42 @@ class IncidentEngine:
                 return True
         return False
 
-    def _place_window(self, duration_days, max_attempts=500):
-        """Find a start date such that [start, start+duration) keeps at
-        least min_gap_days away from every previously placed window, AND
-        leaves SCHEDULING_MARGIN_DAYS of runway before END_DATE so the
-        incident's full consequence (lead time, receipt, downstream
-        effect) has time to actually happen and be observed."""
-        latest_start = (
+    def _place_window(self, duration_days, max_attempts=500, schedule_within=None):
+        default_latest = (
             self.end_date
             - timedelta(days=duration_days - 1)
             - timedelta(days=self.SCHEDULING_MARGIN_DAYS)
         )
-        total_days = (latest_start - self.start_date).days
+        earliest = self.start_date
+        latest_start = default_latest
+
+        if schedule_within:
+            window_start = date(2025, schedule_within["start_month"], 1)
+            end_month = schedule_within["end_month"]
+            window_end = (
+                date(2025, 12, 31) if end_month == 12
+                else date(2025, end_month + 1, 1) - timedelta(days=1)
+            )
+            earliest = max(earliest, window_start)
+            latest_start = min(latest_start, window_end - timedelta(days=duration_days - 1))
+
+        total_days = (latest_start - earliest).days
+        if total_days < 0:
+            raise RuntimeError(
+                f"schedule_within window too narrow to fit a {duration_days}-day incident."
+            )
 
         for _ in range(max_attempts):
             offset = self.rng.randint(0, total_days)
-            start = self.start_date + timedelta(days=offset)
+            start = earliest + timedelta(days=offset)
             end = start + timedelta(days=duration_days - 1)
             if not self._windows_conflict(start, end):
                 self._placed_windows.append((start, end))
                 return start, end
 
         raise RuntimeError(
-            "Could not place incident without violating min_gap_days — "
-            "year is too packed for the current min_gap_days/incident count. "
-            "Widen the year, reduce min_gap_days, or reduce incident count."
+            "Could not place incident without violating min_gap_days."
         )
-
-    # ------------------------------------------------------------------
-    # Building individual incidents
-    # ------------------------------------------------------------------
 
     def create_incident(self, incident):
         result = {
@@ -192,7 +156,11 @@ class IncidentEngine:
 
         result.update(self.choose_entity(incident))
 
-        start, end = self._place_window(generated_duration)
+        if "target_material" in incident:
+            result["material_id"] = incident["target_material"]
+
+        placement_duration = incident.get("placement_duration_override", generated_duration)
+        start, end = self._place_window(placement_duration, schedule_within=incident.get("schedule_within"))
         result["start_date"] = start
         result["end_date"] = end
 
@@ -203,14 +171,7 @@ class IncidentEngine:
 
         return result
 
-    # ------------------------------------------------------------------
-    # Public entry point
-    # ------------------------------------------------------------------
-
     def generate(self):
-        """Always returns exactly the 10 frozen scenarios, each scheduled
-        to respect min_gap_days and max_incidents_per_entity. Sorted by
-        start_date for a readable, chronological incident log."""
         self._entity_usage = {}
         self._placed_windows = []
 
@@ -230,4 +191,3 @@ if __name__ == "__main__":
             f"{incident['id']:8} {incident['type']:35} "
             f"{incident['start_date']} -> {incident['end_date']}"
         )
-        print(f"    {incident}\n")

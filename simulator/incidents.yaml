@@ -1,8 +1,8 @@
 simulation:
   seed: 42
 
-  # This engine now ALWAYS generates exactly the 10 frozen required
-  # scenarios per run — nothing is randomly sampled/skipped.
+  # This engine ALWAYS generates exactly the 10 frozen required
+  # scenarios per run -- nothing is randomly sampled/skipped.
   min_gap_days: 10          # enforced: min days between any two incident windows
   max_incidents_per_entity: 2   # enforced: cap on how many incidents touch the same supplier/product
 
@@ -46,7 +46,7 @@ incidents:
       entity: finished_product
     parameters:
       demand_multiplier: { min: 1.50, max: 2.00 }
-      duration_days: { min: 2, max: 5 }
+      duration_days: { min: 4, max: 7 }
     controls:
       supplier_disruption: false
     causal_role:
@@ -67,7 +67,7 @@ incidents:
       entity: finished_product
     parameters:
       capacity_reduction: { min: 0.30, max: 0.60 }
-      duration_days: { min: 2, max: 5 }
+      duration_days: { min: 5, max: 8 }
     controls:
       material_shortage: false
       supplier_disruption: false
@@ -98,15 +98,13 @@ incidents:
         - possible_production_impact
         - possible_sales_impact
 
-  # 6. Two simultaneous INDEPENDENT root causes (different categories,
-  # overlapping window, but no shared causal story between them —
-  # distinct from #5, which is two suppliers feeding the same pressure)
+  # 6. Two simultaneous INDEPENDENT root causes
   - id: INC_06
     type: two_simultaneous_independent_causes
     category: causal_contrast
     enabled: true
     selection:
-      entity: independent_pair   # one supplier incident + one production incident, same window
+      entity: independent_pair
     parameters:
       duration_days: { min: 2, max: 5 }
       capacity_reduction: { min: 0.25, max: 0.50 }
@@ -138,9 +136,7 @@ incidents:
         - material_inventory_pressure
         - possible_production_impact
 
-  # 8. Delay absorbed by safety stock — should show NO downstream effect.
-  # Kept short/mild on purpose so safety stock covers it; do not widen
-  # duration/severity without re-checking this still produces no impact.
+  # 8. Delay absorbed by safety stock
   - id: INC_08
     type: delay_absorbed_by_safety_stock
     category: supply_buffer
@@ -158,16 +154,18 @@ incidents:
         - no_expected_production_disruption
         - no_expected_sales_disruption
 
-  # 9. Delay causing a genuine stockout — deliberately long/severe so it
-  # WILL exceed safety stock, unlike #8.
+  # 9. Severe supplier delay causing a stockout (Material 101)
   - id: INC_09
     type: severe_supplier_delay_stockout
     category: supply
     enabled: true
     selection:
       entity: supplier
+      candidates: [1, 2, 4]
+    target_material: 101
+    placement_duration_override: 1
     parameters:
-      duration_days: { min: 8, max: 14 }
+      duration_days: { min: 75, max: 85 }
     causal_role:
       root_cause: true
       expected_path:
@@ -178,7 +176,7 @@ incidents:
         - finished_goods_shortage
         - sales_fulfillment_impact
 
-  # 10. Seasonal demand pattern — normal fluctuation, NOT an incident
+  # 10. Seasonal demand pattern
   - id: INC_10
     type: seasonal_demand
     category: normal_variation
@@ -186,8 +184,8 @@ incidents:
     selection:
       entity: finished_product
     parameters:
-      demand_multiplier: { min: 1.15, max: 1.40 }
       duration_days: { min: 7, max: 21 }
+    schedule_within: { start_month: 9, end_month: 12 }
     causal_role:
       root_cause: false
       expected_path:

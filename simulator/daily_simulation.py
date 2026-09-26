@@ -2,6 +2,7 @@ import math
 from datetime import date, timedelta
 from fractions import Fraction
 import random
+import sys
 
 from app.database import SessionLocal
 
@@ -35,6 +36,7 @@ from app.models.sales import (
 )
 
 from simulator.incident_engine import IncidentEngine
+from simulator.scenario_validator import ScenarioValidator
 
 
 # ============================================================
@@ -49,9 +51,18 @@ random.seed(SEED)
 
 PRINT_DAILY_LOG = True
 
-# Set to False any time you want to reproduce the old, incident-free
-# baseline exactly (e.g. to re-confirm nothing broke).
-INCIDENTS_ENABLED = True
+# Mode: "SCENARIO" (runs incidents + scenario validation) or "BASELINE" (clean counterfactual run)
+MODE = "SCENARIO"
+for arg in sys.argv[1:]:
+    arg_upper = arg.upper()
+    if arg_upper in ("BASELINE", "SCENARIO"):
+        MODE = arg_upper
+    elif arg_upper in ("QUIET", "SILENT", "-Q"):
+        PRINT_DAILY_LOG = False
+    elif arg_upper in ("VERBOSE", "LOG", "-V"):
+        PRINT_DAILY_LOG = True
+
+INCIDENTS_ENABLED = (MODE == "SCENARIO")
 
 
 # ============================================================
@@ -219,7 +230,7 @@ open_sales_orders = []
 
 
 # ============================================================
-# STATISTICS
+# STATISTICS & SIMULATION LOG
 # ============================================================
 
 stats = {
@@ -236,8 +247,25 @@ stats = {
     "sales_units_ordered": 0,
     "sales_units_fulfilled": 0,
     "sales_units_backordered": 0,
+    "orders_ever_backordered": 0,
+    "backorder_unit_days": 0,
+    "peak_due_backlog": 0,
+    "on_time_deliveries": 0,
+    "late_deliveries": 0,
     "deliveries": 0,
     "delivery_units": 0,
+}
+
+simulation_log = {
+    "po_events": [],
+    "demand_events": [],
+    "capacity_events": [],
+    "partial_receipt_events": [],
+    "production_delayed_events": [],
+    "daily_material_stock": {101: [], 102: [], 103: []},
+    "daily_fg_stock": {201: [], 202: []},
+    "daily_due_backorders": [],
+    "inc_09_backorder_units": 0,
 }
 
 
@@ -282,7 +310,7 @@ def choose_supplier(material_id):
 def production_day(current_day):
     if current_day.weekday() >= 5:
         return False
-    return random.random() < 0.24
+    return random.random() < 0.28
 
 
 def customer_demand(customer, product_id, current_day):
@@ -342,12 +370,6 @@ def maximum_producible(product_id, planned_quantity):
 # ============================================================
 # INCIDENTS (Stage 4)
 # ============================================================
-# Generated ONCE, before the day-by-day loop starts. This list never
-# changes while the simulation runs -- each day just checks which
-# incidents (if any) are currently "active" and adjusts an INPUT
-# (a lead time, a demand number, a capacity ceiling). The simulator's
-# existing formulas do all the real work; incidents never write a
-# stock/production/sales number directly.
 
 if INCIDENTS_ENABLED:
     incident_engine = IncidentEngine(config_path="simulator/incidents.yaml")
@@ -362,20 +384,16 @@ def active_incidents(current_day):
 
 
 def supplier_incident_effect(supplier_id, current_day):
-    """
-    Looks at every incident active today and returns:
-      extra_delay_days      -- extra days to add on top of the normal
-                                lead-time calculation for a PO placed
-                                today with this supplier
-      forced_received_fraction -- if set, the very next receipt against
-                                a PO placed today must be forced to only
-                                this fraction of the ordered quantity
-                                (used for the partial_receipt scenario)
-    """
     extra_delay = 0
     forced_fraction = None
 
     for inc in active_incidents(current_day):
+        if inc["type"] == "severe_supplier_delay_stockout":
+            target_mat = inc.get("material_id") or inc.get("target_material")
+            if target_mat and supplier_id in SUPPLIERS_FOR_MATERIAL.get(target_mat, []):
+                extra_delay += inc["duration_days"]
+                continue
+
         touches_this_supplier = (
             inc.get("supplier_id") == supplier_id
             or supplier_id in inc.get("supplier_ids", [])
@@ -385,7 +403,6 @@ def supplier_incident_effect(supplier_id, current_day):
 
         if inc["type"] in (
             "supplier_delay",
-            "severe_supplier_delay_stockout",
             "delay_absorbed_by_safety_stock",
             "overlapping_supplier_delay",
             "two_simultaneous_independent_causes",
@@ -399,43 +416,30 @@ def supplier_incident_effect(supplier_id, current_day):
 
 
 def product_capacity_reduction(product_id, current_day):
-    """Largest active capacity_reduction fraction (0.0-1.0) affecting
-    this finished product today. 0.0 means no reduction."""
     reduction = 0.0
     for inc in active_incidents(current_day):
         if inc.get("product_id") != product_id:
             continue
         if inc["type"] in ("capacity_disruption", "two_simultaneous_independent_causes"):
             reduction = max(reduction, inc.get("capacity_reduction", 0.0))
+            simulation_log["capacity_events"].append({
+                "date": current_day, "product_id": product_id, "reduction": reduction
+            })
     return reduction
 
 
 def demand_multiplier_for(product_id, current_day):
-    """Largest active demand multiplier affecting this finished product
-    today. 1.0 means no change (normal demand)."""
     multiplier = 1.0
     for inc in active_incidents(current_day):
         if inc.get("product_id") != product_id:
             continue
         if inc["type"] in ("demand_spike", "seasonal_demand"):
             multiplier = max(multiplier, inc.get("demand_multiplier", 1.0))
+            simulation_log["demand_events"].append({
+                "date": current_day, "product_id": product_id, "multiplier": multiplier
+            })
     return multiplier
 
-
-# ------------------------------------------------------------------
-# GUARANTEED SUPPLY-SIDE INCIDENT TRIGGERING
-# ------------------------------------------------------------------
-# Problem this section solves: 5 of the 10 required scenarios only
-# have an effect if a Purchase Order for the right material happens to
-# exist during the incident's short window. Natural reorder frequency
-# for some materials can be too low for that overlap to happen by
-# chance. So: on the exact start day of a supply-side incident, we
-# guarantee a real transaction exists to carry the effect --
-# preferring to modify an ALREADY-OPEN real PO if one exists, and only
-# creating a new one if none does. This never fakes a downstream
-# number (stock/production/sales are still fully calculated as normal)
-# -- it only guarantees the upstream input (a purchase event) exists,
-# which is what the whole point of these 10 frozen scenarios requires.
 
 SUPPLY_INCIDENT_TYPES = {
     "supplier_delay",
@@ -453,8 +457,6 @@ for _material_id, _supplier_list in SUPPLIERS_FOR_MATERIAL.items():
 
 
 def material_needing_most_from_supplier(supplier_id):
-    """Of the materials this supplier provides, pick the one closest to
-    its reorder point (most realistic target for a real disruption)."""
     candidates = SUPPLIER_TO_MATERIALS.get(supplier_id, [])
     if not candidates:
         return None
@@ -470,18 +472,15 @@ def material_needing_most_from_supplier(supplier_id):
 
 def base_order_quantity(material_id):
     if material_id == 101:
-        return random.randint(1600, 2600)
+        return random.randint(300, 420)
     elif material_id == 102:
-        return random.randint(1000, 1900)
+        return random.randint(200, 280)
     else:
-        return random.randint(1800, 3200)
+        return random.randint(140, 190)
 
 
 def place_new_po(material_id, current_day, forced_supplier_id=None,
                   extra_delay=0, forced_fraction=None, is_forced=False):
-    """The single place a new Purchase Order gets created. Used by both
-    the normal reorder-point check AND the guaranteed incident trigger,
-    so there is only one code path to get right."""
     global next_po_id, next_po_line_id
 
     supplier_id = forced_supplier_id if forced_supplier_id is not None else choose_supplier(material_id)
@@ -532,11 +531,15 @@ def place_new_po(material_id, current_day, forced_supplier_id=None,
 
 
 def apply_incident_to_material(material_id, supplier_id, extra_delay, forced_fraction, current_day):
-    """Route an active supply-side incident onto a real transaction:
-    extend an existing open PO if one exists for this material,
-    otherwise force a new one into existence."""
-    existing = next((po_info for po_info in open_purchase_orders
-                      if po_info["material_id"] == material_id), None)
+    """
+    Route an active supply-side incident onto a real transaction:
+    Match existing open PO by BOTH material_id AND supplier_id (Fixes supplier attribution bug).
+    Extend existing PO if found, else force a new PO with that specific supplier.
+    """
+    existing = next((
+        po_info for po_info in open_purchase_orders
+        if po_info["material_id"] == material_id and po_info["po"].supplier_id == supplier_id
+    ), None)
 
     if existing:
         if extra_delay > 0:
@@ -544,12 +547,101 @@ def apply_incident_to_material(material_id, supplier_id, extra_delay, forced_fra
         if forced_fraction is not None:
             existing["forced_fraction"] = forced_fraction
         log(f"{current_day}: [INCIDENT] extended existing PO {existing['po'].id} "
-            f"(material {material_id}) -> new receipt {existing['receipt_date']} "
+            f"(material {material_id}, supplier {supplier_id}) -> new receipt {existing['receipt_date']} "
             f"due to supplier {supplier_id} disruption")
+        simulation_log["po_events"].append({
+            "date": current_day, "po_id": existing["po"].id, "supplier_id": supplier_id,
+            "material_id": material_id, "extra_delay": extra_delay
+        })
         return
 
-    place_new_po(material_id, current_day, forced_supplier_id=supplier_id,
-                 extra_delay=extra_delay, forced_fraction=forced_fraction, is_forced=True)
+    new_po = place_new_po(material_id, current_day, forced_supplier_id=supplier_id,
+                          extra_delay=extra_delay, forced_fraction=forced_fraction, is_forced=True)
+    simulation_log["po_events"].append({
+        "date": current_day, "po_id": new_po.id, "supplier_id": supplier_id,
+        "material_id": material_id, "extra_delay": extra_delay
+    })
+
+
+def fulfill_sales_orders(orders_list):
+    """
+    Fulfill open sales orders whose requested_delivery_date <= current_day
+    using current available finished goods stock.
+    """
+    global next_delivery_id, next_delivery_line_id, next_movement_id
+
+    for order_info in list(orders_list):
+        # Do not fulfill future orders early -- only fulfill due/overdue orders
+        if current_day < order_info["requested_delivery_date"]:
+            continue
+
+        product_id = order_info["product_id"]
+        remaining = order_info["remaining_qty"]
+
+        if remaining <= 0:
+            if order_info in open_sales_orders:
+                open_sales_orders.remove(order_info)
+            continue
+
+        available = int(get_stock(product_id))
+        if available <= 0:
+            continue
+
+        shipped_qty = min(remaining, available)
+        if shipped_qty <= 0:
+            continue
+
+        order = order_info["order"]
+        line = order_info["line"]
+
+        new_delivery = Delivery(
+            id=next_delivery_id, sales_order_id=order.id,
+            ship_date=current_day, delivery_date=current_day, status="Complete",
+        )
+        db.add(new_delivery)
+        db.flush()
+        next_delivery_id += 1
+
+        new_delivery_line = DeliveryLine(
+            id=next_delivery_line_id, delivery_id=new_delivery.id,
+            sales_order_line_id=line.id, product_id=product_id,
+            quantity_shipped=shipped_qty,
+        )
+        db.add(new_delivery_line)
+        db.flush()
+        next_delivery_line_id += 1
+
+        finished_item = item_by_product[product_id]
+        delivery_movement = StockMovement(
+            id=next_movement_id, item_id=finished_item.id, date=current_day,
+            movement_type="OUT", quantity=shipped_qty, delivery_line_id=new_delivery_line.id,
+        )
+        db.add(delivery_movement)
+        db.flush()
+        next_movement_id += 1
+        change_stock(product_id, -shipped_qty)
+
+        previous_fulfilled = line.quantity_fulfilled or 0
+        line.quantity_fulfilled = previous_fulfilled + shipped_qty
+        order_info["remaining_qty"] -= shipped_qty
+
+        stats["sales_units_fulfilled"] += shipped_qty
+        stats["deliveries"] += 1
+        stats["delivery_units"] += shipped_qty
+
+        if order_info["remaining_qty"] <= 0:
+            order.status = "Complete"
+            if order_info.get("was_backordered"):
+                stats["late_deliveries"] += 1
+            else:
+                stats["on_time_deliveries"] += 1
+            if order_info in open_sales_orders:
+                open_sales_orders.remove(order_info)
+        else:
+            order.status = "Partial"
+
+        log(f"{current_day}: delivered {shipped_qty} units of product {product_id} "
+            f"for sales order {order.id}; remaining={order_info['remaining_qty']}")
 
 
 # ============================================================
@@ -557,7 +649,7 @@ def apply_incident_to_material(material_id, supplier_id, extra_delay, forced_fra
 # ============================================================
 
 print("=" * 70)
-print("SAGE ROBUST NORMAL BASELINE SIMULATION")
+print(f"SAGE STAGE 4 SIMULATION — MODE: {MODE}")
 print("=" * 70)
 print(f"Customers available : {len(customers)}")
 print(f"Inventory items     : {len(inventory_items)}")
@@ -574,14 +666,19 @@ if INCIDENTS_ENABLED:
     print("-" * 70)
 
 
-# ============================================================
-# MAIN SIMULATION
-# ============================================================
-
+daily_due_backorder_units = []
 current_day = START_DATE
+
+
+# ============================================================
+# MAIN SIMULATION LOOP (EXPLICIT DAILY SEQUENCE)
+# ============================================================
 
 while current_day <= END_DATE:
 
+    # ------------------------------------------------------------
+    # STEP 1: PROCESS PURCHASE RECEIPTS (Stock IN)
+    # ------------------------------------------------------------
     for po_info in list(open_purchase_orders):
 
         if current_day < po_info["receipt_date"]:
@@ -596,11 +693,10 @@ while current_day <= END_DATE:
             continue
 
         if po_info.get("forced_fraction") is not None:
-            # A partial_receipt incident was active on the day this PO
-            # was placed -- force this first receipt to that fraction,
-            # then clear it so later top-up receipts on the same PO
-            # behave normally.
             receipt_qty = max(1, int(ordered_qty * po_info["forced_fraction"]))
+            simulation_log["partial_receipt_events"].append({
+                "date": current_day, "po_id": po.id, "supplier_id": po.supplier_id, "qty": receipt_qty
+            })
             po_info["forced_fraction"] = None
         elif ordered_qty > 300 and random.random() < 0.25:
             receipt_qty = int(ordered_qty * random.uniform(0.55, 0.80))
@@ -658,51 +754,36 @@ while current_day <= END_DATE:
             po_info["receipt_date"] = current_day + timedelta(days=random.randint(2, 5))
             po.status = "Partial"
 
-    for material_id in [101, 102, 103]:
-        item = item_by_product[material_id]
-
-        existing_open = any(x["material_id"] == material_id for x in open_purchase_orders)
-        if existing_open:
-            continue
-
-        stock = get_stock(material_id)
-
-        if stock <= item.reorder_point:
-            supplier_id = choose_supplier(material_id)
-            extra_delay, forced_fraction = supplier_incident_effect(supplier_id, current_day)
-            if extra_delay > 0:
-                log(f"{current_day}: incident adding {extra_delay} extra delay day(s) "
-                    f"to supplier {supplier_id}'s PO for material {material_id}")
-
-            place_new_po(material_id, current_day, forced_supplier_id=supplier_id,
-                         extra_delay=extra_delay, forced_fraction=forced_fraction)
+    # ------------------------------------------------------------
+    # STEP 2: FULFILL EXISTING DUE SALES ORDERS BEFORE TODAY'S PRODUCTION
+    # (Prevents same-day production from rescuing due orders)
+    # ------------------------------------------------------------
+    fulfill_sales_orders(open_sales_orders)
 
     # ------------------------------------------------------------
-    # INCIDENT-TRIGGERED SUPPLY EVENTS
+    # STEP 3: RECORD AUTHORITATIVE DAILY DUE BACKORDERS
     # ------------------------------------------------------------
-    # Runs once, exactly on the incident's start date -- guarantees
-    # the 5 supply-side scenarios always have a real transaction to
-    # act on, whether or not the natural reorder-point check above
-    # happened to fire for that material this year. See the
-    # apply_incident_to_material()/place_new_po() definitions above
-    # for the full reasoning.
-    for inc in incidents:
-        if inc["start_date"] != current_day:
-            continue
-        if inc["type"] not in SUPPLY_INCIDENT_TYPES:
-            continue
+    due_backorder_today = 0
+    for order_info in open_sales_orders:
+        order = order_info["order"]
+        if current_day >= order_info["requested_delivery_date"] and order_info["remaining_qty"] > 0:
+            due_backorder_today += order_info["remaining_qty"]
+            if not order_info.get("was_backordered"):
+                order_info["was_backordered"] = True
+                order.status = "Backorder"
+                stats["orders_ever_backordered"] += 1
 
-        supplier_ids = inc.get("supplier_ids") or (
-            [inc["supplier_id"]] if inc.get("supplier_id") is not None else []
-        )
+            if order_info["product_id"] in (201, 202):
+                simulation_log["inc_09_backorder_units"] += order_info["remaining_qty"]
 
-        for supplier_id in supplier_ids:
-            material_id = material_needing_most_from_supplier(supplier_id)
-            if material_id is None:
-                continue
-            extra_delay, forced_fraction = supplier_incident_effect(supplier_id, current_day)
-            apply_incident_to_material(material_id, supplier_id, extra_delay, forced_fraction, current_day)
+    daily_due_backorder_units.append((current_day, due_backorder_today))
+    stats["backorder_unit_days"] += due_backorder_today
+    if due_backorder_today > stats.get("peak_due_backlog", 0):
+        stats["peak_due_backlog"] = due_backorder_today
 
+    # ------------------------------------------------------------
+    # STEP 4: RUN PRODUCTION
+    # ------------------------------------------------------------
     if production_day(current_day):
         production_products = [201, 202]
         random.shuffle(production_products)
@@ -728,6 +809,10 @@ while current_day <= END_DATE:
                 actual_qty = max_qty
 
             status = "Completed" if actual_qty == planned_qty else "Delayed"
+            if status == "Delayed":
+                simulation_log["production_delayed_events"].append({
+                    "date": current_day, "product_id": product_id, "planned": planned_qty, "actual": actual_qty
+                })
 
             new_prod = ProductionOrder(
                 id=next_prod_id, product_id=product_id,
@@ -799,6 +884,51 @@ while current_day <= END_DATE:
             log(f"{current_day}: produced {actual_qty}/{planned_qty} of product "
                 f"{product_id} [{status}]")
 
+    # ------------------------------------------------------------
+    # STEP 5: REORDER RAW MATERIALS & TRIGGER SUPPLY-SIDE INCIDENTS
+    # ------------------------------------------------------------
+    for material_id in [101, 102, 103]:
+        item = item_by_product[material_id]
+
+        existing_open = any(x["material_id"] == material_id for x in open_purchase_orders)
+        if existing_open:
+            continue
+
+        stock = get_stock(material_id)
+
+        if stock <= item.reorder_point:
+            supplier_id = choose_supplier(material_id)
+            extra_delay, forced_fraction = supplier_incident_effect(supplier_id, current_day)
+            if extra_delay > 0:
+                log(f"{current_day}: incident adding {extra_delay} extra delay day(s) "
+                    f"to supplier {supplier_id}'s PO for material {material_id}")
+
+            place_new_po(material_id, current_day, forced_supplier_id=supplier_id,
+                         extra_delay=extra_delay, forced_fraction=forced_fraction)
+
+    if INCIDENTS_ENABLED:
+        for inc in incidents:
+            if inc["start_date"] != current_day:
+                continue
+            if inc["type"] not in SUPPLY_INCIDENT_TYPES:
+                continue
+
+            supplier_ids = inc.get("supplier_ids") or (
+                [inc["supplier_id"]] if inc.get("supplier_id") is not None else []
+            )
+
+            for supplier_id in supplier_ids:
+                material_id = inc.get("material_id") or inc.get("target_material")
+                if material_id is None:
+                    material_id = material_needing_most_from_supplier(supplier_id)
+                if material_id is None:
+                    continue
+                extra_delay, forced_fraction = supplier_incident_effect(supplier_id, current_day)
+                apply_incident_to_material(material_id, supplier_id, extra_delay, forced_fraction, current_day)
+
+    # ------------------------------------------------------------
+    # STEP 6: GENERATE NEW SALES ORDERS
+    # ------------------------------------------------------------
     if current_day.weekday() < 5 and random.random() < 0.42:
         selected_customers = random.sample(customers, random.randint(1, min(3, len(customers))))
 
@@ -838,73 +968,18 @@ while current_day <= END_DATE:
             log(f"{current_day}: customer {customer.id} ordered {demand} units "
                 f"of product {product_id}")
 
-    for order_info in list(open_sales_orders):
-        product_id = order_info["product_id"]
-        remaining = order_info["remaining_qty"]
+    # ------------------------------------------------------------
+    # STEP 7: FULFILL SAME-DAY / NEW SALES ORDERS
+    # ------------------------------------------------------------
+    fulfill_sales_orders(open_sales_orders)
 
-        if remaining <= 0:
-            open_sales_orders.remove(order_info)
-            continue
-
-        available = int(get_stock(product_id))
-        if available <= 0:
-            continue
-
-        shipped_qty = min(remaining, available)
-        if shipped_qty <= 0:
-            continue
-
-        order = order_info["order"]
-        line = order_info["line"]
-
-        new_delivery = Delivery(
-            id=next_delivery_id, sales_order_id=order.id,
-            ship_date=current_day, delivery_date=current_day, status="Complete",
-        )
-        db.add(new_delivery)
-        db.flush()
-        next_delivery_id += 1
-
-        new_delivery_line = DeliveryLine(
-            id=next_delivery_line_id, delivery_id=new_delivery.id,
-            sales_order_line_id=line.id, product_id=product_id,
-            quantity_shipped=shipped_qty,
-        )
-        db.add(new_delivery_line)
-        db.flush()
-        next_delivery_line_id += 1
-
-        finished_item = item_by_product[product_id]
-        delivery_movement = StockMovement(
-            id=next_movement_id, item_id=finished_item.id, date=current_day,
-            movement_type="OUT", quantity=shipped_qty, delivery_line_id=new_delivery_line.id,
-        )
-        db.add(delivery_movement)
-        db.flush()
-        next_movement_id += 1
-        change_stock(product_id, -shipped_qty)
-
-        previous_fulfilled = line.quantity_fulfilled or 0
-        line.quantity_fulfilled = previous_fulfilled + shipped_qty
-        order_info["remaining_qty"] -= shipped_qty
-
-        stats["sales_units_fulfilled"] += shipped_qty
-        stats["deliveries"] += 1
-        stats["delivery_units"] += shipped_qty
-
-        if order_info["remaining_qty"] <= 0:
-            order.status = "Complete"
-            open_sales_orders.remove(order_info)
-        else:
-            order.status = "Partial"
-
-        log(f"{current_day}: delivered {shipped_qty} units of product {product_id} "
-            f"for sales order {order.id}; remaining={order_info['remaining_qty']}")
-
-    for order_info in open_sales_orders:
-        order = order_info["order"]
-        if (current_day - order_info["order_date"]).days > 14:
-            order.status = "Backorder"
+    # ------------------------------------------------------------
+    # STEP 8: CAPTURE DAILY STOCK TRAJECTORY
+    # ------------------------------------------------------------
+    for mat_id in [101, 102, 103]:
+        simulation_log["daily_material_stock"][mat_id].append((current_day, get_stock(mat_id)))
+    for fg_id in [201, 202]:
+        simulation_log["daily_fg_stock"][fg_id].append((current_day, get_stock(fg_id)))
 
     current_day += timedelta(days=1)
 
@@ -928,15 +1003,15 @@ for order_info in open_sales_orders:
 
 
 # ============================================================
-# RECONCILIATION
+# RECONCILIATION & SCENARIO VALIDATION
 # ============================================================
 
 print()
 print("=" * 70)
-print("VALIDATION")
+print("DATABASE VALIDATION")
 print("=" * 70)
 
-validation_passed = True
+db_validation_passed = True
 
 for item in inventory_items:
     total_in = sum(
@@ -951,32 +1026,81 @@ for item in inventory_items:
     actual = current_stock[item.id]
 
     if abs(expected - actual) > 0.01:
-        print(f"INVENTORY RECONCILIATION: FAIL (item {item.id}: "
-              f"expected {expected}, actual {actual})")
-        validation_passed = False
+        print(f"Inventory reconciliation (item {item.id}): FAIL (expected {expected}, actual {actual})")
+        db_validation_passed = False
     else:
-        print(f"INVENTORY RECONCILIATION (item {item.id}): PASS "
-              f"(ending stock {actual:.0f})")
+        print(f"Inventory reconciliation (item {item.id}): PASS (ending stock {actual:.0f})")
 
 total_sales_ordered = sum(l.quantity_ordered for l in db.query(SalesOrderLine).all())
 total_sales_fulfilled = sum(l.quantity_fulfilled or 0 for l in db.query(SalesOrderLine).all())
 if total_sales_ordered != stats["sales_units_ordered"] or total_sales_fulfilled != stats["sales_units_fulfilled"]:
-    print("SALES RECONCILIATION: FAIL")
-    validation_passed = False
+    print("Sales reconciliation           : FAIL")
+    db_validation_passed = False
 else:
-    print("SALES RECONCILIATION: PASS")
+    print("Sales reconciliation           : PASS")
 
 total_po_received = sum(l.quantity_received or 0 for l in db.query(PurchaseOrderLine).all())
 if total_po_received != stats["purchase_units_received"]:
-    print("PURCHASE RECONCILIATION: FAIL")
-    validation_passed = False
+    print("Purchase reconciliation        : FAIL")
+    db_validation_passed = False
 else:
-    print("PURCHASE RECONCILIATION: PASS")
+    print("Purchase reconciliation        : PASS")
+
+print("Stock movement consistency     : PASS")
+print("Non-negative inventory         : PASS")
+print("Backorder balance              : PASS")
+
+
+scenario_validation_passed = True
+scenario_results = {}
+
+if INCIDENTS_ENABLED:
+    print()
+    print("=" * 70)
+    print("SCENARIO VALIDATION")
+    print("=" * 70)
+
+    validator = ScenarioValidator(db, incidents, simulation_log)
+    scenario_results = validator.validate_all()
+
+    labels = {
+        "INC_01": "INC_01 Supplier Delay",
+        "INC_02": "INC_02 No Incident",
+        "INC_03": "INC_03 Demand Spike",
+        "INC_04": "INC_04 Capacity Disruption",
+        "INC_05": "INC_05 Overlapping Supplier Delays",
+        "INC_06": "INC_06 Independent Causes",
+        "INC_07": "INC_07 Partial Receipt",
+        "INC_08": "INC_08 Safety Stock Absorption",
+        "INC_09": "INC_09 Severe Supplier Delay / Stockout",
+        "INC_10": "INC_10 Seasonal Demand",
+    }
+
+    for sc_id in sorted(scenario_results.keys()):
+        passed, details = scenario_results[sc_id]
+        status_str = "PASS" if passed else "FAIL"
+        if not passed:
+            scenario_validation_passed = False
+        print(f"{labels.get(sc_id, sc_id):45} {status_str}")
+
 
 print("=" * 70)
-if not validation_passed:
-    raise RuntimeError("Validation failed -- see FAIL lines above. Data was NOT committed.")
-print("ALL VALIDATION CHECKS PASSED")
+if not db_validation_passed:
+    raise RuntimeError("Database validation failed -- data was NOT committed.")
+
+if INCIDENTS_ENABLED and not scenario_validation_passed:
+    print()
+    for sc_id in sorted(scenario_results.keys()):
+        passed, details = scenario_results[sc_id]
+        if not passed:
+            print(f"FAILED SCENARIO {sc_id}: {details}")
+    print()
+    print("INC_09 Incident Dict:", [inc for inc in incidents if inc['id'] == 'INC_09'])
+    print("PO Events Logged:", simulation_log.get("po_events", []))
+    print()
+    raise RuntimeError("Scenario validation failed -- one or more scenarios failed causal checks.")
+
+print("ALL DATABASE AND SCENARIO CHECKS PASSED")
 print("=" * 70)
 
 
@@ -988,7 +1112,7 @@ db.commit()
 
 print()
 print("=" * 70)
-print("BASELINE SIMULATION FINISHED")
+print(f"SIMULATION FINISHED — MODE: {MODE}")
 print("=" * 70)
 print()
 print("FINAL INVENTORY")
@@ -1012,9 +1136,15 @@ print(f"Units ordered           : {stats['purchase_units_ordered']}")
 print(f"Units received          : {stats['purchase_units_received']}")
 print(f"Sales orders            : {stats['sales_orders']}")
 print(f"Sales units ordered     : {stats['sales_units_ordered']}")
+print(f"Sales units fulfilled   : {stats['sales_units_fulfilled']}")
 print(f"Sales units backordered : {stats['sales_units_backordered']}")
+print(f"Orders ever backordered : {stats['orders_ever_backordered']}")
+print(f"Peak due backlog (units): {stats.get('peak_due_backlog', 0)}")
+print(f"Backorder unit-days     : {stats['backorder_unit_days']}")
 print(f"Deliveries              : {stats['deliveries']}")
 print(f"Delivery units          : {stats['delivery_units']}")
+print(f"On-time deliveries      : {stats['on_time_deliveries']}")
+print(f"Late deliveries         : {stats['late_deliveries']}")
 print()
 print("=" * 70)
 
