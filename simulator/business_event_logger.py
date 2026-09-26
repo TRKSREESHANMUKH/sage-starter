@@ -12,16 +12,34 @@ class BusinessEventLogger:
     def __init__(self, db):
         self.db = db
 
-    def log_incidents(self, incidents):
+    def log_incidents(self, incidents, simulation_log=None):
         """
         Takes the generated list of incidents from IncidentEngine (post-simulation)
         and logs each incident as one or more BusinessEvent records in PostgreSQL.
+        Pulls exact PO receipt dates from simulation_log for supply-side incidents.
         """
+        po_events = simulation_log.get("po_events", []) if simulation_log else []
         for inc in incidents:
-            self._log_single_incident(inc)
+            self._log_single_incident(inc, po_events)
         self.db.flush()
 
-    def _log_single_incident(self, inc):
+    def _get_actual_po_receipt_date(self, inc_id, supplier_id, fallback_end_date, po_events):
+        """
+        Looks up actual receipt date from simulated PO transactions matching inc_id or supplier_id.
+        """
+        # Match by incident_id first
+        matching = [e for e in po_events if e.get("incident_id") == inc_id and "receipt_date" in e]
+        if matching:
+            return matching[-1]["receipt_date"]
+
+        # Match by supplier_id as fallback
+        matching_supp = [e for e in po_events if e.get("supplier_id") == supplier_id and "receipt_date" in e]
+        if matching_supp:
+            return matching_supp[-1]["receipt_date"]
+
+        return fallback_end_date
+
+    def _log_single_incident(self, inc, po_events):
         inc_type = inc["type"]
         inc_id = inc["id"]
         start_date = inc["start_date"]
@@ -37,12 +55,13 @@ class BusinessEventLogger:
         if inc_type == "supplier_delay":
             supplier_id = inc["supplier_id"]
             duration = float(inc.get("duration_days", 0))
+            actual_end = self._get_actual_po_receipt_date(inc_id, supplier_id, end_date, po_events)
             self._create_event(
                 event_type="supplier_delay",
                 entity_type="supplier",
                 entity_id=supplier_id,
                 start_date=start_date,
-                end_date=end_date,
+                end_date=actual_end,
                 metric_name="delay_days",
                 metric_value=duration,
                 metric_unit="days",
@@ -98,15 +117,16 @@ class BusinessEventLogger:
             offset_days = int(inc.get("start_offset_days", 0))
 
             for idx, supp_id in enumerate(supplier_ids):
-                # Stagger second supplier by offset_days if provided
+                # Stagger second supplier by offset_days
                 supp_start = start_date + timedelta(days=idx * offset_days)
-                supp_end = end_date + timedelta(days=idx * offset_days)
+                fallback_end = end_date + timedelta(days=idx * offset_days)
+                actual_end = self._get_actual_po_receipt_date(inc_id, supp_id, fallback_end, po_events)
                 self._create_event(
                     event_type="overlapping_supplier_delay",
                     entity_type="supplier",
                     entity_id=supp_id,
                     start_date=supp_start,
-                    end_date=supp_end,
+                    end_date=actual_end,
                     metric_name="delay_days",
                     metric_value=duration,
                     metric_unit="days",
@@ -123,12 +143,13 @@ class BusinessEventLogger:
             red = float(inc.get("capacity_reduction", 0.0))
 
             if supp_id:
+                actual_end = self._get_actual_po_receipt_date(inc_id, supp_id, end_date, po_events)
                 self._create_event(
                     event_type="independent_supplier_delay",
                     entity_type="supplier",
                     entity_id=supp_id,
                     start_date=start_date,
-                    end_date=end_date,
+                    end_date=actual_end,
                     metric_name="delay_days",
                     metric_value=duration,
                     metric_unit="days",
@@ -156,12 +177,13 @@ class BusinessEventLogger:
         elif inc_type == "partial_receipt":
             supp_id = inc["supplier_id"]
             frac = float(inc.get("received_fraction", 1.0))
+            actual_end = self._get_actual_po_receipt_date(inc_id, supp_id, end_date, po_events)
             self._create_event(
                 event_type="partial_receipt",
                 entity_type="supplier",
                 entity_id=supp_id,
                 start_date=start_date,
-                end_date=end_date,
+                end_date=actual_end,
                 metric_name="received_fraction",
                 metric_value=frac,
                 metric_unit="fraction",
@@ -174,12 +196,13 @@ class BusinessEventLogger:
         elif inc_type == "delay_absorbed_by_safety_stock":
             supp_id = inc["supplier_id"]
             duration = float(inc.get("duration_days", 0))
+            actual_end = self._get_actual_po_receipt_date(inc_id, supp_id, end_date, po_events)
             self._create_event(
                 event_type="delay_absorbed",
                 entity_type="supplier",
                 entity_id=supp_id,
                 start_date=start_date,
-                end_date=end_date,
+                end_date=actual_end,
                 metric_name="delay_days",
                 metric_value=duration,
                 metric_unit="days",
@@ -192,14 +215,15 @@ class BusinessEventLogger:
         elif inc_type == "severe_supplier_delay_stockout":
             supp_id = inc["supplier_id"]
             duration = float(inc.get("duration_days", 80))
-            # Calculate actual end date from trigger date + full duration days
-            actual_end_date = start_date + timedelta(days=int(duration))
+            fallback_end = start_date + timedelta(days=int(duration))
+            # Pull actual PO receipt date from simulation transactions
+            actual_end = self._get_actual_po_receipt_date(inc_id, supp_id, fallback_end, po_events)
             self._create_event(
                 event_type="severe_supplier_delay",
                 entity_type="supplier",
                 entity_id=supp_id,
                 start_date=start_date,
-                end_date=actual_end_date,
+                end_date=actual_end,
                 metric_name="delay_days",
                 metric_value=duration,
                 metric_unit="days",

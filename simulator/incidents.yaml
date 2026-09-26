@@ -89,7 +89,8 @@ incidents:
       count: { min: 2, max: 2 }
     parameters:
       duration_days: { min: 2, max: 6 }
-      start_offset_days: { min: 0, max: 2 }
+      start_offset_days: { min: 1, max: 2 }
+
     causal_role:
       root_cause: true
       expected_path:

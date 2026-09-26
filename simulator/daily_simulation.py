@@ -392,12 +392,24 @@ def supplier_incident_effect(supplier_id, current_day):
     extra_delay = 0
     forced_fraction = None
 
-    for inc in active_incidents(current_day):
+    for inc in incidents:
         if inc["type"] == "severe_supplier_delay_stockout":
-            target_mat = inc.get("material_id") or inc.get("target_material")
-            if target_mat and supplier_id in SUPPLIERS_FOR_MATERIAL.get(target_mat, []):
-                extra_delay += inc["duration_days"]
-                continue
+            if inc["start_date"] <= current_day <= inc["end_date"]:
+                target_mat = inc.get("material_id") or inc.get("target_material")
+                if target_mat and supplier_id in SUPPLIERS_FOR_MATERIAL.get(target_mat, []):
+                    extra_delay += inc["duration_days"]
+                    continue
+
+        if inc["type"] == "overlapping_supplier_delay":
+            supplier_ids = inc.get("supplier_ids", [])
+            if supplier_id in supplier_ids:
+                idx = supplier_ids.index(supplier_id)
+                offset = idx * int(inc.get("start_offset_days", 0))
+                supp_start = inc["start_date"] + timedelta(days=offset)
+                supp_end = inc["end_date"] + timedelta(days=offset)
+                if supp_start <= current_day <= supp_end:
+                    extra_delay += inc["duration_days"]
+            continue
 
         touches_this_supplier = (
             inc.get("supplier_id") == supplier_id
@@ -406,10 +418,12 @@ def supplier_incident_effect(supplier_id, current_day):
         if not touches_this_supplier:
             continue
 
+        if not (inc["start_date"] <= current_day <= inc["end_date"]):
+            continue
+
         if inc["type"] in (
             "supplier_delay",
             "delay_absorbed_by_safety_stock",
-            "overlapping_supplier_delay",
             "two_simultaneous_independent_causes",
         ):
             extra_delay += inc["duration_days"]
@@ -418,6 +432,7 @@ def supplier_incident_effect(supplier_id, current_day):
             forced_fraction = inc["received_fraction"]
 
     return extra_delay, forced_fraction
+
 
 
 def product_capacity_reduction(product_id, current_day):
@@ -535,7 +550,7 @@ def place_new_po(material_id, current_day, forced_supplier_id=None,
     return new_po
 
 
-def apply_incident_to_material(material_id, supplier_id, extra_delay, forced_fraction, current_day):
+def apply_incident_to_material(material_id, supplier_id, extra_delay, forced_fraction, current_day, inc_id=None):
     """
     Route an active supply-side incident onto a real transaction:
     Match existing open PO by BOTH material_id AND supplier_id (Fixes supplier attribution bug).
@@ -556,16 +571,20 @@ def apply_incident_to_material(material_id, supplier_id, extra_delay, forced_fra
             f"due to supplier {supplier_id} disruption")
         simulation_log["po_events"].append({
             "date": current_day, "po_id": existing["po"].id, "supplier_id": supplier_id,
-            "material_id": material_id, "extra_delay": extra_delay
+            "material_id": material_id, "extra_delay": extra_delay,
+            "receipt_date": existing["receipt_date"], "incident_id": inc_id
         })
         return
 
     new_po = place_new_po(material_id, current_day, forced_supplier_id=supplier_id,
                           extra_delay=extra_delay, forced_fraction=forced_fraction, is_forced=True)
+    new_po_info = next(p for p in open_purchase_orders if p["po"].id == new_po.id)
     simulation_log["po_events"].append({
         "date": current_day, "po_id": new_po.id, "supplier_id": supplier_id,
-        "material_id": material_id, "extra_delay": extra_delay
+        "material_id": material_id, "extra_delay": extra_delay,
+        "receipt_date": new_po_info["receipt_date"], "incident_id": inc_id
     })
+
 
 
 def fulfill_sales_orders(orders_list):
@@ -929,16 +948,30 @@ while current_day <= END_DATE:
                 if material_id is None:
                     continue
                 extra_delay, forced_fraction = supplier_incident_effect(supplier_id, current_day)
-                apply_incident_to_material(material_id, supplier_id, extra_delay, forced_fraction, current_day)
+                apply_incident_to_material(material_id, supplier_id, extra_delay, forced_fraction, current_day, inc_id=inc["id"])
+
 
     # ------------------------------------------------------------
     # STEP 6: GENERATE NEW SALES ORDERS
     # ------------------------------------------------------------
-    if current_day.weekday() < 5 and random.random() < 0.42:
+    active_demand_spikes = [
+        inc for inc in active_incidents(current_day)
+        if inc["type"] == "demand_spike"
+    ]
+
+    is_weekday = (current_day.weekday() < 5)
+    should_generate_orders = (is_weekday and random.random() < 0.42) or bool(active_demand_spikes)
+
+    if should_generate_orders:
         selected_customers = random.sample(customers, random.randint(1, min(3, len(customers))))
 
         for customer in selected_customers:
-            product_id = random.choice([201, 202])
+            spiked_products = [inc["product_id"] for inc in active_demand_spikes if inc.get("product_id")]
+            if spiked_products and random.random() < 0.80:
+                product_id = random.choice(spiked_products)
+            else:
+                product_id = random.choice([201, 202])
+
             demand = customer_demand(customer, product_id, current_day)
             if demand <= 0:
                 continue
@@ -1013,7 +1046,8 @@ for order_info in open_sales_orders:
 
 if INCIDENTS_ENABLED:
     event_logger = BusinessEventLogger(db)
-    event_logger.log_incidents(incidents)
+    event_logger.log_incidents(incidents, simulation_log=simulation_log)
+
 
 
 # ============================================================
