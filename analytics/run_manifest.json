@@ -1,0 +1,12 @@
+{
+  "generated_at": "2026-10-03T22:32:06.616722",
+  "total_scenarios_evaluated": 10,
+  "zero_ground_truth_leakage": true,
+  "baseline_shortfall_units": 720,
+  "combined_shortfall_units": 720,
+  "wide_panel_shape": [
+    365,
+    47
+  ],
+  "all_scenarios_passed": true
+}

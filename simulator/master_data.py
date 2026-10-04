@@ -51,8 +51,9 @@ def seed_master_data():
                       opening_balance_qty=300, opening_balance_date=date(2025, 1, 1)),
         InventoryItem(id=2, product_id=102, safety_stock=50, reorder_point=120,
                       opening_balance_qty=250, opening_balance_date=date(2025, 1, 1)),
-        InventoryItem(id=3, product_id=103, safety_stock=30, reorder_point=80,
-                      opening_balance_qty=180, opening_balance_date=date(2025, 1, 1)),
+        # Material 103 Frozen Benchmark: safety_stock=40, reorder_point=90, opening_balance_qty=220
+        InventoryItem(id=3, product_id=103, safety_stock=40, reorder_point=90,
+                      opening_balance_qty=220, opening_balance_date=date(2025, 1, 1)),
         InventoryItem(id=4, product_id=201, safety_stock=40, reorder_point=80,
                       opening_balance_qty=100, opening_balance_date=date(2025, 1, 1)),
         InventoryItem(id=5, product_id=202, safety_stock=40, reorder_point=80,

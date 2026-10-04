@@ -5,9 +5,20 @@ Decides WHEN incidents happen and WHAT their input parameters are.
 Does NOT pre-compute downstream effects.
 """
 
+import hashlib
 import random
 import yaml
 from datetime import date, timedelta
+
+
+def is_production_day(current_day, seed=42):
+    if current_day.weekday() >= 5:
+        return False
+    date_str = current_day.isoformat() if hasattr(current_day, "isoformat") else str(current_day)
+    seed_str = f"{seed}_production_day_{date_str}_0_"
+    seed_hash = hashlib.sha256(seed_str.encode()).hexdigest()
+    seed_int = int(seed_hash[:15], 16)
+    return random.Random(seed_int).random() < 0.28
 
 
 class IncidentEngine:
@@ -101,15 +112,7 @@ class IncidentEngine:
                 return True
         return False
 
-    def _place_window(self, duration_days, max_attempts=500, schedule_within=None):
-        default_latest = (
-            self.end_date
-            - timedelta(days=duration_days - 1)
-            - timedelta(days=self.SCHEDULING_MARGIN_DAYS)
-        )
-        earliest = self.start_date
-        latest_start = default_latest
-
+    def _place_window(self, incident_id, duration_days, max_attempts=500, schedule_within=None, min_production_days=0):
         if schedule_within:
             window_start = date(2025, schedule_within["start_month"], 1)
             end_month = schedule_within["end_month"]
@@ -117,8 +120,15 @@ class IncidentEngine:
                 date(2025, 12, 31) if end_month == 12
                 else date(2025, end_month + 1, 1) - timedelta(days=1)
             )
-            earliest = max(earliest, window_start)
-            latest_start = min(latest_start, window_end - timedelta(days=duration_days - 1))
+            earliest = max(self.start_date, window_start)
+            latest_start = min(self.end_date - timedelta(days=duration_days - 1), window_end - timedelta(days=duration_days - 1))
+        else:
+            earliest = self.start_date
+            latest_start = (
+                self.end_date
+                - timedelta(days=duration_days - 1)
+                - timedelta(days=self.SCHEDULING_MARGIN_DAYS)
+            )
 
         total_days = (latest_start - earliest).days
         if total_days < 0:
@@ -126,16 +136,32 @@ class IncidentEngine:
                 f"schedule_within window too narrow to fit a {duration_days}-day incident."
             )
 
+        # Isolated placement RNG stream keyed on (seed, 'placement', incident_id)
+        # Guarantees placement retries for one incident never consume numbers from
+        # self.rng or perturb any other incident's placement stream.
+        date_str = date(2025, 1, 1).isoformat()
+        seed_str = f"{self.seed}_placement_{date_str}_0_{incident_id}"
+        seed_hash = hashlib.sha256(seed_str.encode()).hexdigest()
+        seed_int = int(seed_hash[:15], 16)
+        place_rng = random.Random(seed_int)
+
         for _ in range(max_attempts):
-            offset = self.rng.randint(0, total_days)
+            offset = place_rng.randint(0, total_days)
             start = earliest + timedelta(days=offset)
             end = start + timedelta(days=duration_days - 1)
             if not self._windows_conflict(start, end):
+                if min_production_days > 0:
+                    prod_count = sum(
+                        1 for i in range((end - start).days + 1)
+                        if is_production_day(start + timedelta(days=i), self.seed)
+                    )
+                    if prod_count < min_production_days:
+                        continue
                 self._placed_windows.append((start, end))
                 return start, end
 
         raise RuntimeError(
-            "Could not place incident without violating min_gap_days."
+            f"Could not place incident {incident_id} without violating min_gap_days or min_production_days."
         )
 
     def create_incident(self, incident):
@@ -160,7 +186,12 @@ class IncidentEngine:
             result["material_id"] = incident["target_material"]
 
         placement_duration = incident.get("placement_duration_override", generated_duration)
-        start, end = self._place_window(placement_duration, schedule_within=incident.get("schedule_within"))
+        start, end = self._place_window(
+            incident["id"],
+            placement_duration,
+            schedule_within=incident.get("schedule_within"),
+            min_production_days=incident.get("requires_production_days", 0),
+        )
         result["start_date"] = start
         result["end_date"] = end
 

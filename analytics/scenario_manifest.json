@@ -1,0 +1,52 @@
+[
+  {
+    "id": "INC_01",
+    "type": "supplier_delay",
+    "category": "supply"
+  },
+  {
+    "id": "INC_02",
+    "type": "no_incident",
+    "category": "negative_control"
+  },
+  {
+    "id": "INC_03",
+    "type": "demand_spike",
+    "category": "demand"
+  },
+  {
+    "id": "INC_04",
+    "type": "capacity_disruption",
+    "category": "production"
+  },
+  {
+    "id": "INC_05",
+    "type": "overlapping_supplier_delay",
+    "category": "supply"
+  },
+  {
+    "id": "INC_06",
+    "type": "two_simultaneous_independent_causes",
+    "category": "causal_contrast"
+  },
+  {
+    "id": "INC_07",
+    "type": "partial_receipt",
+    "category": "supply"
+  },
+  {
+    "id": "INC_08",
+    "type": "delay_absorbed_by_safety_stock",
+    "category": "supply_buffer"
+  },
+  {
+    "id": "INC_09",
+    "type": "severe_supplier_delay_stockout",
+    "category": "supply"
+  },
+  {
+    "id": "INC_10",
+    "type": "seasonal_demand",
+    "category": "normal_variation"
+  }
+]

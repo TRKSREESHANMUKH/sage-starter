@@ -190,12 +190,12 @@ class ScenarioValidator:
         if not po_events:
             return False, f"Step 1 Fail: No severe PO delay logged for Material {material_id}."
         
-        # 2. Check stockout of Material 101
+        # 2. Check stockout of Material 101 (insufficient stock for a production batch requirement of 75u)
         mat_stock = self.log.get("daily_material_stock", {}).get(material_id, [])
-        stockouts = [dt for dt, st in mat_stock if st < 5.0 and dt >= start_date]
+        stockouts = [dt for dt, st in mat_stock if st < 75.0 and dt >= start_date]
         if not stockouts:
             min_st = min((st for dt, st in mat_stock if dt >= start_date), default=-1)
-            return False, f"Step 2 Fail: Material {material_id} stock min={min_st:.1f} (never < 5.0)."
+            return False, f"Step 2 Fail: Material {material_id} stock min={min_st:.1f} (never < 75.0)."
         
         # 3. Check production delays for products consuming Material 101 (201 & 202)
         prod_delays = [

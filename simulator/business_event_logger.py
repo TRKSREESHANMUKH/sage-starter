@@ -205,8 +205,12 @@ class BusinessEventLogger:
             supp_id = inc["supplier_id"]
             duration = float(inc.get("duration_days", 80))
             fallback_end = start_date + timedelta(days=int(duration))
-            # Pull actual PO receipt date from simulation transactions for INC_09
             actual_end = self._get_actual_po_receipt_date(inc_id, fallback_end, po_events)
+            observed_days = float((actual_end - start_date).days) if actual_end else duration
+
+            desc_payload["intervention_duration_days"] = duration
+            desc_payload["observed_delay_days"] = observed_days
+
             self._create_event(
                 event_type="severe_supplier_delay",
                 entity_type="supplier",

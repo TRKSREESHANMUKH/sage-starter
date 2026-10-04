@@ -68,6 +68,7 @@ incidents:
     parameters:
       capacity_reduction: { min: 0.30, max: 0.60 }
       duration_days: { min: 5, max: 8 }
+    schedule_within: { start_month: 9, end_month: 10 }
     controls:
       material_shortage: false
       supplier_disruption: false
@@ -100,6 +101,11 @@ incidents:
         - possible_sales_impact
 
   # 6. Two simultaneous INDEPENDENT root causes
+  # 6. Two simultaneous INDEPENDENT root causes (different categories,
+  # overlapping window, but no shared causal story between them).
+  # STRUCTURAL PLACEMENT RULE: Enforced by IncidentEngine at schedule time —
+  # window MUST contain at least 2 weekdays with active planned production (production_day=True)
+  # for the target product, ensuring capacity reduction hits actual production runs without ad-hoc duration widening.
   - id: INC_06
     type: two_simultaneous_independent_causes
     category: causal_contrast
@@ -109,6 +115,7 @@ incidents:
     parameters:
       duration_days: { min: 2, max: 5 }
       capacity_reduction: { min: 0.25, max: 0.50 }
+    requires_production_days: 2
     causal_role:
       root_cause: true
       multiple_roots: true
@@ -127,6 +134,7 @@ incidents:
     enabled: true
     selection:
       entity: supplier
+    schedule_within: { start_month: 6, end_month: 7 }
     parameters:
       received_fraction: { min: 0.45, max: 0.80 }
     causal_role:
@@ -165,6 +173,7 @@ incidents:
       candidates: [1, 2, 4]
     target_material: 101
     placement_duration_override: 1
+    schedule_within: { start_month: 7, end_month: 8 }
     parameters:
       duration_days: { min: 75, max: 85 }
     causal_role:

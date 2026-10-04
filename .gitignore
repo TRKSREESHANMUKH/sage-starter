@@ -9,3 +9,7 @@ Thumbs.db
 desktop.ini
 .vscode/
 .idea/
+*.parquet
+sage-starter.zip
+scratch/
+analytics/isolated_panels/

@@ -1,4 +1,5 @@
 import math
+import os
 from datetime import date, timedelta
 from fractions import Fraction
 import random
@@ -48,13 +49,28 @@ from simulator.business_event_logger import BusinessEventLogger
 START_DATE = date(2025, 1, 1)
 END_DATE = date(2025, 12, 31)
 
-SEED = 42
+SEED = int(os.environ.get("SEED", os.environ.get("RANDOM_SEED", 42)))
 random.seed(SEED)
+
+import hashlib
+
+def get_deterministic_rng(domain: str, date_val, entity_id=0, salt=""):
+    """
+    Returns a discrete random.Random instance seeded deterministically from
+    (SEED, domain, date_val, entity_id, salt).
+    Guarantees that enabling/disabling incidents or running isolated scenarios
+    never alters or shifts the baseline random draws of unrelated operational events.
+    """
+    date_str = date_val.isoformat() if hasattr(date_val, "isoformat") else str(date_val)
+    seed_str = f"{SEED}_{domain}_{date_str}_{entity_id}_{salt}"
+    seed_hash = hashlib.sha256(seed_str.encode()).hexdigest()
+    seed_int = int(seed_hash[:15], 16)
+    return random.Random(seed_int)
 
 PRINT_DAILY_LOG = True
 
 # Mode: "SCENARIO" (runs incidents + scenario validation) or "BASELINE" (clean counterfactual run)
-MODE = "SCENARIO"
+MODE = os.getenv("MODE", "SCENARIO").upper()
 for arg in sys.argv[1:]:
     arg_upper = arg.upper()
     if arg_upper in ("BASELINE", "SCENARIO"):
@@ -297,7 +313,7 @@ def change_stock(product_id, amount):
         )
 
 
-def choose_supplier(material_id):
+def choose_supplier(material_id, current_day=date(2025, 1, 1)):
     choices = [
         supplier_id
         for supplier_id in SUPPLIERS_FOR_MATERIAL.get(material_id, [])
@@ -307,13 +323,15 @@ def choose_supplier(material_id):
     if not choices:
         raise RuntimeError(f"No supplier configured for material {material_id}.")
 
-    return random.choice(choices)
+    rng = get_deterministic_rng("choose_supplier", current_day, material_id)
+    return rng.choice(choices)
 
 
 def production_day(current_day):
     if current_day.weekday() >= 5:
         return False
-    return random.random() < 0.28
+    rng = get_deterministic_rng("production_day", current_day)
+    return rng.random() < 0.28
 
 
 def customer_demand(customer, product_id, current_day):
@@ -336,7 +354,8 @@ def customer_demand(customer, product_id, current_day):
     mean = base * customer_factor * weekday_factor * month_factor
     mean *= demand_multiplier_for(product_id, current_day)
 
-    demand = random.gauss(mean, mean * 0.15)
+    rng = get_deterministic_rng("customer_demand", current_day, customer.id, salt=str(product_id))
+    demand = rng.gauss(mean, mean * 0.15)
     demand = max(mean * 0.5, min(demand, mean * 1.6))
     return max(1, int(round(demand)))
 
@@ -374,9 +393,16 @@ def maximum_producible(product_id, planned_quantity):
 # INCIDENTS (Stage 4) & GROUND TRUTH EVENT LOGGING (Stage 5)
 # ============================================================
 
+TARGET_SCENARIO = os.getenv("TARGET_SCENARIO", os.getenv("SCENARIO", None))
+
 if INCIDENTS_ENABLED:
     incident_engine = IncidentEngine(config_path="simulator/incidents.yaml")
-    incidents = incident_engine.generate()
+    all_generated = incident_engine.generate()
+    if TARGET_SCENARIO and TARGET_SCENARIO.upper() not in ("ALL", "SCENARIO", "ALL_COMBINED"):
+        incidents = [inc for inc in all_generated if inc["id"].upper() == TARGET_SCENARIO.upper()]
+        print(f"ISOLATED SCENARIO SIMULATION MODE: Loaded 1 target scenario -> {TARGET_SCENARIO.upper()}")
+    else:
+        incidents = all_generated
 else:
     incidents = []
 
@@ -438,13 +464,20 @@ def supplier_incident_effect(supplier_id, current_day):
 def product_capacity_reduction(product_id, current_day):
     reduction = 0.0
     for inc in active_incidents(current_day):
-        if inc.get("product_id") != product_id:
-            continue
-        if inc["type"] in ("capacity_disruption", "two_simultaneous_independent_causes"):
-            reduction = max(reduction, inc.get("capacity_reduction", 0.0))
-            simulation_log["capacity_events"].append({
-                "date": current_day, "product_id": product_id, "reduction": reduction
-            })
+        if inc["type"] == "capacity_disruption":
+            target_prod = inc.get("product_id", 201)
+            if target_prod == product_id:
+                reduction = max(reduction, inc.get("capacity_reduction", 0.50))
+                simulation_log["capacity_events"].append({
+                    "date": current_day, "product_id": product_id, "reduction": reduction
+                })
+        elif inc["type"] == "two_simultaneous_independent_causes":
+            target_prod = inc.get("product_id")
+            if target_prod == product_id:
+                reduction = max(reduction, inc.get("capacity_reduction", 0.40))
+                simulation_log["capacity_events"].append({
+                    "date": current_day, "product_id": product_id, "reduction": reduction
+                })
     return reduction
 
 
@@ -490,28 +523,30 @@ def material_needing_most_from_supplier(supplier_id):
     return min(candidates, key=urgency)
 
 
-def base_order_quantity(material_id):
+def base_order_quantity(material_id, current_day=date(2025, 1, 1)):
+    rng = get_deterministic_rng("base_order_quantity", current_day, material_id)
     if material_id == 101:
-        return random.randint(300, 420)
+        return rng.randint(300, 420)
     elif material_id == 102:
-        return random.randint(200, 280)
+        return rng.randint(200, 280)
     else:
-        return random.randint(140, 190)
+        return rng.randint(140, 190)
 
 
 def place_new_po(material_id, current_day, forced_supplier_id=None,
                   extra_delay=0, forced_fraction=None, is_forced=False):
     global next_po_id, next_po_line_id
 
-    supplier_id = forced_supplier_id if forced_supplier_id is not None else choose_supplier(material_id)
+    supplier_id = forced_supplier_id if forced_supplier_id is not None else choose_supplier(material_id, current_day)
     supplier = suppliers[supplier_id]
-    order_qty = base_order_quantity(material_id)
+    order_qty = base_order_quantity(material_id, current_day)
 
     base_lead = supplier.base_lead_time_days
-    if random.random() <= supplier.historical_on_time_rate:
-        delay = random.randint(-1, 1)
+    po_rng = get_deterministic_rng("supplier_lead_time", current_day, supplier_id, salt=str(next_po_id))
+    if po_rng.random() <= supplier.historical_on_time_rate:
+        delay = po_rng.randint(-1, 1)
     else:
-        delay = random.randint(2, 7)
+        delay = po_rng.randint(2, 7)
 
     actual_lead = max(2, base_lead + delay + extra_delay)
     expected_date = current_day + timedelta(days=base_lead)
@@ -550,15 +585,19 @@ def place_new_po(material_id, current_day, forced_supplier_id=None,
     return new_po
 
 
-def apply_incident_to_material(material_id, supplier_id, extra_delay, forced_fraction, current_day, inc_id=None):
+pending_incident_delays = {}
+
+def apply_incident_to_material(material_id, supplier_id, extra_delay, forced_fraction, current_day, inc_id=None, duration_days=5):
     """
     Route an active supply-side incident onto a real transaction:
-    Match existing open PO by BOTH material_id AND supplier_id (Fixes supplier attribution bug).
-    Extend existing PO if found, else force a new PO with that specific supplier.
+    Match existing open PO by material_id. Extend existing PO if found.
+    If no open PO exists, register a pending delay for material_id with a bounded fallback
+    deadline (start_date + duration_days + 14 days). If no natural reorder occurs before
+    the deadline, a PO is forced to guarantee a real observable effect.
     """
     existing = next((
         po_info for po_info in open_purchase_orders
-        if po_info["material_id"] == material_id and po_info["po"].supplier_id == supplier_id
+        if po_info["material_id"] == material_id
     ), None)
 
     if existing:
@@ -568,22 +607,29 @@ def apply_incident_to_material(material_id, supplier_id, extra_delay, forced_fra
             existing["forced_fraction"] = forced_fraction
         log(f"{current_day}: [INCIDENT] extended existing PO {existing['po'].id} "
             f"(material {material_id}, supplier {supplier_id}) -> new receipt {existing['receipt_date']} "
-            f"due to supplier {supplier_id} disruption")
+            f"due to supplier disruption")
         simulation_log["po_events"].append({
             "date": current_day, "po_id": existing["po"].id, "supplier_id": supplier_id,
             "material_id": material_id, "extra_delay": extra_delay,
-            "receipt_date": existing["receipt_date"], "incident_id": inc_id
+            "receipt_date": existing["receipt_date"], "incident_id": inc_id,
+            "intervention_requested_date": current_day,
+            "actual_intervention_date": current_day,
+            "intervention_transaction_id": existing["po"].id,
+            "intervention_mode": "existing_attachment"
         })
         return
 
-    new_po = place_new_po(material_id, current_day, forced_supplier_id=supplier_id,
-                          extra_delay=extra_delay, forced_fraction=forced_fraction, is_forced=True)
-    new_po_info = next(p for p in open_purchase_orders if p["po"].id == new_po.id)
-    simulation_log["po_events"].append({
-        "date": current_day, "po_id": new_po.id, "supplier_id": supplier_id,
-        "material_id": material_id, "extra_delay": extra_delay,
-        "receipt_date": new_po_info["receipt_date"], "incident_id": inc_id
-    })
+    deadline = current_day + timedelta(days=int(duration_days) + 14)
+    pending_incident_delays[material_id] = {
+        "supplier_id": supplier_id,
+        "extra_delay": extra_delay,
+        "forced_fraction": forced_fraction,
+        "inc_id": inc_id,
+        "start_date": current_day,
+        "deadline": deadline,
+    }
+    log(f"{current_day}: [INCIDENT] registered pending delay for material {material_id} "
+        f"(supplier {supplier_id}, delay {extra_delay}d, fallback deadline {deadline})")
 
 
 
@@ -722,8 +768,12 @@ while current_day <= END_DATE:
                 "date": current_day, "po_id": po.id, "supplier_id": po.supplier_id, "qty": receipt_qty
             })
             po_info["forced_fraction"] = None
-        elif ordered_qty > 300 and random.random() < 0.25:
-            receipt_qty = int(ordered_qty * random.uniform(0.55, 0.80))
+        elif ordered_qty > 300:
+            part_rng = get_deterministic_rng("partial_receipt", current_day, po.id)
+            if part_rng.random() < 0.25:
+                receipt_qty = int(ordered_qty * part_rng.uniform(0.55, 0.80))
+            else:
+                receipt_qty = ordered_qty
         else:
             receipt_qty = ordered_qty
         receipt_qty = max(1, min(receipt_qty, ordered_qty))
@@ -775,7 +825,8 @@ while current_day <= END_DATE:
             po.status = "Complete"
             open_purchase_orders.remove(po_info)
         else:
-            po_info["receipt_date"] = current_day + timedelta(days=random.randint(2, 5))
+            resched_rng = get_deterministic_rng("po_reschedule", current_day, po.id)
+            po_info["receipt_date"] = current_day + timedelta(days=resched_rng.randint(2, 5))
             po.status = "Partial"
 
     # ------------------------------------------------------------
@@ -810,7 +861,8 @@ while current_day <= END_DATE:
     # ------------------------------------------------------------
     if production_day(current_day):
         production_products = [201, 202]
-        random.shuffle(production_products)
+        prod_shuf_rng = get_deterministic_rng("production_shuffle", current_day)
+        prod_shuf_rng.shuffle(production_products)
 
         for product_id in production_products:
             planned_qty = PRODUCTION_BATCH[product_id]
@@ -824,8 +876,9 @@ while current_day <= END_DATE:
                 log(f"{current_day}: incident reducing product {product_id} capacity by "
                     f"{capacity_reduction:.0%}; max producible now {max_qty}")
 
-            if max_qty > 0 and random.random() < 0.15:
-                reduction = random.choice([2, 4, 6])
+            yield_rng = get_deterministic_rng("prod_yield", current_day, product_id)
+            if max_qty > 0 and yield_rng.random() < 0.15:
+                reduction = yield_rng.choice([2, 4, 6])
                 actual_qty = max(0, max_qty - reduction)
                 step = PRODUCTION_STEP[product_id]
                 actual_qty = (actual_qty // step) * step
@@ -923,12 +976,36 @@ while current_day <= END_DATE:
         if stock <= item.reorder_point:
             supplier_id = choose_supplier(material_id)
             extra_delay, forced_fraction = supplier_incident_effect(supplier_id, current_day)
-            if extra_delay > 0:
-                log(f"{current_day}: incident adding {extra_delay} extra delay day(s) "
+
+            inc_id = None
+            if material_id in pending_incident_delays:
+                pdata = pending_incident_delays.pop(material_id)
+                if pdata["supplier_id"]:
+                    supplier_id = pdata["supplier_id"]
+                extra_delay = max(extra_delay, pdata["extra_delay"])
+                if pdata["forced_fraction"] is not None:
+                    forced_fraction = pdata["forced_fraction"]
+                inc_id = pdata["inc_id"]
+
+            if extra_delay > 0 or forced_fraction is not None:
+                log(f"{current_day}: incident adding extra delay={extra_delay}d, fraction={forced_fraction} "
                     f"to supplier {supplier_id}'s PO for material {material_id}")
 
-            place_new_po(material_id, current_day, forced_supplier_id=supplier_id,
-                         extra_delay=extra_delay, forced_fraction=forced_fraction)
+            new_po = place_new_po(material_id, current_day, forced_supplier_id=supplier_id,
+                                  extra_delay=extra_delay, forced_fraction=forced_fraction)
+
+            if extra_delay > 0 or forced_fraction is not None:
+                po_info = next(p for p in open_purchase_orders if p["po"].id == new_po.id)
+                start_req = pdata.get("start_date", current_day) if inc_id else current_day
+                simulation_log["po_events"].append({
+                    "date": current_day, "po_id": new_po.id, "supplier_id": supplier_id,
+                    "material_id": material_id, "extra_delay": extra_delay,
+                    "receipt_date": po_info["receipt_date"], "incident_id": inc_id,
+                    "intervention_requested_date": start_req,
+                    "actual_intervention_date": current_day,
+                    "intervention_transaction_id": new_po.id,
+                    "intervention_mode": "natural_attachment"
+                })
 
     if INCIDENTS_ENABLED:
         for inc in incidents:
@@ -948,7 +1025,34 @@ while current_day <= END_DATE:
                 if material_id is None:
                     continue
                 extra_delay, forced_fraction = supplier_incident_effect(supplier_id, current_day)
-                apply_incident_to_material(material_id, supplier_id, extra_delay, forced_fraction, current_day, inc_id=inc["id"])
+                duration_days = inc.get("duration_days", 5)
+                apply_incident_to_material(material_id, supplier_id, extra_delay, forced_fraction, current_day, inc_id=inc["id"], duration_days=duration_days)
+
+        # Bounded Fallback Hijack: If fallback deadline reached without a natural reorder, force PO placement
+        for material_id in list(pending_incident_delays.keys()):
+            pdata = pending_incident_delays[material_id]
+            if current_day >= pdata["deadline"]:
+                pdata = pending_incident_delays.pop(material_id)
+                supplier_id = pdata["supplier_id"] or choose_supplier(material_id)
+                extra_delay = pdata["extra_delay"]
+                forced_fraction = pdata["forced_fraction"]
+                inc_id = pdata["inc_id"]
+
+                log(f"{current_day}: [FALLBACK HIJACK] Deadline reached for pending incident {inc_id} on material {material_id}. Forcing PO placement with supplier {supplier_id}.")
+
+                new_po = place_new_po(material_id, current_day, forced_supplier_id=supplier_id,
+                                      extra_delay=extra_delay, forced_fraction=forced_fraction, is_forced=True)
+
+                po_info = next(p for p in open_purchase_orders if p["po"].id == new_po.id)
+                simulation_log["po_events"].append({
+                    "date": current_day, "po_id": new_po.id, "supplier_id": supplier_id,
+                    "material_id": material_id, "extra_delay": extra_delay,
+                    "receipt_date": po_info["receipt_date"], "incident_id": inc_id,
+                    "intervention_requested_date": pdata.get("start_date", current_day),
+                    "actual_intervention_date": current_day,
+                    "intervention_transaction_id": new_po.id,
+                    "intervention_mode": "bounded_fallback"
+                })
 
 
     # ------------------------------------------------------------
@@ -960,23 +1064,33 @@ while current_day <= END_DATE:
     ]
 
     is_weekday = (current_day.weekday() < 5)
-    should_generate_orders = (is_weekday and random.random() < 0.42) or bool(active_demand_spikes)
+    base_trigger_rng = get_deterministic_rng("customer_order_trigger", current_day)
+    baseline_trigger = is_weekday and (base_trigger_rng.random() < 0.42)
+    should_generate_orders = baseline_trigger or bool(active_demand_spikes)
 
     if should_generate_orders:
-        selected_customers = random.sample(customers, random.randint(1, min(3, len(customers))))
+        cust_sample_rng = get_deterministic_rng("customer_sample", current_day)
+        selected_customers = cust_sample_rng.sample(
+            customers, cust_sample_rng.randint(1, min(3, len(customers)))
+        )
 
-        for customer in selected_customers:
+        for cust_idx, customer in enumerate(selected_customers):
             spiked_products = [inc["product_id"] for inc in active_demand_spikes if inc.get("product_id")]
-            if spiked_products and random.random() < 0.80:
-                product_id = random.choice(spiked_products)
+            prod_choice_rng = get_deterministic_rng("customer_product_choice", current_day, customer.id, salt=str(cust_idx))
+            if spiked_products:
+                if baseline_trigger and prod_choice_rng.random() >= 0.80:
+                    product_id = prod_choice_rng.choice([201, 202])
+                else:
+                    product_id = prod_choice_rng.choice(spiked_products)
             else:
-                product_id = random.choice([201, 202])
+                product_id = prod_choice_rng.choice([201, 202])
 
             demand = customer_demand(customer, product_id, current_day)
             if demand <= 0:
                 continue
 
-            requested_delivery_date = current_day + timedelta(days=random.randint(3, 10))
+            deliv_date_rng = get_deterministic_rng("customer_deliv_date", current_day, customer.id, salt=str(cust_idx))
+            requested_delivery_date = current_day + timedelta(days=deliv_date_rng.randint(3, 10))
 
             new_order = SalesOrder(
                 id=next_sales_order_id, customer_id=customer.id, order_date=current_day,
@@ -1113,7 +1227,9 @@ if INCIDENTS_ENABLED:
     print("=" * 70)
 
     validator = ScenarioValidator(db, incidents, simulation_log)
-    scenario_results = validator.validate_all()
+    raw_results = validator.validate_all()
+    scheduled_ids = {inc["id"] for inc in incidents}
+    scenario_results = {k: v for k, v in raw_results.items() if k in scheduled_ids}
 
     labels = {
         "INC_01": "INC_01 Supplier Delay",

@@ -23,3 +23,9 @@
 18. Risks — id, event_id, assessed_at, risk_score, severity, affected_order_count, impact_description, priority_rank
 19. Causal Analysis Runs — id, analysis_date, dag_version, baseline_window_start, baseline_window_end, comparison_window_start, comparison_window_end, random_seed, notes
 20. Causal Attributions — id, analysis_run_id, effect_event_id, candidate_node, candidate_event_id, attribution_score, attribution_rank, path_nodes
+
+---
+
+## Semantic Freezes & Definitions
+* **Fulfillment Semantics**: For SAGE analytics and simulation, customer fulfillment is considered complete when a `Delivery` record is created with `status="Complete"` on `ship_date` (`ship_date` == `delivery_date`).
+* **Inventory Snapshots**: Dynamic in-memory analytical time series derived from `StockMovement` transactions. No physical table exists for snapshots; the 20-table relational schema remains strictly frozen.
