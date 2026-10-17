@@ -37,7 +37,7 @@ PRODUCTS = [201, 202]
 SUPPLIERS = [1, 2, 3, 4, 5]
 
 
-def build_panel(db_session, output_parquet="analytics/daily_panel.parquet", output_csv="analytics/daily_panel.csv"):
+def build_panel(db_session, output_parquet="analytics/daily_panel.parquet", output_csv="analytics/daily_panel.csv", start_date=START_DATE, end_date=END_DATE):
     print("=" * 70)
     print("BUILDING DAILY DATE x ENTITY AGGREGATION PANEL (STAGE 6)")
     print("=" * 70)
@@ -136,8 +136,8 @@ def build_panel(db_session, output_parquet="analytics/daily_panel.parquet", outp
     # History of daily planned material consumption (for trailing 28-day avg)
     daily_mat_planned_consumption_history = {m_id: [] for m_id in MATERIALS}
 
-    cur_date = START_DATE
-    while cur_date <= END_DATE:
+    cur_date = start_date
+    while cur_date <= end_date:
         row = {}
 
         # ------------------------------------------------------------
@@ -267,6 +267,26 @@ def build_panel(db_session, output_parquet="analytics/daily_panel.parquet", outp
             row[f"product_{prod_id}_actual_production"] = actual_prod
             row[f"product_{prod_id}_production_shortfall"] = shortfall
 
+            # Calculate material_limited_max (BOM quantities against current raw material stock levels)
+            recipe = [b for b in boms if b.finished_good_id == prod_id]
+            if recipe and planned_prod > 0:
+                max_possible = planned_prod
+                for b in recipe:
+                    avail_stock = running_stock[item_by_product[b.raw_material_id].id]
+                    qty_req = float(b.quantity_required)
+                    possible = int(avail_stock // qty_req)
+                    max_possible = min(max_possible, possible)
+                material_limited_max = max(0, max_possible)
+            else:
+                material_limited_max = 0
+
+            if planned_prod == 0:
+                cap_shortfall = 0
+            else:
+                cap_shortfall = max(0, min(planned_prod, material_limited_max) - actual_prod)
+
+            row[f"product_{prod_id}_capacity_shortfall_units"] = cap_shortfall
+
             # New demand ordered today for product_id
             demand_today = 0
             for line in sales_lines:
@@ -354,7 +374,7 @@ def build_panel(db_session, output_parquet="analytics/daily_panel.parquet", outp
         # Product features
         for prod_id in PRODUCTS:
             for p_feat in ["fg_stock", "planned_production", "actual_production",
-                          "production_shortfall", "demand_units", "due_backlog_units",
+                          "production_shortfall", "capacity_shortfall_units", "demand_units", "due_backlog_units",
                           "newly_backordered_units", "backorder_flag"]:
                 val = float(r[f"product_{prod_id}_{p_feat}"])
                 entity_rows.append({

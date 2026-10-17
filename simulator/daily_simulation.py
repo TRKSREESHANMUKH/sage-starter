@@ -46,8 +46,8 @@ from simulator.business_event_logger import BusinessEventLogger
 # CONFIGURATION
 # ============================================================
 
-START_DATE = date(2025, 1, 1)
-END_DATE = date(2025, 12, 31)
+START_DATE = date.fromisoformat(os.getenv("SIM_START_DATE", "2025-01-01"))
+END_DATE = date.fromisoformat(os.getenv("SIM_END_DATE", "2025-12-31"))
 
 SEED = int(os.environ.get("SEED", os.environ.get("RANDOM_SEED", 42)))
 random.seed(SEED)

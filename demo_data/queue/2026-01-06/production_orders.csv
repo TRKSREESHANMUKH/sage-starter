@@ -1,0 +1,3 @@
+id,product_id,planned_start,planned_end,actual_start,actual_end,planned_qty,actual_qty,status
+159,201,2026-01-06,2026-01-06,,,30,0,Delayed
+160,202,2026-01-06,2026-01-06,,,20,0,Delayed

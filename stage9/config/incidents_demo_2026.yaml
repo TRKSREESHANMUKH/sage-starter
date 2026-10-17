@@ -1,0 +1,50 @@
+simulation:
+  year: 2026
+  start_date: "2026-01-01"
+  end_date: "2026-01-10"
+  seed: 42
+
+incidents:
+  # 1-2 Jan: Normal baseline days (no incidents active)
+
+  # 3-8 Jan: One supplier delay whose overdue period becomes visible on ~3 Jan and clears by ~8 Jan
+  - id: DEMO_2026_INC_01
+    type: supplier_delay
+    category: supply
+    enabled: true
+    target_supplier: 1
+    target_material: 101
+    start_date: "2026-01-03"
+    end_date: "2026-01-08"
+    duration_days: 5
+    delay_days: 5
+    parameters:
+      duration_days: { min: 4, max: 6 }
+    causal_role:
+      root_cause: true
+      expected_path:
+        - supplier_delay
+        - receipt_delay
+        - material_inventory_pressure
+        - possible_production_impact
+
+  # 6-8 Jan: One demand spike on one product (Product 201) around 6-8 Jan
+  - id: DEMO_2026_INC_02
+    type: demand_spike
+    category: demand
+    enabled: true
+    target_product: 201
+    start_date: "2026-01-06"
+    end_date: "2026-01-08"
+    duration_days: 3
+    parameters:
+      demand_multiplier: { min: 1.60, max: 2.00 }
+      duration_days: { min: 2, max: 4 }
+    causal_role:
+      root_cause: true
+      expected_path:
+        - demand_increase
+        - faster_finished_goods_consumption
+        - finished_goods_inventory_pressure
+
+  # 9-10 Jan: Normal recovery days
