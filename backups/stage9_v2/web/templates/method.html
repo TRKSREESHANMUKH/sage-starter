@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}SAGE &bull; Scientific Methodology{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 20px;">
+  <h1 style="font-size: 1.4rem; font-weight: 800;">Scientific Methodology &amp; Governance</h1>
+  <p style="font-size: 0.85rem; color: var(--text-muted);">Controlled synthetic causal-attribution evaluation under an expert-defined structural causal model.</p>
+</div>
+
+<div class="card" style="border-left: 4px solid var(--accent);">
+  <div class="card-title">Mandatory Scientific Framing</div>
+  <p style="font-size: 1.05rem; font-style: italic; color: var(--text-main); line-height: 1.5;">
+    "{{ framing }}"
+  </p>
+</div>
+
+<div class="card">
+  <div class="card-title">Causal DAG Architecture (32 Nodes, 40 Directed Edges)</div>
+  <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
+    The expert causal graph maps physical material flows, capacity ceilings, demand seasonality, finished goods buffering, and customer backlog creation.
+  </p>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; font-size: 0.8rem;">
+    <div style="background: var(--bg); padding: 12px; border-radius: 6px;">
+      <strong style="color: var(--accent);">Tier 0: Exogenous Supply &amp; Calendar (14)</strong>
+      <p style="color: var(--text-muted); margin-top: 4px;">Supplier delays, fill rates, weekday, month, planned targets, shortfalls.</p>
+    </div>
+    <div style="background: var(--bg); padding: 12px; border-radius: 6px;">
+      <strong style="color: #fb923c;">Tier 1: Raw Materials (6)</strong>
+      <p style="color: var(--text-muted); margin-top: 4px;">Material 101 (Steel), 102 (Plastic), 103 (Copper) stocks and autoregressive lags.</p>
+    </div>
+    <div style="background: var(--bg); padding: 12px; border-radius: 6px;">
+      <strong style="color: #f472b6;">Tier 2: Customer Demand (2)</strong>
+      <p style="color: var(--text-muted); margin-top: 4px;">Product 201 and 202 incoming order volumes driven by calendar seasonality.</p>
+    </div>
+    <div style="background: var(--bg); padding: 12px; border-radius: 6px;">
+      <strong style="color: #4ade80;">Tier 3: Manufacturing Output (2)</strong>
+      <p style="color: var(--text-muted); margin-top: 4px;">Completed production constrained by raw stocks and capacity limits.</p>
+    </div>
+    <div style="background: var(--bg); padding: 12px; border-radius: 6px;">
+      <strong style="color: #facc15;">Tier 4: Finished Goods (4)</strong>
+      <p style="color: var(--text-muted); margin-top: 4px;">Warehouse inventory carryover from t-1 plus completed output minus sales.</p>
+    </div>
+    <div style="background: var(--bg); padding: 12px; border-radius: 6px;">
+      <strong style="color: #f87171;">Tier 5: Order Backlog (2)</strong>
+      <p style="color: var(--text-muted); margin-top: 4px;">Unfulfilled customer delivery backlog (primary root KPI).</p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Pre-Registered Null Calibration Thresholds</div>
+  <table style="margin-top: 6px;">
+    <thead>
+      <tr>
+        <th>Metric Identifier</th>
+        <th>Threshold Value</th>
+        <th>Interpretation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>M1 Peak Anomaly (S_p95)</strong></td>
+        <td><code>0.218006</code></td>
+        <td>Attribution mass on root causes during single-day anomaly peaks.</td>
+      </tr>
+      <tr>
+        <td><strong>M2 Short-Window Shift (S_p95)</strong></td>
+        <td><code>0.922611</code></td>
+        <td>Distributional shift across 14-day rolling incident windows.</td>
+      </tr>
+      <tr>
+        <td><strong>M2 Long-Window Shift (S_p95)</strong></td>
+        <td><code>1.092598</code></td>
+        <td>Distributional shift across 28-day extended multi-month periods.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <div class="card-title">Documented Structural Limitations &amp; Sampling Bounds</div>
+  <ul style="padding-left: 20px; font-size: 0.85rem; color: var(--text-main); line-height: 1.7;">
+    <li>
+      <strong>Reduced Sampling Budget:</strong> Shapley attribution is evaluated using 50 subset samples and 3 permutations per node to bound runtime to &lt;2 minutes per scenario.
+    </li>
+    <li>
+      <strong>Target Averaging Dilution:</strong> In scenarios like P01 and P06, averaging Shapley scores across multiple target nodes dilutes signal mass, resulting in a NOISE tier despite Stage 7 detecting single-target spikes.
+    </li>
+    <li>
+      <strong>Zero Baseline Variance (INC_07):</strong> In synthetic training data, Supplier 5 never exhibited partial receipts (fill_rate = 1.0 constant). Linear SCM fits &beta; = 0.0, rendering upstream attribution mathematically impossible.
+    </li>
+    <li>
+      <strong>Lag-State Dominance (INC_09):</strong> Autoregressive inventory continuity (lag1) captures 60–80% of Shapley variance during prolonged stockouts, suppressing the exogenous supplier delay rank.
+    </li>
+    <li>
+      <strong>Cryptographic Immutability:</strong> Stages 1–8 are sealed under frozen JSON digests (<code>stage7/FROZEN.json</code> and <code>stage8/FROZEN.json</code>).
+    </li>
+  </ul>
+</div>
+{% endblock %}

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}SAGE &bull; Strategic Analytics for Guided Execution{% endblock %}</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-border: #e2e8f0;
+      --header-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --badge-strong-bg: #f0fdf4;
+      --badge-strong-text: #166534;
+      --badge-strong-border: #bbf7d0;
+      --badge-some-bg: #f0f9ff;
+      --badge-some-text: #0369a1;
+      --badge-some-border: #bae6fd;
+      --badge-weak-bg: #fffbeb;
+      --badge-weak-text: #92400e;
+      --badge-weak-border: #fde68a;
+      --badge-calm-bg: #f8fafc;
+      --badge-calm-text: #475569;
+      --badge-calm-border: #cbd5e1;
+      --radius: 10px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Navigation / Brand Header */
+    header.site-header {
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--surface-border);
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+
+    .header-inner {
+      max-width: 1040px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .brand-name {
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--accent);
+    }
+
+    .sim-tag {
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: #e2e8f0;
+      color: #475569;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .header-meta {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    main.page-main {
+      flex: 1;
+      max-width: 1040px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 20px 48px 20px;
+    }
+
+    /* Footer */
+    footer.site-footer {
+      background: #ffffff;
+      border-top: 1px solid var(--surface-border);
+      padding: 32px 24px 40px 24px;
+      color: var(--text-muted);
+      font-size: 0.86rem;
+      line-height: 1.6;
+    }
+
+    .footer-inner {
+      max-width: 1040px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .footer-framing {
+      background: #f8fafc;
+      border-left: 3px solid var(--accent);
+      padding: 12px 16px;
+      border-radius: 0 6px 6px 0;
+      color: #334155;
+    }
+
+    .footer-details {
+      margin-top: 8px;
+    }
+
+    .footer-details summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--accent);
+      outline: none;
+    }
+
+    .footer-details-body {
+      margin-top: 10px;
+      padding: 14px;
+      background: #f8fafc;
+      border: 1px solid var(--surface-border);
+      border-radius: 6px;
+      font-size: 0.84rem;
+      line-height: 1.6;
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left" style="display: flex; align-items: center; gap: 24px; flex-wrap: wrap;">
+        <a href="/?date={{ selected_date }}" class="brand-wrap">
+          <span class="brand-name">SAGE</span>
+          <span class="sim-tag">Simulated Data</span>
+        </a>
+        <nav class="nav-tabs" aria-label="Main Navigation" style="display: inline-flex; gap: 4px; background: #f1f5f9; padding: 4px; border-radius: 8px; border: 1px solid var(--surface-border);">
+          <a href="/?date={{ selected_date }}" class="tab-link {% if active_tab == 'today' %}active{% endif %}" id="nav-tab-today" style="font-size: 0.92rem; font-weight: 600; padding: 6px 14px; border-radius: 6px; text-decoration: none; color: {% if active_tab == 'today' %}var(--accent){% else %}var(--text-muted){% endif %}; background: {% if active_tab == 'today' %}#ffffff{% else %}transparent{% endif %}; box-shadow: {% if active_tab == 'today' %}0 1px 2px rgba(0,0,0,0.05){% else %}none{% endif %};">Today</a>
+          <a href="/insights?date={{ selected_date }}&period={{ period|default('ytd') }}" class="tab-link {% if active_tab == 'insights' %}active{% endif %}" id="nav-tab-insights" style="font-size: 0.92rem; font-weight: 600; padding: 6px 14px; border-radius: 6px; text-decoration: none; color: {% if active_tab == 'insights' %}var(--accent){% else %}var(--text-muted){% endif %}; background: {% if active_tab == 'insights' %}#ffffff{% else %}transparent{% endif %}; box-shadow: {% if active_tab == 'insights' %}0 1px 2px rgba(0,0,0,0.05){% else %}none{% endif %};">Insights</a>
+        </nav>
+      </div>
+      <div class="header-meta">
+        {% block header_meta %}{% endblock %}
+      </div>
+    </div>
+  </header>
+
+  <main class="page-main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-framing">
+        <strong>Research Framing:</strong> {{ framing }}
+      </div>
+      <div>
+        Simulated data as of <strong>{{ selected_date }}</strong> &bull; Executive Single-View Delivery Layer
+      </div>
+      <details class="footer-details">
+        <summary>About this analysis &amp; operational limits</summary>
+        <div class="footer-details-body">
+          <p style="margin-bottom: 8px;">
+            <strong>What SAGE does:</strong> SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined cause-and-effect map. It continuously cross-checks incoming operational telemetry against physical constraints (Bills of Materials, lead times, workcenter capacities) and calculates statistical consistency scores.
+          </p>
+          <p style="margin-bottom: 8px;">
+            <strong>What SAGE does not claim:</strong> Real enterprise operations lack ground-truth labels. SAGE does not claim to prove real-world causality. Root-cause candidates reflect structural plausibility relative to human expert models, not mathematical certainty.
+          </p>
+          <p>
+            <strong>Prerequisites for plant deployment:</strong> Plant managers must review and validate the factory causal DAG. Operational remediation choices remain the sole responsibility of authorized operations staff.
+          </p>
+        </div>
+      </details>
+    </div>
+  </footer>
+</body>
+</html>

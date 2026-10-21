@@ -1,0 +1,57 @@
+{
+  "as_of": "2025-03-13",
+  "metadata": {
+    "as_of_date": "2025-03-13",
+    "rules_source": "stage9/config/rules.yaml",
+    "simulated_data": true
+  },
+  "top_priorities": [
+    {
+      "action": "Prepare dispatch for order SO-47 (Widget Model Y (Product 202))",
+      "category": "Upcoming Order",
+      "due_date": "2025-03-15",
+      "rank": 1,
+      "reason": "Order SO-47 (6 units) requested for delivery on 2025-03-15",
+      "role": "Planner"
+    },
+    {
+      "action": "Prepare dispatch for order SO-44 (Widget Model X (Product 201))",
+      "category": "Upcoming Order",
+      "due_date": "2025-03-16",
+      "rank": 2,
+      "reason": "Order SO-44 (9 units) requested for delivery on 2025-03-16",
+      "role": "Planner"
+    },
+    {
+      "action": "Prepare dispatch for order SO-48 (Widget Model X (Product 201))",
+      "category": "Upcoming Order",
+      "due_date": "2025-03-16",
+      "rank": 3,
+      "reason": "Order SO-48 (11 units) requested for delivery on 2025-03-16",
+      "role": "Planner"
+    },
+    {
+      "action": "Prepare receipt for PO-6 from EastCoast Components",
+      "category": "Incoming Supply",
+      "due_date": "2025-03-20",
+      "rank": 4,
+      "reason": "Expected shipment of 374 units of Steel Rod 10mm (Material 101) scheduled for arrival on 2025-03-20",
+      "role": "Procurement"
+    },
+    {
+      "action": "Monitor inventory buffer for Steel Rod 10mm (Material 101)",
+      "category": "Buffer Health",
+      "due_date": "2025-03-13",
+      "rank": 5,
+      "reason": "Steel Rod 10mm (Material 101) has 5.3 days of cover remaining (142 kg on hand)",
+      "role": "Procurement"
+    }
+  ],
+  "watchlist": [
+    {
+      "item": "Steel Rod 10mm (Material 101) inventory monitoring",
+      "reason": "Steel Rod 10mm (Material 101) is at 142 kg (below reorder point 150 kg), tracking 1 open replenishment POs",
+      "role": "Procurement"
+    }
+  ]
+}

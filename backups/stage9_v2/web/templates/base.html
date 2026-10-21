@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}SAGE &bull; Operations &amp; Causal Platform{% endblock %}</title>
+  <!-- Pinned Chart.js from cdnjs -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #111827;
+      --card-border: #1f2937;
+      --header-bg: #111827;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --crit-bg: #450a0a;
+      --crit-text: #f87171;
+      --warn-bg: #431407;
+      --warn-text: #fb923c;
+      --ok-bg: #052e16;
+      --ok-text: #4ade80;
+    }
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --header-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent: #0284c7;
+      --accent-hover: #0369a1;
+      --crit-bg: #fee2e2;
+      --crit-text: #b91c1c;
+      --warn-bg: #ffedd5;
+      --warn-text: #c2410c;
+      --ok-bg: #dcfce7;
+      --ok-text: #15803d;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--card-border);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--accent);
+    }
+    .sim-badge {
+      background: var(--card-border);
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    nav {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+    nav a:hover, nav a.active {
+      color: var(--accent);
+    }
+    .theme-btn {
+      background: var(--card-border);
+      color: var(--text-main);
+      border: none;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    main {
+      flex: 1;
+      padding: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .table-container {
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    th {
+      text-align: left;
+      padding: 10px 12px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--card-border);
+      font-weight: 600;
+    }
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge-crit { background: var(--crit-bg); color: var(--crit-text); }
+    .badge-warn { background: var(--warn-bg); color: var(--warn-text); }
+    .badge-ok { background: var(--ok-bg); color: var(--ok-text); }
+    .badge-info { background: #0369a1; color: #fff; }
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .kpi-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+    }
+    .kpi-val {
+      font-size: 1.7rem;
+      font-weight: 800;
+      margin-top: 4px;
+    }
+    .kpi-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    footer {
+      background: var(--header-bg);
+      border-top: 1px solid var(--card-border);
+      padding: 18px 24px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+    .footer-framing {
+      max-width: 900px;
+      margin: 0 auto 6px auto;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/?token={{ token }}" class="brand">
+      <span class="brand-title">SAGE &bull; Platform</span>
+      <span class="sim-badge">Simulated Data</span>
+    </a>
+    <nav>
+      <a href="/?token={{ token }}">Home</a>
+      <a href="/digests?token={{ token }}">Digests</a>
+      <a href="/priorities?token={{ token }}">Priorities</a>
+      <a href="/causal?token={{ token }}">Causal</a>
+      <a href="/research?token={{ token }}" style="color: #f59e0b;">Research</a>
+      <a href="/method?token={{ token }}">Method</a>
+      <a href="/schedule?token={{ token }}">Schedule</a>
+      <button class="theme-btn" onclick="toggleTheme()">🌓 Theme</button>
+    </nav>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    <div class="footer-framing">
+      <strong>Research Framing:</strong> {{ framing }}
+    </div>
+    <div>
+      Simulated Data &bull; As-of Date: <strong>{{ as_of }}</strong> &bull; Executive Delivery Layer (Stage 9 v2)
+    </div>
+  </footer>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const cur = html.getAttribute('data-theme');
+      const nxt = cur === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', nxt);
+      localStorage.setItem('sage_theme', nxt);
+    }
+    const saved = localStorage.getItem('sage_theme');
+    if (saved) {
+      document.documentElement.setAttribute('data-theme', saved);
+    }
+  </script>
+</body>
+</html>

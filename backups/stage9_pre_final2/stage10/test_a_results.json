@@ -1,0 +1,412 @@
+{
+  "metadata": {
+    "test": "Test A \u2014 Fresh synthetic worlds",
+    "date": "2026-10-11",
+    "seeds": [
+      7,
+      11
+    ],
+    "frozen_m1_null_threshold": 0.218006,
+    "frozen_m2_null_threshold": 0.922611
+  },
+  "seed_results": {
+    "seed_7": {
+      "seed": 7,
+      "detectable_scenarios_evaluated": 4,
+      "detectable_detected": 0,
+      "detection_rate_pct": 0.0,
+      "quiet_windows_evaluated": 20,
+      "false_alarms_count": 18,
+      "false_alarm_rate_pct": 90.0,
+      "scenario_evaluations": [
+        {
+          "scenario_id": "INC_01",
+          "type": "supplier_delay",
+          "window": "2025-07-30 -> 2025-09-28",
+          "target_node": "material_101_stock",
+          "true_drivers": [
+            "supplier_1_po_delay_days",
+            "supplier_1_receipt_fill_rate"
+          ],
+          "true_driver_score": 0.0,
+          "true_driver_rank": 5,
+          "top_driver": "material_101_stock_lag1",
+          "top_score": 0.9783,
+          "cleared_null": false,
+          "classification": "BELOW NULL / UNATTRIBUTED"
+        },
+        {
+          "scenario_id": "INC_02",
+          "type": "no_incident",
+          "window": "2025-10-14 -> 2025-12-13",
+          "target_node": "product_201_actual_production",
+          "true_drivers": [
+            "none"
+          ],
+          "true_driver_score": 0.0,
+          "true_driver_rank": 99,
+          "top_driver": "product_201_planned_production",
+          "top_score": 0.5772,
+          "cleared_null": false,
+          "classification": "CORRECT REJECTION (CONTROL)"
+        },
+        {
+          "scenario_id": "INC_03",
+          "type": "demand_spike",
+          "window": "2025-01-04 -> 2025-03-05",
+          "target_node": "product_201_fg_stock",
+          "true_drivers": [
+            "product_201_demand_units"
+          ],
+          "true_driver_score": 0.0122,
+          "true_driver_rank": 8,
+          "top_driver": "product_201_fg_stock_lag1",
+          "top_score": 1.8648,
+          "cleared_null": false,
+          "classification": "BELOW NULL / UNATTRIBUTED"
+        },
+        {
+          "scenario_id": "INC_04",
+          "type": "capacity_disruption",
+          "window": "2025-09-05 -> 2025-11-04",
+          "target_node": "product_201_actual_production",
+          "true_drivers": [
+            "product_201_capacity_shortfall_units"
+          ],
+          "true_driver_score": 0.0505,
+          "true_driver_rank": 5,
+          "top_driver": "material_101_stock_lag1",
+          "top_score": 0.2167,
+          "cleared_null": false,
+          "classification": "BELOW NULL / UNATTRIBUTED"
+        },
+        {
+          "scenario_id": "INC_05",
+          "type": "overlapping_supplier_delay",
+          "window": "2025-01-29 -> 2025-03-30",
+          "target_node": "material_101_stock",
+          "true_drivers": [
+            "supplier_1_po_delay_days",
+            "supplier_2_po_delay_days"
+          ],
+          "true_driver_score": 0.0,
+          "true_driver_rank": 4,
+          "top_driver": "material_101_stock_lag1",
+          "top_score": 1.2498,
+          "cleared_null": false,
+          "classification": "BELOW NULL / UNATTRIBUTED"
+        },
+        {
+          "scenario_id": "INC_06",
+          "type": "two_simultaneous_independent_causes",
+          "window": "2025-07-12 -> 2025-09-10",
+          "target_node": "product_202_actual_production",
+          "true_drivers": [
+            "supplier_2_po_delay_days",
+            "product_202_capacity_shortfall_units"
+          ],
+          "true_driver_score": -0.1654,
+          "true_driver_rank": 3,
+          "top_driver": "product_202_planned_production",
+          "top_score": 1.2899,
+          "cleared_null": false,
+          "classification": "BELOW NULL / UNATTRIBUTED"
+        },
+        {
+          "scenario_id": "INC_07",
+          "type": "partial_receipt",
+          "window": "2025-06-12 -> 2025-08-11",
+          "target_node": "material_103_stock",
+          "true_drivers": [
+            "supplier_5_receipt_fill_rate"
+          ],
+          "true_driver_score": 0.0,
+          "true_driver_rank": 5,
+          "top_driver": "material_103_stock_lag1",
+          "top_score": 1.5892,
+          "cleared_null": false,
+          "classification": "BELOW NULL / UNATTRIBUTED"
+        },
+        {
+          "scenario_id": "INC_08",
+          "type": "delay_absorbed_by_safety_stock",
+          "window": "2025-05-05 -> 2025-07-04",
+          "target_node": "material_103_stock",
+          "true_drivers": [
+            "supplier_4_po_delay_days"
+          ],
+          "true_driver_score": 0.0,
+          "true_driver_rank": 99,
+          "top_driver": "material_103_stock_lag1",
+          "top_score": 1.7964,
+          "cleared_null": false,
+          "classification": "BELOW NULL / UNATTRIBUTED"
+        },
+        {
+          "scenario_id": "INC_09",
+          "type": "severe_supplier_delay_stockout",
+          "window": "2025-08-25 -> 2025-10-24",
+          "target_node": "material_101_stock",
+          "true_drivers": [
+            "supplier_4_po_delay_days"
+          ],
+          "true_driver_score": 0.0488,
+          "true_driver_rank": 2,
+          "top_driver": "material_101_stock_lag1",
+          "top_score": 1.2478,
+          "cleared_null": false,
+          "classification": "BELOW NULL / UNATTRIBUTED"
+        },
+        {
+          "scenario_id": "INC_10",
+          "type": "seasonal_demand",
+          "window": "2025-12-10 -> 2025-12-31",
+          "target_node": "product_201_demand_units",
+          "true_drivers": [
+            "month",
+            "weekday"
+          ],
+          "true_driver_score": 0.342,
+          "true_driver_rank": 1,
+          "top_driver": "month",
+          "top_score": 0.342,
+          "cleared_null": true,
+          "classification": "FALSE POSITIVE"
+        }
+      ],
+      "quiet_window_samples": [
+        {
+          "window": "2025-01-19 -> 2025-02-02",
+          "target": "material_101_stock",
+          "max_score": 0.4687,
+          "false_alarm": true
+        },
+        {
+          "window": "2025-02-04 -> 2025-02-18",
+          "target": "product_201_actual_production",
+          "max_score": 0.2879,
+          "false_alarm": true
+        },
+        {
+          "window": "2025-02-26 -> 2025-03-12",
+          "target": "product_201_fg_stock",
+          "max_score": 1.4508,
+          "false_alarm": true
+        },
+        {
+          "window": "2025-03-08 -> 2025-03-22",
+          "target": "product_201_actual_production",
+          "max_score": 0.366,
+          "false_alarm": true
+        },
+        {
+          "window": "2025-03-26 -> 2025-04-09",
+          "target": "material_101_stock",
+          "max_score": 1.2753,
+          "false_alarm": true
+        }
+      ]
+    },
+    "seed_11": {
+      "seed": 11,
+      "detectable_scenarios_evaluated": 4,
+      "detectable_detected": 0,
+      "detection_rate_pct": 0.0,
+      "quiet_windows_evaluated": 20,
+      "false_alarms_count": 12,
+      "false_alarm_rate_pct": 60.0,
+      "scenario_evaluations": [
+        {
+          "scenario_id": "INC_01",
+          "type": "supplier_delay",
+          "window": "2025-10-24 -> 2025-12-23",
+          "target_node": "material_101_stock",
+          "true_drivers": [
+            "supplier_1_po_delay_days",
+            "supplier_1_receipt_fill_rate"
+          ],
+          "true_driver_score": 0.0,
+          "true_driver_rank": 5,
+          "top_driver": "material_101_stock_lag1",
+          "top_score": 0.5934,
+          "cleared_null": false,
+          "classification": "BELOW NULL / UNATTRIBUTED"
+        },
+        {
+          "scenario_id": "INC_02",
+          "type": "no_incident",
+          "window": "2025-03-04 -> 2025-05-03",
+          "target_node": "product_201_actual_production",
+          "true_drivers": [
+            "none"
+          ],
+          "true_driver_score": 0.0,
+          "true_driver_rank": 99,
+          "top_driver": "product_201_planned_production",
+          "top_score": 0.6887,
+          "cleared_null": false,
+          "classification": "CORRECT REJECTION (CONTROL)"
+        },
+        {
+          "scenario_id": "INC_03",
+          "type": "demand_spike",
+          "window": "2025-08-03 -> 2025-10-02",
+          "target_node": "product_201_fg_stock",
+          "true_drivers": [
+            "product_201_demand_units"
+          ],
+          "true_driver_score": -0.074,
+          "true_driver_rank": 5,
+          "top_driver": "product_201_actual_production",
+          "top_score": 0.6255,
+          "cleared_null": false,
+          "classification": "BELOW NULL / UNATTRIBUTED"
+        },
+        {
+          "scenario_id": "INC_04",
+          "type": "capacity_disruption",
+          "window": "2025-09-21 -> 2025-11-20",
+          "target_node": "product_201_actual_production",
+          "true_drivers": [
+            "product_201_capacity_shortfall_units"
+          ],
+          "true_driver_score": 0.0099,
+          "true_driver_rank": 9,
+          "top_driver": "product_201_planned_production",
+          "top_score": 0.555,
+          "cleared_null": false,
+          "classification": "BELOW NULL / UNATTRIBUTED"
+        },
+        {
+          "scenario_id": "INC_05",
+          "type": "overlapping_supplier_delay",
+          "window": "2025-02-15 -> 2025-04-16",
+          "target_node": "material_101_stock",
+          "true_drivers": [
+            "supplier_1_po_delay_days",
+            "supplier_2_po_delay_days"
+          ],
+          "true_driver_score": 0.0,
+          "true_driver_rank": 4,
+          "top_driver": "material_101_stock_lag1",
+          "top_score": 1.2319,
+          "cleared_null": false,
+          "classification": "BELOW NULL / UNATTRIBUTED"
+        },
+        {
+          "scenario_id": "INC_06",
+          "type": "two_simultaneous_independent_causes",
+          "window": "2025-07-01 -> 2025-08-30",
+          "target_node": "product_202_actual_production",
+          "true_drivers": [
+            "supplier_2_po_delay_days",
+            "product_202_capacity_shortfall_units"
+          ],
+          "true_driver_score": -0.1109,
+          "true_driver_rank": 2,
+          "top_driver": "product_202_planned_production",
+          "top_score": 1.4833,
+          "cleared_null": false,
+          "classification": "BELOW NULL / UNATTRIBUTED"
+        },
+        {
+          "scenario_id": "INC_07",
+          "type": "partial_receipt",
+          "window": "2025-07-22 -> 2025-09-20",
+          "target_node": "material_103_stock",
+          "true_drivers": [
+            "supplier_5_receipt_fill_rate"
+          ],
+          "true_driver_score": 0.0,
+          "true_driver_rank": 5,
+          "top_driver": "material_103_stock_lag1",
+          "top_score": 1.9828,
+          "cleared_null": false,
+          "classification": "BELOW NULL / UNATTRIBUTED"
+        },
+        {
+          "scenario_id": "INC_08",
+          "type": "delay_absorbed_by_safety_stock",
+          "window": "2025-02-01 -> 2025-04-02",
+          "target_node": "material_103_stock",
+          "true_drivers": [
+            "supplier_4_po_delay_days"
+          ],
+          "true_driver_score": 0.0,
+          "true_driver_rank": 99,
+          "top_driver": "material_103_stock_lag1",
+          "top_score": 0.4669,
+          "cleared_null": false,
+          "classification": "BELOW NULL / UNATTRIBUTED"
+        },
+        {
+          "scenario_id": "INC_09",
+          "type": "severe_supplier_delay_stockout",
+          "window": "2025-08-31 -> 2025-10-30",
+          "target_node": "material_101_stock",
+          "true_drivers": [
+            "supplier_4_po_delay_days"
+          ],
+          "true_driver_score": -0.3779,
+          "true_driver_rank": 2,
+          "top_driver": "material_101_stock_lag1",
+          "top_score": 2.2625,
+          "cleared_null": true,
+          "classification": "DETECTED"
+        },
+        {
+          "scenario_id": "INC_10",
+          "type": "seasonal_demand",
+          "window": "2025-11-22 -> 2025-12-31",
+          "target_node": "product_201_demand_units",
+          "true_drivers": [
+            "month",
+            "weekday"
+          ],
+          "true_driver_score": 0.4588,
+          "true_driver_rank": 1,
+          "top_driver": "month",
+          "top_score": 0.4588,
+          "cleared_null": true,
+          "classification": "FALSE POSITIVE"
+        }
+      ],
+      "quiet_window_samples": [
+        {
+          "window": "2025-01-22 -> 2025-02-05",
+          "target": "material_101_stock",
+          "max_score": 0.8782,
+          "false_alarm": true
+        },
+        {
+          "window": "2025-02-03 -> 2025-02-17",
+          "target": "product_201_actual_production",
+          "max_score": 0.6393,
+          "false_alarm": true
+        },
+        {
+          "window": "2025-03-03 -> 2025-03-17",
+          "target": "product_201_fg_stock",
+          "max_score": 0.5321,
+          "false_alarm": true
+        },
+        {
+          "window": "2025-03-07 -> 2025-03-21",
+          "target": "product_201_actual_production",
+          "max_score": 0.2136,
+          "false_alarm": false
+        },
+        {
+          "window": "2025-03-25 -> 2025-04-08",
+          "target": "material_101_stock",
+          "max_score": 1.0357,
+          "false_alarm": true
+        }
+      ]
+    }
+  },
+  "file_sha256": "31c2e1e7895d8cf1f94fe90c30aede9dd01b77b60d8788bfc5692bb72caa2100",
+  "file_mtime": "2026-10-11T09:30:51.424399Z",
+  "source_script": "stage10/run_validation.py",
+  "raw_data_file": "analytics/scenario_causal_evaluation.json"
+}

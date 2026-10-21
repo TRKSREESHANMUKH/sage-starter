@@ -1,0 +1,14 @@
+# stage9/config/schedule.yaml
+timezone: Asia/Kolkata
+
+jobs:
+  findings_brief: {cron: "0 8 * * *"}     # 08:00 AM daily
+  nightly_digest: {cron: "0 21 * * *"}    # 09:00 PM daily
+
+recipients:
+  findings_brief: ["operations-leadership@sage-plant.local"]
+  nightly_digest: ["plant-manager@sage-plant.local", "executive-brief@sage-plant.local"]
+
+replay:
+  replay_start: "2025-01-15"
+  replay_end: "2025-12-31"

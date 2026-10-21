@@ -1,0 +1,62 @@
+<USER_REQUEST>
+# SAGE — Stage 9 FIX 2: Reconcile the Remaining Contradictions, Then Fix
+
+For Antigravity (AG). This continues `SAGE_stage9_FIX_validity_and_send.md`. Your Step 1.1 audit is accepted for what it explained (hardcoded names, the on-time denominator, mislabelled owed units, partial receipts summed per PO, the PO #18 label). It also exposed new contradictions that must be reconciled BEFORE any fix is written. Do Part R first (audit only, print and stop for my review if any item shows a frozen-stage problem), then Part F.
+
+## Rules
+1. Stages 1–8 stay FROZEN (verify the hashes first). Never write to the main Postgres database or any frozen artifact. The audit scripts live in `stage10/audit/`, are one-off, and are never imported by the pipeline, the viewer or the controller (the pipeline guards against `business_events*` stay in force).
+2. Never invent, relabel or "reconcile" a number. Every figure traces to a table, file or command output you name.
+3. Credits are limited: print short tables only. If a part fails twice, record why in `HANDOFF.md` and continue.
+4. No new features.
+
+## Part R — Reconciliation audit (print only; no fixes yet)
+
+**R1. Three sources disagree about customer backlog at year end.** Your audit says the database holds 48 overdue customer orders (652 units, up to 90 days late, for example SO #164 due 2025-10-02, 11 of 12 units shipped). But (a) you also say the panel has 0 customer backlog days, and (b) the eventful-date scan earlier found no problem days after 2025-10-15. If 48 orders really stayed unfulfilled from October to December, the panel's due-backlog column must be above 0 for those days. Print for 2025-06-30, 2025-09-15, 2025-10-20 and 2025-12-31:
+1. Open overdue units from the database (the rule you used).
+2. The scenario panel's `due_backlog_units` per product (state which panel file you read, scenario or baseline, with its sha256).
+3. The authoritative `daily_due_backorder_units` figures from the Stage 4 simulation outputs (summary or manifest files), if stored.
+4. What `snapshot.py` reports for those dates.
+5. For SO #164 and SO #165: every row in the order, order line and delivery tables, with dates and quantities.
+State which source is right and why. If the frozen panel or the frozen simulation outputs are the ones that are wrong, STOP and report that plainly; do not change frozen files.
+
+**R2. Order buckets.** For all customer orders requested on or before 2025-12-31 print counts of: shipped complete on or before the requested date; shipped complete after the requested date (late but delivered); partly shipped and overdue; unshipped and overdue. Give 5 examples of "late but delivered" with order id, requested date, shipped date. Compare with the Stage 4 `orders_ever_backordered` figure. (The earlier audit reported 176 on time and 48 overdue and no late-but-delivered orders, which is suspicious given the 2025 stockout scenarios: orders backordered earlier in the year should have been delivered late.)
+
+**R3. EastCoast PO #18 (steel rod, Material 101).** Placed 2025-08-05, expected 2025-08-14, no receipt by 2025-12-31 (139 days overdue). Print every row that references PO #18 (lines, receipts, stock movements) in the main database, and the same in `sage_ext` including rows dated in 2026. Does Material 101 have any other open or received purchase order after 2025-08-05? Why did the simulator reorder or not reorder? Is any frozen incident responsible (read-only query of the incident log in the audit script; the pipeline must not read it)? State whether this PO is a real stuck order, a superseded order, or an end-of-run artefact.
+
+**R4. Hardcoded example text.** The earlier Today cards said "Supplier 1's delivery is 9 days late", "PO #1004" and "Raw steel is running low". But the audit shows Supplier 1 had zero purchase orders in 2025, and only 18 purchase orders existed in 2025 (4 + 10 + 4), so PO #1004 cannot exist. Search the whole repo (`web/`, `stage9/`, `controller/`, templates, `rules.yaml`, tests, `demo_data/`) for the literals `1004`, `Supplier 1's delivery`, `Raw steel is running low`, `Standard Motor`, `Heavy Duty Motor`, `Electric Motors`, `Gear Assemblies`, `Electronic housings`, `Plastic resin`, and print each hit with file and line and whether it is sample text copied from the specification. Also print the supplier, material and dates of the PO #19 that sits in the 2026 pack, and the definition of the January demo incident. Is a supplier that has never supplied a material in 2025 suddenly supplying it in January 2026?
+
+**R5. Expert DAG versus actual sourcing, and the incident labels.** Print (a) the supplier → material edges of the Stage 7 DAG, (b) the actual sourcing from purchase order lines in 2025 (the audit shows Supplier 4 → Material 101, Supplier 3 → 102, Supplier 5 → 103, and Suppliers 1 and 2 never used), and (c) for each of the 10 frozen incidents: the supplier and material in `incidents.yaml`, in `business_events`, and the supplier on the purchase order that was actually delayed. Flag every mismatch (for example INC_08 listing Supplier 4 for a Material 103 order that is supplied by Supplier 5). Do not change any frozen file. Write the findings to `stage10/KNOWN_ISSUES.md` and add a plain-English limitation line to the Method page ("The expert graph allows supplier links that the simulated sourcing never used").
+
+## Part F — Fixes (after Part R is printed and accepted)
+
+**F1. Everything in the previous fix prompt that is still open** (`SAGE_stage9_FIX_validity_and_send.md`): Steps 1.2 and 1.3 (one name source from the master tables; finished goods only in the product table; the on-time definition; Overdue now versus Due later; plural fix; open-PO labels), Problem 2 (`ops.ensure_report(day)`, friendly errors, dry-run clarity) and Problem 3 (`stage9.smoke_ui`).
+
+**F2. On-time definition, using the R2 buckets.** On time = shipped complete on or before the requested date. The Insights strip and the customer tables show: on time, shipped late, still overdue, and due later, with counts. The on-time percentage is on time divided by all orders requested on or before the current day (open overdue orders count against it). Never show 100% when any order is late or open overdue.
+
+**F3. Backlog source of truth.** Whatever R1 shows is right, all Today, Insights, mail and PDF backlog figures must come from that one source through one function, and the reconciliation test must assert that the page, the email and the raw tables give the same number on the dates in R1.
+
+**F4. Supplier report card.**
+- Rows for active suppliers (at least one purchase order in the selected period), each listing every material it actually supplied (from purchase order lines).
+- Idle suppliers are not shown as zero rows. Show one collapsed line under the table: "No orders placed in this period: Sri Materials Pvt Ltd, Bharat Steel Works (backup vendors)". Keep "Too few deliveries to rate" for suppliers with fewer than 5 deliveries.
+- Partial receipts: show "first delivery: 70% of the order; completed 2 days after the first delivery" and keep two figures: first-delivery fill rate and final received versus ordered. The partial receipt (PO #17, 105 of 150 units on the first receipt) must be visible.
+- Open orders show "X days overdue (was due <date>)".
+
+**F5. Names.** All names come from the master tables (Steel Rod 10mm, Plastic Granules, Copper Wire; Widget Model X, Widget Model Y; the five suppliers and five customers). Remove the hardcoded names in `trace.py`, `narrate.py`, `rules.yaml`, templates and tests. The same entity has the same name on every screen.
+
+**F6. No sample text in the product.** Every sentence on a card, in the bottom line and in the mail is generated from snapshot facts and the trace. Add a test that fails if any of the R4 literals appear in code outside `tests/`, and a test that every purchase order or sales order number shown on a card exists in the database.
+
+**F7. Trace edges (Stage 9 only, Stage 7 untouched).** The cause-chain trace uses only supplier → material links that have at least one purchase order in the history up to the current day (derived from the data, never from the answer key). Edges from suppliers that never supplied a material are ignored. Document this in the Method page and `KNOWN_ISSUES.md`.
+
+**F8. The January demo incident (only if R4 shows a mismatch).** Regenerate the January 2026 part so the delayed purchase order belongs to the supplier that actually supplies the chosen material (for example Supplier 4 for steel rod). Keep 2025 unchanged and prove it (the 365-row panel comparison). Rebuild the packs and re-run the equivalence hashes.
+
+**F9. If R1, R2 or R3 show that the frozen simulation or panel is wrong,** do not fix it in place. Write the finding to `stage10/KNOWN_ISSUES.md` with evidence, add a plain limitation line to the Method page, make the Stage 9 pages use the database truth as above, and report it so the decision on any re-run is made by the owner.
+
+## Final report (short; only these)
+1. R1–R5 audit tables with a one-line conclusion each, and which items concern frozen stages.
+2. Before and after of each fixed number (on-time %, overdue counts, supplier rows, partial receipt, PO #18 label).
+3. Reconciliation test results (pass or fail per check and date), `smoke_ui` result, and the Send-now proof from the previous prompt.
+4. The list of files changed and anything you could not do.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-10-21T12:52:30+05:30.
+</ADDITIONAL_METADATA>

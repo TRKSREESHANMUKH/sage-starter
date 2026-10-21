@@ -217,8 +217,8 @@ def generate_deterministic_template(
 
     # Fill up to 4 if calm
     if not bullets:
-        bullets.append("Assembly Lines: Standard Motor and Heavy Duty Motor lines operated at planned cadence.")
-        bullets.append("Inventory: Raw steel, plastic, and copper stocks maintained above safety stock minimums.")
+        bullets.append("Assembly Lines: Widget Model X and Widget Model Y lines operated at planned cadence.")
+        bullets.append("Inventory: Steel Rod 10mm, Plastic Granules, and Copper Wire stocks maintained above safety stock minimums.")
         bullets.append("Logistics: No overdue customer shipments or supplier delivery exceptions recorded.")
 
     # 3. Watch list (at most 3 bullets)

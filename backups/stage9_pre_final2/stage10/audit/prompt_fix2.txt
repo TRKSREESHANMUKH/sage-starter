@@ -1,0 +1,38 @@
+<USER_REQUEST>
+# SAGE — Stage 9 FIX 2: Reconcile the Remaining Contradictions, Then Fix
+
+For Antigravity (AG). This continues `SAGE_stage9_FIX_validity_and_send.md`. Your Step 1.1 audit is accepted for what it explained (hardcoded names, the on-time denominator, mislabelled owed units, partial receipts summed per PO, the PO #18 label). It also exposed new contradictions that must be reconciled BEFORE any fix is written. Do Part R first (audit only, print and stop for my review if any item shows a frozen-stage problem), then Part F.
+
+## Rules
+1. Stages 1–8 stay FROZEN (verify the hashes first). Never write to the main Postgres database or any frozen artifact. The audit scripts live in `stage10/audit/`, are one-off, and are never imported by the pipeline, the viewer or the controller (the pipeline guards against `business_events*` stay in force).
+2. Never invent, relabel or "reconcile" a number. Every figure traces to a table, file or command output you name.
+3. Credits are limited: print short tables only. If a part fails twice, record why in `HANDOFF.md` and continue.
+4. No new features.
+
+## Part R — Reconciliation audit (print only; no fixes yet)
+
+**R1. Three sources disagree about customer backlog at year end.** Your audit says the database holds 48 overdue customer orders (652 units, up to 90 days late, for example SO #164 due 2025-10-02, 11 of 12 units shipped). But (a) you also say the panel has 0 customer backlog days, and (b) the eventful-date scan earlier found no problem days after 2025-10-15. If 48 orders really stayed unfulfilled from October to December, the panel's due-backlog column must be above 0 for those days. Print for 2025-06-30, 2025-09-15, 2025-10-20 and 2025-12-31:
+1. Open overdue units from the database (the rule you used).
+2. The scenario panel's `due_backlog_units` per product (state which panel file you read, scenario or baseline, with its sha256).
+3. The authoritative `daily_due_backorder_units` figures from the Stage 4 simulation outputs (summary or manifest files), if stored.
+4
+<truncated 5488 bytes>
+`trace.py`, `narrate.py`, `rules.yaml`, templates and tests. The same entity has the same name on every screen.
+
+**F6. No sample text in the product.** Every sentence on a card, in the bottom line and in the mail is generated from snapshot facts and the trace. Add a test that fails if any of the R4 literals appear in code outside `tests/`, and a test that every purchase order or sales order number shown on a card exists in the database.
+
+**F7. Trace edges (Stage 9 only, Stage 7 untouched).** The cause-chain trace uses only supplier → material links that have at least one purchase order in the history up to the current day (derived from the data, never from the answer key). Edges from suppliers that never supplied a material are ignored. Document this in the Method page and `KNOWN_ISSUES.md`.
+
+**F8. The January demo incident (only if R4 shows a mismatch).** Regenerate the January 2026 part so the delayed purchase order belongs to the supplier that actually supplies the chosen material (for example Supplier 4 for steel rod). Keep 2025 unchanged and prove it (the 365-row panel comparison). Rebuild the packs and re-run the equivalence hashes.
+
+**F9. If R1, R2 or R3 show that the frozen simulation or panel is wrong,** do not fix it in place. Write the finding to `stage10/KNOWN_ISSUES.md` with evidence, add a plain limitation line to the Method page, make the Stage 9 pages use the database truth as above, and report it so the decision on any re-run is made by the owner.
+
+## Final report (short; only these)
+1. R1–R5 audit tables with a one-line conclusion each, and which items concern frozen stages.
+2. Before and after of each fixed number (on-time %, overdue counts, supplier rows, partial receipt, PO #18 label).
+3. Reconciliation test results (pass or fail per check and date), `smoke_ui` result, and the Send-now proof from the previous prompt.
+4. The list of files changed and anything you could not do.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-10-21T12:52:30+05:30.
+</ADDITIONAL_METADATA>

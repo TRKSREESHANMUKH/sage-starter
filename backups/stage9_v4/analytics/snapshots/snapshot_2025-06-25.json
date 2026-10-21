@@ -1,0 +1,87 @@
+{
+  "as_of": "2025-06-25",
+  "composite_severity_score": 0.0,
+  "kpis": {
+    "oldest_overdue_date": null,
+    "total_backlog_units": 0,
+    "total_material_stockouts": 0,
+    "total_overdue_orders": 0,
+    "total_po_overdue_days": 0,
+    "total_production_shortfall": 0
+  },
+  "materials": {
+    "101": {
+      "days_of_cover": 10.2,
+      "material_id": 101,
+      "name": "Steel Rod 10mm",
+      "open_pos_count": 0,
+      "overdue_pos": [],
+      "reorder_point": 150.0,
+      "safety_stock": 50.0,
+      "severity": "WARNING",
+      "stock": 108.0
+    },
+    "102": {
+      "days_of_cover": 72.1,
+      "material_id": 102,
+      "name": "Plastic Granules",
+      "open_pos_count": 0,
+      "overdue_pos": [],
+      "reorder_point": 120.0,
+      "safety_stock": 40.0,
+      "severity": "NORMAL",
+      "stock": 206.0
+    },
+    "103": {
+      "days_of_cover": 84.9,
+      "material_id": 103,
+      "name": "Copper Wire",
+      "open_pos_count": 0,
+      "overdue_pos": [],
+      "reorder_point": 100.0,
+      "safety_stock": 30.0,
+      "severity": "NORMAL",
+      "stock": 194.0
+    }
+  },
+  "metadata": {
+    "as_of_date": "2025-06-25",
+    "simulated_data": true,
+    "source": "PostgreSQL committed operational ERP schema"
+  },
+  "plant_severity": "NORMAL",
+  "products": {
+    "201": {
+      "actual_production": 0,
+      "demand_units": 20,
+      "due_backlog_units": 0,
+      "fg_stock": 201.0,
+      "name": "Widget Model X",
+      "oldest_due_date": null,
+      "overdue_orders_count": 0,
+      "planned_production": 0,
+      "product_id": 201,
+      "production_shortfall": 0,
+      "reorder_point": 30.0,
+      "safety_stock": 15.0,
+      "severity": "NORMAL"
+    },
+    "202": {
+      "actual_production": 0,
+      "demand_units": 13,
+      "due_backlog_units": 0,
+      "fg_stock": 195.0,
+      "name": "Widget Model Y",
+      "oldest_due_date": null,
+      "overdue_orders_count": 0,
+      "planned_production": 0,
+      "product_id": 202,
+      "production_shortfall": 0,
+      "reorder_point": 25.0,
+      "safety_stock": 10.0,
+      "severity": "NORMAL"
+    }
+  },
+  "receipts_today": [],
+  "weekday": "Wednesday"
+}

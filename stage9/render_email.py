@@ -417,9 +417,9 @@ def render_nightly_digest(
         # 1. Trailing 7 days context
         records_7d, kpi_ctx = get_trailing_7d_metrics(as_of, db_session)
         sparkline_png = generate_7d_sparkline_png(records_7d)
-
-        # 2. Priorities (top 5 real order-level)
-        orders_top5 = get_order_level_priorities(as_of, db_session)
+        from stage9.trace import compute_cause_trace, compute_focus_list
+        cause_chains = compute_cause_trace(as_of)
+        focus_items = compute_focus_list(as_of, db_session=db_session)
 
         # 3. Supplier watch
         supp_watch = get_supplier_watch(as_of, db_session)
@@ -462,31 +462,63 @@ def render_nightly_digest(
                 bottom_line_text = "Factory operations ran smoothly across all workcenters today. All customer shipments and supplier replenishments are tracking within planned parameters."
                 preheader_text = "Factory operations ran smoothly across all workcenters today."
 
-        # 5. Orders to prioritise rows
-        order_rows_html = ""
-        if orders_top5:
-            for it in orders_top5:
-                badge_bg = "#fee2e2" if it["is_overdue"] else "#f1f5f9"
-                badge_fg = "#991b1b" if it["is_overdue"] else "#475569"
-                order_rows_html += f"""
-                <tr style="border-bottom: 1px solid #f1f5f9;">
-                  <td style="padding: 4px 6px; font-weight: 700; color: #2563eb; width: 18px; font-size: 10px;">{it['rank']}</td>
-                  <td style="padding: 4px 6px; font-size: 10.5px; color: #0f172a; font-weight: 600;">{it['order_no']}</td>
-                  <td style="padding: 4px 6px; font-size: 10px; color: #475569;">{it['customer']}</td>
-                  <td style="padding: 4px 6px; font-size: 10px; color: #334155;">{it['product']} ({it['quantity']}u)</td>
-                  <td style="padding: 4px 6px; font-size: 10px; color: #0f172a; white-space: nowrap;">{it['due_date']}</td>
-                  <td style="padding: 4px 6px; font-size: 9.5px; white-space: nowrap;">
-                    <span style="background: {badge_bg}; color: {badge_fg}; padding: 1px 4px; border-radius: 3px; font-weight: 600;">{it['days_overdue']}</span>
-                  </td>
-                  <td style="padding: 4px 6px; font-size: 9.5px; color: #64748b;">{it['reason']}</td>
-                </tr>
+        # Computed projection line (only if recent usage > 0)
+        projection_html = ""
+        projection_text = ""
+        for m_id, m_data in snap.get("materials", {}).items():
+            u_rate = float(m_data.get("daily_usage_rate", 0.0))
+            stk = float(m_data.get("stock", 0.0))
+            saf = float(m_data.get("safety_stock", 0.0))
+            m_nm = m_data.get("name", f"Material {m_id}")
+            if u_rate > 0.0 and stk > saf:
+                days_left = (stk - saf) / u_rate
+                if 0.5 <= days_left <= 7.0:
+                    d_int = max(1, int(round(days_left)))
+                    projection_text = f"At the recent usage rate of {u_rate:.1f} kg/day, {m_nm.lower()} reaches its safety level in {d_int} day{'s' if d_int != 1 else ''}."
+                    projection_html = f'<div style="font-size: 9.5px; color: #b45309; margin-top: 4px; font-weight: 500;">&bull; {projection_text}</div>'
+                    break
+
+        # 4. What caused what (Past analysed cases)
+        if cause_chains:
+            chains_html = ""
+            for c in cause_chains[:3]:
+                conf_color = "#166534" if c["confidence"] == "Seen end to end" else "#92400e"
+                conf_bg = "#dcfce7" if c["confidence"] == "Seen end to end" else "#fef3c7"
+                chains_html += f"""
+                <div style="margin-bottom: 5px; padding: 5px 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px;">
+                  <div style="font-size: 10.5px; font-weight: 700; color: #0f172a; margin-bottom: 2px;">
+                    {c['chain_text']}
+                  </div>
+                  <div style="font-size: 9.5px; color: #334155; margin-bottom: 2px;">
+                    {c['narrative']}
+                  </div>
+                  <div style="font-size: 9px; color: #64748b;">
+                    <span style="background: {conf_bg}; color: {conf_color}; font-weight: 700; padding: 1px 4px; border-radius: 3px;">{c['confidence']}</span>
+                    &nbsp;&bull;&nbsp; <strong>Model check:</strong> {c['model_check']['label']} ({c['model_check']['tag']}) &mdash; {c['model_check']['details']}
+                  </div>
+                </div>
                 """
         else:
-            order_rows_html = """
-            <tr>
-              <td colspan="7" style="padding: 8px; text-align: center; font-size: 10px; color: #64748b; font-style: italic;">
-                No customer orders requiring intervention tomorrow.
+            chains_html = """
+            <div style="font-size: 10px; color: #475569; padding: 4px 0; font-style: italic;">
+              No abnormal causal cascades observed in the trailing 7 days. Operations tracking within baseline variation.
+            </div>
+            """
+
+        # 5. Focus tomorrow (Top 5)
+        focus_rows_html = ""
+        for it in focus_items[:5]:
+            badge_bg = "#dbeafe" if it.get("is_root_fix") else "#f1f5f9"
+            badge_fg = "#1e40af" if it.get("is_root_fix") else "#475569"
+            focus_rows_html += f"""
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="padding: 3px 5px; font-weight: 700; color: #2563eb; width: 16px; font-size: 9.5px;">{it['rank']}</td>
+              <td style="padding: 3px 5px; font-size: 10px; color: #0f172a; font-weight: 600;">{it['action']}</td>
+              <td style="padding: 3px 5px; font-size: 9.5px; color: #475569; white-space: nowrap;">
+                <span style="background: {badge_bg}; color: {badge_fg}; padding: 1px 4px; border-radius: 3px; font-weight: 600;">{it['owner_role']}</span>
               </td>
+              <td style="padding: 3px 5px; font-size: 9.5px; color: #0f172a; white-space: nowrap;">{it['due_time']}</td>
+              <td style="padding: 3px 5px; font-size: 9px; color: #64748b;">{it['reason']}</td>
             </tr>
             """
 
@@ -495,42 +527,20 @@ def render_nightly_digest(
         if supp_watch["overdue_pos"]:
             for po_it in supp_watch["overdue_pos"]:
                 supplier_watch_html += f"""
-                <div style="font-size: 10.5px; margin-bottom: 3px; color: #0f172a;">
+                <div style="font-size: 10px; margin-bottom: 2px; color: #0f172a;">
                   &bull; <strong>{po_it['po_no']}</strong> ({po_it['supplier']}): {po_it['pending_qty']} units of {po_it['material']} &mdash; <span style="color: #b91c1c; font-weight: 600;">{po_it['days_overdue']}</span> (expected {po_it['expected_date']})
                 </div>
                 """
         else:
-            supplier_watch_html = '<div style="font-size: 10.5px; color: #166534; font-weight: 500;">No supplier problems today.</div>'
+            supplier_watch_html = '<div style="font-size: 10px; color: #166534; font-weight: 500;">No supplier problems today.</div>'
 
         if supp_watch["expected_tomorrow"]:
-            supplier_watch_html += '<div style="font-size: 10px; color: #475569; margin-top: 3px;"><strong>Receipts expected tomorrow:</strong> ' + "; ".join(supp_watch["expected_tomorrow"]) + '</div>'
-
-        # 7. What happened bullets (up to 4, tied to facts)
-        what_happened_html = ""
-        bullets = narr.get("what_happened", [])[:4]
-        if not bullets:
-            bullets = [
-                f"Finished goods buffer tracking at normal baseline levels as of {as_of.isoformat()}.",
-                f"Operational telemetry confirmed zero critical material shortages on plant floor."
-            ]
-        for b in bullets:
-            what_happened_html += f'<li style="margin-bottom: 2px;">{b} <span style="color: #64748b; font-size: 9px;">(Seen directly in the data)</span></li>'
-
-        # 8. Causal findings (frozen analysed cases only, plain English)
-        causal_findings_html = f"""
-        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px 10px; font-size: 10px; line-height: 1.35;">
-          <div style="font-weight: 700; color: #334155; margin-bottom: 2px;">From past analysed cases, not detected today:</div>
-          <div style="color: #475569;">
-            &bull; <strong>Supplier 1 delivery delay</strong> (<span style="color: #166534; font-weight: 600;">Strong evidence</span>): 7-day supplier delay propagated into assembly starvation in past benchmark evaluation.<br>
-            &bull; <em>Evidence is limited: SAGE has been tested on simulated data.</em> <a href="{dashboard_url}/insights#trust" style="color: #2563eb; text-decoration: underline;">View Trust section &rarr;</a>
-          </div>
-        </div>
-        """
+            supplier_watch_html += '<div style="font-size: 9.5px; color: #475569; margin-top: 2px;"><strong>Receipts expected tomorrow:</strong> ' + "; ".join(supp_watch["expected_tomorrow"]) + '</div>'
 
         # 7-day table rows
-        spark_table_headers = "".join([f'<th style="padding: 2px 4px; font-size: 9px; font-weight: 600; color: #475569; text-align: center;">{r["date_label"]}</th>' for r in records_7d])
-        spark_table_late = "".join([f'<td style="padding: 2px 4px; font-size: 9px; text-align: center; color: {"#b91c1c" if r["late_units"] > 0 else "#64748b"}; font-weight: {"700" if r["late_units"] > 0 else "normal"};">{r["late_units"]}</td>' for r in records_7d])
-        spark_table_short = "".join([f'<td style="padding: 2px 4px; font-size: 9px; text-align: center; color: {"#2563eb" if r["shortfall"] > 0 else "#64748b"};">{r["shortfall"]}</td>' for r in records_7d])
+        spark_table_headers = "".join([f'<th style="padding: 2px 4px; font-size: 8.5px; font-weight: 600; color: #475569; text-align: center;">{r["date_label"]}</th>' for r in records_7d])
+        spark_table_late = "".join([f'<td style="padding: 2px 4px; font-size: 8.5px; text-align: center; color: {"#b91c1c" if r["late_units"] > 0 else "#64748b"}; font-weight: {"700" if r["late_units"] > 0 else "normal"};">{r["late_units"]}</td>' for r in records_7d])
+        spark_table_short = "".join([f'<td style="padding: 2px 4px; font-size: 8.5px; text-align: center; color: {"#2563eb" if r["shortfall"] > 0 else "#64748b"};">{r["shortfall"]}</td>' for r in records_7d])
 
         sent_time_str = datetime.now(timezone.utc).strftime("%H:%M:%S UTC")
 
@@ -550,7 +560,7 @@ def render_nightly_digest(
     }}
     @page {{
       size: A4 portrait;
-      margin: 8mm 10mm 8mm 10mm;
+      margin: 6mm 8mm 6mm 8mm;
     }}
   </style>
 </head>
@@ -558,26 +568,26 @@ def render_nightly_digest(
   <!-- Preheader text -->
   <span style="display:none; font-size:1px; color:#ffffff; line-height:1px; max-height:0px; max-width:0px; opacity:0; overflow:hidden;">{preheader_text}</span>
 
-  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f1f5f9; padding: 8px 0;" class="email-bg">
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f1f5f9; padding: 6px 0;" class="email-bg">
     <tr>
       <td align="center">
         <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="600" style="width: 600px; max-width: 600px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);" class="email-card">
 
           <!-- 1. Header & Status Banner -->
           <tr>
-            <td style="padding: 12px 18px 10px 18px; border-bottom: 1px solid #e2e8f0;">
+            <td style="padding: 10px 16px 8px 16px; border-bottom: 1px solid #e2e8f0;">
               <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
                   <td>
-                    <div style="font-size: 16px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em;">
+                    <div style="font-size: 15px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em;">
                       <span style="color: #2563eb;">SAGE</span> Daily Brief
                     </div>
-                    <div style="font-size: 10.5px; color: #64748b; font-weight: 500; margin-top: 1px;">
-                      Simulated data as of {as_of.isoformat()}
+                    <div style="font-size: 10px; color: #64748b; font-weight: 500; margin-top: 1px;">
+                      Simulated factory data as of {as_of.isoformat()}
                     </div>
                   </td>
                   <td align="right">
-                    <span style="display: inline-block; font-size: 11px; font-weight: 700; color: {status_badge_color}; background-color: {status_badge_bg}; border: 1px solid {status_badge_border}; border-radius: 4px; padding: 3px 8px; text-transform: uppercase; letter-spacing: 0.03em;">
+                    <span style="display: inline-block; font-size: 10.5px; font-weight: 700; color: {status_badge_color}; background-color: {status_badge_bg}; border: 1px solid {status_badge_border}; border-radius: 4px; padding: 2px 7px; text-transform: uppercase; letter-spacing: 0.03em;">
                       {status_title} &bull; {status_summary}
                     </span>
                   </td>
@@ -588,100 +598,78 @@ def render_nightly_digest(
 
           <!-- 2. Bottom Line -->
           <tr>
-            <td style="padding: 10px 18px 8px 18px; background-color: #f8fafc; border-bottom: 1px solid #e2e8f0;">
-              <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 3px;">The Bottom Line</div>
-              <div style="font-size: 12px; line-height: 1.45; color: #0f172a; font-weight: 500;">
+            <td style="padding: 8px 16px; background-color: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+              <div style="font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 2px;">The Bottom Line</div>
+              <div style="font-size: 11.5px; line-height: 1.4; color: #0f172a; font-weight: 500;">
                 {bottom_line_text}
               </div>
             </td>
           </tr>
 
-          <!-- 3. Today's Numbers with Context -->
+          <!-- 3. Today's Numbers with Context & 7-Day Trend -->
           <tr>
-            <td style="padding: 10px 18px 8px 18px; border-bottom: 1px solid #f1f5f9;">
-              <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 6px;">Today's Numbers in Context</div>
+            <td style="padding: 8px 16px 6px 16px; border-bottom: 1px solid #f1f5f9;">
+              <div style="font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 4px;">Today's Numbers in Context</div>
               <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
-                  <td width="25%" style="padding: 6px 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; vertical-align: top;">
-                    <div style="font-size: 9px; color: #64748b; font-weight: 600;">Orders Due</div>
-                    <div style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 1px 0;">{kpi_ctx['today_orders_due']}</div>
-                    <div style="font-size: 8.5px; color: #64748b; line-height: 1.2;">{kpi_ctx['orders_due_text'].split(',', 1)[-1].strip()}</div>
+                  <td width="25%" style="padding: 5px 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; vertical-align: top;">
+                    <div style="font-size: 8.5px; color: #64748b; font-weight: 600;">Orders Due</div>
+                    <div style="font-size: 14px; font-weight: 800; color: #0f172a; margin: 1px 0;">{kpi_ctx['today_orders_due']}</div>
+                    <div style="font-size: 8px; color: #64748b; line-height: 1.2;">{kpi_ctx['orders_due_text'].split(',', 1)[-1].strip()}</div>
                   </td>
                   <td width="2%">&nbsp;</td>
-                  <td width="25%" style="padding: 6px 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; vertical-align: top;">
-                    <div style="font-size: 9px; color: #64748b; font-weight: 600;">Orders Late</div>
-                    <div style="font-size: 15px; font-weight: 800; color: {'#dc2626' if kpi_ctx['today_orders_late'] > 0 else '#0f172a'}; margin: 1px 0;">{kpi_ctx['today_orders_late']}</div>
-                    <div style="font-size: 8.5px; color: #64748b; line-height: 1.2;">{kpi_ctx['orders_late_text'].split(',', 1)[-1].strip()}</div>
+                  <td width="25%" style="padding: 5px 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; vertical-align: top;">
+                    <div style="font-size: 8.5px; color: #64748b; font-weight: 600;">Orders Late</div>
+                    <div style="font-size: 14px; font-weight: 800; color: {'#dc2626' if kpi_ctx['today_orders_late'] > 0 else '#0f172a'}; margin: 1px 0;">{kpi_ctx['today_orders_late']}</div>
+                    <div style="font-size: 8px; color: #64748b; line-height: 1.2;">{kpi_ctx['orders_late_text'].split(',', 1)[-1].strip()}</div>
                   </td>
                   <td width="2%">&nbsp;</td>
-                  <td width="25%" style="padding: 6px 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; vertical-align: top;">
-                    <div style="font-size: 9px; color: #64748b; font-weight: 600;">Units Short</div>
-                    <div style="font-size: 15px; font-weight: 800; color: {'#dc2626' if kpi_ctx['today_units_short'] > 0 else '#0f172a'}; margin: 1px 0;">{kpi_ctx['today_units_short']}</div>
-                    <div style="font-size: 8.5px; color: #64748b; line-height: 1.2;">{kpi_ctx['units_short_text'].split(',', 1)[-1].strip()}</div>
+                  <td width="25%" style="padding: 5px 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; vertical-align: top;">
+                    <div style="font-size: 8.5px; color: #64748b; font-weight: 600;">Units Short</div>
+                    <div style="font-size: 14px; font-weight: 800; color: {'#dc2626' if kpi_ctx['today_units_short'] > 0 else '#0f172a'}; margin: 1px 0;">{kpi_ctx['today_units_short']}</div>
+                    <div style="font-size: 8px; color: #64748b; line-height: 1.2;">{kpi_ctx['units_short_text'].split(',', 1)[-1].strip()}</div>
                   </td>
                   <td width="2%">&nbsp;</td>
-                  <td width="25%" style="padding: 6px 8px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; vertical-align: top;">
-                    <div style="font-size: 9px; color: #64748b; font-weight: 600;">Materials Low</div>
-                    <div style="font-size: 15px; font-weight: 800; color: {'#d97706' if kpi_ctx['today_materials_low'] > 0 else '#0f172a'}; margin: 1px 0;">{kpi_ctx['today_materials_low']}</div>
-                    <div style="font-size: 8.5px; color: #64748b; line-height: 1.2;">{kpi_ctx['materials_low_text'].split(',', 1)[-1].strip()}</div>
+                  <td width="25%" style="padding: 5px 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; vertical-align: top;">
+                    <div style="font-size: 8.5px; color: #64748b; font-weight: 600;">Materials Low</div>
+                    <div style="font-size: 14px; font-weight: 800; color: {'#d97706' if kpi_ctx['today_materials_low'] > 0 else '#0f172a'}; margin: 1px 0;">{kpi_ctx['today_materials_low']}</div>
+                    <div style="font-size: 8px; color: #64748b; line-height: 1.2;">{kpi_ctx['materials_low_text'].split(',', 1)[-1].strip()}</div>
                   </td>
                 </tr>
               </table>
-            </td>
-          </tr>
-
-          <!-- 4. Last 7 Days at a Glance (CID Image + Compact Table) -->
-          <tr>
-            <td style="padding: 8px 18px; border-bottom: 1px solid #f1f5f9;">
-              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
-                <tr>
-                  <td>
-                    <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b;">Last 7 Days at a Glance</span>
-                  </td>
-                  <td align="right" style="font-size: 9px; color: #64748b;">
-                    <span style="color: #dc2626; font-weight: 600;">&bull; Late units</span> &nbsp;
-                    <span style="color: #2563eb; font-weight: 600;">&bull; Prod shortfall</span>
-                  </td>
-                </tr>
-              </table>
-              <div style="text-align: center; margin: 4px 0 6px 0;">
+              {projection_html}
+              <div style="text-align: center; margin: 6px 0 4px 0;">
                 <img src="cid:sparkline7d" alt="7-Day Trend Sparkline" style="width: 560px; max-width: 100%; height: auto; border: 1px solid #e2e8f0; border-radius: 4px; display: block;" />
               </div>
-              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; background: #f8fafc; border-radius: 3px; border: 1px solid #e2e8f0;">
-                <tr style="border-bottom: 1px solid #e2e8f0;">
-                  <td style="padding: 2px 6px; font-size: 8.5px; font-weight: 600; color: #64748b;">Date</td>
-                  {spark_table_headers}
-                </tr>
-                <tr style="border-bottom: 1px solid #f1f5f9;">
-                  <td style="padding: 2px 6px; font-size: 8.5px; font-weight: 600; color: #dc2626;">Late units</td>
-                  {spark_table_late}
-                </tr>
-                <tr>
-                  <td style="padding: 2px 6px; font-size: 8.5px; font-weight: 600; color: #2563eb;">Shortfall</td>
-                  {spark_table_short}
-                </tr>
-              </table>
             </td>
           </tr>
 
-          <!-- 5. Orders to Prioritise Tomorrow -->
+          <!-- 4. Past analysed cases -->
           <tr>
-            <td style="padding: 8px 18px; border-bottom: 1px solid #f1f5f9;">
-              <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 4px;">Orders to Prioritise Tomorrow (Top 5)</div>
-              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse; font-size: 10.5px;">
+            <td style="padding: 6px 16px; border-bottom: 1px solid #f1f5f9;">
+              <div style="font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 3px;">
+                Past analysed cases: What caused what
+              </div>
+              {chains_html}
+            </td>
+          </tr>
+
+          <!-- 5. Focus Tomorrow (Top 5) -->
+          <tr>
+            <td style="padding: 6px 16px; border-bottom: 1px solid #f1f5f9;">
+              <div style="font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 3px;">Focus Tomorrow (Top 5 Priorities)</div>
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
                 <thead>
                   <tr style="background-color: #f8fafc; border-bottom: 1px solid #e2e8f0; text-align: left;">
-                    <th style="padding: 4px 6px; font-size: 9px; color: #64748b;">#</th>
-                    <th style="padding: 4px 6px; font-size: 9px; color: #64748b;">Order</th>
-                    <th style="padding: 4px 6px; font-size: 9px; color: #64748b;">Customer</th>
-                    <th style="padding: 4px 6px; font-size: 9px; color: #64748b;">Product</th>
-                    <th style="padding: 4px 6px; font-size: 9px; color: #64748b;">Due</th>
-                    <th style="padding: 4px 6px; font-size: 9px; color: #64748b;">Status</th>
-                    <th style="padding: 4px 6px; font-size: 9px; color: #64748b;">Reason</th>
+                    <th style="padding: 3px 5px; font-size: 8.5px; color: #64748b;">#</th>
+                    <th style="padding: 3px 5px; font-size: 8.5px; color: #64748b;">Action</th>
+                    <th style="padding: 3px 5px; font-size: 8.5px; color: #64748b;">Owner</th>
+                    <th style="padding: 3px 5px; font-size: 8.5px; color: #64748b;">Due</th>
+                    <th style="padding: 3px 5px; font-size: 8.5px; color: #64748b;">Reason</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {order_rows_html}
+                  {focus_rows_html}
                 </tbody>
               </table>
             </td>
@@ -689,39 +677,22 @@ def render_nightly_digest(
 
           <!-- 6. Supplier Watch -->
           <tr>
-            <td style="padding: 8px 18px; border-bottom: 1px solid #f1f5f9;">
-              <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 4px;">Supplier Watch</div>
+            <td style="padding: 6px 16px; border-bottom: 1px solid #f1f5f9;">
+              <div style="font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 3px;">Supplier Watch</div>
               {supplier_watch_html}
             </td>
           </tr>
 
-          <!-- 7. What Happened and Why -->
+          <!-- 7. Footer with Mandatory Framing -->
           <tr>
-            <td style="padding: 8px 18px; border-bottom: 1px solid #f1f5f9;">
-              <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 4px;">What Happened and Why (Observed Facts)</div>
-              <ul style="margin: 0; padding-left: 16px; font-size: 10.5px; color: #0f172a; line-height: 1.4;">
-                {what_happened_html}
-              </ul>
-            </td>
-          </tr>
-
-          <!-- 8. Causal Findings (Frozen past cases only) -->
-          <tr>
-            <td style="padding: 8px 18px 10px 18px; border-bottom: 1px solid #e2e8f0;">
-              {causal_findings_html}
-            </td>
-          </tr>
-
-          <!-- 9. Footer with Mandatory Framing -->
-          <tr>
-            <td style="padding: 10px 18px 12px 18px; background-color: #f8fafc; font-size: 9.5px; color: #64748b; line-height: 1.45;">
-              <div style="font-weight: 600; color: #334155; margin-bottom: 3px;">
+            <td style="padding: 8px 16px 10px 16px; background-color: #f8fafc; font-size: 9px; color: #64748b; line-height: 1.4;">
+              <div style="font-weight: 600; color: #334155; margin-bottom: 2px;">
                 <strong>Framing:</strong> {RESEARCH_FRAMING}
               </div>
-              <div style="margin-top: 3px;">
+              <div>
                 Simulated data. System knows data up to {as_of.isoformat()} only. &bull; Generated at {sent_time_str}.
               </div>
-              <div style="margin-top: 4px;">
+              <div style="margin-top: 3px;">
                 <a href="{dashboard_url}" style="color: #2563eb; text-decoration: underline; font-weight: 600;">Open SAGE Web Dashboard &rarr;</a>
               </div>
             </td>
@@ -748,17 +719,29 @@ def render_nightly_digest(
             f"• Orders Late    : {kpi_ctx['orders_late_text']}",
             f"• Units Short    : {kpi_ctx['units_short_text']}",
             f"• Materials Low  : {kpi_ctx['materials_low_text']}",
-            "",
-            "ORDERS TO PRIORITISE TOMORROW:",
         ]
-        if orders_top5:
-            for it in orders_top5:
-                text_lines.append(
-                    f"{it['rank']}. {it['order_no']} | {it['customer']} | {it['product']} ({it['quantity']}u) | {it['due_date']} | {it['days_overdue']}"
-                )
-                text_lines.append(f"   Reason: {it['reason']}")
+        if projection_text:
+            text_lines.append(f"• Projection     : {projection_text}")
+
+        text_lines.extend([
+            "",
+            "PAST ANALYSED CASES: WHAT CAUSED WHAT:",
+        ])
+        if cause_chains:
+            for c in cause_chains[:3]:
+                text_lines.append(f"• Chain: {c['chain_text']}")
+                text_lines.append(f"  {c['narrative']}")
+                text_lines.append(f"  Confidence: {c['confidence']} | Model check: {c['model_check']['label']} ({c['model_check']['tag']})")
         else:
-            text_lines.append("No customer orders requiring intervention tomorrow.")
+            text_lines.append("No abnormal causal cascades observed in the trailing 7 days.")
+
+        text_lines.extend([
+            "",
+            "FOCUS TOMORROW (TOP 5 PRIORITIES):",
+        ])
+        for it in focus_items[:5]:
+            text_lines.append(f"{it['rank']}. {it['action']} ({it['owner_role']}) - Due {it['due_time']}")
+            text_lines.append(f"   Reason: {it['reason']}")
 
         text_lines.extend([
             "",
@@ -772,22 +755,9 @@ def render_nightly_digest(
         else:
             text_lines.append("No supplier problems today.")
         if supp_watch["expected_tomorrow"]:
-            text_lines.append("Receipts tomorrow: " + "; ".join(supp_watch["expected_tomorrow"]))
+            text_lines.append("Receipts expected tomorrow: " + "; ".join(supp_watch["expected_tomorrow"]))
 
         text_lines.extend([
-            "",
-            "WHAT HAPPENED AND WHY (OBSERVED FACTS):",
-        ])
-        for b in bullets:
-            text_lines.append(f"• {b} (Seen directly in the data)")
-
-        text_lines.extend([
-            "",
-            "FROM PAST ANALYSED CASES (NOT DETECTED TODAY):",
-            "• Supplier 1 delivery delay (Strong evidence): 7-day supplier delay propagated",
-            "  into assembly starvation in past benchmark evaluation.",
-            "• Note: Evidence is limited: SAGE has been tested on simulated data.",
-            f"  Trust report: {dashboard_url}/insights#trust",
             "",
             "=" * 70,
             f"FRAMING: {RESEARCH_FRAMING}",

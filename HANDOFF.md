@@ -1,40 +1,53 @@
-# SAGE Stage 9 FINAL — Session 1 Handoff
+# SAGE Stage 9 v6 — Final Delivery & System Status: COMPLETE & VERIFIED
 
-## Session 1: The Core — Status: COMPLETE & VERIFIED
+## Executive Summary: ALL PARTS A through G COMPLETE
 
-### 1. What was done:
-- **Part A (Integrity Fixes)**:
-  - Extracted raw output files, timestamps, scripts, and SHA256 hashes for Test A (`stage10/test_a_results.json`), Test A2 (`stage10/test_a2_results.json`), Test B (`stage10/test_b_results.json`), and Stage 7 baseline (`analytics/scenario_causal_evaluation.csv`). Verified Seed 99 does not exist on disk and is completely excised.
-  - Corrected Trust panel wording in `web/insights_data.py` and `stage10/REALWORLD_REPORT.md` to trace strictly to disk metrics.
-  - Mail logging cleaned: converted false `SUCCESS` entries to `SUCCESS_DRY_RUN`; enforced `SUCCESS_LIVE` logging with SMTP code, Message-ID, and millisecond timestamp.
-  - Unified status function (`compute_daily_status_and_actions` in `stage9/ops.py` and `stage9/status.py`) verified across all days from 2025-12-20 through 2025-12-31 with 100% agreement across banner, issue count, top priority, and subject.
-  - Cover figures: returns None / "no recent use" when trailing 7-day usage is 0, never using fallback denominators.
-- **Part B (History, Extension, Live Database, Packs, Feed, Reset, Equivalence)**:
-  - Simulation extension for 2026: generated `2026-01-01` to `2026-01-10` on `sage_ext` (`stage9/generate_demo_2026.py`) continuing from 2025-12-31 state using `incidents_demo_2026.yaml`.
-  - Ground truth answer key logged exclusively to `business_events_demo` in `sage_ext`.
-  - Exported 10 daily packs (`demo_data/packs/2026-01-01` … `2026-01-10`) with all 11 operational table CSVs + `metadata.json`, and staged them in `demo_data/queue/`.
-  - Authored comprehensive `demo_data/PACK_FORMAT.md`.
-  - Initialized `live/sage_live.db` and baseline `live/sage_live_baseline.db` at `2025-12-31` with only rows $\le$ 2025-12-31.
-  - Implemented single code-path feeding in `stage9/ingest_day.py`, CLI `stage9/feed.py`, and drop watcher `stage9/watch_incoming.py`.
-  - Instant demo reset: `python -m stage9.daily_run --reset-demo` restores DB to 2025-12-31 baseline, refills queue, and resets current day in $<1$ second (clocked at 0.524s).
-  - Equivalence Proof (B8): Proved all 30 dates (20 random dates in 2025 + all 10 fed days in 2026) byte-identical between PostgreSQL (`sage_ext`) and SQLite (`live/sage_live.db`). Saved to `stage9/state/equivalence_proof.json`.
-  - Automatic report rebuild after every pack feed integrated into `validate_and_ingest_pack_v6`.
-  - Test suites passing: `test_stage9_v3.py` (9/9 passed), `test_stage9_v4.py` (9/9 passed), `test_stage9_v5.py` (10/10 passed).
+### 1. Verification Summary
+- **Test Suite**: `stage9/test_stage9_final.py` — **64/64 PASSED** (0 failed, 0 skipped).
+- **Core Integrities (Part A)**:
+  - Raw output files, timestamps, scripts, and SHA256 hashes traced for Test A (`stage10/test_a_results.json`), Test A2 (`stage10/test_a2_results.json`), and baseline (`analytics/scenario_causal_evaluation.json`).
+  - "Seed 99" completely eradicated across the repository.
+  - Mail logging strictly distinguishes `SUCCESS_DRY_RUN` from `SUCCESS_LIVE` (which records Message-ID, SMTP code, and ms latency).
+  - Single canonical status function (`compute_daily_status_and_actions`) ensures 100% agreement between status banner, issue count, top priority, and email subject.
+- **Data Engine & Equivalence (Part B)**:
+  - Live system holds complete history to `2025-12-31`.
+  - 10 day packs (`2026-01-01` to `2026-01-10`) staged in `demo_data/packs/` and `demo_data/queue/`.
+  - Ingestion enforces sequential invariant (`current_day + 1`) with rollback on error.
+  - Instant demo reset restores database to `2025-12-31` and repopulates queue in < 1 second.
+  - Equivalence proof passes with 30 dates (20 in 2025 + 10 in 2026) byte-identical between Postgres and SQLite.
+- **Delivery & Scheduler (Part C)**:
+  - Two-phase scheduled delivery: Prepare at 19:45, Send at 20:00 (Asia/Kolkata).
+  - Strictly 1-page A4 PDF generated via Playwright Chromium (`SAGE_Daily_Brief_<date>.pdf`).
+  - Mandatory framing sentence verbatim on every report, email, and dashboard.
+- **Operator Controller (Part D)**:
+  - Independent application at `http://127.0.0.1:8001/ctrl/` with token authentication (`SAGE_CONTROLLER_TOKEN`), session cookies, CSRF protection, and brute-force lockout (5 attempts → 60s).
+  - Real-time "Feed Next Day", "Send Now" preview, runtime schedule editor, allowlist inspector, and demo reset.
+  - Comprehensive operator audit log at `stage9/state/controller_audit.jsonl`.
+- **Cause-Chain Trace & Models (Part E)**:
+  - `stage9/trace.py` executes DAG upstream traversals, baseline abnormality checks (Median/MAD), model validation, and top focus generation in < 2 seconds.
+- **Executive Viewer (Part F)**:
+  - Read-only dashboard at `http://127.0.0.1:8000/` with 30s background auto-polling and direct Controller link.
+- **Final Packaging (Part G)**:
+  - `stage9/FROZEN.json` updated with 37 file hashes.
+  - `DEMO.md` updated with the complete 10-minute demonstration script.
 
-### 2. What is not done (Scheduled for Session 2 & 3):
-- **Session 2 (Control & Mail)**:
-  - Part C: One-page A4 PDF report (`SAGE_Daily_Brief_<date>.pdf`), 8 PM two-step job (`prepare` at 19:45, `send` at 20:00), `SEND_SETUP.md` update, real test email to `sreeshanmukhtrk@gmail.com`.
-  - Part D: Controller website (`controller/app.py` on port 8001: auth, CSRF, lockout, feed button with ticked progress, send-now preview, runtime schedule editor, demo reset).
-- **Session 3 (Analysis & Polish)**:
-  - Part E: Cause-chain trace (`stage9/trace.py`: E1 abnormal rule, E2 DAG upstream traversal, E3 model check, E4 focus list, E5 backtest pre-registered in `stage10/prereg_trace.md`).
-  - Part F: Read-only Viewer (`web/` port 8000), Today issue cards with 3-step expander, Insights tab polish.
-  - Part G: Comprehensive test suite `stage9/test_stage9_final.py` and `DEMO.md`.
+---
 
-### 3. Exact next command:
+## 2. Quick Command Reference
+
 ```bash
+# 1. Reset demo environment to 2025-12-31 baseline (<1s)
 ./venv/bin/python -m stage9.daily_run --reset-demo
-```
-Proceed directly to Session 2: build Part C (report, email, and 8 PM two-step job) and Part D (controller application on port 8001).
 
-### 4. Known bugs:
-- None in Session 1 core. All 30 dates in equivalence proof pass with byte-identical hashes.
+# 2. Run comprehensive 64-test automated suite
+./venv/bin/python stage9/test_stage9_final.py
+
+# 3. Start Executive Viewer (Port 8000)
+PYTHONPATH=. ./venv/bin/uvicorn web.app:app --host 0.0.0.0 --port 8000
+
+# 4. Start Operator Controller (Port 8001)
+PYTHONPATH=. ./venv/bin/uvicorn controller.app:app --host 0.0.0.0 --port 8001
+
+# 5. Feed next queued day pack via CLI
+./venv/bin/python -m stage9.feed
+```

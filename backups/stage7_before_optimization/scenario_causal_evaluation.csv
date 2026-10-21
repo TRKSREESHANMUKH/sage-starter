@@ -1,0 +1,11 @@
+scenario_id,target_node,expected_sources,status_category,graph_distance,top_overall_node,top_overall_score,top_exogenous_node,top_exogenous_score,expected_exogenous_rank
+INC_01,material_101_stock,"supplier_1_po_delay_days,supplier_1_receipt_fill_rate",Below Null Threshold (S_p95=1.230585) / No Measurable Attribution,1.0,supplier_1_receipt_fill_rate,0.675173,supplier_1_receipt_fill_rate,0.675173,1
+INC_02,product_201_due_backlog_units,none,Correct Negative Control,,material_101_stock,0.0,month,0.0,N/A
+INC_03,product_201_fg_stock,product_201_demand_units,Strong Exogenous Attribution,1.0,product_201_demand_units,0.24227,product_201_demand_units,0.24227,1
+INC_04,product_201_actual_production,product_201_capacity_shortfall_units,Strong Exogenous Attribution,1.0,product_201_planned_production,0.781735,product_201_capacity_shortfall_units,0.47802,1
+INC_05,material_101_stock,"supplier_1_po_delay_days,supplier_2_po_delay_days",Ambiguous / Multi-Supplier Feature Competition,1.0,supplier_4_receipt_fill_rate,0.591497,supplier_4_receipt_fill_rate,0.591497,4
+INC_06,product_202_actual_production,"supplier_2_po_delay_days,product_202_capacity_shortfall_units",Below Null Threshold (S_p95=0.177105) / No Measurable Attribution,1.0,material_101_stock,0.0,product_202_capacity_shortfall_units,0.0,1
+INC_07,material_103_stock,supplier_5_receipt_fill_rate,Structurally Un-attributable (Zero Baseline Variance in Training Data),1.0,material_103_stock_lag1,0.0,supplier_1_po_delay_days,0.0,4
+INC_08,material_103_stock,supplier_5_po_delay_days,Safety Stock Absorption (Asymmetric Pass),1.0,material_103_stock_lag1,1.215817,supplier_5_receipt_fill_rate,0.91734,3
+INC_09,material_101_stock,supplier_4_po_delay_days,Below Null Threshold (S_p95=0.177105) / No Measurable Attribution,1.0,supplier_2_po_delay_days,0.800538,supplier_2_po_delay_days,0.800538,3
+INC_10,product_202_demand_units,"month,weekday",Normal-Variation Seasonal Control,1.0,month,0.0,month,0.0,1

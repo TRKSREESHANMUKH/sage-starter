@@ -1,0 +1,62 @@
+{
+  "as_of": "2025-10-07",
+  "metadata": {
+    "as_of_date": "2025-10-07",
+    "rules_source": "stage9/config/rules.yaml",
+    "simulated_data": true
+  },
+  "top_priorities": [
+    {
+      "action": "Fulfil order SO-164 first",
+      "category": "Rule 1",
+      "due_date": "2025-10-07",
+      "rank": 1,
+      "reason": "Order SO-164 for Widget Model X (Product 201) is 5 days overdue (1 units pending, due 2025-10-02)",
+      "role": "Planner"
+    },
+    {
+      "action": "Fulfil order SO-165 first",
+      "category": "Rule 1",
+      "due_date": "2025-10-07",
+      "rank": 2,
+      "reason": "Order SO-165 for Widget Model X (Product 201) is 4 days overdue (16 units pending, due 2025-10-03)",
+      "role": "Planner"
+    },
+    {
+      "action": "Fulfil order SO-167 first",
+      "category": "Rule 1",
+      "due_date": "2025-10-07",
+      "rank": 3,
+      "reason": "Order SO-167 for Widget Model X (Product 201) is 4 days overdue (8 units pending, due 2025-10-03)",
+      "role": "Planner"
+    },
+    {
+      "action": "Expedite urgent replenishment for Steel Rod 10mm (Material 101)",
+      "category": "Rule 3",
+      "due_date": "2025-10-07",
+      "rank": 4,
+      "reason": "Steel Rod 10mm (Material 101) stock at 9 kg is at or below safety stock (50 kg). no recent use",
+      "role": "Procurement"
+    },
+    {
+      "action": "Chase supplier EastCoast Components (PO-18)",
+      "category": "Rule 4",
+      "due_date": "2025-10-07",
+      "rank": 5,
+      "reason": "PO-18 for Steel Rod 10mm (Material 101) (407 units) is 54 days overdue from EastCoast Components",
+      "role": "Procurement"
+    }
+  ],
+  "watchlist": [
+    {
+      "item": "Review capacity & throughput for Widget Model X (Product 201)",
+      "reason": "Widget Model X (Product 201) manufactured 0 units vs 30 planned (30 units shortfall)",
+      "role": "Plant Manager"
+    },
+    {
+      "item": "Review capacity & throughput for Widget Model Y (Product 202)",
+      "reason": "Widget Model Y (Product 202) manufactured 0 units vs 20 planned (20 units shortfall)",
+      "role": "Plant Manager"
+    }
+  ]
+}

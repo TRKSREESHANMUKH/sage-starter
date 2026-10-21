@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}SAGE &bull; Delivery Schedule &amp; Sent Log{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 20px;">
+  <h1 style="font-size: 1.4rem; font-weight: 800;">Delivery Schedule &amp; Audit Log</h1>
+  <p style="font-size: 0.85rem; color: var(--text-muted);">
+    Automated email dispatch schedule configured in <code>stage9/config/schedule.yaml</code> (Timezone: <strong>{{ schedule_info.timezone }}</strong>).
+  </p>
+</div>
+
+<div class="card">
+  <div class="card-title">Configured Automated Jobs</div>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Job Name</th>
+          <th>Cron Expression</th>
+          <th>Schedule Description</th>
+          <th>Masked Recipients</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Findings Brief</strong></td>
+          <td><code>{{ schedule_info.jobs.findings_brief.cron }}</code></td>
+          <td>Daily Morning Exception Dispatch (08:00 AM)</td>
+          <td><code>{{ schedule_info.masked_recipients.findings_brief }}</code></td>
+        </tr>
+        <tr>
+          <td><strong>Nightly Digest</strong></td>
+          <td><code>{{ schedule_info.jobs.nightly_digest.cron }}</code></td>
+          <td>Daily Evening Operations Summary (09:00 PM)</td>
+          <td><code>{{ schedule_info.masked_recipients.nightly_digest }}</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Recent Delivery Telemetry (sent_log.jsonl)</div>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Timestamp (UTC)</th>
+          <th>Job Identifier</th>
+          <th>Simulated As-Of</th>
+          <th>Status</th>
+          <th>Delivery Mode</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in sent_logs %}
+        <tr>
+          <td style="font-size: 0.8rem; color: var(--text-muted);">{{ log.timestamp }}</td>
+          <td><strong>{{ log.job }}</strong></td>
+          <td>{{ log.as_of }}</td>
+          <td>
+            <span class="badge {% if 'SUCCESS' in log.status %}badge-ok{% else %}badge-crit{% endif %}">
+              {{ log.status }}
+            </span>
+          </td>
+          <td><code>{{ log.delivery_mode }}</code></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

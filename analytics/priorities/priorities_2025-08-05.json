@@ -1,0 +1,57 @@
+{
+  "as_of": "2025-08-05",
+  "metadata": {
+    "as_of_date": "2025-08-05",
+    "rules_source": "stage9/config/rules.yaml",
+    "simulated_data": true
+  },
+  "top_priorities": [
+    {
+      "action": "Review capacity & throughput for Widget Model X (Product 201)",
+      "category": "Rule 5",
+      "due_date": "2025-08-05",
+      "rank": 1,
+      "reason": "Widget Model X (Product 201) manufactured 20 units vs 30 planned (10 units shortfall)",
+      "role": "Plant Manager"
+    },
+    {
+      "action": "Prepare dispatch for order SO-141 (Widget Model X (Product 201))",
+      "category": "Upcoming Order",
+      "due_date": "2025-08-07",
+      "rank": 2,
+      "reason": "Order SO-141 (11 units) requested for delivery on 2025-08-07",
+      "role": "Planner"
+    },
+    {
+      "action": "Prepare receipt for PO-17 from Copper & Co",
+      "category": "Incoming Supply",
+      "due_date": "2025-08-07",
+      "rank": 3,
+      "reason": "Expected shipment of 150 units of Copper Wire (Material 103) scheduled for arrival on 2025-08-07",
+      "role": "Procurement"
+    },
+    {
+      "action": "Prepare receipt for PO-18 from EastCoast Components",
+      "category": "Incoming Supply",
+      "due_date": "2025-08-14",
+      "rank": 4,
+      "reason": "Expected shipment of 407 units of Steel Rod 10mm (Material 101) scheduled for arrival on 2025-08-14",
+      "role": "Procurement"
+    },
+    {
+      "action": "Monitor inventory buffer for Steel Rod 10mm (Material 101)",
+      "category": "Buffer Health",
+      "due_date": "2025-08-05",
+      "rank": 5,
+      "reason": "Steel Rod 10mm (Material 101) has 7.8 days of cover remaining (194 kg on hand)",
+      "role": "Procurement"
+    }
+  ],
+  "watchlist": [
+    {
+      "item": "Copper Wire (Material 103) inventory monitoring",
+      "reason": "Copper Wire (Material 103) is at 74 kg (below reorder point 100 kg), tracking 1 open replenishment POs",
+      "role": "Procurement"
+    }
+  ]
+}

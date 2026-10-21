@@ -1,0 +1,64 @@
+{
+  "status": "completed",
+  "dataset": "Walmart Store Sales Forecasting (Store 1, Dept 72: Consumer Electronics)",
+  "scope": "Demand-side calendar plausibility check only; does not evaluate supply chain or inventory mechanisms.",
+  "calibration_period": {
+    "period": "2010 (Year 1)",
+    "start": "2010-02-05",
+    "end": "2010-12-31",
+    "weeks_count": 48,
+    "null_p95_threshold": 25497.78,
+    "null_mean_deviation": 9034.66
+  },
+  "evaluation_period": {
+    "period": "2011 (Year 2)",
+    "start": "2011-01-07",
+    "end": "2011-12-30",
+    "weeks_count": 52,
+    "documented_holiday_events_count": 4,
+    "holiday_detection_rate_pct": 25.0,
+    "ordinary_weeks_count": 48,
+    "ordinary_weeks_false_alarm_rate_pct": 2.1,
+    "mean_event_attribution_score": 49345.39,
+    "mean_ordinary_attribution_score": 7399.62,
+    "signal_to_noise_ratio": 6.67,
+    "event_details": [
+      {
+        "date": "2011-02-11",
+        "event_name": "Super Bowl",
+        "actual_sales": 71013.56,
+        "expected_baseline": 45751.12,
+        "attribution_score": 25262.44,
+        "cleared_null_p95": false,
+        "status": "WITHIN NULL"
+      },
+      {
+        "date": "2011-09-09",
+        "event_name": "Labor Day",
+        "actual_sales": 38861.38,
+        "expected_baseline": 44942.54,
+        "attribution_score": 6081.16,
+        "cleared_null_p95": false,
+        "status": "WITHIN NULL"
+      },
+      {
+        "date": "2011-11-25",
+        "event_name": "Thanksgiving / Black Friday",
+        "actual_sales": 203670.47,
+        "expected_baseline": 44101.76,
+        "attribution_score": 159568.71,
+        "cleared_null_p95": true,
+        "status": "FLAGGED ABOVE NULL"
+      },
+      {
+        "date": "2011-12-30",
+        "event_name": "Christmas",
+        "actual_sales": 59732.61,
+        "expected_baseline": 53263.37,
+        "attribution_score": 6469.24,
+        "cleared_null_p95": false,
+        "status": "WITHIN NULL"
+      }
+    ]
+  }
+}

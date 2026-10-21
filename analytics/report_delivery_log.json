@@ -1,0 +1,268 @@
+[
+  {
+    "message_id": "<179161691931.26280.2353829844348996659@sage.internal>",
+    "timestamp": "2026-10-10T07:21:59.312173+00:00",
+    "subject": "Dry Run Subject",
+    "recipients": [
+      "supply-chain-ops@internal.corp"
+    ],
+    "from": "sage-causal@internal.corp",
+    "dry_run": true,
+    "status": "DRY_RUN_SAVED"
+  },
+  {
+    "message_id": "<179161691931.26280.17662944978659052729@sage.internal>",
+    "timestamp": "2026-10-10T07:21:59.321955+00:00",
+    "subject": "SAGE Causal Attribution Report 2026-10-10 | 1 HIGH-conf, 2 MEDIUM-conf",
+    "recipients": [
+      "supply-chain-ops@internal.corp"
+    ],
+    "from": "sage-causal@internal.corp",
+    "dry_run": true,
+    "status": "DRY_RUN_SAVED"
+  },
+  {
+    "message_id": "<179161809029.26610.14651442674837481750@sage.internal>",
+    "timestamp": "2026-10-10T07:41:30.297424+00:00",
+    "subject": "SAGE Causal Attribution Report 2026-10-10 | 1 HIGH-conf, 2 MEDIUM-conf",
+    "recipients": [
+      "supply-chain-ops@internal.corp"
+    ],
+    "from": "sage-causal@internal.corp",
+    "dry_run": true,
+    "status": "DRY_RUN_SAVED"
+  },
+  {
+    "message_id": "<179161856407.26805.18088106418302746253@sage.internal>",
+    "timestamp": "2026-10-10T07:49:24.072106+00:00",
+    "subject": "Dry Run Subject",
+    "recipients": [
+      "supply-chain-ops@internal.corp"
+    ],
+    "from": "sage-causal@internal.corp",
+    "dry_run": true,
+    "status": "DRY_RUN_SAVED"
+  },
+  {
+    "message_id": "<179161856408.26805.14248607947373142211@sage.internal>",
+    "timestamp": "2026-10-10T07:49:24.081596+00:00",
+    "subject": "SAGE Operations Executive Briefing 2026-10-10 | 2 Action Required",
+    "recipients": [
+      "supply-chain-ops@internal.corp"
+    ],
+    "from": "sage-causal@internal.corp",
+    "dry_run": true,
+    "status": "DRY_RUN_SAVED"
+  },
+  {
+    "message_id": "<179161860707.26830.7950857477582675804@sage.internal>",
+    "timestamp": "2026-10-10T07:50:07.074760+00:00",
+    "subject": "Dry Run Subject",
+    "recipients": [
+      "supply-chain-ops@internal.corp"
+    ],
+    "from": "sage-causal@internal.corp",
+    "dry_run": true,
+    "status": "DRY_RUN_SAVED"
+  },
+  {
+    "message_id": "<179161860708.26830.11794046864720173976@sage.internal>",
+    "timestamp": "2026-10-10T07:50:07.085614+00:00",
+    "subject": "SAGE Causal Attribution Report 2026-10-10 | 2 Action Required",
+    "recipients": [
+      "supply-chain-ops@internal.corp"
+    ],
+    "from": "sage-causal@internal.corp",
+    "dry_run": true,
+    "status": "DRY_RUN_SAVED"
+  },
+  {
+    "message_id": "<179161861627.26851.10536423519521019474@sage.internal>",
+    "timestamp": "2026-10-10T07:50:16.274712+00:00",
+    "subject": "SAGE Causal Attribution Report 2026-10-10 | 2 Action Required",
+    "recipients": [
+      "supply-chain-ops@internal.corp"
+    ],
+    "from": "sage-causal@internal.corp",
+    "dry_run": true,
+    "status": "DRY_RUN_SAVED"
+  },
+  {
+    "timestamp": "2026-10-10T17:36:14.288980+00:00",
+    "job": "findings_brief",
+    "as_of": "2025-01-15",
+    "recipients": [
+      "operations-leadership@sage-plant.local"
+    ],
+    "status": "SUCCESS_DRY_RUN",
+    "delivery_mode": "dry_run"
+  },
+  {
+    "timestamp": "2026-10-10T17:36:15.641083+00:00",
+    "job": "nightly_digest",
+    "as_of": "2025-01-15",
+    "recipients": [
+      "plant-manager@sage-plant.local",
+      "executive-brief@sage-plant.local"
+    ],
+    "status": "SUCCESS_DRY_RUN",
+    "delivery_mode": "dry_run"
+  },
+  {
+    "timestamp": "2026-10-10T17:36:17.185513+00:00",
+    "job": "test_send",
+    "as_of": "2025-01-15",
+    "recipients": [
+      "dev_test@example.com"
+    ],
+    "status": "SUCCESS_DRY_RUN",
+    "delivery_mode": "dry_run"
+  },
+  {
+    "timestamp": "2026-10-10T17:45:58.777680+00:00",
+    "job": "nightly_digest",
+    "as_of": "2025-12-01",
+    "recipients": [
+      "plant-manager@sage-plant.local",
+      "executive-brief@sage-plant.local"
+    ],
+    "status": "SUCCESS_DRY_RUN",
+    "delivery_mode": "dry_run"
+  },
+  {
+    "timestamp": "2026-10-10T17:47:16.869724+00:00",
+    "job": "nightly_digest",
+    "as_of": "2025-12-01",
+    "recipients": [
+      "plant-manager@sage-plant.local",
+      "executive-brief@sage-plant.local"
+    ],
+    "status": "SUCCESS_DRY_RUN",
+    "delivery_mode": "dry_run"
+  },
+  {
+    "timestamp": "2026-10-10T17:48:03.074828+00:00",
+    "job": "nightly_digest",
+    "as_of": "2025-12-01",
+    "recipients": [
+      "plant-manager@sage-plant.local",
+      "executive-brief@sage-plant.local"
+    ],
+    "status": "SUCCESS_DRY_RUN",
+    "delivery_mode": "dry_run"
+  },
+  {
+    "timestamp": "2026-10-10T18:28:21.594231+00:00",
+    "job": "nightly_digest",
+    "as_of": "2025-12-01",
+    "recipients": [
+      "plant-manager@sage-plant.local",
+      "executive-brief@sage-plant.local"
+    ],
+    "status": "SUCCESS_DRY_RUN",
+    "delivery_mode": "dry_run"
+  },
+  {
+    "timestamp": "2026-10-11T07:43:54.410758+00:00",
+    "job": "nightly_digest",
+    "as_of": "2025-01-22",
+    "recipients": [
+      "plant-manager@sage-plant.local"
+    ],
+    "status": "SUCCESS_DRY_RUN",
+    "delivery_mode": "dry_run"
+  },
+  {
+    "timestamp": "2026-10-11T07:45:28.801573+00:00",
+    "job": "nightly_digest",
+    "as_of": "2025-12-01",
+    "recipients": [
+      "plant-manager@sage-plant.local",
+      "executive-brief@sage-plant.local"
+    ],
+    "status": "SUCCESS_DRY_RUN",
+    "delivery_mode": "dry_run"
+  },
+  {
+    "timestamp": "2026-10-11T08:13:51.675746+00:00",
+    "job": "nightly_digest",
+    "as_of": "2025-02-03",
+    "recipients": [
+      "PUT_REAL_ADDRESSES_HERE"
+    ],
+    "status": "SUCCESS_DRY_RUN",
+    "delivery_mode": "dry_run"
+  },
+  {
+    "timestamp": "2026-10-11T08:13:51.679794+00:00",
+    "job": "nightly_digest",
+    "as_of": "2025-02-03",
+    "recipients": [
+      "PUT_REAL_ADDRESSES_HERE"
+    ],
+    "status": "SUCCESS",
+    "delivery_mode": "run_due",
+    "extra_key": "nightly_digest:real_2026-10-11"
+  },
+  {
+    "timestamp": "2026-10-11T08:14:10.705753+00:00",
+    "job": "test_send",
+    "as_of": "2025-02-04",
+    "recipients": [
+      "dev_test@example.com"
+    ],
+    "status": "SUCCESS_DRY_RUN",
+    "delivery_mode": "dry_run"
+  },
+  {
+    "timestamp": "2026-10-11T16:26:35.161178+00:00",
+    "job": "nightly_digest",
+    "as_of": "2025-02-03",
+    "recipients": [
+      "PUT_REAL_ADDRESSES_HERE"
+    ],
+    "status": "REFUSED_PLACEHOLDER",
+    "delivery_mode": "refused"
+  },
+  {
+    "timestamp": "2026-10-11T16:29:47.579301+00:00",
+    "job": "test_send",
+    "as_of": "2025-02-03",
+    "recipients": [
+      "thotaramakrishnasreeshanmukh@gmail.com"
+    ],
+    "status": "SUCCESS_DRY_RUN",
+    "delivery_mode": "dry_run"
+  },
+  {
+    "timestamp": "2026-10-11T16:30:30.017829+00:00",
+    "job": "test_send",
+    "as_of": "2025-02-03",
+    "recipients": [
+      "thotaramakrishnasreeshanmukh@gmail.com"
+    ],
+    "status": "SUCCESS",
+    "delivery_mode": "dry_run"
+  },
+  {
+    "timestamp": "2026-10-17T16:50:26.451487+00:00",
+    "job": "nightly_digest",
+    "as_of": "2025-12-31",
+    "recipients": [
+      "sreeshanmukhtrk@gmail.com"
+    ],
+    "status": "SUCCESS_DRY_RUN",
+    "delivery_mode": "dry_run"
+  },
+  {
+    "timestamp": "2026-10-17T16:50:26.456498+00:00",
+    "job": "nightly_digest",
+    "as_of": "2025-12-31",
+    "recipients": [
+      "sreeshanmukhtrk@gmail.com"
+    ],
+    "status": "SUCCESS",
+    "delivery_mode": "run_due",
+    "extra_key": "nightly_digest:real_2026-10-17"
+  }
+]

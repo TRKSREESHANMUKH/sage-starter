@@ -163,7 +163,14 @@ def prepare_daily_run(as_of: Optional[date] = None, force_pack: Optional[Path] =
     4. Sends nothing!
     """
     no_new_data = False
-    pack_to_ingest = force_pack or get_next_queue_pack()
+    if force_pack:
+        pack_to_ingest = force_pack
+    elif as_of is not None and as_of <= get_current_day():
+        pack_to_ingest = None
+        target_as_of = as_of
+        no_new_data = False
+    else:
+        pack_to_ingest = get_next_queue_pack()
 
     if pack_to_ingest:
         logger.info("Ingesting operational pack: %s", pack_to_ingest)

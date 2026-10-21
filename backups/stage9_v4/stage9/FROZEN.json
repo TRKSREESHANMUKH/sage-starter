@@ -1,0 +1,28 @@
+{
+  "stage": "Stage 9 v4 (Insights Tab + v3 Fixes + Site-Calibrated Protocol)",
+  "frozen_at": "2026-10-11T18:05:14.112552+00:00",
+  "framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+  "files": {
+    "stage9/SEND_SETUP.md": "bf32ebf1796e263e0d27803cd8a583e269a578fed033e57e14018d4e21a2d987",
+    "stage9/clock.py": "0209b5c490f9bb6a9244fcdfc4406e4de6ca36337dccd66783cc3d544e22ad63",
+    "stage9/config/rules.yaml": "6d7d3588908e275a0d544b3365ee15b2733e976e7a0506504a072dde1e3748ef",
+    "stage9/config/schedule.yaml": "349d68ab9ad11d2ba67f2b67a307edcfd1a46ca51be9751bf7cfe89d673e6b0b",
+    "stage9/narrate.py": "b256c3c9d795045e681a1a252c3943fe28c2a744a6018e7297f3918b052f3858",
+    "stage9/priorities.py": "fa07c46f2a890135b9259d7b4354b313d0d65ea438c871f3f0af86274cf30463",
+    "stage9/render_email.py": "fd6106a8954b9bd0e8b290e596444cae7078bbfa9c1f599c2f793033a0d6cf7a",
+    "stage9/report_builder.py": "5b7c1d9b5f7b43eac4a4d13c8df76e5b914d38a5184f219e082cfe2fb0c98cb6",
+    "stage9/scheduler.py": "f2cc5e0c2067e946bcb9da968c89ef467966f53a2d4e27668965ed7fc0fa04b2",
+    "stage9/smtp_sender.py": "bddb991271694953e25fe2b10b19d1d1535b45e11ef1432dd3c9045b42e46444",
+    "stage9/snapshot.py": "4c683afe965025760245015ac3b504bef2db2e229bf34221d6785c24d25d0e5e",
+    "stage9/status.py": "a1e0735ed82d1aff76eab0d38d01a535418a9e09e86fb37ae74b2aab63e9bd55",
+    "stage9/test_stage9_v3.py": "b8881b04971b73894010dc8a72b184828433f62fd0205dd63df1a9b4883d7c2d",
+    "stage9/test_stage9_v4.py": "6907add4e032173892bd1ab36be018246f119921a40b1f3c32c0acd2afb2b7fd",
+    "web/app.py": "6fbd7f24308fb056dbf9fdc1fe8bce0efd70be06f42308b3f5ef259b25ee8255",
+    "web/insights_data.py": "07c299abb7c619fe6dba34c9de89c1ada86d4d462677333420702f1da165ab79",
+    "web/one_page_data.py": "ce0e1e89e49fbad302e963f48be064ef5081464805e25d47301942c25c9f33fb",
+    "web/research_view.py": "a07edd895d5641c09b57b4cf548285553a8a11040f1372fa4bee4e7ffb20f870",
+    "web/templates/base.html": "864eea76ccd61eb51a1a61fe579ef42e7e28416dc2974c2febba7f45adf6ce2d",
+    "web/templates/home.html": "7a2a5a8935a1fda178c54a6a64f62fdbeb5227b33ef82b7e06caaf1f6603776d",
+    "web/templates/insights.html": "690e623e5dcb1a2a51622d97956f75c4e1be2b71979a0035d99d2a27f9705f9f"
+  }
+}

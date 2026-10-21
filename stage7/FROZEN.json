@@ -1,0 +1,25 @@
+{
+  "frozen_at": "2026-10-10T06:43:42.998357Z",
+  "stage": 7,
+  "research_framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+  "fitted_causal_model_sha256": "2d3249899bdde1ff9da9f33519ea67b17ccef9e0bc1372d6b47b31d63338e192",
+  "causal_attribution_results_sha256": "7e7d8fdd3ac6d65865dcd1a6bdc681951e8f9540b0a721e4be45860cbffd977b",
+  "null_thresholds": {
+    "M1_peak_p95": 0.218006,
+    "M2_short_p95": 0.922611,
+    "M2_long_p95": 1.092598
+  },
+  "scenarios_frozen": [
+    "INC_01",
+    "INC_02",
+    "INC_03",
+    "INC_04",
+    "INC_05",
+    "INC_06",
+    "INC_07",
+    "INC_08",
+    "INC_09",
+    "INC_10"
+  ],
+  "do_not_modify": "Stages 1-7 code, DAG, thresholds, panels and schema are frozen. Stage 8 reads this file to validate prerequisites."
+}

@@ -1,0 +1,899 @@
+[
+  {
+    "scenario_id": "INC_01",
+    "target_node": "material_101_stock",
+    "expected_sources": [
+      "supplier_1_po_delay_days",
+      "supplier_1_receipt_fill_rate"
+    ],
+    "expected_path_desc": "Supplier 1 delay -> Material 101 stock",
+    "status_category": "Below Null Threshold (S_p95=1.230585) / No Measurable Attribution",
+    "graph_distance": 1,
+    "relationship_type": "Direct (d=1)",
+    "top_overall_node": "supplier_1_receipt_fill_rate",
+    "top_overall_score": 0.675173,
+    "top_exogenous_node": "supplier_1_receipt_fill_rate",
+    "top_exogenous_score": 0.675173,
+    "expected_exogenous_rank": 1,
+    "top_5_attributed_nodes": [
+      {
+        "supplier_1_receipt_fill_rate": 0.675173
+      },
+      {
+        "supplier_2_receipt_fill_rate": 0.648708
+      },
+      {
+        "supplier_1_po_delay_days": 0.5594
+      },
+      {
+        "supplier_4_receipt_fill_rate": 0.276253
+      },
+      {
+        "material_101_stock_lag1": -0.134824
+      }
+    ],
+    "top_3_exogenous_nodes": [
+      {
+        "supplier_1_receipt_fill_rate": 0.675173
+      },
+      {
+        "supplier_2_receipt_fill_rate": 0.648708
+      },
+      {
+        "supplier_1_po_delay_days": 0.5594
+      }
+    ],
+    "top_3_state_lags": [
+      {
+        "material_101_stock_lag1": -0.134824
+      }
+    ],
+    "panel_perturbations": {
+      "supplier_1_po_delay_days": {
+        "mean_diff": 0.1765,
+        "max_diff": 2.0
+      },
+      "supplier_1_receipt_event_flag": {
+        "mean_diff": 0.0588,
+        "max_diff": 1.0
+      },
+      "supplier_4_po_delay_days": {
+        "mean_diff": 0.1765,
+        "max_diff": 2.0
+      },
+      "supplier_4_receipt_event_flag": {
+        "mean_diff": 0.0588,
+        "max_diff": 1.0
+      },
+      "supplier_4_receipt_fill_rate": {
+        "mean_diff": 0.0199,
+        "max_diff": 0.3375
+      },
+      "material_101_stock": {
+        "mean_diff": 31.5294,
+        "max_diff": 320.0
+      },
+      "material_101_days_of_cover": {
+        "mean_diff": 1.1471,
+        "max_diff": 11.32
+      },
+      "material_101_open_po_flag": {
+        "mean_diff": 0.1765,
+        "max_diff": 1.0
+      }
+    }
+  },
+  {
+    "scenario_id": "INC_02",
+    "target_node": "product_201_due_backlog_units",
+    "expected_sources": [
+      "none"
+    ],
+    "expected_path_desc": "Negative control: 100% panel identity, zero anomaly",
+    "status_category": "Correct Negative Control",
+    "graph_distance": null,
+    "relationship_type": "Unconnected",
+    "top_overall_node": "material_101_stock",
+    "top_overall_score": 0.0,
+    "top_exogenous_node": "month",
+    "top_exogenous_score": 0.0,
+    "expected_exogenous_rank": "N/A",
+    "top_5_attributed_nodes": [
+      {
+        "material_101_stock": 0.0
+      },
+      {
+        "material_101_stock_lag1": 0.0
+      },
+      {
+        "material_102_stock": 0.0
+      },
+      {
+        "material_102_stock_lag1": 0.0
+      },
+      {
+        "material_103_stock": 0.0
+      }
+    ],
+    "top_3_exogenous_nodes": [
+      {
+        "month": 0.0
+      },
+      {
+        "product_201_capacity_shortfall_units": 0.0
+      },
+      {
+        "product_201_demand_units": 0.0
+      }
+    ],
+    "top_3_state_lags": [
+      {
+        "material_101_stock_lag1": 0.0
+      },
+      {
+        "material_102_stock_lag1": 0.0
+      },
+      {
+        "material_103_stock_lag1": 0.0
+      }
+    ],
+    "panel_perturbations": {}
+  },
+  {
+    "scenario_id": "INC_03",
+    "target_node": "product_201_fg_stock",
+    "expected_sources": [
+      "product_201_demand_units"
+    ],
+    "expected_path_desc": "Demand spike -> Product 201 FG stock depletion",
+    "status_category": "Strong Exogenous Attribution",
+    "graph_distance": 1,
+    "relationship_type": "Direct (d=1)",
+    "top_overall_node": "product_201_demand_units",
+    "top_overall_score": 0.24227,
+    "top_exogenous_node": "product_201_demand_units",
+    "top_exogenous_score": 0.24227,
+    "expected_exogenous_rank": 1,
+    "top_5_attributed_nodes": [
+      {
+        "product_201_demand_units": 0.24227
+      },
+      {
+        "supplier_5_receipt_fill_rate": 0.205614
+      },
+      {
+        "supplier_2_po_delay_days": 0.205039
+      },
+      {
+        "material_103_stock_lag1": 0.204429
+      },
+      {
+        "supplier_5_po_delay_days": 0.187042
+      }
+    ],
+    "top_3_exogenous_nodes": [
+      {
+        "product_201_demand_units": 0.24227
+      },
+      {
+        "supplier_5_receipt_fill_rate": 0.205614
+      },
+      {
+        "supplier_2_po_delay_days": 0.205039
+      }
+    ],
+    "top_3_state_lags": [
+      {
+        "material_103_stock_lag1": 0.204429
+      },
+      {
+        "product_201_fg_stock_lag1": -0.05497
+      },
+      {
+        "material_102_stock_lag1": 0.052209
+      }
+    ],
+    "panel_perturbations": {
+      "product_201_fg_stock": {
+        "mean_diff": 96.4,
+        "max_diff": 167.0
+      },
+      "product_201_demand_units": {
+        "mean_diff": 8.35,
+        "max_diff": 45.0
+      },
+      "product_202_fg_stock": {
+        "mean_diff": 9.05,
+        "max_diff": 16.0
+      },
+      "product_202_demand_units": {
+        "mean_diff": 0.8,
+        "max_diff": 16.0
+      }
+    }
+  },
+  {
+    "scenario_id": "INC_04",
+    "target_node": "product_201_actual_production",
+    "expected_sources": [
+      "product_201_capacity_shortfall_units"
+    ],
+    "expected_path_desc": "Capacity disruption -> Product 201 capacity shortfall",
+    "status_category": "Strong Exogenous Attribution",
+    "graph_distance": 1,
+    "relationship_type": "Direct (d=1)",
+    "top_overall_node": "product_201_planned_production",
+    "top_overall_score": 0.781735,
+    "top_exogenous_node": "product_201_capacity_shortfall_units",
+    "top_exogenous_score": 0.47802,
+    "expected_exogenous_rank": 1,
+    "top_5_attributed_nodes": [
+      {
+        "product_201_planned_production": 0.781735
+      },
+      {
+        "product_201_capacity_shortfall_units": 0.47802
+      },
+      {
+        "supplier_3_receipt_fill_rate": 0.384474
+      },
+      {
+        "supplier_4_po_delay_days": 0.281683
+      },
+      {
+        "material_103_stock": 0.278013
+      }
+    ],
+    "top_3_exogenous_nodes": [
+      {
+        "product_201_capacity_shortfall_units": 0.47802
+      },
+      {
+        "supplier_3_receipt_fill_rate": 0.384474
+      },
+      {
+        "supplier_4_po_delay_days": 0.281683
+      }
+    ],
+    "top_3_state_lags": [
+      {
+        "material_101_stock_lag1": 0.216302
+      },
+      {
+        "material_103_stock_lag1": -0.045602
+      },
+      {
+        "material_102_stock_lag1": 0.039092
+      }
+    ],
+    "panel_perturbations": {
+      "supplier_3_po_delay_days": {
+        "mean_diff": 0.3,
+        "max_diff": 3.0
+      },
+      "supplier_4_po_delay_days": {
+        "mean_diff": 0.5,
+        "max_diff": 4.0
+      },
+      "supplier_4_receipt_event_flag": {
+        "mean_diff": 0.05,
+        "max_diff": 1.0
+      },
+      "supplier_4_receipt_fill_rate": {
+        "mean_diff": 0.0144,
+        "max_diff": 0.2886
+      },
+      "material_101_stock": {
+        "mean_diff": 9.7,
+        "max_diff": 260.0
+      },
+      "material_101_days_of_cover": {
+        "mean_diff": 0.6145,
+        "max_diff": 12.25
+      },
+      "material_101_open_po_flag": {
+        "mean_diff": 0.2,
+        "max_diff": 1.0
+      },
+      "material_101_reorder_triggered": {
+        "mean_diff": 0.0,
+        "max_diff": 1.0
+      },
+      "material_102_stock": {
+        "mean_diff": 25.0,
+        "max_diff": 40.0
+      },
+      "material_102_days_of_cover": {
+        "mean_diff": 3.6705,
+        "max_diff": 5.33
+      },
+      "material_102_open_po_flag": {
+        "mean_diff": 0.2,
+        "max_diff": 1.0
+      },
+      "material_102_reorder_triggered": {
+        "mean_diff": 0.0,
+        "max_diff": 1.0
+      },
+      "material_103_stock": {
+        "mean_diff": 7.5,
+        "max_diff": 12.0
+      },
+      "material_103_days_of_cover": {
+        "mean_diff": 1.742,
+        "max_diff": 2.53
+      },
+      "product_201_fg_stock": {
+        "mean_diff": 25.0,
+        "max_diff": 40.0
+      },
+      "product_201_actual_production": {
+        "mean_diff": 1.0,
+        "max_diff": 20.0
+      },
+      "product_201_production_shortfall": {
+        "mean_diff": 1.0,
+        "max_diff": 20.0
+      },
+      "product_201_capacity_shortfall_units": {
+        "mean_diff": 2.0,
+        "max_diff": 20.0
+      }
+    }
+  },
+  {
+    "scenario_id": "INC_05",
+    "target_node": "material_101_stock",
+    "expected_sources": [
+      "supplier_1_po_delay_days",
+      "supplier_2_po_delay_days"
+    ],
+    "expected_path_desc": "Overlapping supplier delays -> Supplier 1 & 2 delays -> Material 101 stock",
+    "status_category": "Ambiguous / Multi-Supplier Feature Competition",
+    "graph_distance": 1,
+    "relationship_type": "Direct (d=1)",
+    "top_overall_node": "supplier_4_receipt_fill_rate",
+    "top_overall_score": 0.591497,
+    "top_exogenous_node": "supplier_4_receipt_fill_rate",
+    "top_exogenous_score": 0.591497,
+    "expected_exogenous_rank": 4,
+    "top_5_attributed_nodes": [
+      {
+        "supplier_4_receipt_fill_rate": 0.591497
+      },
+      {
+        "supplier_1_receipt_fill_rate": 0.547876
+      },
+      {
+        "supplier_2_receipt_fill_rate": 0.291541
+      },
+      {
+        "material_101_stock_lag1": 0.255189
+      },
+      {
+        "supplier_2_po_delay_days": 0.243433
+      }
+    ],
+    "top_3_exogenous_nodes": [
+      {
+        "supplier_4_receipt_fill_rate": 0.591497
+      },
+      {
+        "supplier_1_receipt_fill_rate": 0.547876
+      },
+      {
+        "supplier_2_receipt_fill_rate": 0.291541
+      }
+    ],
+    "top_3_state_lags": [
+      {
+        "material_101_stock_lag1": 0.255189
+      }
+    ],
+    "panel_perturbations": {
+      "supplier_1_po_delay_days": {
+        "mean_diff": 1.3333,
+        "max_diff": 7.0
+      },
+      "supplier_1_receipt_event_flag": {
+        "mean_diff": 0.0476,
+        "max_diff": 1.0
+      },
+      "supplier_2_po_delay_days": {
+        "mean_diff": 0.0476,
+        "max_diff": 1.0
+      },
+      "supplier_2_receipt_event_flag": {
+        "mean_diff": 0.0476,
+        "max_diff": 1.0
+      },
+      "supplier_4_po_delay_days": {
+        "mean_diff": 0.4762,
+        "max_diff": 4.0
+      },
+      "supplier_4_receipt_event_flag": {
+        "mean_diff": 0.0952,
+        "max_diff": 1.0
+      },
+      "supplier_4_receipt_fill_rate": {
+        "mean_diff": 0.0135,
+        "max_diff": 0.2825
+      },
+      "supplier_5_po_delay_days": {
+        "mean_diff": 0.1429,
+        "max_diff": 2.0
+      },
+      "material_101_stock": {
+        "mean_diff": 23.8095,
+        "max_diff": 226.0
+      },
+      "material_101_days_of_cover": {
+        "mean_diff": 1.2457,
+        "max_diff": 12.78
+      },
+      "material_101_open_po_flag": {
+        "mean_diff": 0.0952,
+        "max_diff": 1.0
+      },
+      "material_103_stock": {
+        "mean_diff": 7.0952,
+        "max_diff": 149.0
+      },
+      "material_103_days_of_cover": {
+        "mean_diff": 2.0914,
+        "max_diff": 43.92
+      },
+      "material_103_open_po_flag": {
+        "mean_diff": 0.0476,
+        "max_diff": 1.0
+      }
+    }
+  },
+  {
+    "scenario_id": "INC_06",
+    "target_node": "product_202_actual_production",
+    "expected_sources": [
+      "supplier_2_po_delay_days",
+      "product_202_capacity_shortfall_units"
+    ],
+    "expected_path_desc": "Branch A (Supplier 2 delay) & Branch B (Product 202 capacity shortfall)",
+    "status_category": "Below Null Threshold (S_p95=0.177105) / No Measurable Attribution",
+    "graph_distance": 1,
+    "relationship_type": "Direct (d=1)",
+    "top_overall_node": "material_101_stock",
+    "top_overall_score": 0.0,
+    "top_exogenous_node": "product_202_capacity_shortfall_units",
+    "top_exogenous_score": 0.0,
+    "expected_exogenous_rank": 1,
+    "top_5_attributed_nodes": [
+      {
+        "material_101_stock": 0.0
+      },
+      {
+        "material_101_stock_lag1": 0.0
+      },
+      {
+        "material_103_stock": 0.0
+      },
+      {
+        "material_103_stock_lag1": 0.0
+      },
+      {
+        "product_202_capacity_shortfall_units": 0.0
+      }
+    ],
+    "top_3_exogenous_nodes": [
+      {
+        "product_202_capacity_shortfall_units": 0.0
+      },
+      {
+        "supplier_1_po_delay_days": 0.0
+      },
+      {
+        "supplier_1_receipt_fill_rate": 0.0
+      }
+    ],
+    "top_3_state_lags": [
+      {
+        "material_101_stock_lag1": 0.0
+      },
+      {
+        "material_103_stock_lag1": 0.0
+      }
+    ],
+    "panel_perturbations": {
+      "supplier_4_po_delay_days": {
+        "mean_diff": 0.8333,
+        "max_diff": 5.0
+      },
+      "supplier_4_receipt_event_flag": {
+        "mean_diff": 0.0556,
+        "max_diff": 1.0
+      },
+      "supplier_4_receipt_fill_rate": {
+        "mean_diff": 0.0123,
+        "max_diff": 0.2216
+      },
+      "material_101_stock": {
+        "mean_diff": 46.5,
+        "max_diff": 319.0
+      },
+      "material_101_days_of_cover": {
+        "mean_diff": 2.3828,
+        "max_diff": 18.04
+      },
+      "material_101_open_po_flag": {
+        "mean_diff": 0.3333,
+        "max_diff": 1.0
+      },
+      "material_103_stock": {
+        "mean_diff": 9.7222,
+        "max_diff": 10.0
+      },
+      "material_103_days_of_cover": {
+        "mean_diff": 2.5378,
+        "max_diff": 2.95
+      },
+      "product_201_capacity_shortfall_units": {
+        "mean_diff": 0.5,
+        "max_diff": 9.0
+      },
+      "product_202_fg_stock": {
+        "mean_diff": 19.4444,
+        "max_diff": 20.0
+      },
+      "product_202_actual_production": {
+        "mean_diff": 1.1111,
+        "max_diff": 10.0
+      },
+      "product_202_production_shortfall": {
+        "mean_diff": 1.1111,
+        "max_diff": 10.0
+      },
+      "product_202_capacity_shortfall_units": {
+        "mean_diff": 1.1111,
+        "max_diff": 10.0
+      }
+    }
+  },
+  {
+    "scenario_id": "INC_07",
+    "target_node": "material_103_stock",
+    "expected_sources": [
+      "supplier_5_receipt_fill_rate"
+    ],
+    "expected_path_desc": "Partial receipt -> Supplier 5 fill rate -> Material 103 stock",
+    "status_category": "Structurally Un-attributable (Zero Baseline Variance in Training Data)",
+    "graph_distance": 1,
+    "relationship_type": "Direct (d=1)",
+    "top_overall_node": "material_103_stock_lag1",
+    "top_overall_score": 0.0,
+    "top_exogenous_node": "supplier_1_po_delay_days",
+    "top_exogenous_score": 0.0,
+    "expected_exogenous_rank": 4,
+    "top_5_attributed_nodes": [
+      {
+        "material_103_stock_lag1": 0.0
+      },
+      {
+        "supplier_1_po_delay_days": 0.0
+      },
+      {
+        "supplier_1_receipt_fill_rate": 0.0
+      },
+      {
+        "supplier_5_po_delay_days": 0.0
+      },
+      {
+        "supplier_5_receipt_fill_rate": 0.0
+      }
+    ],
+    "top_3_exogenous_nodes": [
+      {
+        "supplier_1_po_delay_days": 0.0
+      },
+      {
+        "supplier_1_receipt_fill_rate": 0.0
+      },
+      {
+        "supplier_5_po_delay_days": 0.0
+      }
+    ],
+    "top_3_state_lags": [
+      {
+        "material_103_stock_lag1": 0.0
+      }
+    ],
+    "panel_perturbations": {
+      "material_103_open_po_flag": {
+        "mean_diff": 0.05,
+        "max_diff": 1.0
+      },
+      "material_103_reorder_triggered": {
+        "mean_diff": 0.05,
+        "max_diff": 1.0
+      }
+    }
+  },
+  {
+    "scenario_id": "INC_08",
+    "target_node": "material_103_stock",
+    "expected_sources": [
+      "supplier_5_po_delay_days"
+    ],
+    "expected_path_desc": "Supplier 5 delay absorbed by Material 103 safety stock (0 backlog impact)",
+    "status_category": "Safety Stock Absorption (Asymmetric Pass)",
+    "graph_distance": 1,
+    "relationship_type": "Direct (d=1)",
+    "top_overall_node": "material_103_stock_lag1",
+    "top_overall_score": 1.215817,
+    "top_exogenous_node": "supplier_5_receipt_fill_rate",
+    "top_exogenous_score": 0.91734,
+    "expected_exogenous_rank": 3,
+    "top_5_attributed_nodes": [
+      {
+        "material_103_stock_lag1": 1.215817
+      },
+      {
+        "supplier_5_receipt_fill_rate": 0.91734
+      },
+      {
+        "supplier_1_po_delay_days": 0.717565
+      },
+      {
+        "supplier_5_po_delay_days": 0.670268
+      },
+      {
+        "supplier_1_receipt_fill_rate": -0.383275
+      }
+    ],
+    "top_3_exogenous_nodes": [
+      {
+        "supplier_5_receipt_fill_rate": 0.91734
+      },
+      {
+        "supplier_1_po_delay_days": 0.717565
+      },
+      {
+        "supplier_5_po_delay_days": 0.670268
+      }
+    ],
+    "top_3_state_lags": [
+      {
+        "material_103_stock_lag1": 1.215817
+      }
+    ],
+    "panel_perturbations": {
+      "supplier_4_po_delay_days": {
+        "mean_diff": 1.1053,
+        "max_diff": 6.0
+      },
+      "supplier_4_receipt_event_flag": {
+        "mean_diff": 0.0526,
+        "max_diff": 1.0
+      },
+      "supplier_4_receipt_fill_rate": {
+        "mean_diff": 0.0163,
+        "max_diff": 0.3098
+      },
+      "material_101_stock": {
+        "mean_diff": 96.5263,
+        "max_diff": 397.0
+      },
+      "material_101_days_of_cover": {
+        "mean_diff": 4.8084,
+        "max_diff": 22.45
+      },
+      "material_101_open_po_flag": {
+        "mean_diff": 0.3158,
+        "max_diff": 1.0
+      }
+    }
+  },
+  {
+    "scenario_id": "INC_09",
+    "target_node": "material_101_stock",
+    "expected_sources": [
+      "supplier_4_po_delay_days"
+    ],
+    "expected_path_desc": "Severe supplier delay -> Supplier 4 delay -> Material 101 stockout -> Backlog",
+    "status_category": "Below Null Threshold (S_p95=0.177105) / No Measurable Attribution",
+    "graph_distance": 1,
+    "relationship_type": "Direct (d=1)",
+    "top_overall_node": "supplier_2_po_delay_days",
+    "top_overall_score": 0.800538,
+    "top_exogenous_node": "supplier_2_po_delay_days",
+    "top_exogenous_score": 0.800538,
+    "expected_exogenous_rank": 3,
+    "top_5_attributed_nodes": [
+      {
+        "supplier_2_po_delay_days": 0.800538
+      },
+      {
+        "supplier_1_receipt_fill_rate": 0.634175
+      },
+      {
+        "supplier_4_po_delay_days": 0.408434
+      },
+      {
+        "material_101_stock_lag1": 0.360352
+      },
+      {
+        "supplier_1_po_delay_days": 0.33553
+      }
+    ],
+    "top_3_exogenous_nodes": [
+      {
+        "supplier_2_po_delay_days": 0.800538
+      },
+      {
+        "supplier_1_receipt_fill_rate": 0.634175
+      },
+      {
+        "supplier_4_po_delay_days": 0.408434
+      }
+    ],
+    "top_3_state_lags": [
+      {
+        "material_101_stock_lag1": 0.360352
+      }
+    ],
+    "panel_perturbations": {
+      "supplier_3_po_delay_days": {
+        "mean_diff": 0.3011,
+        "max_diff": 7.0
+      },
+      "supplier_3_receipt_event_flag": {
+        "mean_diff": 0.0215,
+        "max_diff": 1.0
+      },
+      "supplier_4_po_delay_days": {
+        "mean_diff": 37.3011,
+        "max_diff": 83.0
+      },
+      "supplier_4_receipt_event_flag": {
+        "mean_diff": 0.0753,
+        "max_diff": 1.0
+      },
+      "supplier_4_receipt_fill_rate": {
+        "mean_diff": 0.0067,
+        "max_diff": 0.3375
+      },
+      "supplier_5_po_delay_days": {
+        "mean_diff": 0.0323,
+        "max_diff": 2.0
+      },
+      "supplier_5_receipt_event_flag": {
+        "mean_diff": 0.0108,
+        "max_diff": 1.0
+      },
+      "material_101_stock": {
+        "mean_diff": 178.6667,
+        "max_diff": 402.0
+      },
+      "material_101_days_of_cover": {
+        "mean_diff": 8.8404,
+        "max_diff": 28.42
+      },
+      "material_101_open_po_flag": {
+        "mean_diff": 0.4409,
+        "max_diff": 1.0
+      },
+      "material_101_reorder_triggered": {
+        "mean_diff": 0.043,
+        "max_diff": 1.0
+      },
+      "material_102_stock": {
+        "mean_diff": 46.3978,
+        "max_diff": 194.0
+      },
+      "material_102_days_of_cover": {
+        "mean_diff": 6.5423,
+        "max_diff": 30.17
+      },
+      "material_102_open_po_flag": {
+        "mean_diff": 0.3763,
+        "max_diff": 1.0
+      },
+      "material_102_reorder_triggered": {
+        "mean_diff": 0.0215,
+        "max_diff": 1.0
+      },
+      "material_103_stock": {
+        "mean_diff": 74.6989,
+        "max_diff": 158.0
+      },
+      "material_103_days_of_cover": {
+        "mean_diff": 17.9766,
+        "max_diff": 51.21
+      },
+      "material_103_open_po_flag": {
+        "mean_diff": 0.2903,
+        "max_diff": 1.0
+      },
+      "material_103_reorder_triggered": {
+        "mean_diff": 0.0215,
+        "max_diff": 1.0
+      },
+      "product_201_fg_stock": {
+        "mean_diff": 214.4086,
+        "max_diff": 460.0
+      },
+      "product_201_actual_production": {
+        "mean_diff": 4.9462,
+        "max_diff": 30.0
+      },
+      "product_201_production_shortfall": {
+        "mean_diff": 4.9462,
+        "max_diff": 30.0
+      },
+      "product_201_capacity_shortfall_units": {
+        "mean_diff": 0.2581,
+        "max_diff": 7.0
+      },
+      "product_202_fg_stock": {
+        "mean_diff": 146.6237,
+        "max_diff": 281.0
+      },
+      "product_202_actual_production": {
+        "mean_diff": 3.4409,
+        "max_diff": 20.0
+      },
+      "product_202_production_shortfall": {
+        "mean_diff": 3.4409,
+        "max_diff": 20.0
+      },
+      "product_202_capacity_shortfall_units": {
+        "mean_diff": 1.1183,
+        "max_diff": 7.0
+      },
+      "product_202_due_backlog_units": {
+        "mean_diff": 3.5914,
+        "max_diff": 42.0
+      },
+      "product_202_newly_backordered_units": {
+        "mean_diff": 0.4516,
+        "max_diff": 19.0
+      },
+      "product_202_backorder_flag": {
+        "mean_diff": 0.1075,
+        "max_diff": 1.0
+      }
+    }
+  },
+  {
+    "scenario_id": "INC_10",
+    "target_node": "product_202_demand_units",
+    "expected_sources": [
+      "month",
+      "weekday"
+    ],
+    "expected_path_desc": "Seasonal Q4 boost fully absorbed by calendar month feature",
+    "status_category": "Normal-Variation Seasonal Control",
+    "graph_distance": 1,
+    "relationship_type": "Direct (d=1)",
+    "top_overall_node": "month",
+    "top_overall_score": 0.0,
+    "top_exogenous_node": "month",
+    "top_exogenous_score": 0.0,
+    "expected_exogenous_rank": 1,
+    "top_5_attributed_nodes": [
+      {
+        "month": 0.0
+      },
+      {
+        "weekday": 0.0
+      }
+    ],
+    "top_3_exogenous_nodes": [
+      {
+        "month": 0.0
+      },
+      {
+        "weekday": 0.0
+      }
+    ],
+    "top_3_state_lags": [],
+    "panel_perturbations": {}
+  }
+]

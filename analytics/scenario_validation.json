@@ -31,7 +31,7 @@
     "win_peak_backlog": 0,
     "annual_delta_shortfall": 0,
     "annual_peak_backlog": 0,
-    "operational_details": "Negative control: 100% panel identity on all 47 columns across all 365 dates"
+    "operational_details": "Negative control: 100% panel identity on all 49 columns across all 365 dates"
   },
   {
     "scenario_id": "INC_03",

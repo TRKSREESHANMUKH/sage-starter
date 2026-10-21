@@ -1,0 +1,962 @@
+[
+  {
+    "date": "2025-01-08",
+    "weekday": "Wednesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 0,
+    "shortfall": 10,
+    "severity": "WARNING",
+    "score": 20.0
+  },
+  {
+    "date": "2025-01-16",
+    "weekday": "Thursday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-01-17",
+    "weekday": "Friday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 50,
+    "severity": "CRITICAL",
+    "score": 125.0
+  },
+  {
+    "date": "2025-01-18",
+    "weekday": "Saturday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-01-19",
+    "weekday": "Sunday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-01-20",
+    "weekday": "Monday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-01-21",
+    "weekday": "Tuesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-01-22",
+    "weekday": "Wednesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 40,
+    "severity": "CRITICAL",
+    "score": 105.0
+  },
+  {
+    "date": "2025-02-03",
+    "weekday": "Monday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 10,
+    "severity": "CRITICAL",
+    "score": 45.0
+  },
+  {
+    "date": "2025-02-04",
+    "weekday": "Tuesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-02-05",
+    "weekday": "Wednesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-02-06",
+    "weekday": "Thursday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-02-07",
+    "weekday": "Friday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-02-08",
+    "weekday": "Saturday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-02-09",
+    "weekday": "Sunday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-02-10",
+    "weekday": "Monday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 30,
+    "severity": "CRITICAL",
+    "score": 85.0
+  },
+  {
+    "date": "2025-02-11",
+    "weekday": "Tuesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 50,
+    "severity": "CRITICAL",
+    "score": 125.0
+  },
+  {
+    "date": "2025-02-12",
+    "weekday": "Wednesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-02-13",
+    "weekday": "Thursday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-02-18",
+    "weekday": "Tuesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 0,
+    "shortfall": 10,
+    "severity": "WARNING",
+    "score": 20.0
+  },
+  {
+    "date": "2025-02-21",
+    "weekday": "Friday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-02-22",
+    "weekday": "Saturday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-02-23",
+    "weekday": "Sunday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-02-24",
+    "weekday": "Monday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-02-25",
+    "weekday": "Tuesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-02-26",
+    "weekday": "Wednesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-02-27",
+    "weekday": "Thursday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-03-07",
+    "weekday": "Friday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-03-11",
+    "weekday": "Tuesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 0,
+    "shortfall": 10,
+    "severity": "WARNING",
+    "score": 20.0
+  },
+  {
+    "date": "2025-03-14",
+    "weekday": "Friday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-03-15",
+    "weekday": "Saturday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-03-16",
+    "weekday": "Sunday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-03-17",
+    "weekday": "Monday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 30,
+    "severity": "CRITICAL",
+    "score": 85.0
+  },
+  {
+    "date": "2025-03-18",
+    "weekday": "Tuesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 40,
+    "severity": "CRITICAL",
+    "score": 105.0
+  },
+  {
+    "date": "2025-03-19",
+    "weekday": "Wednesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-03-20",
+    "weekday": "Thursday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 50,
+    "severity": "CRITICAL",
+    "score": 125.0
+  },
+  {
+    "date": "2025-04-07",
+    "weekday": "Monday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 20,
+    "severity": "CRITICAL",
+    "score": 65.0
+  },
+  {
+    "date": "2025-04-08",
+    "weekday": "Tuesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-04-09",
+    "weekday": "Wednesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 30,
+    "severity": "CRITICAL",
+    "score": 85.0
+  },
+  {
+    "date": "2025-04-10",
+    "weekday": "Thursday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-04-11",
+    "weekday": "Friday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-04-12",
+    "weekday": "Saturday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-05-02",
+    "weekday": "Friday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 20,
+    "severity": "CRITICAL",
+    "score": 65.0
+  },
+  {
+    "date": "2025-05-03",
+    "weekday": "Saturday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-05-04",
+    "weekday": "Sunday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-05-05",
+    "weekday": "Monday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-05-06",
+    "weekday": "Tuesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-05-07",
+    "weekday": "Wednesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-05-09",
+    "weekday": "Friday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 0,
+    "shortfall": 10,
+    "severity": "WARNING",
+    "score": 20.0
+  },
+  {
+    "date": "2025-05-13",
+    "weekday": "Tuesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 0,
+    "shortfall": 10,
+    "severity": "WARNING",
+    "score": 20.0
+  },
+  {
+    "date": "2025-05-30",
+    "weekday": "Friday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 0,
+    "shortfall": 20,
+    "severity": "WARNING",
+    "score": 40.0
+  },
+  {
+    "date": "2025-06-06",
+    "weekday": "Friday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 0,
+    "shortfall": 10,
+    "severity": "WARNING",
+    "score": 20.0
+  },
+  {
+    "date": "2025-06-17",
+    "weekday": "Tuesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 0,
+    "shortfall": 10,
+    "severity": "WARNING",
+    "score": 20.0
+  },
+  {
+    "date": "2025-06-20",
+    "weekday": "Friday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 0,
+    "shortfall": 10,
+    "severity": "WARNING",
+    "score": 20.0
+  },
+  {
+    "date": "2025-06-30",
+    "weekday": "Monday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 0,
+    "shortfall": 10,
+    "severity": "WARNING",
+    "score": 20.0
+  },
+  {
+    "date": "2025-07-21",
+    "weekday": "Monday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 10,
+    "severity": "CRITICAL",
+    "score": 45.0
+  },
+  {
+    "date": "2025-07-22",
+    "weekday": "Tuesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 30,
+    "severity": "CRITICAL",
+    "score": 85.0
+  },
+  {
+    "date": "2025-07-23",
+    "weekday": "Wednesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-07-24",
+    "weekday": "Thursday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-07-25",
+    "weekday": "Friday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-08-05",
+    "weekday": "Tuesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 0,
+    "shortfall": 10,
+    "severity": "WARNING",
+    "score": 20.0
+  },
+  {
+    "date": "2025-08-12",
+    "weekday": "Tuesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 0,
+    "shortfall": 20,
+    "severity": "WARNING",
+    "score": 40.0
+  },
+  {
+    "date": "2025-08-13",
+    "weekday": "Wednesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 10,
+    "severity": "CRITICAL",
+    "score": 45.0
+  },
+  {
+    "date": "2025-08-14",
+    "weekday": "Thursday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-08-15",
+    "weekday": "Friday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 0,
+    "shortfall": 10,
+    "severity": "WARNING",
+    "score": 20.0
+  },
+  {
+    "date": "2025-08-22",
+    "weekday": "Friday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 0,
+    "shortfall": 10,
+    "severity": "WARNING",
+    "score": 20.0
+  },
+  {
+    "date": "2025-08-27",
+    "weekday": "Wednesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 10,
+    "severity": "CRITICAL",
+    "score": 45.0
+  },
+  {
+    "date": "2025-08-28",
+    "weekday": "Thursday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-08-29",
+    "weekday": "Friday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-08-30",
+    "weekday": "Saturday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-08-31",
+    "weekday": "Sunday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-09-15",
+    "weekday": "Monday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-09-16",
+    "weekday": "Tuesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-09-17",
+    "weekday": "Wednesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-09-18",
+    "weekday": "Thursday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 40,
+    "severity": "CRITICAL",
+    "score": 105.0
+  },
+  {
+    "date": "2025-09-19",
+    "weekday": "Friday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-10-03",
+    "weekday": "Friday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 0,
+    "shortfall": 10,
+    "severity": "WARNING",
+    "score": 20.0
+  },
+  {
+    "date": "2025-10-07",
+    "weekday": "Tuesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 0,
+    "shortfall": 10,
+    "severity": "WARNING",
+    "score": 20.0
+  },
+  {
+    "date": "2025-10-09",
+    "weekday": "Thursday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 20,
+    "severity": "CRITICAL",
+    "score": 65.0
+  },
+  {
+    "date": "2025-10-10",
+    "weekday": "Friday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-10-11",
+    "weekday": "Saturday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-10-21",
+    "weekday": "Tuesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-10-22",
+    "weekday": "Wednesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-10-23",
+    "weekday": "Thursday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-10-28",
+    "weekday": "Tuesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-10-29",
+    "weekday": "Wednesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-11-21",
+    "weekday": "Friday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 0,
+    "shortfall": 10,
+    "severity": "WARNING",
+    "score": 20.0
+  },
+  {
+    "date": "2025-12-17",
+    "weekday": "Wednesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-12-18",
+    "weekday": "Thursday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 30,
+    "severity": "CRITICAL",
+    "score": 85.0
+  },
+  {
+    "date": "2025-12-19",
+    "weekday": "Friday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-12-20",
+    "weekday": "Saturday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-12-21",
+    "weekday": "Sunday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-12-22",
+    "weekday": "Monday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-12-26",
+    "weekday": "Friday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 10,
+    "severity": "CRITICAL",
+    "score": 45.0
+  },
+  {
+    "date": "2025-12-27",
+    "weekday": "Saturday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  },
+  {
+    "date": "2025-12-31",
+    "weekday": "Wednesday",
+    "backlog": 0,
+    "overdue_orders": 0,
+    "stockouts": 1,
+    "shortfall": 0,
+    "severity": "CRITICAL",
+    "score": 25.0
+  }
+]

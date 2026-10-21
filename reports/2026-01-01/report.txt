@@ -1,0 +1,44 @@
+SAGE DAILY BRIEF | 1 Jan 2026
+Status: ACTION NEEDED (50 items need action)
+======================================================================
+
+THE BOTTOM LINE:
+P l
+
+TODAY'S NUMBERS IN CONTEXT:
+• Orders Due     : 2 orders due, up from 1 yesterday (7d avg: 1.0)
+• Orders Late    : 48 late orders, up from 47 yesterday (7d avg: 43.9)
+• Units Short    : 702 units short, same as yesterday (7d avg: 624.4)
+• Materials Low  : 1 material low, same as yesterday (7d avg: 1.0)
+
+PAST ANALYSED CASES: WHAT CAUSED WHAT:
+• Chain: Supplier 4 delivery late → Raw steel below safety level
+  Observed raw steel below safety level on 01 Jan is consistent with supplier 4 delivery late starting on 01 Jan.
+  Confidence: Partly seen | Model check: Model inconclusive (Computed just now)
+• Chain: Raw steel below safety level → Standard Motor production shortfall
+  Observed standard motor production shortfall on 01 Jan is consistent with raw steel below safety level starting on 31 Dec.
+  Confidence: Partly seen | Model check: Model inconclusive (Computed just now)
+• Chain: Raw steel below safety level → Heavy Duty Motor production shortfall
+  Observed heavy duty motor production shortfall on 01 Jan is consistent with raw steel below safety level starting on 31 Dec.
+  Confidence: Partly seen | Model check: Model inconclusive (Computed just now)
+
+FOCUS TOMORROW (TOP 5 PRIORITIES):
+1. Fix at the root: Supplier 4 delivery late (Supply Chain Lead) - Due Immediate
+   Reason: Observed raw steel below safety level on 01 Jan is consistent with supplier 4 delivery late starting on 01 Jan. (Confidence: Partly seen)
+2. Fix at the root: Raw steel below safety level (Production Supervisor) - Due Immediate
+   Reason: Observed standard motor production shortfall on 01 Jan is consistent with raw steel below safety level starting on 31 Dec. (Confidence: Partly seen)
+3. Fix at the root: Raw steel below safety level (Production Supervisor) - Due Immediate
+   Reason: Observed heavy duty motor production shortfall on 01 Jan is consistent with raw steel below safety level starting on 31 Dec. (Confidence: Partly seen)
+4. Expedite delivery for SO-164 to Metro Distributors (Customer Logistics) - Due 10:00 AM
+   Reason: 1 units of Widget Model X are 91 days overdue (was due 02 Oct).
+5. Expedite delivery for SO-165 to Coastal Traders (Customer Logistics) - Due 10:00 AM
+   Reason: 16 units of Widget Model X are 90 days overdue (was due 03 Oct).
+
+SUPPLIER WATCH:
+• PO-18 (EastCoast Components): 407 units Steel Rod 10mm - 140 days late (expected 14 Aug)
+
+======================================================================
+FRAMING: SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.
+
+Simulated data. System knows data up to 2026-01-01 only.
+Dashboard: http://127.0.0.1:8000

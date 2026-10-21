@@ -1,0 +1,62 @@
+{
+  "as_of": "2025-11-20",
+  "metadata": {
+    "as_of_date": "2025-11-20",
+    "rules_source": "stage9/config/rules.yaml",
+    "simulated_data": true
+  },
+  "top_priorities": [
+    {
+      "action": "Reorder Steel Rod 10mm",
+      "due_date": "2025-11-20",
+      "rank": 1,
+      "reason": "Steel Rod 10mm stock at 133 kg is at or below reorder point (150 kg) with 0 open purchase orders",
+      "role": "Procurement",
+      "rule_tier": 3
+    },
+    {
+      "action": "Audit master production schedule targets",
+      "due_date": "2025-11-20",
+      "rank": 2,
+      "reason": "Verify scheduled workcenter batches against weekly sales order forecasts",
+      "role": "Planner",
+      "rule_tier": 0
+    },
+    {
+      "action": "Review supplier on-time delivery scorecards",
+      "due_date": "2025-11-20",
+      "rank": 3,
+      "reason": "Confirm upcoming replenishment deliveries remain on schedule",
+      "role": "Procurement",
+      "rule_tier": 0
+    },
+    {
+      "action": "Routine workcenter equipment calibration",
+      "due_date": "2025-11-20",
+      "rank": 4,
+      "reason": "Standard preventative maintenance on primary motor assembly lines",
+      "role": "Plant Manager",
+      "rule_tier": 0
+    },
+    {
+      "action": "Safety stock verification audit",
+      "due_date": "2025-11-20",
+      "rank": 5,
+      "reason": "Validate physical inventory cycle counts against ERP closing stock balances",
+      "role": "Planner",
+      "rule_tier": 0
+    }
+  ],
+  "watchlist": [
+    {
+      "item": "Finished goods warehouse stock health",
+      "reason": "All finished goods buffers maintained within healthy operating margins",
+      "role": "Planner"
+    },
+    {
+      "item": "Inbound supplier dispatch lead times",
+      "reason": "Vendor shipment intervals tracking within nominal purchase order parameters",
+      "role": "Procurement"
+    }
+  ]
+}

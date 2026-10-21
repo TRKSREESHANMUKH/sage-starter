@@ -1,0 +1,3 @@
+id,production_order_id,item_id,planned_quantity,planned_issue_date,quantity_issued,issue_date
+178,85,3,10,2025-07-22,5,2025-07-22
+179,85,1,24,2025-07-22,12,2025-07-22

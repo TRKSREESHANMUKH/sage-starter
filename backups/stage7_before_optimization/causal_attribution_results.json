@@ -1,0 +1,935 @@
+{
+  "empirical_baseline_distribution_shift_reference": {
+    "max_bound": 1.324579341637009,
+    "mean_shift": 0.2085823103488203,
+    "p95_bound": 0.9363573205941943,
+    "sample_count": 224
+  },
+  "scenarios": {
+    "INC_01": {
+      "scenario_id": "INC_01",
+      "window_period": "2025-08-17 -> 2025-09-02",
+      "target_nodes": [
+        "material_101_stock",
+        "product_201_actual_production"
+      ],
+      "attributions": {
+        "material_101_stock": {
+          "method_1_anomaly_attribution": {
+            "supplier_4_receipt_fill_rate": -0.015567,
+            "material_101_stock_lag1": 0.206118,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_4_po_delay_days": 0.018919,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "material_101_stock": 0.528013
+          },
+          "method_2_distribution_change_attribution": {
+            "material_101_stock": 0.662812,
+            "material_101_stock_lag1": -0.134824,
+            "supplier_1_po_delay_days": 0.5594,
+            "supplier_1_receipt_fill_rate": 0.675173,
+            "supplier_2_po_delay_days": 0.04339,
+            "supplier_2_receipt_fill_rate": 0.648708,
+            "supplier_4_po_delay_days": -0.082794,
+            "supplier_4_receipt_fill_rate": 0.276253
+          }
+        },
+        "product_201_actual_production": {
+          "method_1_anomaly_attribution": {
+            "material_101_stock_lag1": 0.044624,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_4_po_delay_days": -0.001888,
+            "supplier_4_receipt_fill_rate": -0.000452,
+            "material_102_stock_lag1": -0.009149,
+            "supplier_3_po_delay_days": -0.002433,
+            "supplier_3_receipt_fill_rate": 0.0,
+            "material_103_stock_lag1": 0.073566,
+            "supplier_5_po_delay_days": -0.000212,
+            "supplier_5_receipt_fill_rate": 0.0,
+            "product_201_planned_production": 0.414139,
+            "product_201_capacity_shortfall_units": 0.128431,
+            "material_101_stock": 0.00233,
+            "material_102_stock": 0.000813,
+            "material_103_stock": -0.005665,
+            "product_201_actual_production": 0.17515
+          },
+          "method_2_distribution_change_attribution": {
+            "material_101_stock": 0.210589,
+            "material_101_stock_lag1": 0.100925,
+            "material_102_stock": -0.018851,
+            "material_102_stock_lag1": 0.271575,
+            "material_103_stock": 0.206085,
+            "material_103_stock_lag1": 0.15769,
+            "product_201_actual_production": 0.186981,
+            "product_201_capacity_shortfall_units": 0.238853,
+            "product_201_planned_production": 0.026445,
+            "supplier_1_po_delay_days": -0.055073,
+            "supplier_1_receipt_fill_rate": 0.018691,
+            "supplier_2_po_delay_days": 0.061894,
+            "supplier_2_receipt_fill_rate": 0.177671,
+            "supplier_3_po_delay_days": 0.265967,
+            "supplier_3_receipt_fill_rate": 0.467323,
+            "supplier_4_po_delay_days": 0.055248,
+            "supplier_4_receipt_fill_rate": -0.019621,
+            "supplier_5_po_delay_days": 0.089381,
+            "supplier_5_receipt_fill_rate": -0.008625
+          }
+        }
+      }
+    },
+    "INC_02": {
+      "scenario_id": "INC_02",
+      "window_period": "2025-06-20 -> 2025-07-09",
+      "target_nodes": [
+        "product_201_due_backlog_units",
+        "product_201_actual_production"
+      ],
+      "attributions": {
+        "product_201_due_backlog_units": {
+          "method_1_anomaly_attribution": {
+            "material_101_stock_lag1": 0.0,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_4_po_delay_days": 0.0,
+            "supplier_4_receipt_fill_rate": 0.0,
+            "material_102_stock_lag1": 0.0,
+            "supplier_3_po_delay_days": 0.0,
+            "supplier_3_receipt_fill_rate": 0.0,
+            "material_103_stock_lag1": 0.0,
+            "supplier_5_po_delay_days": 0.0,
+            "supplier_5_receipt_fill_rate": 0.0,
+            "weekday": 0.0,
+            "month": 0.0,
+            "product_201_planned_production": 0.0,
+            "product_201_capacity_shortfall_units": 0.0,
+            "product_201_fg_stock_lag1": 0.0,
+            "material_101_stock": 0.0,
+            "material_102_stock": 0.0,
+            "material_103_stock": 0.0,
+            "product_201_demand_units": 0.0,
+            "product_201_actual_production": 0.0,
+            "product_201_fg_stock": 0.0,
+            "product_201_due_backlog_units": 0.0
+          },
+          "method_2_distribution_change_attribution": {
+            "material_101_stock": 0.0,
+            "material_101_stock_lag1": 0.0,
+            "material_102_stock": 0.0,
+            "material_102_stock_lag1": 0.0,
+            "material_103_stock": 0.0,
+            "material_103_stock_lag1": 0.0,
+            "month": 0.0,
+            "product_201_actual_production": 0.0,
+            "product_201_capacity_shortfall_units": 0.0,
+            "product_201_demand_units": 0.0,
+            "product_201_due_backlog_units": 0.0,
+            "product_201_fg_stock": 0.0,
+            "product_201_fg_stock_lag1": 0.0,
+            "product_201_planned_production": 0.0,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_3_po_delay_days": 0.0,
+            "supplier_3_receipt_fill_rate": 0.0,
+            "supplier_4_po_delay_days": 0.0,
+            "supplier_4_receipt_fill_rate": 0.0,
+            "supplier_5_po_delay_days": 0.0,
+            "supplier_5_receipt_fill_rate": 0.0,
+            "weekday": 0.0
+          }
+        },
+        "product_201_actual_production": {
+          "method_1_anomaly_attribution": {
+            "material_101_stock_lag1": -0.010157,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_4_po_delay_days": -0.003485,
+            "supplier_4_receipt_fill_rate": -0.002589,
+            "material_102_stock_lag1": 0.232359,
+            "supplier_3_po_delay_days": -0.00561,
+            "supplier_3_receipt_fill_rate": 0.0,
+            "material_103_stock_lag1": -0.003448,
+            "supplier_5_po_delay_days": 0.000172,
+            "supplier_5_receipt_fill_rate": 0.0,
+            "product_201_planned_production": 0.398722,
+            "product_201_capacity_shortfall_units": 0.316186,
+            "material_101_stock": 0.004485,
+            "material_102_stock": -0.022224,
+            "material_103_stock": -0.010014,
+            "product_201_actual_production": -0.010327
+          },
+          "method_2_distribution_change_attribution": {
+            "material_101_stock": 0.526114,
+            "material_101_stock_lag1": 0.515452,
+            "material_102_stock": 0.535361,
+            "material_102_stock_lag1": 0.533638,
+            "material_103_stock": 0.498195,
+            "material_103_stock_lag1": 0.201034,
+            "product_201_actual_production": -0.153373,
+            "product_201_capacity_shortfall_units": 0.170747,
+            "product_201_planned_production": -0.374244,
+            "supplier_1_po_delay_days": 0.003281,
+            "supplier_1_receipt_fill_rate": 0.046672,
+            "supplier_2_po_delay_days": 0.264683,
+            "supplier_2_receipt_fill_rate": 0.949583,
+            "supplier_3_po_delay_days": 0.448177,
+            "supplier_3_receipt_fill_rate": -0.358609,
+            "supplier_4_po_delay_days": 0.322026,
+            "supplier_4_receipt_fill_rate": 0.566097,
+            "supplier_5_po_delay_days": -0.159717,
+            "supplier_5_receipt_fill_rate": -0.384444
+          }
+        }
+      }
+    },
+    "INC_03": {
+      "scenario_id": "INC_03",
+      "window_period": "2025-03-29 -> 2025-04-17",
+      "target_nodes": [
+        "product_201_fg_stock",
+        "product_201_demand_units",
+        "product_201_due_backlog_units"
+      ],
+      "attributions": {
+        "product_201_fg_stock": {
+          "method_1_anomaly_attribution": {
+            "material_101_stock_lag1": 0.007706,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_4_po_delay_days": -0.004163,
+            "supplier_4_receipt_fill_rate": -0.000524,
+            "material_102_stock_lag1": 0.013178,
+            "supplier_3_po_delay_days": -0.022331,
+            "supplier_3_receipt_fill_rate": 0.0,
+            "material_103_stock_lag1": 0.055101,
+            "supplier_5_po_delay_days": 0.004019,
+            "supplier_5_receipt_fill_rate": 0.0,
+            "weekday": -0.005304,
+            "month": -0.004332,
+            "product_201_planned_production": -0.015239,
+            "product_201_capacity_shortfall_units": 0.119967,
+            "product_201_fg_stock_lag1": -0.641838,
+            "material_101_stock": 0.013795,
+            "material_102_stock": 0.00992,
+            "material_103_stock": 0.042697,
+            "product_201_demand_units": 0.691257,
+            "product_201_actual_production": -0.033852,
+            "product_201_fg_stock": 0.514462
+          },
+          "method_2_distribution_change_attribution": {
+            "material_101_stock": -0.062344,
+            "material_101_stock_lag1": 0.042216,
+            "material_102_stock": 0.026597,
+            "material_102_stock_lag1": 0.052209,
+            "material_103_stock": -0.056103,
+            "material_103_stock_lag1": 0.204429,
+            "month": -0.02556,
+            "product_201_actual_production": 0.029404,
+            "product_201_capacity_shortfall_units": 0.180855,
+            "product_201_demand_units": 0.24227,
+            "product_201_fg_stock": 0.171713,
+            "product_201_fg_stock_lag1": -0.05497,
+            "product_201_planned_production": 0.058171,
+            "supplier_1_po_delay_days": 0.132881,
+            "supplier_1_receipt_fill_rate": 0.125744,
+            "supplier_2_po_delay_days": 0.205039,
+            "supplier_2_receipt_fill_rate": -0.008879,
+            "supplier_3_po_delay_days": -0.042573,
+            "supplier_3_receipt_fill_rate": -0.024265,
+            "supplier_4_po_delay_days": 0.031152,
+            "supplier_4_receipt_fill_rate": 0.00992,
+            "supplier_5_po_delay_days": 0.187042,
+            "supplier_5_receipt_fill_rate": 0.205614,
+            "weekday": 0.174156
+          }
+        },
+        "product_201_demand_units": {
+          "method_1_anomaly_attribution": {
+            "weekday": 0.086961,
+            "month": 0.137279,
+            "product_201_demand_units": 1.871385
+          },
+          "method_2_distribution_change_attribution": {
+            "month": 2.831964,
+            "product_201_demand_units": 1.597396,
+            "weekday": 0.285312
+          }
+        },
+        "product_201_due_backlog_units": {
+          "method_1_anomaly_attribution": {
+            "material_101_stock_lag1": 0.0,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_4_po_delay_days": 0.0,
+            "supplier_4_receipt_fill_rate": 0.0,
+            "material_102_stock_lag1": 0.0,
+            "supplier_3_po_delay_days": 0.0,
+            "supplier_3_receipt_fill_rate": 0.0,
+            "material_103_stock_lag1": 0.0,
+            "supplier_5_po_delay_days": 0.0,
+            "supplier_5_receipt_fill_rate": 0.0,
+            "weekday": 0.0,
+            "month": 0.0,
+            "product_201_planned_production": 0.0,
+            "product_201_capacity_shortfall_units": 0.0,
+            "product_201_fg_stock_lag1": 0.0,
+            "material_101_stock": 0.0,
+            "material_102_stock": 0.0,
+            "material_103_stock": 0.0,
+            "product_201_demand_units": 0.0,
+            "product_201_actual_production": 0.0,
+            "product_201_fg_stock": 0.0,
+            "product_201_due_backlog_units": 0.0
+          },
+          "method_2_distribution_change_attribution": {
+            "material_101_stock": 0.0,
+            "material_101_stock_lag1": 0.0,
+            "material_102_stock": 0.0,
+            "material_102_stock_lag1": 0.0,
+            "material_103_stock": 0.0,
+            "material_103_stock_lag1": 0.0,
+            "month": 0.0,
+            "product_201_actual_production": 0.0,
+            "product_201_capacity_shortfall_units": 0.0,
+            "product_201_demand_units": 0.0,
+            "product_201_due_backlog_units": 0.0,
+            "product_201_fg_stock": 0.0,
+            "product_201_fg_stock_lag1": 0.0,
+            "product_201_planned_production": 0.0,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_3_po_delay_days": 0.0,
+            "supplier_3_receipt_fill_rate": 0.0,
+            "supplier_4_po_delay_days": 0.0,
+            "supplier_4_receipt_fill_rate": 0.0,
+            "supplier_5_po_delay_days": 0.0,
+            "supplier_5_receipt_fill_rate": 0.0,
+            "weekday": 0.0
+          }
+        }
+      }
+    },
+    "INC_04": {
+      "scenario_id": "INC_04",
+      "window_period": "2025-10-01 -> 2025-10-20",
+      "target_nodes": [
+        "product_201_actual_production",
+        "product_201_capacity_shortfall_units"
+      ],
+      "attributions": {
+        "product_201_actual_production": {
+          "method_1_anomaly_attribution": {
+            "material_101_stock_lag1": -0.011497,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_4_po_delay_days": 0.002353,
+            "supplier_4_receipt_fill_rate": 0.001046,
+            "material_102_stock_lag1": 0.090911,
+            "supplier_3_po_delay_days": -0.001447,
+            "supplier_3_receipt_fill_rate": 0.0,
+            "material_103_stock_lag1": 0.029776,
+            "supplier_5_po_delay_days": 0.002826,
+            "supplier_5_receipt_fill_rate": 0.0,
+            "product_201_planned_production": 0.170223,
+            "product_201_capacity_shortfall_units": -0.040286,
+            "material_101_stock": 0.009463,
+            "material_102_stock": 0.036812,
+            "material_103_stock": 0.001945,
+            "product_201_actual_production": 0.224394
+          },
+          "method_2_distribution_change_attribution": {
+            "material_101_stock": 0.004231,
+            "material_101_stock_lag1": 0.216302,
+            "material_102_stock": 0.038906,
+            "material_102_stock_lag1": 0.039092,
+            "material_103_stock": 0.278013,
+            "material_103_stock_lag1": -0.045602,
+            "product_201_actual_production": 0.03533,
+            "product_201_capacity_shortfall_units": 0.47802,
+            "product_201_planned_production": 0.781735,
+            "supplier_1_po_delay_days": 0.041454,
+            "supplier_1_receipt_fill_rate": 0.059614,
+            "supplier_2_po_delay_days": 0.079117,
+            "supplier_2_receipt_fill_rate": -0.089593,
+            "supplier_3_po_delay_days": -0.063742,
+            "supplier_3_receipt_fill_rate": 0.384474,
+            "supplier_4_po_delay_days": 0.281683,
+            "supplier_4_receipt_fill_rate": -0.081891,
+            "supplier_5_po_delay_days": 0.2247,
+            "supplier_5_receipt_fill_rate": 0.003698
+          }
+        },
+        "product_201_capacity_shortfall_units": {
+          "method_1_anomaly_attribution": {
+            "product_201_capacity_shortfall_units": 1.739936
+          },
+          "method_2_distribution_change_attribution": {
+            "product_201_capacity_shortfall_units": 0.0
+          }
+        }
+      }
+    },
+    "INC_05": {
+      "scenario_id": "INC_05",
+      "window_period": "2025-10-16 -> 2025-11-05",
+      "target_nodes": [
+        "material_101_stock",
+        "product_201_actual_production"
+      ],
+      "attributions": {
+        "material_101_stock": {
+          "method_1_anomaly_attribution": {
+            "supplier_4_receipt_fill_rate": -0.01586,
+            "material_101_stock_lag1": -0.024288,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_4_po_delay_days": -0.000146,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "material_101_stock": 0.687263
+          },
+          "method_2_distribution_change_attribution": {
+            "material_101_stock": 0.193725,
+            "material_101_stock_lag1": 0.255189,
+            "supplier_1_po_delay_days": 0.217088,
+            "supplier_1_receipt_fill_rate": 0.547876,
+            "supplier_2_po_delay_days": 0.243433,
+            "supplier_2_receipt_fill_rate": 0.291541,
+            "supplier_4_po_delay_days": 0.178208,
+            "supplier_4_receipt_fill_rate": 0.591497
+          }
+        },
+        "product_201_actual_production": {
+          "method_1_anomaly_attribution": {
+            "material_101_stock_lag1": 0.09559,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_4_po_delay_days": -0.009065,
+            "supplier_4_receipt_fill_rate": -0.000926,
+            "material_102_stock_lag1": -0.118806,
+            "supplier_3_po_delay_days": 0.037593,
+            "supplier_3_receipt_fill_rate": 0.0,
+            "material_103_stock_lag1": 0.041489,
+            "supplier_5_po_delay_days": 0.00035,
+            "supplier_5_receipt_fill_rate": 0.0,
+            "product_201_planned_production": 0.220868,
+            "product_201_capacity_shortfall_units": -0.017694,
+            "material_101_stock": -0.001651,
+            "material_102_stock": 0.004395,
+            "material_103_stock": -0.005677,
+            "product_201_actual_production": 0.16762
+          },
+          "method_2_distribution_change_attribution": {
+            "material_101_stock": 0.585513,
+            "material_101_stock_lag1": 0.246441,
+            "material_102_stock": 0.605748,
+            "material_102_stock_lag1": 0.022741,
+            "material_103_stock": 1.133199,
+            "material_103_stock_lag1": -0.193651,
+            "product_201_actual_production": 0.056661,
+            "product_201_capacity_shortfall_units": 0.458697,
+            "product_201_planned_production": 0.176411,
+            "supplier_1_po_delay_days": 0.061097,
+            "supplier_1_receipt_fill_rate": 0.451334,
+            "supplier_2_po_delay_days": 0.460766,
+            "supplier_2_receipt_fill_rate": 0.021348,
+            "supplier_3_po_delay_days": 0.369051,
+            "supplier_3_receipt_fill_rate": -0.083875,
+            "supplier_4_po_delay_days": -0.06064,
+            "supplier_4_receipt_fill_rate": 0.074524,
+            "supplier_5_po_delay_days": 0.446297,
+            "supplier_5_receipt_fill_rate": 0.100706
+          }
+        }
+      }
+    },
+    "INC_06": {
+      "scenario_id": "INC_06",
+      "window_period": "2025-07-21 -> 2025-08-07",
+      "target_nodes": [
+        "product_202_actual_production",
+        "product_201_actual_production"
+      ],
+      "attributions": {
+        "product_202_actual_production": {
+          "method_1_anomaly_attribution": {
+            "supplier_4_receipt_fill_rate": -0.001225,
+            "supplier_5_po_delay_days": 0.0,
+            "material_101_stock_lag1": -0.093445,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_4_po_delay_days": 0.000743,
+            "material_103_stock_lag1": -0.000793,
+            "product_202_capacity_shortfall_units": -0.329742,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_5_receipt_fill_rate": 0.0,
+            "product_202_planned_production": 0.234535,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "material_101_stock": 0.017806,
+            "material_103_stock": 0.000369,
+            "product_202_actual_production": 0.756086
+          },
+          "method_2_distribution_change_attribution": {
+            "material_101_stock": 0.0,
+            "material_101_stock_lag1": 0.0,
+            "material_103_stock": 0.0,
+            "material_103_stock_lag1": 0.0,
+            "product_202_actual_production": 0.0,
+            "product_202_capacity_shortfall_units": 0.0,
+            "product_202_planned_production": 0.0,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_4_po_delay_days": 0.0,
+            "supplier_4_receipt_fill_rate": 0.0,
+            "supplier_5_po_delay_days": 0.0,
+            "supplier_5_receipt_fill_rate": 0.0
+          }
+        },
+        "product_201_actual_production": {
+          "method_1_anomaly_attribution": {
+            "material_101_stock_lag1": -0.179187,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_4_po_delay_days": -0.011536,
+            "supplier_4_receipt_fill_rate": -0.007029,
+            "material_102_stock_lag1": -0.116758,
+            "supplier_3_po_delay_days": -0.015541,
+            "supplier_3_receipt_fill_rate": 0.0,
+            "material_103_stock_lag1": 0.028399,
+            "supplier_5_po_delay_days": -0.00063,
+            "supplier_5_receipt_fill_rate": 0.0,
+            "product_201_planned_production": 0.142938,
+            "product_201_capacity_shortfall_units": -0.013449,
+            "material_101_stock": 0.064156,
+            "material_102_stock": -0.034369,
+            "material_103_stock": -0.01934,
+            "product_201_actual_production": 0.81107
+          },
+          "method_2_distribution_change_attribution": {
+            "material_101_stock": 0.231299,
+            "material_101_stock_lag1": 0.28126,
+            "material_102_stock": 0.231204,
+            "material_102_stock_lag1": 0.23644,
+            "material_103_stock": 0.214428,
+            "material_103_stock_lag1": 0.197099,
+            "product_201_actual_production": -0.042287,
+            "product_201_capacity_shortfall_units": 0.097586,
+            "product_201_planned_production": -0.000507,
+            "supplier_1_po_delay_days": -0.036449,
+            "supplier_1_receipt_fill_rate": -0.019539,
+            "supplier_2_po_delay_days": -0.059614,
+            "supplier_2_receipt_fill_rate": 0.222689,
+            "supplier_3_po_delay_days": 0.061438,
+            "supplier_3_receipt_fill_rate": 0.522234,
+            "supplier_4_po_delay_days": 0.009619,
+            "supplier_4_receipt_fill_rate": 0.24425,
+            "supplier_5_po_delay_days": 0.058525,
+            "supplier_5_receipt_fill_rate": 0.013681
+          }
+        }
+      }
+    },
+    "INC_07": {
+      "scenario_id": "INC_07",
+      "window_period": "2025-07-07 -> 2025-07-26",
+      "target_nodes": [
+        "material_103_stock",
+        "material_102_stock",
+        "product_201_actual_production"
+      ],
+      "attributions": {
+        "material_103_stock": {
+          "method_1_anomaly_attribution": {
+            "supplier_5_po_delay_days": 0.000186,
+            "material_103_stock_lag1": 0.539795,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_5_receipt_fill_rate": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "material_103_stock": 0.127341
+          },
+          "method_2_distribution_change_attribution": {
+            "material_103_stock": 0.0,
+            "material_103_stock_lag1": 0.0,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "supplier_5_po_delay_days": 0.0,
+            "supplier_5_receipt_fill_rate": 0.0
+          }
+        },
+        "material_102_stock": {
+          "method_1_anomaly_attribution": {
+            "supplier_3_po_delay_days": -0.038381,
+            "supplier_4_receipt_fill_rate": -0.004609,
+            "supplier_4_po_delay_days": 0.015182,
+            "supplier_3_receipt_fill_rate": 0.0,
+            "material_102_stock_lag1": 0.531841,
+            "material_102_stock": 0.479188
+          },
+          "method_2_distribution_change_attribution": {
+            "material_102_stock": 0.0,
+            "material_102_stock_lag1": 0.0,
+            "supplier_3_po_delay_days": 0.0,
+            "supplier_3_receipt_fill_rate": 0.0,
+            "supplier_4_po_delay_days": 0.0,
+            "supplier_4_receipt_fill_rate": 0.0
+          }
+        },
+        "product_201_actual_production": {
+          "method_1_anomaly_attribution": {
+            "material_101_stock_lag1": -0.07605,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_4_po_delay_days": -0.001818,
+            "supplier_4_receipt_fill_rate": -0.002834,
+            "material_102_stock_lag1": 0.045325,
+            "supplier_3_po_delay_days": 0.0014,
+            "supplier_3_receipt_fill_rate": 0.0,
+            "material_103_stock_lag1": 0.26574,
+            "supplier_5_po_delay_days": 0.005279,
+            "supplier_5_receipt_fill_rate": 0.0,
+            "product_201_planned_production": -0.046667,
+            "product_201_capacity_shortfall_units": -0.016432,
+            "material_101_stock": -0.002249,
+            "material_102_stock": 0.005757,
+            "material_103_stock": -0.063456,
+            "product_201_actual_production": 0.024476
+          },
+          "method_2_distribution_change_attribution": {
+            "material_101_stock": 0.006413,
+            "material_101_stock_lag1": 0.043506,
+            "material_102_stock": 0.044963,
+            "material_102_stock_lag1": 0.004797,
+            "material_103_stock": 0.001111,
+            "material_103_stock_lag1": 0.017384,
+            "product_201_actual_production": 0.021349,
+            "product_201_capacity_shortfall_units": -0.015275,
+            "product_201_planned_production": -0.001187,
+            "supplier_1_po_delay_days": 0.009429,
+            "supplier_1_receipt_fill_rate": -0.016798,
+            "supplier_2_po_delay_days": 0.031827,
+            "supplier_2_receipt_fill_rate": 0.014758,
+            "supplier_3_po_delay_days": -0.00231,
+            "supplier_3_receipt_fill_rate": 0.027543,
+            "supplier_4_po_delay_days": -0.011842,
+            "supplier_4_receipt_fill_rate": 0.002864,
+            "supplier_5_po_delay_days": -0.000903,
+            "supplier_5_receipt_fill_rate": -0.015796
+          }
+        }
+      }
+    },
+    "INC_08": {
+      "scenario_id": "INC_08",
+      "window_period": "2025-02-26 -> 2025-03-16",
+      "target_nodes": [
+        "material_103_stock",
+        "product_201_due_backlog_units",
+        "product_201_actual_production"
+      ],
+      "attributions": {
+        "material_103_stock": {
+          "method_1_anomaly_attribution": {
+            "supplier_5_po_delay_days": -0.297543,
+            "material_103_stock_lag1": 1.688717,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_5_receipt_fill_rate": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "material_103_stock": 1.341364
+          },
+          "method_2_distribution_change_attribution": {
+            "material_103_stock": 0.316569,
+            "material_103_stock_lag1": 1.215817,
+            "supplier_1_po_delay_days": 0.717565,
+            "supplier_1_receipt_fill_rate": -0.383275,
+            "supplier_5_po_delay_days": 0.670268,
+            "supplier_5_receipt_fill_rate": 0.91734
+          }
+        },
+        "product_201_due_backlog_units": {
+          "method_1_anomaly_attribution": {
+            "material_101_stock_lag1": 0.0,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_4_po_delay_days": 0.0,
+            "supplier_4_receipt_fill_rate": 0.0,
+            "material_102_stock_lag1": 0.0,
+            "supplier_3_po_delay_days": 0.0,
+            "supplier_3_receipt_fill_rate": 0.0,
+            "material_103_stock_lag1": 0.0,
+            "supplier_5_po_delay_days": 0.0,
+            "supplier_5_receipt_fill_rate": 0.0,
+            "weekday": 0.0,
+            "month": 0.0,
+            "product_201_planned_production": 0.0,
+            "product_201_capacity_shortfall_units": 0.0,
+            "product_201_fg_stock_lag1": 0.0,
+            "material_101_stock": 0.0,
+            "material_102_stock": 0.0,
+            "material_103_stock": 0.0,
+            "product_201_demand_units": 0.0,
+            "product_201_actual_production": 0.0,
+            "product_201_fg_stock": 0.0,
+            "product_201_due_backlog_units": 0.0
+          },
+          "method_2_distribution_change_attribution": {
+            "material_101_stock": 0.0,
+            "material_101_stock_lag1": 0.0,
+            "material_102_stock": 0.0,
+            "material_102_stock_lag1": 0.0,
+            "material_103_stock": 0.0,
+            "material_103_stock_lag1": 0.0,
+            "month": 0.0,
+            "product_201_actual_production": 0.0,
+            "product_201_capacity_shortfall_units": 0.0,
+            "product_201_demand_units": 0.0,
+            "product_201_due_backlog_units": 0.0,
+            "product_201_fg_stock": 0.0,
+            "product_201_fg_stock_lag1": 0.0,
+            "product_201_planned_production": 0.0,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_3_po_delay_days": 0.0,
+            "supplier_3_receipt_fill_rate": 0.0,
+            "supplier_4_po_delay_days": 0.0,
+            "supplier_4_receipt_fill_rate": 0.0,
+            "supplier_5_po_delay_days": 0.0,
+            "supplier_5_receipt_fill_rate": 0.0,
+            "weekday": 0.0
+          }
+        },
+        "product_201_actual_production": {
+          "method_1_anomaly_attribution": {
+            "material_101_stock_lag1": 0.102594,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_4_po_delay_days": 0.086837,
+            "supplier_4_receipt_fill_rate": -0.009555,
+            "material_102_stock_lag1": 0.065365,
+            "supplier_3_po_delay_days": -0.008536,
+            "supplier_3_receipt_fill_rate": 0.0,
+            "material_103_stock_lag1": -0.095482,
+            "supplier_5_po_delay_days": 0.098782,
+            "supplier_5_receipt_fill_rate": 0.0,
+            "product_201_planned_production": 0.218729,
+            "product_201_capacity_shortfall_units": -0.029961,
+            "material_101_stock": -0.091946,
+            "material_102_stock": -0.023664,
+            "material_103_stock": -0.042698,
+            "product_201_actual_production": 0.064917
+          },
+          "method_2_distribution_change_attribution": {
+            "material_101_stock": 0.0,
+            "material_101_stock_lag1": 0.0,
+            "material_102_stock": 0.0,
+            "material_102_stock_lag1": 0.0,
+            "material_103_stock": 0.0,
+            "material_103_stock_lag1": 0.0,
+            "product_201_actual_production": 0.0,
+            "product_201_capacity_shortfall_units": 0.0,
+            "product_201_planned_production": 0.0,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_3_po_delay_days": 0.0,
+            "supplier_3_receipt_fill_rate": 0.0,
+            "supplier_4_po_delay_days": 0.0,
+            "supplier_4_receipt_fill_rate": 0.0,
+            "supplier_5_po_delay_days": 0.0,
+            "supplier_5_receipt_fill_rate": 0.0
+          }
+        }
+      }
+    },
+    "INC_09": {
+      "scenario_id": "INC_09",
+      "window_period": "2025-08-05 -> 2025-11-05",
+      "target_nodes": [
+        "material_101_stock",
+        "product_201_due_backlog_units"
+      ],
+      "attributions": {
+        "material_101_stock": {
+          "method_1_anomaly_attribution": {
+            "supplier_4_receipt_fill_rate": -0.01072,
+            "material_101_stock_lag1": 1.276235,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_4_po_delay_days": -0.111928,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "material_101_stock": 1.140866
+          },
+          "method_2_distribution_change_attribution": {
+            "material_101_stock": 0.307546,
+            "material_101_stock_lag1": 0.360352,
+            "supplier_1_po_delay_days": 0.33553,
+            "supplier_1_receipt_fill_rate": 0.634175,
+            "supplier_2_po_delay_days": 0.800538,
+            "supplier_2_receipt_fill_rate": -0.055958,
+            "supplier_4_po_delay_days": 0.408434,
+            "supplier_4_receipt_fill_rate": 0.322202
+          }
+        },
+        "product_201_due_backlog_units": {
+          "method_1_anomaly_attribution": {
+            "material_101_stock_lag1": 0.0,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_4_po_delay_days": 0.0,
+            "supplier_4_receipt_fill_rate": 0.0,
+            "material_102_stock_lag1": 0.0,
+            "supplier_3_po_delay_days": 0.0,
+            "supplier_3_receipt_fill_rate": 0.0,
+            "material_103_stock_lag1": 0.0,
+            "supplier_5_po_delay_days": 0.0,
+            "supplier_5_receipt_fill_rate": 0.0,
+            "weekday": 0.0,
+            "month": 0.0,
+            "product_201_planned_production": 0.0,
+            "product_201_capacity_shortfall_units": 0.0,
+            "product_201_fg_stock_lag1": 0.0,
+            "material_101_stock": 0.0,
+            "material_102_stock": 0.0,
+            "material_103_stock": 0.0,
+            "product_201_demand_units": 0.0,
+            "product_201_actual_production": 0.0,
+            "product_201_fg_stock": 0.0,
+            "product_201_due_backlog_units": 0.0
+          },
+          "method_2_distribution_change_attribution": {
+            "material_101_stock": 0.0,
+            "material_101_stock_lag1": 0.0,
+            "material_102_stock": 0.0,
+            "material_102_stock_lag1": 0.0,
+            "material_103_stock": 0.0,
+            "material_103_stock_lag1": 0.0,
+            "month": 0.0,
+            "product_201_actual_production": 0.0,
+            "product_201_capacity_shortfall_units": 0.0,
+            "product_201_demand_units": 0.0,
+            "product_201_due_backlog_units": 0.0,
+            "product_201_fg_stock": 0.0,
+            "product_201_fg_stock_lag1": 0.0,
+            "product_201_planned_production": 0.0,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_3_po_delay_days": 0.0,
+            "supplier_3_receipt_fill_rate": 0.0,
+            "supplier_4_po_delay_days": 0.0,
+            "supplier_4_receipt_fill_rate": 0.0,
+            "supplier_5_po_delay_days": 0.0,
+            "supplier_5_receipt_fill_rate": 0.0,
+            "weekday": 0.0
+          }
+        }
+      }
+    },
+    "INC_10": {
+      "scenario_id": "INC_10",
+      "window_period": "2025-11-26 -> 2025-12-26",
+      "target_nodes": [
+        "product_202_demand_units",
+        "product_202_due_backlog_units"
+      ],
+      "attributions": {
+        "product_202_demand_units": {
+          "method_1_anomaly_attribution": {
+            "weekday": 0.145196,
+            "month": -0.006781,
+            "product_202_demand_units": 0.33723
+          },
+          "method_2_distribution_change_attribution": {
+            "month": 0.0,
+            "product_202_demand_units": 0.0,
+            "weekday": 0.0
+          }
+        },
+        "product_202_due_backlog_units": {
+          "method_1_anomaly_attribution": {
+            "material_101_stock_lag1": 0.0,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_4_po_delay_days": 0.0,
+            "supplier_4_receipt_fill_rate": 0.0,
+            "material_103_stock_lag1": 0.0,
+            "supplier_5_po_delay_days": 0.0,
+            "supplier_5_receipt_fill_rate": 0.0,
+            "weekday": 0.0,
+            "month": 0.0,
+            "product_202_planned_production": 0.0,
+            "product_202_capacity_shortfall_units": 0.0,
+            "product_202_fg_stock_lag1": 0.0,
+            "material_101_stock": 0.0,
+            "material_103_stock": 0.0,
+            "product_202_demand_units": 0.0,
+            "product_202_actual_production": 0.0,
+            "product_202_fg_stock": 0.0,
+            "product_202_due_backlog_units": 0.0
+          },
+          "method_2_distribution_change_attribution": {
+            "material_101_stock": 0.0,
+            "material_101_stock_lag1": 0.0,
+            "material_103_stock": 0.0,
+            "material_103_stock_lag1": 0.0,
+            "month": 0.0,
+            "product_202_actual_production": 0.0,
+            "product_202_capacity_shortfall_units": 0.0,
+            "product_202_demand_units": 0.0,
+            "product_202_due_backlog_units": 0.0,
+            "product_202_fg_stock": 0.0,
+            "product_202_fg_stock_lag1": 0.0,
+            "product_202_planned_production": 0.0,
+            "supplier_1_po_delay_days": 0.0,
+            "supplier_1_receipt_fill_rate": 0.0,
+            "supplier_2_po_delay_days": 0.0,
+            "supplier_2_receipt_fill_rate": 0.0,
+            "supplier_4_po_delay_days": 0.0,
+            "supplier_4_receipt_fill_rate": 0.0,
+            "supplier_5_po_delay_days": 0.0,
+            "supplier_5_receipt_fill_rate": 0.0,
+            "weekday": 0.0
+          }
+        }
+      }
+    }
+  }
+}

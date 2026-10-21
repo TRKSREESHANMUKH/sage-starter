@@ -1,0 +1,97 @@
+{
+  "as_of": "2025-12-29",
+  "composite_severity_score": 7088.0,
+  "kpis": {
+    "oldest_overdue_date": "2025-10-02",
+    "total_backlog_units": 630,
+    "total_material_stockouts": 1,
+    "total_overdue_orders": 43,
+    "total_po_overdue_days": 137,
+    "total_production_shortfall": 0
+  },
+  "materials": {
+    "101": {
+      "days_of_cover": null,
+      "material_id": 101,
+      "name": "Steel Rod 10mm",
+      "open_pos_count": 1,
+      "overdue_pos": [
+        {
+          "days_overdue": 137,
+          "expected_date": "2025-08-14",
+          "pending_quantity": 407,
+          "po_id": 18,
+          "severity": "CRITICAL",
+          "supplier_id": 4,
+          "supplier_name": "EastCoast Components"
+        }
+      ],
+      "reorder_point": 150.0,
+      "safety_stock": 50.0,
+      "severity": "CRITICAL",
+      "stock": 9.0
+    },
+    "102": {
+      "days_of_cover": null,
+      "material_id": 102,
+      "name": "Plastic Granules",
+      "open_pos_count": 0,
+      "overdue_pos": [],
+      "reorder_point": 120.0,
+      "safety_stock": 40.0,
+      "severity": "NORMAL",
+      "stock": 204.0
+    },
+    "103": {
+      "days_of_cover": null,
+      "material_id": 103,
+      "name": "Copper Wire",
+      "open_pos_count": 0,
+      "overdue_pos": [],
+      "reorder_point": 100.0,
+      "safety_stock": 30.0,
+      "severity": "NORMAL",
+      "stock": 184.0
+    }
+  },
+  "metadata": {
+    "as_of_date": "2025-12-29",
+    "simulated_data": true,
+    "source": "PostgreSQL committed operational ERP schema"
+  },
+  "plant_severity": "CRITICAL",
+  "products": {
+    "201": {
+      "actual_production": 0,
+      "demand_units": 0,
+      "due_backlog_units": 453,
+      "fg_stock": 0.0,
+      "name": "Widget Model X",
+      "oldest_due_date": "2025-10-02",
+      "overdue_orders_count": 30,
+      "planned_production": 0,
+      "product_id": 201,
+      "production_shortfall": 0,
+      "reorder_point": 30.0,
+      "safety_stock": 15.0,
+      "severity": "CRITICAL"
+    },
+    "202": {
+      "actual_production": 0,
+      "demand_units": 35,
+      "due_backlog_units": 177,
+      "fg_stock": 0.0,
+      "name": "Widget Model Y",
+      "oldest_due_date": "2025-10-27",
+      "overdue_orders_count": 13,
+      "planned_production": 0,
+      "product_id": 202,
+      "production_shortfall": 0,
+      "reorder_point": 25.0,
+      "safety_stock": 10.0,
+      "severity": "CRITICAL"
+    }
+  },
+  "receipts_today": [],
+  "weekday": "Monday"
+}

@@ -1,0 +1,102 @@
+{
+  "metadata": {
+    "test": "Test A2 — Site-Calibrated Deployment Protocol",
+    "protocol": "Per-seed null threshold recalibrated on site baseline panel only (p95); matched Stage 7 tight scenario windows",
+    "compute_budget_note": "Evaluated on Seed 7 within 90-minute compute budget per pre-registration instructions",
+    "seeds": [7]
+  },
+  "seed_results": {
+    "seed_7": {
+      "seed": 7,
+      "site_null_threshold": 0.824826,
+      "detectable_scenarios_evaluated": 4,
+      "detectable_detected": 0,
+      "detection_rate_pct": 0.0,
+      "quiet_windows_evaluated": 20,
+      "false_alarm_rate_pct": 5.0,
+      "controls_correct_rejection_pct": 100.0,
+      "scenario_evaluations": [
+        {
+          "scenario_id": "INC_01",
+          "window": "2025-07-30 -> 2025-08-09",
+          "true_driver_score": 0.0000,
+          "true_driver_rank": 3,
+          "site_null_threshold": 0.824826,
+          "classification": "BELOW NULL / UNATTRIBUTED"
+        },
+        {
+          "scenario_id": "INC_02",
+          "window": "2025-10-14 -> 2025-10-21",
+          "true_driver_score": 0.0000,
+          "true_driver_rank": 99,
+          "site_null_threshold": 0.824826,
+          "classification": "CORRECT REJECTION (CONTROL)"
+        },
+        {
+          "scenario_id": "INC_03",
+          "window": "2025-01-04 -> 2025-01-14",
+          "true_driver_score": 0.1519,
+          "true_driver_rank": 1,
+          "site_null_threshold": 0.824826,
+          "classification": "BELOW NULL / UNATTRIBUTED"
+        },
+        {
+          "scenario_id": "INC_04",
+          "window": "2025-09-05 -> 2025-09-16",
+          "true_driver_score": 0.0130,
+          "true_driver_rank": 4,
+          "site_null_threshold": 0.824826,
+          "classification": "BELOW NULL / UNATTRIBUTED"
+        },
+        {
+          "scenario_id": "INC_05",
+          "window": "2025-01-29 -> 2025-02-10",
+          "true_driver_score": 0.0000,
+          "true_driver_rank": 3,
+          "site_null_threshold": 0.824826,
+          "classification": "BELOW NULL / UNATTRIBUTED"
+        },
+        {
+          "scenario_id": "INC_06",
+          "window": "2025-07-12 -> 2025-07-23",
+          "true_driver_score": -0.1125,
+          "true_driver_rank": 2,
+          "site_null_threshold": 0.824826,
+          "classification": "BELOW NULL / UNATTRIBUTED"
+        },
+        {
+          "scenario_id": "INC_07",
+          "window": "2025-06-12 -> 2025-06-19",
+          "true_driver_score": 0.0000,
+          "true_driver_rank": 3,
+          "site_null_threshold": 0.824826,
+          "classification": "BELOW NULL / UNATTRIBUTED"
+        },
+        {
+          "scenario_id": "INC_08",
+          "window": "2025-05-05 -> 2025-05-15",
+          "true_driver_score": 0.0000,
+          "true_driver_rank": 99,
+          "site_null_threshold": 0.824826,
+          "classification": "BELOW NULL / UNATTRIBUTED"
+        },
+        {
+          "scenario_id": "INC_09",
+          "window": "2025-08-25 -> 2025-09-01",
+          "true_driver_score": 0.0370,
+          "true_driver_rank": 1,
+          "site_null_threshold": 0.824826,
+          "classification": "BELOW NULL / UNATTRIBUTED"
+        },
+        {
+          "scenario_id": "INC_10",
+          "window": "2025-12-10 -> 2025-12-31",
+          "true_driver_score": 0.3379,
+          "true_driver_rank": 1,
+          "site_null_threshold": 0.824826,
+          "classification": "CORRECT REJECTION (CONTROL)"
+        }
+      ]
+    }
+  }
+}

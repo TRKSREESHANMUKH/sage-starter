@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}SAGE Operations &bull; Priority Action Register{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+  <div>
+    <h1 style="font-size: 1.4rem; font-weight: 800;">Tomorrow's Priority Action Register</h1>
+    <p style="font-size: 0.85rem; color: var(--text-muted);">Deterministic rule-based actions for <strong>{{ as_of }}</strong> &bull; Rules pre-registered in rules.yaml.</p>
+  </div>
+  <div style="display: flex; gap: 8px;">
+    <button class="theme-btn" onclick="filterRole('ALL')">All Roles</button>
+    <button class="theme-btn" onclick="filterRole('Planner')">Planner</button>
+    <button class="theme-btn" onclick="filterRole('Procurement')">Procurement</button>
+    <button class="theme-btn" onclick="filterRole('Plant Manager')">Plant Manager</button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Top 5 Action Items</div>
+  <div class="table-container">
+    <table id="priorities-table">
+      <thead>
+        <tr>
+          <th style="width: 50px;">Rank</th>
+          <th>Action Item</th>
+          <th>Reason &amp; Quantitative Context</th>
+          <th style="width: 140px;">Owner Role</th>
+          <th style="width: 110px;">Due Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in priorities.top_priorities %}
+        <tr data-role="{{ p.role }}">
+          <td><strong style="color: var(--accent); font-size: 1.1rem;">#{{ p.rank }}</strong></td>
+          <td><strong>{{ p.action }}</strong></td>
+          <td style="color: var(--text-muted);">{{ p.reason }}</td>
+          <td><span class="badge badge-info">{{ p.role }}</span></td>
+          <td style="color: var(--text-muted);">{{ p.due_date }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Watch-List (Upcoming Horizons)</div>
+  <ul style="padding-left: 20px; line-height: 1.8; font-size: 0.88rem;">
+    {% for w in priorities.watchlist %}
+    <li>
+      <strong>{{ w.item }}</strong> ({{ w.role }}): <span style="color: var(--text-muted);">{{ w.reason }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+
+<script>
+  function filterRole(role) {
+    const rows = document.querySelectorAll('#priorities-table tbody tr');
+    rows.forEach(r => {
+      if (role === 'ALL' || r.getAttribute('data-role') === role) {
+        r.style.display = '';
+      } else {
+        r.style.display = 'none';
+      }
+    });
+  }
+</script>
+{% endblock %}

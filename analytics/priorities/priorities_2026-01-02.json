@@ -1,0 +1,67 @@
+{
+  "as_of": "2026-01-02",
+  "metadata": {
+    "as_of_date": "2026-01-02",
+    "rules_source": "stage9/config/rules.yaml",
+    "simulated_data": true
+  },
+  "top_priorities": [
+    {
+      "action": "Fulfil order SO-164 first",
+      "category": "Rule 1",
+      "due_date": "2026-01-02",
+      "rank": 1,
+      "reason": "Order SO-164 for Widget Model X (Product 201) is 92 days overdue (1 units pending, due 2025-10-02)",
+      "role": "Planner"
+    },
+    {
+      "action": "Fulfil order SO-165 first",
+      "category": "Rule 1",
+      "due_date": "2026-01-02",
+      "rank": 2,
+      "reason": "Order SO-165 for Widget Model X (Product 201) is 91 days overdue (16 units pending, due 2025-10-03)",
+      "role": "Planner"
+    },
+    {
+      "action": "Fulfil order SO-167 first",
+      "category": "Rule 1",
+      "due_date": "2026-01-02",
+      "rank": 3,
+      "reason": "Order SO-167 for Widget Model X (Product 201) is 91 days overdue (8 units pending, due 2025-10-03)",
+      "role": "Planner"
+    },
+    {
+      "action": "Fulfil order SO-173 first",
+      "category": "Rule 1",
+      "due_date": "2026-01-02",
+      "rank": 4,
+      "reason": "Order SO-173 for Widget Model X (Product 201) is 85 days overdue (13 units pending, due 2025-10-09)",
+      "role": "Planner"
+    },
+    {
+      "action": "Fulfil order SO-175 first",
+      "category": "Rule 1",
+      "due_date": "2026-01-02",
+      "rank": 5,
+      "reason": "Order SO-175 for Widget Model X (Product 201) is 82 days overdue (17 units pending, due 2025-10-12)",
+      "role": "Planner"
+    }
+  ],
+  "watchlist": [
+    {
+      "item": "Fulfil order SO-174 first",
+      "reason": "Order SO-174 for Widget Model X (Product 201) is 82 days overdue (11 units pending, due 2025-10-12)",
+      "role": "Planner"
+    },
+    {
+      "item": "Fulfil order SO-176 first",
+      "reason": "Order SO-176 for Widget Model X (Product 201) is 80 days overdue (11 units pending, due 2025-10-14)",
+      "role": "Planner"
+    },
+    {
+      "item": "Fulfil order SO-177 first",
+      "reason": "Order SO-177 for Widget Model X (Product 201) is 79 days overdue (12 units pending, due 2025-10-15)",
+      "role": "Planner"
+    }
+  ]
+}

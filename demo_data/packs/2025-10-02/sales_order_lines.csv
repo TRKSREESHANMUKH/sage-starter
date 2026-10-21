@@ -1,0 +1,4 @@
+id,sales_order_id,product_id,quantity_ordered,quantity_fulfilled
+170,170,202,13,0
+171,171,202,11,0
+172,172,202,8,0

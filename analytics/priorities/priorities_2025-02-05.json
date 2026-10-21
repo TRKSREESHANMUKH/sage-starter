@@ -1,0 +1,57 @@
+{
+  "as_of": "2025-02-05",
+  "metadata": {
+    "as_of_date": "2025-02-05",
+    "rules_source": "stage9/config/rules.yaml",
+    "simulated_data": true
+  },
+  "top_priorities": [
+    {
+      "action": "Expedite urgent replenishment for Steel Rod 10mm (Material 101)",
+      "category": "Rule 3",
+      "due_date": "2025-02-05",
+      "rank": 1,
+      "reason": "Steel Rod 10mm (Material 101) stock at 50 kg is at or below safety stock (50 kg). Cover is 1.9 days",
+      "role": "Procurement"
+    },
+    {
+      "action": "Prepare receipt for PO-2 from EastCoast Components",
+      "category": "Incoming Supply",
+      "due_date": "2025-02-08",
+      "rank": 2,
+      "reason": "Expected shipment of 315 units of Steel Rod 10mm (Material 101) scheduled for arrival on 2025-02-08",
+      "role": "Procurement"
+    },
+    {
+      "action": "Prepare receipt for PO-3 from Global Polymers Co",
+      "category": "Incoming Supply",
+      "due_date": "2025-02-13",
+      "rank": 3,
+      "reason": "Expected shipment of 262 units of Plastic Granules (Material 102) scheduled for arrival on 2025-02-13",
+      "role": "Procurement"
+    },
+    {
+      "action": "Monitor inventory buffer for Steel Rod 10mm (Material 101)",
+      "category": "Buffer Health",
+      "due_date": "2025-02-05",
+      "rank": 4,
+      "reason": "Steel Rod 10mm (Material 101) has 1.9 days of cover remaining (50 kg on hand)",
+      "role": "Procurement"
+    },
+    {
+      "action": "Monitor inventory buffer for Plastic Granules (Material 102)",
+      "category": "Buffer Health",
+      "due_date": "2025-02-05",
+      "rank": 5,
+      "reason": "Plastic Granules (Material 102) has 8.2 days of cover remaining (70 kg on hand)",
+      "role": "Procurement"
+    }
+  ],
+  "watchlist": [
+    {
+      "item": "Plastic Granules (Material 102) inventory monitoring",
+      "reason": "Plastic Granules (Material 102) is at 70 kg (below reorder point 120 kg), tracking 1 open replenishment POs",
+      "role": "Procurement"
+    }
+  ]
+}

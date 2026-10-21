@@ -1,0 +1,4 @@
+id,customer_id,order_date,requested_delivery_date,status
+11,2,2025-01-15,2025-01-23,OPEN
+12,3,2025-01-15,2025-01-25,OPEN
+13,4,2025-01-15,2025-01-25,OPEN

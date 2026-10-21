@@ -19,8 +19,8 @@ materials:
 # 2. Finished Goods Inventory Rules
 products:
   safety_stock:
-    201: 15.0   # Standard Motor (units)
-    202: 10.0   # Heavy Duty Motor (units)
+    201: 15.0   # Widget Model X (units)
+    202: 10.0   # Widget Model Y (units)
   reorder_point:
     201: 30.0
     202: 25.0
@@ -58,4 +58,23 @@ supplier_rating:
   grade_a_on_time_min: 90.0
   grade_a_received_min: 95.0
   grade_b_on_time_min: 70.0
+
+# 6. Part E Abnormal Detection & Cause-Chain Trace Rules (Pre-registered)
+abnormal_detection:
+  baseline_reference: "analytics/daily_panel_baseline.parquet"
+  modified_z_threshold: 3.5
+  modified_z_multiplier: 0.6745
+  zero_inflated_percentile: 99.0
+  trailing_window_days: 7
+  max_reported_chains: 3
+  symptom_nodes:
+    - "product_201_due_backlog_units"
+    - "product_202_due_backlog_units"
+    - "product_201_production_shortfall_units"
+    - "product_202_production_shortfall_units"
+    - "product_201_capacity_shortfall_units"
+    - "product_202_capacity_shortfall_units"
+    - "material_101_stock"
+    - "material_102_stock"
+    - "material_103_stock"
 

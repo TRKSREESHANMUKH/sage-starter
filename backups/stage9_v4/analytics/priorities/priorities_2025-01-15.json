@@ -1,0 +1,35 @@
+{
+  "as_of": "2025-01-15",
+  "metadata": {
+    "as_of_date": "2025-01-15",
+    "rules_source": "stage9/config/rules.yaml",
+    "simulated_data": true
+  },
+  "top_priorities": [
+    {
+      "action": "Reorder Steel Rod 10mm (Material 101)",
+      "category": "Rule 3",
+      "due_date": "2025-01-15",
+      "rank": 1,
+      "reason": "Steel Rod 10mm (Material 101) stock at 114 kg is at or below reorder point (150 kg) with 0 open purchase orders",
+      "role": "Procurement"
+    },
+    {
+      "action": "Monitor inventory buffer for Steel Rod 10mm (Material 101)",
+      "category": "Buffer Health",
+      "due_date": "2025-01-15",
+      "rank": 2,
+      "reason": "Steel Rod 10mm (Material 101) has 8.1 days of cover remaining (114 kg on hand)",
+      "role": "Procurement"
+    },
+    {
+      "action": "Monitor inventory buffer for Plastic Granules (Material 102)",
+      "category": "Buffer Health",
+      "due_date": "2025-01-15",
+      "rank": 3,
+      "reason": "Plastic Granules (Material 102) has 44.3 days of cover remaining (190 kg on hand)",
+      "role": "Procurement"
+    }
+  ],
+  "watchlist": []
+}

@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}SAGE Operations &bull; Nightly Digests Archive{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 20px;">
+  <h1 style="font-size: 1.4rem; font-weight: 800;">Nightly Digests Archive</h1>
+  <p style="font-size: 0.85rem; color: var(--text-muted);">Historical operational snapshots generated under simulated clock replay.</p>
+</div>
+
+<!-- Historical Trend Visualizer -->
+<div class="card" style="margin-bottom: 24px;">
+  <div class="card-title">
+    <span>Historical Factory Performance Timeline (Production Shortfall &amp; Severity)</span>
+    <span style="font-size: 0.8rem; color: var(--text-muted);">{{ snapshots|length }} Recorded Snapshots</span>
+  </div>
+  <div style="height: 260px; position: relative;">
+    <canvas id="historyChart"></canvas>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">
+    <span>Historical Snapshot Register</span>
+    <span style="font-size: 0.8rem; color: var(--text-muted);">Click any row to open full daily operations replay</span>
+  </div>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Snapshot Date</th>
+          <th>Plant Severity</th>
+          <th>Severity Score</th>
+          <th>Backlog Units</th>
+          <th>Shortfall Units</th>
+          <th>Overdue Orders</th>
+          <th>Stockouts</th>
+          <th style="text-align: right;">Detail</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in snapshots %}
+        <tr>
+          <td><strong>{{ s.as_of }}</strong></td>
+          <td>
+            <span class="badge {% if s.plant_severity == 'CRITICAL' %}badge-crit{% elif s.plant_severity == 'WARNING' %}badge-warn{% else %}badge-ok{% endif %}">
+              {{ s.plant_severity }}
+            </span>
+          </td>
+          <td>{{ s.composite_severity_score }}</td>
+          <td>{{ s.kpis.total_backlog_units }}</td>
+          <td>{{ s.kpis.total_production_shortfall }}</td>
+          <td>{{ s.kpis.total_overdue_orders }}</td>
+          <td>{{ s.kpis.total_material_stockouts }}</td>
+          <td style="text-align: right;">
+            <a href="/digest/{{ s.as_of }}?token={{ token }}" style="color: var(--accent); text-decoration: none; font-weight: 600;">Open &rarr;</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const ctx = document.getElementById("historyChart").getContext("2d");
+    new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: {{ chart_dates | tojson }},
+        datasets: [
+          {
+            label: "Production Shortfall (units)",
+            data: {{ chart_shortfall | tojson }},
+            borderColor: "#fb923c",
+            backgroundColor: "rgba(251, 146, 60, 0.15)",
+            borderWidth: 2,
+            tension: 0.3,
+            fill: true,
+            yAxisID: "y"
+          },
+          {
+            label: "Plant Severity Score",
+            data: {{ chart_severity | tojson }},
+            borderColor: "#f87171",
+            backgroundColor: "transparent",
+            borderWidth: 2,
+            borderDash: [4, 4],
+            tension: 0.2,
+            yAxisID: "y1"
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: { labels: { color: "#94a3b8", font: { size: 11 } } },
+          tooltip: {
+            backgroundColor: "#1e293b",
+            titleColor: "#f8fafc",
+            bodyColor: "#cbd5e1"
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: "#64748b", maxTicksLimit: 12, font: { size: 10 } },
+            grid: { color: "#1e293b" }
+          },
+          y: {
+            type: "linear",
+            position: "left",
+            title: { display: true, text: "Shortfall Units", color: "#fb923c", font: { size: 11 } },
+            ticks: { color: "#94a3b8" },
+            grid: { color: "#1e293b" }
+          },
+          y1: {
+            type: "linear",
+            position: "right",
+            title: { display: true, text: "Severity Score", color: "#f87171", font: { size: 11 } },
+            ticks: { color: "#94a3b8" },
+            grid: { drawOnChartArea: false }
+          }
+        }
+      }
+    });
+  });
+</script>
+{% endblock %}

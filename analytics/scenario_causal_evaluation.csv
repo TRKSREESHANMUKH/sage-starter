@@ -1,0 +1,11 @@
+scenario_id,true_driver(s)_from_DB,top_driver,M1_score_(mean+-sd),M1_S_p95,M2_score,M2_S_p95,exogenous_rank,classification,stable_(Y/N)
+INC_01,"supplier_1_po_delay_days,supplier_1_receipt_fill_rate",material_101_stock_lag1,1.009302 +/- 0.167873,0.218006,0.505739,0.922611,5.0,Below Null Threshold / Unattributed,Y
+INC_02,none,material_101_stock_lag1,0.000000 +/- 0.000000,0.218006,0.000000,0.922611,N/A,within null,Y
+INC_03,product_201_demand_units,product_201_fg_stock_lag1,7.726094 +/- 0.379771,0.218006,0.924924,0.922611,2.4,DETECTED (M1 Only),N
+INC_04,product_201_capacity_shortfall_units,product_201_planned_production,0.880037 +/- 0.155131,0.218006,1.167172,0.922611,1.8,DETECTED + SUPPORTED,Y
+INC_05,"supplier_1_po_delay_days,supplier_2_po_delay_days",material_101_stock_lag1,0.814384 +/- 0.173456,0.218006,0.751888,0.922611,5.0,Below Null Threshold / Unattributed,Y
+INC_06,"supplier_2_po_delay_days,product_202_capacity_shortfall_units",product_202_planned_production,1.344424 +/- 0.081580,0.218006,1.846680,0.922611,1.0,DETECTED + SUPPORTED,Y
+INC_07,supplier_5_receipt_fill_rate,material_103_stock_lag1,1.616708 +/- 0.298363,0.218006,1.399335,0.922611,4.0,Structurally Un-attributable (Zero Baseline Variance),Y
+INC_08,supplier_4_po_delay_days,material_103_stock_lag1,1.988699 +/- 0.304850,0.218006,1.067350,0.922611,1.0,Safety Stock Absorption (Asymmetric Pass),Y
+INC_09,supplier_4_po_delay_days,material_101_stock_lag1,1.299460 +/- 0.140169,0.218006,0.792325,1.092598,1.0,Lag-State Dominance (M1 clears; exog rank suppressed by stockout persistence),Y
+INC_10,"month,weekday",month,0.936986 +/- 0.081447,0.218006,2.647051,0.922611,1.0,Seasonal Pattern (Expected — Not Anomaly),Y

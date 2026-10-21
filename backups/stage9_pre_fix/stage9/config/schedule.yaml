@@ -1,0 +1,13 @@
+# stage9/config/schedule.yaml
+timezone: Asia/Kolkata
+
+jobs:
+  prepare: {cron: "45 19 * * *"}   # ingest next pack, build report and PDF
+  send:    {cron: "0 20 * * *"}    # send the prepared report only
+
+recipients:
+  nightly_digest: ["sreeshanmukhtrk@gmail.com"]
+
+replay:
+  replay_start: "2025-02-03"
+  replay_end: "2025-12-31"

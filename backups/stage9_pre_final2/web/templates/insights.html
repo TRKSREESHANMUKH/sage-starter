@@ -1,0 +1,1081 @@
+{% extends "base.html" %}
+
+{% block title %}SAGE &bull; Insights &bull; {{ as_of }}{% endblock %}
+
+{% block extra_head %}
+<!-- Chart.js v4.4.1 Pinned Version -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<style>
+  /* Period Selector Strip */
+  .period-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius);
+    padding: 12px 18px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .period-btn-group {
+    display: inline-flex;
+    gap: 6px;
+    background: #f1f5f9;
+    padding: 4px;
+    border-radius: 8px;
+  }
+  .period-btn {
+    font-size: 0.86rem;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: var(--text-muted);
+    transition: all 0.15s ease;
+  }
+  .period-btn:hover {
+    color: var(--text);
+  }
+  .period-btn.active {
+    background: #ffffff;
+    color: var(--accent);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+  .actions-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.80rem;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--surface-border);
+    background: #ffffff;
+    color: var(--text);
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+  .action-btn:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: var(--accent);
+  }
+
+  /* Date Range Header Under Title */
+  .insights-header-block {
+    margin-bottom: 20px;
+  }
+  .insights-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    margin-bottom: 2px;
+  }
+  .insights-date-range {
+    font-size: 0.90rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  /* Empty Period Warning */
+  .empty-period-banner {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: #92400e;
+    font-size: 0.88rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  /* What Changed This Week Strip */
+  .changed-strip {
+    background: #ffffff;
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 24px;
+  }
+  .changed-strip-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+  .changed-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+  }
+  .changed-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 10px 14px;
+  }
+  .changed-card-label {
+    font-size: 0.78rem;
+    color: #64748b;
+    font-weight: 600;
+  }
+  .changed-card-val {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text);
+    margin: 2px 0;
+  }
+  .changed-card-diff {
+    font-size: 0.80rem;
+    font-weight: 700;
+  }
+
+  /* Summary Strip */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .summary-card {
+    background: #ffffff;
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+  }
+  .summary-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+  }
+  .summary-value {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 5px;
+  }
+  .summary-meaning {
+    font-size: 0.80rem;
+    color: #475569;
+    line-height: 1.35;
+    margin-bottom: 6px;
+  }
+  details.calc-expander {
+    font-size: 0.76rem;
+    color: var(--accent);
+    cursor: pointer;
+  }
+  details.calc-expander summary {
+    font-weight: 600;
+    outline: none;
+  }
+  .calc-details-box {
+    margin-top: 5px;
+    padding: 7px 9px;
+    background: #f8fafc;
+    border: 1px solid var(--surface-border);
+    border-radius: 4px;
+    color: #334155;
+    line-height: 1.35;
+  }
+
+  /* Section Containers */
+  .insight-section {
+    background: #ffffff;
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin-bottom: 28px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  }
+  .insight-section-head {
+    margin-bottom: 14px;
+  }
+  .insight-section-title {
+    font-size: 1.20rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .takeaway-banner {
+    background: #f0fdf4;
+    border-left: 3px solid #16a34a;
+    padding: 7px 12px;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #166534;
+    margin-top: 5px;
+    margin-bottom: 14px;
+  }
+  .takeaway-banner.warn {
+    background: #fffbeb;
+    border-left-color: #d97706;
+    color: #92400e;
+  }
+
+  /* Tables: Sticky First Column & Clean Wrapping */
+  .table-responsive {
+    overflow-x: auto;
+    margin-bottom: 12px;
+    position: relative;
+    border: 1px solid var(--surface-border);
+    border-radius: 6px;
+  }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.84rem;
+    text-align: left;
+    min-width: 820px;
+  }
+  .data-table th {
+    background: #f8fafc;
+    padding: 8px 10px;
+    font-weight: 700;
+    color: #475569;
+    border-bottom: 1px solid var(--surface-border);
+    white-space: normal;
+    vertical-align: bottom;
+  }
+  .data-table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid #f1f5f9;
+    color: var(--text);
+    vertical-align: top;
+  }
+  .data-table tr:hover td {
+    background: #fbfcfe;
+  }
+  .data-table tr.row-greyed td {
+    color: #94a3b8;
+    background: #fafafa;
+  }
+  .data-table td.col-sticky-1, .data-table th.col-sticky-1 {
+    position: sticky;
+    left: 0;
+    background: #ffffff;
+    z-index: 2;
+    box-shadow: 2px 0 3px rgba(0,0,0,0.04);
+  }
+  .data-table tr.row-greyed td.col-sticky-1 {
+    background: #fafafa;
+  }
+  .data-table th.col-sticky-1 {
+    background: #f8fafc;
+    z-index: 3;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .badge-strong { background: var(--badge-strong-bg); color: var(--badge-strong-text); border: 1px solid var(--badge-strong-border); }
+  .badge-some { background: var(--badge-some-bg); color: var(--badge-some-text); border: 1px solid var(--badge-some-border); }
+  .badge-weak { background: var(--badge-weak-bg); color: var(--badge-weak-text); border: 1px solid var(--badge-weak-border); }
+  .badge-calm { background: var(--badge-calm-bg); color: var(--badge-calm-text); border: 1px solid var(--badge-calm-border); }
+
+  .table-rule-note {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+    line-height: 1.45;
+  }
+
+  /* Grid Charts */
+  .charts-subgrid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .charts-subgrid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 18px;
+  }
+  .subchart-card {
+    border: 1px solid var(--surface-border);
+    border-radius: 8px;
+    padding: 14px;
+    background: #fcfdfe;
+  }
+  .subchart-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+  .subchart-takeaway {
+    font-size: 0.78rem;
+    color: #475569;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+
+  /* Reliability Box */
+  .reliability-box {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+  }
+  .reliability-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #0369a1;
+    margin-bottom: 6px;
+  }
+  .reliability-list {
+    margin-left: 18px;
+    font-size: 0.84rem;
+    color: #0c4a6e;
+    line-height: 1.5;
+  }
+  .reliability-list li {
+    margin-bottom: 5px;
+  }
+  .reliability-list li:last-child {
+    margin-bottom: 0;
+  }
+
+  .episode-story {
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: #334155;
+    background: #f8fafc;
+    padding: 6px 10px;
+    border-left: 2px solid #2563eb;
+    border-radius: 0 4px 4px 0;
+    margin-top: 4px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Header Title & Exact Date Range -->
+<div class="insights-header-block">
+  <h1 class="insights-title">Operational Insights</h1>
+  <div class="insights-date-range">
+    {{ date_range_str }} &bull; Data observed up to {{ as_of }}
+  </div>
+</div>
+
+<!-- Period Selector & Action Downloads -->
+<div class="period-bar">
+  <div class="period-btn-group" role="group" aria-label="Time period selector">
+    <a href="/insights?date={{ as_of }}&period=30d" class="period-btn {% if period == '30d' %}active{% endif %}">Last 30 days</a>
+    <a href="/insights?date={{ as_of }}&period=quarter" class="period-btn {% if period == 'quarter' %}active{% endif %}">Last quarter</a>
+    <a href="/insights?date={{ as_of }}&period=ytd" class="period-btn {% if period == 'ytd' %}active{% endif %}">Year so far</a>
+    {% if is_demo_full_year %}
+      <a href="/insights?date={{ as_of }}&period=full_year" class="period-btn active" style="background: #fef3c7; color: #92400e;">Full-year view (demo)</a>
+    {% endif %}
+  </div>
+
+  <div class="actions-group">
+    <a href="/insights/pdf?date={{ as_of }}&period={{ period }}" class="action-btn" target="_blank" title="Download formatted PDF">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download this view as PDF
+    </a>
+    <a href="/insights/suppliers.csv?date={{ as_of }}&period={{ period }}" class="action-btn" title="Download supplier report CSV">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Supplier card (CSV)
+    </a>
+    <a href="/insights/delays.csv?date={{ as_of }}&period={{ period }}" class="action-btn" title="Download delay ledger CSV">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Delay ledger (CSV)
+    </a>
+  </div>
+</div>
+
+{% if empty_period_notice %}
+  <div class="empty-period-banner">
+    {{ empty_period_notice }}
+  </div>
+{% endif %}
+
+<!-- What Changed This Week Strip -->
+<div class="changed-strip">
+  <div class="changed-strip-title">What Changed This Week (Last 7 Days vs Prior 7 Days)</div>
+  <div class="changed-grid">
+    <div class="changed-card">
+      <div class="changed-card-label">Late Customer Units</div>
+      <div class="changed-card-val">{{ what_changed_strip.late_units.current }} units</div>
+      <div class="changed-card-diff" style="color: {{ what_changed_strip.late_units.color }};">
+        {{ what_changed_strip.late_units.change_str }}
+      </div>
+    </div>
+    <div class="changed-card">
+      <div class="changed-card-label">Supplier Delays</div>
+      <div class="changed-card-val">{{ what_changed_strip.supplier_delays.current }} delays</div>
+      <div class="changed-card-diff" style="color: {{ what_changed_strip.supplier_delays.color }};">
+        {{ what_changed_strip.supplier_delays.change_str }}
+      </div>
+    </div>
+    <div class="changed-card">
+      <div class="changed-card-label">Days Buffer Low</div>
+      <div class="changed-card-val">{{ what_changed_strip.low_stock_days.current }} days</div>
+      <div class="changed-card-diff" style="color: {{ what_changed_strip.low_stock_days.color }};">
+        {{ what_changed_strip.low_stock_days.change_str }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 1. Summary Strip (4 KPI Cards) -->
+<div class="summary-grid">
+  {% for kpi in summary_strip %}
+  <div class="summary-card" id="{{ kpi.id }}">
+    <div class="summary-label">{{ kpi.label }}</div>
+    <div class="summary-value">{{ kpi.value }}</div>
+    <div class="summary-meaning">{{ kpi.meaning }}</div>
+    <details class="calc-expander">
+      <summary>How is this calculated?</summary>
+      <div class="calc-details-box">
+        {{ kpi.calc_info }}
+      </div>
+    </details>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Block 1: Supplier Report Card (Richer Columns, Sticky First Column) -->
+<div class="insight-section" id="supplier-report-card">
+  <div class="insight-section-head">
+    <h2 class="insight-section-title">Supplier Report Card</h2>
+    <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 3px;">
+      Operational delivery tracking, lead times, open orders, and timing co-occurrences.
+    </p>
+  </div>
+
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th class="col-sticky-1">Supplier name</th>
+          <th>Material supplied</th>
+          <th>Deliveries (n)</th>
+          <th>On-time %</th>
+          <th>Average days late</th>
+          <th>Worst delay</th>
+          <th>Lead time</th>
+          <th>Open orders now</th>
+          <th>Next expected</th>
+          <th>Received vs ordered</th>
+          <th>Coincided with*</th>
+          <th>Rating</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for supp in supplier_cards %}
+        <tr class="{% if supp.is_greyed and supp.deliveries_count == 0 %}row-greyed{% endif %}">
+          <td class="col-sticky-1">
+            <strong>{{ supp.supplier_name }}</strong>
+            <div style="font-size: 0.76rem; color: #64748b; margin-top: 2px;">
+              {{ supp.summary_sentence }}
+            </div>
+          </td>
+          <td>{{ supp.material_supplied }}</td>
+          <td>{{ supp.deliveries_count }}</td>
+          <td>
+            {% if supp.on_time_pct_str != "—" %}
+              <strong>{{ supp.on_time_pct_str }}</strong>
+            {% else %}
+              <span style="color: #94a3b8;">—</span>
+            {% endif %}
+          </td>
+          <td>{{ supp.avg_days_late_str }}</td>
+          <td>{{ supp.worst_delay_str }}</td>
+          <td>{{ supp.lead_time_str }}</td>
+          <td>{{ supp.open_orders_str }}</td>
+          <td>{{ supp.next_expected_str }}</td>
+          <td>{{ supp.quantity_str }}</td>
+          <td>
+            {% if supp.coincided_str != "0 days" %}
+              <span style="font-weight: 700; color: #b45309;">{{ supp.coincided_str }}</span>
+            {% else %}
+              <span style="color: var(--text-muted);">0 days</span>
+            {% endif %}
+          </td>
+          <td>
+            <span class="badge {{ supp.badge_class }}">
+              {{ supp.rating }}
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-rule-note">
+    <strong>Rating rule:</strong> Grade A if on-time &ge; 90% and received &ge; 95%; Grade B if on-time &ge; 70%; Grade C otherwise; "Too few deliveries to rate" if deliveries &lt; 5.
+    <br>
+    <em>* Observed together, not proven cause. Coincidence in time does not imply attribution.</em>
+  </div>
+</div>
+
+<!-- Block 2: Customer Orders (Service Levels & Top Delayed Orders) -->
+<div class="insight-section" id="customer-orders-block">
+  <div class="insight-section-head">
+    <h2 class="insight-section-title">Customer Orders &amp; Service Delivery</h2>
+    <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 3px;">
+      Order fulfillment rates, average customer delays, and current outstanding units owed.
+    </p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 18px; margin-bottom: 20px;">
+    <!-- Service by Product -->
+    <div>
+      <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 8px;">Service by Finished Product</h3>
+      <div class="table-responsive" style="min-width: 0;">
+        <table class="data-table" style="min-width: 100%;">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Orders</th>
+              <th>On-time %</th>
+              <th>Avg days late</th>
+              <th>Units owed now</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ps in product_service %}
+            <tr>
+              <td><strong>{{ ps.product_name }}</strong></td>
+              <td>{{ ps.orders_count }}</td>
+              <td><strong>{{ ps.on_time_pct }}</strong></td>
+              <td>{{ ps.avg_days_late }}</td>
+              <td><span style="{% if ps.units_owed_now > 0 %}color: #dc2626; font-weight: 700;{% endif %}">{{ ps.units_owed_now }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Service by Customer -->
+    <div>
+      <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 8px;">Service by Key Customer</h3>
+      <div class="table-responsive" style="min-width: 0;">
+        <table class="data-table" style="min-width: 100%;">
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Orders</th>
+              <th>On-time %</th>
+              <th>Avg days late</th>
+              <th>Units owed now</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for cs in customer_service %}
+            <tr>
+              <td><strong>{{ cs.customer_name }}</strong></td>
+              <td>{{ cs.orders_count }}</td>
+              <td><strong>{{ cs.on_time_pct }}</strong></td>
+              <td>{{ cs.avg_days_late }}</td>
+              <td><span style="{% if cs.units_owed_now > 0 %}color: #dc2626; font-weight: 700;{% endif %}">{{ cs.units_owed_now }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Most Delayed Orders Table -->
+  <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 8px;">Most Delayed Customer Orders (Top 5)</h3>
+  {% if top5_delayed_orders %}
+  <div class="table-responsive" style="min-width: 0;">
+    <table class="data-table" style="min-width: 100%;">
+      <thead>
+        <tr>
+          <th>Order #</th>
+          <th>Customer</th>
+          <th>Product</th>
+          <th>Quantity</th>
+          <th>Due Date</th>
+          <th>Delivered Date</th>
+          <th>Days Late</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ord in top5_delayed_orders %}
+        <tr>
+          <td><strong>{{ ord.ref_no }}</strong></td>
+          <td>{{ ord.partner }}</td>
+          <td>{{ ord.item }}</td>
+          <td>{{ ord.quantity }} u</td>
+          <td>{{ ord.due_date }}</td>
+          <td>{{ ord.actual_date }}</td>
+          <td><span style="color: #b91c1c; font-weight: 700;">+{{ ord.days_late }} d</span></td>
+          <td><span class="badge {% if ord.status == 'Currently overdue' %}badge-weak{% else %}badge-calm{% endif %}">{{ ord.status }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div style="font-size: 0.85rem; color: #166534; background: #f0fdf4; padding: 10px 14px; border-radius: 6px;">
+    No delayed customer orders recorded during this timeframe.
+  </div>
+  {% endif %}
+</div>
+
+<!-- Block 3: Delay Ledger (Sortable, Searchable Real Records) -->
+<div class="insight-section" id="delay-ledger-block">
+  <div class="insight-section-head" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px;">
+    <div>
+      <h2 class="insight-section-title">Delay Ledger</h2>
+      <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 3px;">
+        Comprehensive log of every late supplier receipt and late customer shipment.
+      </p>
+    </div>
+    <a href="/insights/delays.csv?date={{ as_of }}&period={{ period }}" class="action-btn">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export Delay Ledger (CSV)
+    </a>
+  </div>
+
+  {% if delay_ledger %}
+  <div class="table-responsive">
+    <table class="data-table" id="table-delay-ledger">
+      <thead>
+        <tr>
+          <th>Record Type</th>
+          <th>Ref #</th>
+          <th>Partner</th>
+          <th>Item</th>
+          <th>Quantity</th>
+          <th>Expected / Due</th>
+          <th>Actual / Received</th>
+          <th>Days Late</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in delay_ledger %}
+        <tr>
+          <td>
+            <span class="badge {% if row.record_type == 'Supplier Delivery' %}badge-some{% else %}badge-weak{% endif %}">
+              {{ row.record_type }}
+            </span>
+          </td>
+          <td><strong>{{ row.ref_no }}</strong></td>
+          <td>{{ row.partner }}</td>
+          <td>{{ row.item }}</td>
+          <td>{{ row.quantity }}</td>
+          <td>{{ row.due_date }}</td>
+          <td>{{ row.actual_date }}</td>
+          <td><span style="color: #b91c1c; font-weight: 700;">+{{ row.days_late }} d</span></td>
+          <td>{{ row.status }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div style="font-size: 0.88rem; color: #166534; background: #f0fdf4; padding: 12px 16px; border-radius: 6px;">
+    Zero operational delays recorded in this timeframe. All receipts and shipments occurred on schedule.
+  </div>
+  {% endif %}
+</div>
+
+<!-- Block 4: Weekly Trend (Weekly Table + Late Units Line Chart) -->
+<div class="insight-section" id="weekly-trend-block">
+  <div class="insight-section-head">
+    <h2 class="insight-section-title">Weekly Operational Trends</h2>
+    <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 3px;">
+      Weekly aggregated demand, manufacturing throughput, and customer backlog progression.
+    </p>
+  </div>
+
+  {% if weekly_trend_rows %}
+  <div class="table-responsive" style="margin-bottom: 20px;">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Calendar Week</th>
+          <th>Demand (units)</th>
+          <th>Produced (units)</th>
+          <th>Shipped (units)</th>
+          <th>Peak Late Units</th>
+          <th>Days Buffer Low</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for wk in weekly_trend_rows %}
+        <tr>
+          <td><strong>{{ wk.week_label }}</strong></td>
+          <td>{{ wk.demand }}</td>
+          <td>{{ wk.produced }}</td>
+          <td>{{ wk.shipped }}</td>
+          <td><span style="{% if wk.late_units > 0 %}color: #dc2626; font-weight: 700;{% endif %}">{{ wk.late_units }}</span></td>
+          <td>{{ wk.days_low_stock }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div style="position: relative; height: 200px; width: 100%;">
+    <canvas id="canvasWeeklyTrend"></canvas>
+  </div>
+  {% else %}
+  <div style="font-size: 0.88rem; color: var(--text-muted); padding: 12px 0;">
+    Insufficient multi-week data for trend visualization in selected period.
+  </div>
+  {% endif %}
+</div>
+
+<!-- Block 5: Disruption Episodes with Plain-English Stories -->
+<div class="insight-section" id="chart-disruption-episodes">
+  <div class="insight-section-head">
+    <h2 class="insight-section-title">When Did Things Go Wrong? (Disruption Episodes)</h2>
+    <div class="takeaway-banner {% if episodes.table %}warn{% endif %}">
+      {{ episodes.takeaway }}
+    </div>
+  </div>
+
+  <div style="position: relative; height: 210px; width: 100%; margin-bottom: 20px;">
+    <canvas id="canvasEpisodesTimeline"></canvas>
+  </div>
+
+  <h3 style="font-size: 1.0rem; font-weight: 700; color: var(--text); margin-bottom: 8px;">
+    Disruption Stories &amp; Timeline
+  </h3>
+  {% if episodes.table %}
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Dates</th>
+          <th>Duration</th>
+          <th>Peak Backlog</th>
+          <th>Items Involved</th>
+          <th>Coincided With</th>
+          <th>Plain-English Narrative</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ep in episodes.table %}
+        <tr>
+          <td><strong>{{ ep.start_date }}</strong> to <strong>{{ ep.end_date }}</strong></td>
+          <td>{{ ep.duration_days }} d</td>
+          <td><span style="color: #dc2626; font-weight: 700;">{{ ep.peak_backlog }} u</span></td>
+          <td>{{ ep.items_involved }}</td>
+          <td>{{ ep.coincided_supplier }}</td>
+          <td>
+            <div class="episode-story">
+              {{ ep.story }}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div style="font-size: 0.88rem; color: #166534; background: #f0fdf4; padding: 12px 16px; border-radius: 6px;">
+    Zero disruption episodes observed during this timeframe. Backlog remained at zero and inventory remained safely above reserve thresholds.
+  </div>
+  {% endif %}
+</div>
+
+<!-- Block 6: Stock vs Safety Level (3 Materials) -->
+<div class="insight-section" id="chart-stock-safety">
+  <div class="insight-section-head">
+    <h2 class="insight-section-title">Stock vs Safety Level (Materials)</h2>
+    <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 3px;">
+      Daily physical inventory against safety buffer thresholds and reorder triggers.
+    </p>
+  </div>
+
+  <div class="charts-subgrid-3">
+    {% for mat in materials_charts %}
+    <div class="subchart-card">
+      <div class="subchart-title">{{ mat.name }}</div>
+      <div class="subchart-takeaway">{{ mat.takeaway }}</div>
+      <div style="position: relative; height: 170px; width: 100%;">
+        <canvas id="canvasMaterial_{{ mat.material_id }}"></canvas>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Block 7: Demand vs What We Built (2 Products) -->
+<div class="insight-section" id="chart-demand-production">
+  <div class="insight-section-head">
+    <h2 class="insight-section-title">Demand vs What We Built (Products)</h2>
+    <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 3px;">
+      Customer demand requirements compared with completed assembly output and finished inventory.
+    </p>
+  </div>
+
+  <div class="charts-subgrid-2">
+    {% for prod in products_charts %}
+    <div class="subchart-card">
+      <div class="subchart-title">{{ prod.name }}</div>
+      <div class="subchart-takeaway">{{ prod.takeaway }}</div>
+      <div style="position: relative; height: 180px; width: 100%;">
+        <canvas id="canvasProduct_{{ prod.product_id }}"></canvas>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Block 8: Past Analysed Cases & Reliability Box -->
+<div class="insight-section" id="past-analysed-cases">
+  <div class="insight-section-head">
+    <h2 class="insight-section-title">Past Analysed Cases &amp; Benchmark Reliability</h2>
+    <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 3px;">
+      Frozen causal attribution evaluations scored under the expert-defined structural model.
+    </p>
+  </div>
+
+  <!-- How reliable has SAGE been? Box -->
+  <div class="reliability-box" id="trust">
+    <div class="reliability-title">How reliable has SAGE been?</div>
+    <ul class="reliability-list">
+      {% for sent in reliability_summary %}
+      <li>{{ sent }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- Compact Table of 10 Frozen Cases -->
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Incident &amp; Date</th>
+          <th>What was disrupted</th>
+          <th>Attributed source</th>
+          <th>Evidence rating</th>
+          <th>How did SAGE work this out?</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for case in past_cases %}
+        <tr>
+          <td>
+            <strong>{{ case.id }}</strong>
+            <div style="font-size: 0.76rem; color: var(--text-muted);">{{ case.title }}</div>
+          </td>
+          <td>{{ case.title }}</td>
+          <td><strong>{{ case.cause_sentence }}</strong></td>
+          <td>
+            <span class="badge {{ case.badge_class }}">
+              {{ case.evidence_label }}
+            </span>
+          </td>
+          <td>
+            <details style="font-size: 0.80rem; cursor: pointer;">
+              <summary style="color: var(--accent); font-weight: 600;">How did SAGE work this out?</summary>
+              <div style="background: #f8fafc; border: 1px solid var(--surface-border); border-radius: 6px; padding: 9px 11px; margin-top: 5px; line-height: 1.45;">
+                <p style="margin-bottom: 5px;"><strong>1. What we saw:</strong> {{ case.step1_what_we_saw }}</p>
+                <p style="margin-bottom: 5px;"><strong>2. How it connects:</strong> {{ case.step2_chain }}</p>
+                <p style="margin-bottom: 5px;"><strong>3. How sure are we:</strong> {{ case.step3_sure_explanation }}</p>
+                <details style="margin-top: 3px;">
+                  <summary style="color: var(--text-muted); font-size: 0.76rem;">Technical details</summary>
+                  <p style="font-size: 0.74rem; color: #475569; margin-top: 3px;">
+                    Method: {{ case.tech_details.method }} | Score: {{ case.tech_details.score }} | {{ case.tech_details.rule }}
+                  </p>
+                </details>
+              </div>
+            </details>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  // Chart: Weekly Trend
+  const wkLabels = {{ weekly_chart_labels | tojson }};
+  const wkLateUnits = {{ weekly_chart_late_units | tojson }};
+  const ctxWeekly = document.getElementById("canvasWeeklyTrend");
+  if (ctxWeekly && wkLabels.length > 0) {
+    new Chart(ctxWeekly, {
+      type: "line",
+      data: {
+        labels: wkLabels,
+        datasets: [{
+          label: "Peak Weekly Late Units",
+          data: wkLateUnits,
+          borderColor: "#dc2626",
+          backgroundColor: "rgba(220, 38, 38, 0.10)",
+          fill: true,
+          tension: 0.15,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { title: { display: true, text: "Calendar Week" } },
+          y: { title: { display: true, text: "Late Units" }, suggestedMin: 0 }
+        }
+      }
+    });
+  }
+
+  // Chart: Episodes Timeline
+  const epDates = {{ episodes.dates | tojson }};
+  const epBacklog = {{ episodes.backlog_series | tojson }};
+  const ctxEpisodes = document.getElementById("canvasEpisodesTimeline");
+  if (ctxEpisodes && epDates.length > 0) {
+    new Chart(ctxEpisodes, {
+      type: "line",
+      data: {
+        labels: epDates,
+        datasets: [{
+          label: "Daily Customer Backlog (units)",
+          data: epBacklog,
+          borderColor: "#dc2626",
+          backgroundColor: "rgba(220, 38, 38, 0.12)",
+          fill: true,
+          tension: 0.1,
+          pointRadius: 1,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { title: { display: true, text: "Date" } },
+          y: { title: { display: true, text: "Overdue Backlog Units" }, suggestedMin: 0 }
+        }
+      }
+    });
+  }
+
+  // Chart: Materials Stock vs Safety
+  const matList = {{ materials_charts | tojson }};
+  matList.forEach(m => {
+    const canvasEl = document.getElementById(`canvasMaterial_${m.material_id}`);
+    if (canvasEl && m.dates.length > 0) {
+      new Chart(canvasEl, {
+        type: "line",
+        data: {
+          labels: m.dates,
+          datasets: [
+            {
+              label: "Stock (kg)",
+              data: m.stock_values,
+              borderColor: "#2563eb",
+              borderWidth: 2,
+              pointRadius: 0,
+              tension: 0.1
+            },
+            {
+              label: `Safety (${m.safety_level} kg)`,
+              data: Array(m.dates.length).fill(m.safety_level),
+              borderColor: "#dc2626",
+              borderWidth: 1.5,
+              borderDash: [4, 4],
+              pointRadius: 0
+            },
+            {
+              label: `Reorder (${m.reorder_level} kg)`,
+              data: Array(m.dates.length).fill(m.reorder_level),
+              borderColor: "#64748b",
+              borderWidth: 1,
+              borderDash: [2, 2],
+              pointRadius: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { display: false },
+            y: { title: { display: true, text: "Kilograms" }, suggestedMin: 0 }
+          }
+        }
+      });
+    }
+  });
+
+  // Chart: Products Demand vs Production
+  const prodList = {{ products_charts | tojson }};
+  prodList.forEach(p => {
+    const canvasEl = document.getElementById(`canvasProduct_${p.product_id}`);
+    if (canvasEl && p.dates.length > 0) {
+      new Chart(canvasEl, {
+        type: "line",
+        data: {
+          labels: p.dates,
+          datasets: [
+            {
+              label: "Daily Demand (units)",
+              data: p.demand,
+              borderColor: "#f59e0b",
+              borderWidth: 1.5,
+              pointRadius: 0
+            },
+            {
+              label: "Actual Output (units)",
+              data: p.actual_production,
+              borderColor: "#16a34a",
+              borderWidth: 2,
+              pointRadius: 0
+            },
+            {
+              label: "Finished Stock (units)",
+              data: p.finished_stock,
+              borderColor: "#2563eb",
+              borderWidth: 1.5,
+              borderDash: [3, 3],
+              pointRadius: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { display: false },
+            y: { title: { display: true, text: "Units" }, suggestedMin: 0 }
+          }
+        }
+      });
+    }
+  });
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,809 @@
+{
+  "generated_at": "2026-10-10T07:48:29.953116+00:00",
+  "stage": 8,
+  "fitted_causal_model": "2d3249899bdde1ff9da9f33519ea67b17ccef9e0bc1372d6b47b31d63338e192",
+  "n_packets": 10,
+  "total_valid": 10,
+  "first_attempt_rate": 1.0,
+  "final_validation_rate": 1.0,
+  "packet_determinism": true,
+  "research_framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+  "packets": {
+    "P01": {
+      "packet_id": "P01",
+      "scenario_id": "INC_01",
+      "window_period": "2025-08-17 -> 2025-12-15",
+      "target_nodes": [
+        "material_101_stock",
+        "product_201_actual_production"
+      ],
+      "target_labels": [
+        "Material 101 \u2013 stock level (units)",
+        "Product 201 \u2013 actual production (units)"
+      ],
+      "top_tier": "NOISE",
+      "is_no_signal": true,
+      "seeds_used": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "drivers": [
+        {
+          "rank": 1,
+          "node": "supplier_5_receipt_fill_rate",
+          "label": "Supplier 5 \u2013 receipt fill-rate (fraction of PO received)",
+          "m1_score": 0.0,
+          "m2_score": 0.536286,
+          "tier": "NOISE"
+        },
+        {
+          "rank": 2,
+          "node": "supplier_1_receipt_fill_rate",
+          "label": "Supplier 1 \u2013 receipt fill-rate (fraction of PO received)",
+          "m1_score": 0.0,
+          "m2_score": 0.411411,
+          "tier": "NOISE"
+        },
+        {
+          "rank": 3,
+          "node": "supplier_4_po_delay_days",
+          "label": "Supplier 4 \u2013 purchase-order delay (days)",
+          "m1_score": 0.074188,
+          "m2_score": 0.299183,
+          "tier": "NOISE"
+        }
+      ],
+      "narrative": "Operational Status for Material 101 \u2013 stock level (units), Product 201 \u2013 actual production (units): All manufacturing, inventory, and fulfillment metrics operated within normal baseline tolerances throughout the monitored window. The causal evaluation detected no anomalous supply disruptions or production bottlenecks requiring floor intervention. Routine manufacturing schedules and standard inventory replenishment workflows should proceed as planned without operational adjustments. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+      "source": "fallback",
+      "attempts": 1,
+      "elapsed_s": 0.06,
+      "validators": {
+        "no_forbidden_tokens": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "verbatim_framing": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "word_count": {
+          "pass": true,
+          "msg": "Passed (78 words)"
+        },
+        "grounding": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "tier_alignment": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "single_paragraph": {
+          "pass": true,
+          "msg": "Passed"
+        }
+      },
+      "is_valid": true
+    },
+    "P02": {
+      "packet_id": "P02",
+      "scenario_id": "INC_02",
+      "window_period": "2025-06-20 -> 2025-10-18",
+      "target_nodes": [
+        "product_201_actual_production",
+        "product_201_due_backlog_units"
+      ],
+      "target_labels": [
+        "Product 201 \u2013 actual production (units)",
+        "Product 201 \u2013 due-backlog (units)"
+      ],
+      "top_tier": "NOISE",
+      "is_no_signal": true,
+      "seeds_used": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "drivers": [
+        {
+          "rank": 1,
+          "node": "product_201_capacity_shortfall_units",
+          "label": "Product 201 \u2013 capacity shortfall (units)",
+          "m1_score": 0.014263,
+          "m2_score": 0.451163,
+          "tier": "NOISE"
+        },
+        {
+          "rank": 2,
+          "node": "supplier_1_receipt_fill_rate",
+          "label": "Supplier 1 \u2013 receipt fill-rate (fraction of PO received)",
+          "m1_score": 0.0,
+          "m2_score": 0.3998,
+          "tier": "NOISE"
+        },
+        {
+          "rank": 3,
+          "node": "supplier_4_receipt_fill_rate",
+          "label": "Supplier 4 \u2013 receipt fill-rate (fraction of PO received)",
+          "m1_score": 0.007599,
+          "m2_score": 0.361285,
+          "tier": "NOISE"
+        }
+      ],
+      "narrative": "Operational Status for Product 201 \u2013 actual production (units), Product 201 \u2013 due-backlog (units): All manufacturing, inventory, and fulfillment metrics operated within normal baseline tolerances throughout the monitored window. The causal evaluation detected no anomalous supply disruptions or production bottlenecks requiring floor intervention. Routine manufacturing schedules and standard inventory replenishment workflows should proceed as planned without operational adjustments. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+      "source": "fallback",
+      "attempts": 1,
+      "elapsed_s": 0.001,
+      "validators": {
+        "no_forbidden_tokens": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "verbatim_framing": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "word_count": {
+          "pass": true,
+          "msg": "Passed (77 words)"
+        },
+        "grounding": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "tier_alignment": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "single_paragraph": {
+          "pass": true,
+          "msg": "Passed"
+        }
+      },
+      "is_valid": true
+    },
+    "P03": {
+      "packet_id": "P03",
+      "scenario_id": "INC_03",
+      "window_period": "2025-03-29 -> 2025-07-27",
+      "target_nodes": [
+        "product_201_demand_units",
+        "product_201_due_backlog_units",
+        "product_201_fg_stock"
+      ],
+      "target_labels": [
+        "Product 201 \u2013 demand (units)",
+        "Product 201 \u2013 due-backlog (units)",
+        "Product 201 \u2013 finished-goods stock (units)"
+      ],
+      "top_tier": "MEDIUM",
+      "is_no_signal": false,
+      "seeds_used": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "drivers": [
+        {
+          "rank": 1,
+          "node": "product_201_demand_units",
+          "label": "Product 201 \u2013 demand (units)",
+          "m1_score": 1.275514,
+          "m2_score": 0.477164,
+          "tier": "MEDIUM"
+        },
+        {
+          "rank": 2,
+          "node": "month",
+          "label": "calendar month",
+          "m1_score": 0.010913,
+          "m2_score": 0.882491,
+          "tier": "NOISE"
+        },
+        {
+          "rank": 3,
+          "node": "weekday",
+          "label": "day-of-week",
+          "m1_score": 0.112235,
+          "m2_score": 0.568468,
+          "tier": "LOW"
+        }
+      ],
+      "narrative": "Operations Briefing for Product 201 \u2013 demand (units), Product 201 \u2013 due-backlog (units): Elevated customer demand outpaced planned plant throughput during the monitored window, resulting in due backlog and depleted finished goods buffers. The causal evaluation attributes the observed schedule strain primarily to Product 201 \u2013 demand (units) with moderate confidence. Production supervisors should evaluate short-term overtime or shift reallocations to restore inventory buffers and prevent shipment delays. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+      "source": "fallback",
+      "attempts": 1,
+      "elapsed_s": 0.001,
+      "validators": {
+        "no_forbidden_tokens": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "verbatim_framing": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "word_count": {
+          "pass": true,
+          "msg": "Passed (87 words)"
+        },
+        "grounding": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "tier_alignment": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "single_paragraph": {
+          "pass": true,
+          "msg": "Passed"
+        }
+      },
+      "is_valid": true
+    },
+    "P04": {
+      "packet_id": "P04",
+      "scenario_id": "INC_04",
+      "window_period": "2025-10-01 -> 2026-01-29",
+      "target_nodes": [
+        "product_201_actual_production",
+        "product_201_capacity_shortfall_units"
+      ],
+      "target_labels": [
+        "Product 201 \u2013 actual production (units)",
+        "Product 201 \u2013 capacity shortfall (units)"
+      ],
+      "top_tier": "MEDIUM",
+      "is_no_signal": false,
+      "seeds_used": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "drivers": [
+        {
+          "rank": 1,
+          "node": "product_201_capacity_shortfall_units",
+          "label": "Product 201 \u2013 capacity shortfall (units)",
+          "m1_score": 2.784418,
+          "m2_score": 0.236614,
+          "tier": "MEDIUM"
+        },
+        {
+          "rank": 2,
+          "node": "supplier_5_receipt_fill_rate",
+          "label": "Supplier 5 \u2013 receipt fill-rate (fraction of PO received)",
+          "m1_score": 0.0,
+          "m2_score": 0.569584,
+          "tier": "NOISE"
+        },
+        {
+          "rank": 3,
+          "node": "supplier_4_receipt_fill_rate",
+          "label": "Supplier 4 \u2013 receipt fill-rate (fraction of PO received)",
+          "m1_score": 0.015407,
+          "m2_score": 0.527781,
+          "tier": "NOISE"
+        }
+      ],
+      "narrative": "Operations Briefing for Product 201 \u2013 actual production (units), Product 201 \u2013 capacity shortfall (units): Internal workcenter throughput constraints created a production shortfall during the monitored window. The causal evaluation confirms with moderate confidence that the primary operational bottleneck was Product 201 \u2013 capacity shortfall (units). Plant supervisors should review equipment availability and line staffing to resolve throughput limitations before increasing master production order schedules. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+      "source": "fallback",
+      "attempts": 1,
+      "elapsed_s": 0.002,
+      "validators": {
+        "no_forbidden_tokens": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "verbatim_framing": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "word_count": {
+          "pass": true,
+          "msg": "Passed (84 words)"
+        },
+        "grounding": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "tier_alignment": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "single_paragraph": {
+          "pass": true,
+          "msg": "Passed"
+        }
+      },
+      "is_valid": true
+    },
+    "P05": {
+      "packet_id": "P05",
+      "scenario_id": "INC_05",
+      "window_period": "2025-10-16 -> 2026-02-13",
+      "target_nodes": [
+        "material_101_stock",
+        "product_201_actual_production"
+      ],
+      "target_labels": [
+        "Material 101 \u2013 stock level (units)",
+        "Product 201 \u2013 actual production (units)"
+      ],
+      "top_tier": "LOW",
+      "is_no_signal": false,
+      "seeds_used": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "drivers": [
+        {
+          "rank": 1,
+          "node": "supplier_4_receipt_fill_rate",
+          "label": "Supplier 4 \u2013 receipt fill-rate (fraction of PO received)",
+          "m1_score": 0.175763,
+          "m2_score": 0.355286,
+          "tier": "LOW"
+        },
+        {
+          "rank": 2,
+          "node": "supplier_4_po_delay_days",
+          "label": "Supplier 4 \u2013 purchase-order delay (days)",
+          "m1_score": 0.059398,
+          "m2_score": 0.335885,
+          "tier": "NOISE"
+        },
+        {
+          "rank": 3,
+          "node": "product_201_capacity_shortfall_units",
+          "label": "Product 201 \u2013 capacity shortfall (units)",
+          "m1_score": 0.022488,
+          "m2_score": 0.339339,
+          "tier": "NOISE"
+        }
+      ],
+      "narrative": "Supply Chain Advisory for Material 101 \u2013 stock level (units), Product 201 \u2013 actual production (units): Moderate inventory cover fluctuations were detected during the monitored window, with preliminary attribution signals pointing toward Supplier 4 \u2013 receipt fill-rate (fraction of PO received). However, the causal evaluation classifies this with low confidence, indicating the disruption was largely absorbed by safety stock buffers. Procurement teams should track upcoming delivery schedules without initiating disruptive floor rescheduling. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+      "source": "fallback",
+      "attempts": 1,
+      "elapsed_s": 0.002,
+      "validators": {
+        "no_forbidden_tokens": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "verbatim_framing": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "word_count": {
+          "pass": true,
+          "msg": "Passed (91 words)"
+        },
+        "grounding": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "tier_alignment": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "single_paragraph": {
+          "pass": true,
+          "msg": "Passed"
+        }
+      },
+      "is_valid": true
+    },
+    "P06": {
+      "packet_id": "P06",
+      "scenario_id": "INC_06",
+      "window_period": "2025-07-21 -> 2025-11-18",
+      "target_nodes": [
+        "product_201_actual_production",
+        "product_202_actual_production"
+      ],
+      "target_labels": [
+        "Product 201 \u2013 actual production (units)",
+        "Product 202 \u2013 actual production (units)"
+      ],
+      "top_tier": "NOISE",
+      "is_no_signal": true,
+      "seeds_used": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "drivers": [
+        {
+          "rank": 1,
+          "node": "supplier_1_receipt_fill_rate",
+          "label": "Supplier 1 \u2013 receipt fill-rate (fraction of PO received)",
+          "m1_score": 0.0,
+          "m2_score": 0.774385,
+          "tier": "NOISE"
+        },
+        {
+          "rank": 2,
+          "node": "supplier_4_receipt_fill_rate",
+          "label": "Supplier 4 \u2013 receipt fill-rate (fraction of PO received)",
+          "m1_score": 0.011818,
+          "m2_score": 0.668715,
+          "tier": "NOISE"
+        },
+        {
+          "rank": 3,
+          "node": "supplier_5_receipt_fill_rate",
+          "label": "Supplier 5 \u2013 receipt fill-rate (fraction of PO received)",
+          "m1_score": 0.0,
+          "m2_score": 0.633035,
+          "tier": "NOISE"
+        }
+      ],
+      "narrative": "Operational Status for Product 201 \u2013 actual production (units), Product 202 \u2013 actual production (units): All manufacturing, inventory, and fulfillment metrics operated within normal baseline tolerances throughout the monitored window. The causal evaluation detected no anomalous supply disruptions or production bottlenecks requiring floor intervention. Routine manufacturing schedules and standard inventory replenishment workflows should proceed as planned without operational adjustments. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+      "source": "fallback",
+      "attempts": 1,
+      "elapsed_s": 0.002,
+      "validators": {
+        "no_forbidden_tokens": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "verbatim_framing": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "word_count": {
+          "pass": true,
+          "msg": "Passed (78 words)"
+        },
+        "grounding": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "tier_alignment": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "single_paragraph": {
+          "pass": true,
+          "msg": "Passed"
+        }
+      },
+      "is_valid": true
+    },
+    "P07": {
+      "packet_id": "P07",
+      "scenario_id": "INC_07",
+      "window_period": "2025-07-07 -> 2025-11-04",
+      "target_nodes": [
+        "material_102_stock",
+        "material_103_stock",
+        "product_201_actual_production"
+      ],
+      "target_labels": [
+        "Material 102 \u2013 stock level (units)",
+        "Material 103 \u2013 stock level (units)",
+        "Product 201 \u2013 actual production (units)"
+      ],
+      "top_tier": "NOISE",
+      "is_no_signal": true,
+      "seeds_used": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "drivers": [
+        {
+          "rank": 1,
+          "node": "supplier_1_po_delay_days",
+          "label": "Supplier 1 \u2013 purchase-order delay (days)",
+          "m1_score": 0.0,
+          "m2_score": 0.707424,
+          "tier": "NOISE"
+        },
+        {
+          "rank": 2,
+          "node": "supplier_5_receipt_fill_rate",
+          "label": "Supplier 5 \u2013 receipt fill-rate (fraction of PO received)",
+          "m1_score": 0.0,
+          "m2_score": 0.619417,
+          "tier": "NOISE"
+        },
+        {
+          "rank": 3,
+          "node": "supplier_1_receipt_fill_rate",
+          "label": "Supplier 1 \u2013 receipt fill-rate (fraction of PO received)",
+          "m1_score": 0.0,
+          "m2_score": 0.575129,
+          "tier": "NOISE"
+        }
+      ],
+      "narrative": "Operational Status for Material 102 \u2013 stock level (units), Material 103 \u2013 stock level (units): All manufacturing, inventory, and fulfillment metrics operated within normal baseline tolerances throughout the monitored window. The causal evaluation detected no anomalous supply disruptions or production bottlenecks requiring floor intervention. Routine manufacturing schedules and standard inventory replenishment workflows should proceed as planned without operational adjustments. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+      "source": "fallback",
+      "attempts": 1,
+      "elapsed_s": 0.002,
+      "validators": {
+        "no_forbidden_tokens": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "verbatim_framing": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "word_count": {
+          "pass": true,
+          "msg": "Passed (78 words)"
+        },
+        "grounding": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "tier_alignment": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "single_paragraph": {
+          "pass": true,
+          "msg": "Passed"
+        }
+      },
+      "is_valid": true
+    },
+    "P08": {
+      "packet_id": "P08",
+      "scenario_id": "INC_08",
+      "window_period": "2025-02-26 -> 2025-06-26",
+      "target_nodes": [
+        "material_103_stock",
+        "product_201_actual_production",
+        "product_201_due_backlog_units"
+      ],
+      "target_labels": [
+        "Material 103 \u2013 stock level (units)",
+        "Product 201 \u2013 actual production (units)",
+        "Product 201 \u2013 due-backlog (units)"
+      ],
+      "top_tier": "NOISE",
+      "is_no_signal": true,
+      "seeds_used": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "drivers": [
+        {
+          "rank": 1,
+          "node": "supplier_1_po_delay_days",
+          "label": "Supplier 1 \u2013 purchase-order delay (days)",
+          "m1_score": 0.0,
+          "m2_score": 0.372634,
+          "tier": "NOISE"
+        },
+        {
+          "rank": 2,
+          "node": "supplier_5_receipt_fill_rate",
+          "label": "Supplier 5 \u2013 receipt fill-rate (fraction of PO received)",
+          "m1_score": 0.0,
+          "m2_score": 0.323206,
+          "tier": "NOISE"
+        },
+        {
+          "rank": 3,
+          "node": "supplier_5_po_delay_days",
+          "label": "Supplier 5 \u2013 purchase-order delay (days)",
+          "m1_score": 0.0,
+          "m2_score": 0.312084,
+          "tier": "NOISE"
+        }
+      ],
+      "narrative": "Operational Status for Material 103 \u2013 stock level (units), Product 201 \u2013 actual production (units): All manufacturing, inventory, and fulfillment metrics operated within normal baseline tolerances throughout the monitored window. The causal evaluation detected no anomalous supply disruptions or production bottlenecks requiring floor intervention. Routine manufacturing schedules and standard inventory replenishment workflows should proceed as planned without operational adjustments. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+      "source": "fallback",
+      "attempts": 1,
+      "elapsed_s": 0.002,
+      "validators": {
+        "no_forbidden_tokens": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "verbatim_framing": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "word_count": {
+          "pass": true,
+          "msg": "Passed (78 words)"
+        },
+        "grounding": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "tier_alignment": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "single_paragraph": {
+          "pass": true,
+          "msg": "Passed"
+        }
+      },
+      "is_valid": true
+    },
+    "P09": {
+      "packet_id": "P09",
+      "scenario_id": "INC_09",
+      "window_period": "2025-08-05 -> 2025-12-03",
+      "target_nodes": [
+        "material_101_stock",
+        "product_201_due_backlog_units"
+      ],
+      "target_labels": [
+        "Material 101 \u2013 stock level (units)",
+        "Product 201 \u2013 due-backlog (units)"
+      ],
+      "top_tier": "LOW",
+      "is_no_signal": false,
+      "seeds_used": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "drivers": [
+        {
+          "rank": 1,
+          "node": "supplier_4_po_delay_days",
+          "label": "Supplier 4 \u2013 purchase-order delay (days)",
+          "m1_score": 0.121535,
+          "m2_score": 0.335269,
+          "tier": "LOW"
+        },
+        {
+          "rank": 2,
+          "node": "product_201_capacity_shortfall_units",
+          "label": "Product 201 \u2013 capacity shortfall (units)",
+          "m1_score": 0.0,
+          "m2_score": 0.405374,
+          "tier": "NOISE"
+        },
+        {
+          "rank": 3,
+          "node": "supplier_2_po_delay_days",
+          "label": "Supplier 2 \u2013 purchase-order delay (days)",
+          "m1_score": 0.0,
+          "m2_score": 0.327958,
+          "tier": "NOISE"
+        }
+      ],
+      "narrative": "Supply Chain Advisory for Material 101 \u2013 stock level (units), Product 201 \u2013 due-backlog (units): Moderate inventory cover fluctuations were detected during the monitored window, with preliminary attribution signals pointing toward Supplier 4 \u2013 purchase-order delay (days). However, the causal evaluation classifies this with low confidence, indicating the disruption was largely absorbed by safety stock buffers. Procurement teams should track upcoming delivery schedules without initiating disruptive floor rescheduling. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+      "source": "fallback",
+      "attempts": 1,
+      "elapsed_s": 0.002,
+      "validators": {
+        "no_forbidden_tokens": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "verbatim_framing": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "word_count": {
+          "pass": true,
+          "msg": "Passed (87 words)"
+        },
+        "grounding": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "tier_alignment": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "single_paragraph": {
+          "pass": true,
+          "msg": "Passed"
+        }
+      },
+      "is_valid": true
+    },
+    "P10": {
+      "packet_id": "P10",
+      "scenario_id": "INC_10",
+      "window_period": "2025-11-26 -> 2026-03-26",
+      "target_nodes": [
+        "product_202_demand_units",
+        "product_202_due_backlog_units"
+      ],
+      "target_labels": [
+        "Product 202 \u2013 demand (units)",
+        "Product 202 \u2013 due-backlog (units)"
+      ],
+      "top_tier": "HIGH",
+      "is_no_signal": false,
+      "seeds_used": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "drivers": [
+        {
+          "rank": 1,
+          "node": "product_202_demand_units",
+          "label": "Product 202 \u2013 demand (units)",
+          "m1_score": 0.972109,
+          "m2_score": 0.88664,
+          "tier": "MEDIUM"
+        },
+        {
+          "rank": 2,
+          "node": "month",
+          "label": "calendar month",
+          "m1_score": 0.468493,
+          "m2_score": 1.323525,
+          "tier": "HIGH"
+        },
+        {
+          "rank": 3,
+          "node": "weekday",
+          "label": "day-of-week",
+          "m1_score": 0.236626,
+          "m2_score": 0.168646,
+          "tier": "MEDIUM"
+        }
+      ],
+      "narrative": "Operations Briefing for Product 202 \u2013 demand (units), Product 202 \u2013 due-backlog (units): Elevated customer demand outpaced planned plant throughput during the monitored window, resulting in due backlog and depleted finished goods buffers. The causal evaluation attributes the observed schedule strain primarily to Product 202 \u2013 demand (units) with moderate confidence. Production supervisors should evaluate short-term overtime or shift reallocations to restore inventory buffers and prevent shipment delays. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+      "source": "fallback",
+      "attempts": 1,
+      "elapsed_s": 0.002,
+      "validators": {
+        "no_forbidden_tokens": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "verbatim_framing": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "word_count": {
+          "pass": true,
+          "msg": "Passed (87 words)"
+        },
+        "grounding": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "tier_alignment": {
+          "pass": true,
+          "msg": "Passed"
+        },
+        "single_paragraph": {
+          "pass": true,
+          "msg": "Passed"
+        }
+      },
+      "is_valid": true
+    }
+  }
+}

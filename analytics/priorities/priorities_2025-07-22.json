@@ -1,0 +1,51 @@
+{
+  "as_of": "2025-07-22",
+  "metadata": {
+    "as_of_date": "2025-07-22",
+    "rules_source": "stage9/config/rules.yaml",
+    "simulated_data": true
+  },
+  "top_priorities": [
+    {
+      "action": "Expedite urgent replenishment for Steel Rod 10mm (Material 101)",
+      "category": "Rule 3",
+      "due_date": "2025-07-22",
+      "rank": 1,
+      "reason": "Steel Rod 10mm (Material 101) stock at 24 kg is at or below safety stock (50 kg). Cover is 0.9 days",
+      "role": "Procurement"
+    },
+    {
+      "action": "Reorder Plastic Granules (Material 102)",
+      "category": "Rule 3",
+      "due_date": "2025-07-22",
+      "rank": 2,
+      "reason": "Plastic Granules (Material 102) stock at 56 kg is at or below reorder point (120 kg) with 0 open purchase orders",
+      "role": "Procurement"
+    },
+    {
+      "action": "Review capacity & throughput for Widget Model X (Product 201)",
+      "category": "Rule 5",
+      "due_date": "2025-07-22",
+      "rank": 3,
+      "reason": "Widget Model X (Product 201) manufactured 0 units vs 30 planned (30 units shortfall)",
+      "role": "Plant Manager"
+    },
+    {
+      "action": "Review capacity & throughput for Widget Model Y (Product 202)",
+      "category": "Rule 5",
+      "due_date": "2025-07-22",
+      "rank": 4,
+      "reason": "Widget Model Y (Product 202) manufactured 10 units vs 20 planned (10 units shortfall)",
+      "role": "Plant Manager"
+    },
+    {
+      "action": "Monitor inventory buffer for Steel Rod 10mm (Material 101)",
+      "category": "Buffer Health",
+      "due_date": "2025-07-22",
+      "rank": 5,
+      "reason": "Steel Rod 10mm (Material 101) has 0.9 days of cover remaining (24 kg on hand)",
+      "role": "Procurement"
+    }
+  ],
+  "watchlist": []
+}

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}SAGE Research &bull; Ground-Truth Evaluation{% endblock %}
+
+{% block content %}
+<div style="background: #451a03; border: 1px solid #b45309; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
+  <div style="font-weight: 800; color: #f59e0b; font-size: 0.95rem; text-transform: uppercase;">
+    ⚠️ {{ research_data.banner }}
+  </div>
+  <p style="font-size: 0.82rem; color: #fde68a; margin-top: 4px;">
+    This view audits SAGE causal engine predictions directly against the simulation oracle. It is isolated from production operational views and strictly inaccessible to the narration layer.
+  </p>
+</div>
+
+<div class="kpi-strip">
+  <div class="kpi-card">
+    <div class="kpi-label">Attribution Acc @ 1</div>
+    <div class="kpi-val" style="color: var(--accent);">{{ "%.1f"|format(research_data.aggregate_metrics.ac1) }}%</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Attribution Acc @ 3</div>
+    <div class="kpi-val" style="color: var(--accent);">{{ "%.1f"|format(research_data.aggregate_metrics.ac3) }}%</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">MRR Score</div>
+    <div class="kpi-val">{{ "%.3f"|format(research_data.aggregate_metrics.mrr) }}</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Control False Positives</div>
+    <div class="kpi-val" style="color: var(--ok-text);">{{ "%.1f"|format(research_data.aggregate_metrics.fpr) }}%</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">5-Seed Stability</div>
+    <div class="kpi-val">{{ "%.1f"|format(research_data.aggregate_metrics.stability_pass_rate) }}%</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">All Ten Evaluation Scenarios vs Ground-Truth Oracle</div>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>True DB Driver</th>
+          <th>Narrated / Top Driver</th>
+          <th>M1 Score</th>
+          <th>M2 Score</th>
+          <th>Exog Rank</th>
+          <th>Audited Classification</th>
+          <th>5-Seed Stability</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in research_data.scenarios %}
+        <tr style="{% if s.scenario_id in ('INC_10', 'P10') %}background: rgba(220, 38, 38, 0.1);{% endif %}">
+          <td><strong>{{ s.scenario_id }}</strong></td>
+          <td><code style="color: var(--accent);">{{ s.true_driver }}</code></td>
+          <td>{{ s.top_driver }}</td>
+          <td>{{ s.m1_score }}</td>
+          <td>{{ s.m2_score }}</td>
+          <td>{{ s.exogenous_rank }}</td>
+          <td>
+            {% if s.scenario_id in ('INC_10', 'P10') %}
+            <span class="badge badge-crit">False positive on negative control</span>
+            {% elif 'DETECTED' in s.classification %}
+            <span class="badge badge-ok">{{ s.classification }}</span>
+            {% elif 'within null' in s.classification.lower() %}
+            <span class="badge badge-info">{{ s.classification }}</span>
+            {% else %}
+            <span class="badge badge-warn">{{ s.classification }}</span>
+            {% endif %}
+          </td>
+          <td><strong>{{ s.stable }}</strong></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Audited Mechanical Calibration Rules</div>
+  <pre style="background: var(--bg); padding: 14px; border-radius: 6px; font-size: 0.8rem; color: var(--text-muted); white-space: pre-wrap; font-family: monospace;">{{ research_data.rule_description }}</pre>
+</div>
+{% endblock %}

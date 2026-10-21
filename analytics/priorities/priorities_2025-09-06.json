@@ -1,0 +1,57 @@
+{
+  "as_of": "2025-09-06",
+  "metadata": {
+    "as_of_date": "2025-09-06",
+    "rules_source": "stage9/config/rules.yaml",
+    "simulated_data": true
+  },
+  "top_priorities": [
+    {
+      "action": "Fulfil order SO-22 first",
+      "category": "Rule 1",
+      "due_date": "2025-09-06",
+      "rank": 1,
+      "reason": "Order SO-22 for Widget Model Y (Product 202) is 214 days overdue (10 units pending, due 2025-02-04)",
+      "role": "Planner"
+    },
+    {
+      "action": "Expedite urgent replenishment for Steel Rod 10mm (Material 101)",
+      "category": "Rule 3",
+      "due_date": "2025-09-06",
+      "rank": 2,
+      "reason": "Steel Rod 10mm (Material 101) stock at 50 kg is at or below safety stock (50 kg). no recent use",
+      "role": "Procurement"
+    },
+    {
+      "action": "Chase supplier EastCoast Components (PO-2)",
+      "category": "Rule 4",
+      "due_date": "2025-09-06",
+      "rank": 3,
+      "reason": "PO-2 for Steel Rod 10mm (Material 101) (315 units) is 210 days overdue from EastCoast Components",
+      "role": "Procurement"
+    },
+    {
+      "action": "Chase supplier Global Polymers Co (PO-3)",
+      "category": "Rule 4",
+      "due_date": "2025-09-06",
+      "rank": 4,
+      "reason": "PO-3 for Plastic Granules (Material 102) (262 units) is 205 days overdue from Global Polymers Co",
+      "role": "Procurement"
+    },
+    {
+      "action": "Monitor inventory buffer for Steel Rod 10mm (Material 101)",
+      "category": "Buffer Health",
+      "due_date": "2025-09-06",
+      "rank": 5,
+      "reason": "Steel Rod 10mm (Material 101) has no recent use (50 kg on hand)",
+      "role": "Procurement"
+    }
+  ],
+  "watchlist": [
+    {
+      "item": "Plastic Granules (Material 102) inventory monitoring",
+      "reason": "Plastic Granules (Material 102) is at 70 kg (below reorder point 120 kg), tracking 1 open replenishment POs",
+      "role": "Procurement"
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "n_evaluated": 10,
+  "n_confidently_wrong": 0,
+  "calibration_criterion_met": true,
+  "research_framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+  "scenarios": [
+    {
+      "packet_id": "P01",
+      "scenario_id": "INC_01",
+      "true_event": "Supplier 1 delay",
+      "category": "supply",
+      "narrated_driver": "Supplier 5 \u2013 receipt fill-rate (fraction of PO received)",
+      "top_tier": "NOISE",
+      "calibration_status": "Tempered (Signal tempered: NOISE)",
+      "confidently_wrong": false,
+      "notes": "Lower confidence on secondary branch (NOISE)"
+    },
+    {
+      "packet_id": "P02",
+      "scenario_id": "INC_02",
+      "true_event": "No incident (control)",
+      "category": "negative_control",
+      "narrated_driver": "Product 201 \u2013 capacity shortfall (units)",
+      "top_tier": "NOISE",
+      "calibration_status": "Calibrated (Correctly identified noise / no signal)",
+      "confidently_wrong": false,
+      "notes": "Within empirical noise band"
+    },
+    {
+      "packet_id": "P03",
+      "scenario_id": "INC_03",
+      "true_event": "Product 201 demand spike",
+      "category": "demand",
+      "narrated_driver": "Product 201 \u2013 demand (units)",
+      "top_tier": "MEDIUM",
+      "calibration_status": "Calibrated (True driver identified: MEDIUM)",
+      "confidently_wrong": false,
+      "notes": "Attributed to Product 201 \u2013 demand (units)"
+    },
+    {
+      "packet_id": "P04",
+      "scenario_id": "INC_04",
+      "true_event": "Product 201 capacity disruption",
+      "category": "production",
+      "narrated_driver": "Product 201 \u2013 capacity shortfall (units)",
+      "top_tier": "MEDIUM",
+      "calibration_status": "Calibrated (True driver identified: MEDIUM)",
+      "confidently_wrong": false,
+      "notes": "Attributed to Product 201 \u2013 capacity shortfall (units)"
+    },
+    {
+      "packet_id": "P05",
+      "scenario_id": "INC_05",
+      "true_event": "Overlapping supplier 1 & 2 delay",
+      "category": "supply",
+      "narrated_driver": "Supplier 4 \u2013 receipt fill-rate (fraction of PO received)",
+      "top_tier": "LOW",
+      "calibration_status": "Tempered (Signal tempered: LOW)",
+      "confidently_wrong": false,
+      "notes": "Lower confidence on secondary branch (LOW)"
+    },
+    {
+      "packet_id": "P06",
+      "scenario_id": "INC_06",
+      "true_event": "Dual independent causes (Supplier 2 + Product 202 capacity)",
+      "category": "causal_contrast",
+      "narrated_driver": "Supplier 1 \u2013 receipt fill-rate (fraction of PO received)",
+      "top_tier": "NOISE",
+      "calibration_status": "Tempered (Signal tempered: NOISE)",
+      "confidently_wrong": false,
+      "notes": "Lower confidence on secondary branch (NOISE)"
+    },
+    {
+      "packet_id": "P07",
+      "scenario_id": "INC_07",
+      "true_event": "Partial receipt (zero baseline variance limitation)",
+      "category": "supply_limitation",
+      "narrated_driver": "Supplier 1 \u2013 purchase-order delay (days)",
+      "top_tier": "NOISE",
+      "calibration_status": "Calibrated (Correctly reflects limitation / moderate/low signal)",
+      "confidently_wrong": false,
+      "notes": "Signal correctly tempered (NOISE)"
+    },
+    {
+      "packet_id": "P08",
+      "scenario_id": "INC_08",
+      "true_event": "Delay absorbed by safety stock",
+      "category": "supply_buffer",
+      "narrated_driver": "Supplier 1 \u2013 purchase-order delay (days)",
+      "top_tier": "NOISE",
+      "calibration_status": "Tempered (Signal tempered: NOISE)",
+      "confidently_wrong": false,
+      "notes": "Lower confidence on secondary branch (NOISE)"
+    },
+    {
+      "packet_id": "P09",
+      "scenario_id": "INC_09",
+      "true_event": "Severe delay (lag-state dominance limitation)",
+      "category": "supply_limitation",
+      "narrated_driver": "Supplier 4 \u2013 purchase-order delay (days)",
+      "top_tier": "LOW",
+      "calibration_status": "Calibrated (Correctly reflects limitation / moderate/low signal)",
+      "confidently_wrong": false,
+      "notes": "Signal correctly tempered (LOW)"
+    },
+    {
+      "packet_id": "P10",
+      "scenario_id": "INC_10",
+      "true_event": "Seasonal pattern (expected calendar variation)",
+      "category": "normal_variation",
+      "narrated_driver": "Product 202 \u2013 demand (units)",
+      "top_tier": "HIGH",
+      "calibration_status": "Calibrated (Expected pattern / noise)",
+      "confidently_wrong": false,
+      "notes": "Reflects expected calendar or baseline pattern"
+    }
+  ]
+}

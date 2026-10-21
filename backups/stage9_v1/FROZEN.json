@@ -1,0 +1,12 @@
+{
+  "frozen_at": "2026-10-10T07:50:29.807097+00:00",
+  "stage": 9,
+  "research_framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+  "report_builder_sha256": "5b7c1d9b5f7b43eac4a4d13c8df76e5b914d38a5184f219e082cfe2fb0c98cb6",
+  "smtp_sender_sha256": "bddb991271694953e25fe2b10b19d1d1535b45e11ef1432dd3c9045b42e46444",
+  "scheduler_sha256": "224e6f834022ba8018c4c407be9eec774c08048828ef035aa7e3ceffc3fa952c",
+  "test_stage9_sha256": "afd08df687dfdbce1d7c32c3578c5feecd1b88d289c8e6f665e238ed4fbee66c",
+  "delivery_log_sha256": "336a01985c8c97032d0f294bb6a7c47f6b9dfb73cb6e5d3ea0fe9254a569f765",
+  "unit_tests_passed": 6,
+  "do_not_modify": "Stage 9 executive reporting and scheduler are frozen."
+}

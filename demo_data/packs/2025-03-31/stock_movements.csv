@@ -1,0 +1,10 @@
+id,item_id,date,movement_type,quantity,goods_receipt_line_id,material_issue_id,production_order_id,delivery_line_id
+175,4,2025-03-31,OUT,14,,,,55
+176,4,2025-03-31,OUT,8,,,,56
+177,1,2025-03-31,OUT,75,,80,,
+178,2,2025-03-31,OUT,30,,81,,
+179,3,2025-03-31,OUT,9,,82,,
+180,4,2025-03-31,IN,30,,,43,
+181,3,2025-03-31,OUT,10,,83,,
+182,1,2025-03-31,OUT,24,,84,,
+183,5,2025-03-31,IN,20,,,44,

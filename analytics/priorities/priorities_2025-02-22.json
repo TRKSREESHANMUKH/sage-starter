@@ -1,0 +1,57 @@
+{
+  "as_of": "2025-02-22",
+  "metadata": {
+    "as_of_date": "2025-02-22",
+    "rules_source": "stage9/config/rules.yaml",
+    "simulated_data": true
+  },
+  "top_priorities": [
+    {
+      "action": "Expedite urgent replenishment for Steel Rod 10mm (Material 101)",
+      "category": "Rule 3",
+      "due_date": "2025-02-22",
+      "rank": 1,
+      "reason": "Steel Rod 10mm (Material 101) stock at 30 kg is at or below safety stock (50 kg). Cover is 0.7 days",
+      "role": "Procurement"
+    },
+    {
+      "action": "Prepare receipt for PO-4 from EastCoast Components",
+      "category": "Incoming Supply",
+      "due_date": "2025-02-28",
+      "rank": 2,
+      "reason": "Expected shipment of 397 units of Steel Rod 10mm (Material 101) scheduled for arrival on 2025-02-28",
+      "role": "Procurement"
+    },
+    {
+      "action": "Prepare receipt for PO-5 from Copper & Co",
+      "category": "Incoming Supply",
+      "due_date": "2025-03-03",
+      "rank": 3,
+      "reason": "Expected shipment of 154 units of Copper Wire (Material 103) scheduled for arrival on 2025-03-03",
+      "role": "Procurement"
+    },
+    {
+      "action": "Monitor inventory buffer for Steel Rod 10mm (Material 101)",
+      "category": "Buffer Health",
+      "due_date": "2025-02-22",
+      "rank": 4,
+      "reason": "Steel Rod 10mm (Material 101) has 0.7 days of cover remaining (30 kg on hand)",
+      "role": "Procurement"
+    },
+    {
+      "action": "Monitor inventory buffer for Copper Wire (Material 103)",
+      "category": "Buffer Health",
+      "due_date": "2025-02-22",
+      "rank": 5,
+      "reason": "Copper Wire (Material 103) has 7.1 days of cover remaining (53 kg on hand)",
+      "role": "Procurement"
+    }
+  ],
+  "watchlist": [
+    {
+      "item": "Copper Wire (Material 103) inventory monitoring",
+      "reason": "Copper Wire (Material 103) is at 53 kg (below reorder point 100 kg), tracking 1 open replenishment POs",
+      "role": "Procurement"
+    }
+  ]
+}

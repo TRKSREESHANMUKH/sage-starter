@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Project SAGE — Interactive Causal DAG Visualizer</title>
+  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #0b0f19;
+      color: #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    header {
+      background: #111827;
+      border-bottom: 1px solid #1f2937;
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+    .title-area h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge {
+      background: #1e293b;
+      color: #94a3b8;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      border: 1px solid #334155;
+    }
+    .title-area p {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-top: 3px;
+    }
+    .controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .legend {
+      display: flex;
+      gap: 14px;
+      background: #1e293b;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      border: 1px solid #334155;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .btn {
+      background: #0284c7;
+      color: white;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .btn:hover { background: #0369a1; }
+    #main-container {
+      display: flex;
+      flex: 1;
+      position: relative;
+    }
+    #network {
+      flex: 1;
+      height: 100%;
+      background: radial-gradient(circle at 50% 50%, #111827 0%, #0b0f19 100%);
+    }
+    #sidebar {
+      width: 320px;
+      background: #111827;
+      border-left: 1px solid #1f2937;
+      padding: 18px;
+      overflow-y: auto;
+      font-size: 0.85rem;
+    }
+    #sidebar h2 {
+      font-size: 0.95rem;
+      color: #38bdf8;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #1f2937;
+      padding-bottom: 8px;
+    }
+    .detail-row {
+      margin-bottom: 12px;
+    }
+    .detail-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #64748b;
+      font-weight: 600;
+    }
+    .detail-value {
+      font-size: 0.88rem;
+      color: #f8fafc;
+      margin-top: 3px;
+      word-break: break-all;
+    }
+    .tag-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .tag-item {
+      background: #1e293b;
+      padding: 6px 10px;
+      border-radius: 6px;
+      border-left: 3px solid #38bdf8;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="title-area">
+      <h1>Project SAGE &bull; Causal DAG <span class="badge">DoWhy GCM Fitted</span></h1>
+      <p>32 Operational Nodes | 40 Physical Supply-Chain Edges | Hierarchical Tiers</p>
+    </div>
+    <div class="controls">
+      <div class="legend">
+        <div class="legend-item"><span class="dot" style="background:#38bdf8"></span> Exogenous Supply / Cal</div>
+        <div class="legend-item"><span class="dot" style="background:#fb923c"></span> Raw Materials</div>
+        <div class="legend-item"><span class="dot" style="background:#f472b6"></span> Demand</div>
+        <div class="legend-item"><span class="dot" style="background:#4ade80"></span> Factory Output</div>
+        <div class="legend-item"><span class="dot" style="background:#facc15"></span> FG Stock</div>
+        <div class="legend-item"><span class="dot" style="background:#f87171"></span> Backlog (Target)</div>
+      </div>
+      <button class="btn" onclick="network.fit({animation:true})">Reset View</button>
+    </div>
+  </header>
+
+  <div id="main-container">
+    <div id="network"></div>
+    <div id="sidebar">
+      <h2>Node Inspection</h2>
+      <div id="node-details">
+        <p style="color:#64748b; font-style:italic;">Click on any node in the graph to inspect its operational role, causal inputs (parents), and downstream effects (children).</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const nodesData = [
+      // Tier 0: Exogenous Supply & Calendar
+      { id: "weekday", label: "weekday", group: "cal", title: "Day of week calendar context" },
+      { id: "month", label: "month", group: "cal", title: "Month seasonality calendar context" },
+      
+      { id: "supplier_1_po_delay_days", label: "S1 Delay", group: "sup", title: "Supplier 1 PO delay days" },
+      { id: "supplier_1_receipt_fill_rate", label: "S1 Fill Rate", group: "sup", title: "Supplier 1 receipt fill rate" },
+      { id: "supplier_2_po_delay_days", label: "S2 Delay", group: "sup", title: "Supplier 2 PO delay days" },
+      { id: "supplier_2_receipt_fill_rate", label: "S2 Fill Rate", group: "sup", title: "Supplier 2 receipt fill rate" },
+      { id: "supplier_3_po_delay_days", label: "S3 Delay", group: "sup", title: "Supplier 3 PO delay days" },
+      { id: "supplier_3_receipt_fill_rate", label: "S3 Fill Rate", group: "sup", title: "Supplier 3 receipt fill rate" },
+      { id: "supplier_4_po_delay_days", label: "S4 Delay", group: "sup", title: "Supplier 4 PO delay days" },
+      { id: "supplier_4_receipt_fill_rate", label: "S4 Fill Rate", group: "sup", title: "Supplier 4 receipt fill rate" },
+      { id: "supplier_5_po_delay_days", label: "S5 Delay", group: "sup", title: "Supplier 5 PO delay days" },
+      { id: "supplier_5_receipt_fill_rate", label: "S5 Fill Rate", group: "sup", title: "Supplier 5 receipt fill rate" },
+
+      { id: "product_201_planned_production", label: "P201 Plan", group: "plan", title: "Master Production Target: Product 201" },
+      { id: "product_201_capacity_shortfall_units", label: "P201 Shortfall", group: "cap", title: "Downtime / Labor Shortfall: Product 201" },
+      { id: "product_202_planned_production", label: "P202 Plan", group: "plan", title: "Master Production Target: Product 202" },
+      { id: "product_202_capacity_shortfall_units", label: "P202 Shortfall", group: "cap", title: "Downtime / Labor Shortfall: Product 202" },
+
+      // Tier 1: Raw Materials
+      { id: "material_101_stock_lag1", label: "Mat 101 Lag", group: "mat_lag", title: "Yesterday Closing Steel Stock" },
+      { id: "material_101_stock", label: "Mat 101 Stock\n(Steel)", group: "mat", title: "Closing Steel Stock (Day t)" },
+      { id: "material_102_stock_lag1", label: "Mat 102 Lag", group: "mat_lag", title: "Yesterday Closing Plastic Stock" },
+      { id: "material_102_stock", label: "Mat 102 Stock\n(Plastic)", group: "mat", title: "Closing Plastic Stock (Day t)" },
+      { id: "material_103_stock_lag1", label: "Mat 103 Lag", group: "mat_lag", title: "Yesterday Closing Copper Stock" },
+      { id: "material_103_stock", label: "Mat 103 Stock\n(Copper)", group: "mat", title: "Closing Copper Stock (Day t)" },
+
+      // Tier 2: Customer Demand
+      { id: "product_201_demand_units", label: "P201 Demand", group: "dem", title: "Daily Order Volume: Product 201" },
+      { id: "product_202_demand_units", label: "P202 Demand", group: "dem", title: "Daily Order Volume: Product 202" },
+
+      // Tier 3: Manufacturing Output
+      { id: "product_201_actual_production", label: "P201 Actual\nProduction", group: "prod", title: "Completed Units: Product 201" },
+      { id: "product_202_actual_production", label: "P202 Actual\nProduction", group: "prod", title: "Completed Units: Product 202" },
+
+      // Tier 4: FG Inventory
+      { id: "product_201_fg_stock_lag1", label: "P201 FG Lag", group: "fg_lag", title: "Yesterday Closing Warehouse Stock: P201" },
+      { id: "product_201_fg_stock", label: "P201 FG Stock", group: "fg", title: "Closing Warehouse Stock (Day t): P201" },
+      { id: "product_202_fg_stock_lag1", label: "P202 FG Lag", group: "fg_lag", title: "Yesterday Closing Warehouse Stock: P202" },
+      { id: "product_202_fg_stock", label: "P202 FG Stock", group: "fg", title: "Closing Warehouse Stock (Day t): P202" },
+
+      // Tier 5: Backlog Target
+      { id: "product_201_due_backlog_units", label: "P201 Backlog\n(TARGET)", group: "target", title: "Unfulfilled Orders (Root KPI): P201" },
+      { id: "product_202_due_backlog_units", label: "P202 Backlog\n(TARGET)", group: "target", title: "Unfulfilled Orders (Root KPI): P202" },
+    ];
+
+    const edgesData = [
+      // Mat 101 Inbound
+      { from: "material_101_stock_lag1", to: "material_101_stock" },
+      { from: "supplier_1_po_delay_days", to: "material_101_stock" },
+      { from: "supplier_1_receipt_fill_rate", to: "material_101_stock" },
+      { from: "supplier_2_po_delay_days", to: "material_101_stock" },
+      { from: "supplier_2_receipt_fill_rate", to: "material_101_stock" },
+      { from: "supplier_4_po_delay_days", to: "material_101_stock" },
+      { from: "supplier_4_receipt_fill_rate", to: "material_101_stock" },
+
+      // Mat 102 Inbound
+      { from: "material_102_stock_lag1", to: "material_102_stock" },
+      { from: "supplier_3_po_delay_days", to: "material_102_stock" },
+      { from: "supplier_3_receipt_fill_rate", to: "material_102_stock" },
+      { from: "supplier_4_po_delay_days", to: "material_102_stock" },
+      { from: "supplier_4_receipt_fill_rate", to: "material_102_stock" },
+
+      // Mat 103 Inbound
+      { from: "material_103_stock_lag1", to: "material_103_stock" },
+      { from: "supplier_1_po_delay_days", to: "material_103_stock" },
+      { from: "supplier_1_receipt_fill_rate", to: "material_103_stock" },
+      { from: "supplier_5_po_delay_days", to: "material_103_stock" },
+      { from: "supplier_5_receipt_fill_rate", to: "material_103_stock" },
+
+      // Customer Demand
+      { from: "weekday", to: "product_201_demand_units" },
+      { from: "month", to: "product_201_demand_units" },
+      { from: "weekday", to: "product_202_demand_units" },
+      { from: "month", to: "product_202_demand_units" },
+
+      // P201 Manufacturing
+      { from: "product_201_planned_production", to: "product_201_actual_production" },
+      { from: "product_201_capacity_shortfall_units", to: "product_201_actual_production" },
+      { from: "material_101_stock", to: "product_201_actual_production" },
+      { from: "material_102_stock", to: "product_201_actual_production" },
+      { from: "material_103_stock", to: "product_201_actual_production" },
+
+      // P202 Manufacturing
+      { from: "product_202_planned_production", to: "product_202_actual_production" },
+      { from: "product_202_capacity_shortfall_units", to: "product_202_actual_production" },
+      { from: "material_101_stock", to: "product_202_actual_production" },
+      { from: "material_103_stock", to: "product_202_actual_production" },
+
+      // P201 FG Warehouse
+      { from: "product_201_fg_stock_lag1", to: "product_201_fg_stock" },
+      { from: "product_201_actual_production", to: "product_201_fg_stock" },
+      { from: "product_201_demand_units", to: "product_201_fg_stock" },
+
+      // P202 FG Warehouse
+      { from: "product_202_fg_stock_lag1", to: "product_202_fg_stock" },
+      { from: "product_202_actual_production", to: "product_202_fg_stock" },
+      { from: "product_202_demand_units", to: "product_202_fg_stock" },
+
+      // P201 Backlog
+      { from: "product_201_fg_stock", to: "product_201_due_backlog_units" },
+      { from: "product_201_demand_units", to: "product_201_due_backlog_units" },
+
+      // P202 Backlog
+      { from: "product_202_fg_stock", to: "product_202_due_backlog_units" },
+      { from: "product_202_demand_units", to: "product_202_due_backlog_units" },
+    ];
+
+    const groupStyles = {
+      cal:    { color: { background: "#0284c7", border: "#38bdf8" }, font: { color: "#fff" } },
+      sup:    { color: { background: "#0369a1", border: "#38bdf8" }, font: { color: "#fff" } },
+      plan:   { color: { background: "#6d28d9", border: "#a78bfa" }, font: { color: "#fff" } },
+      cap:    { color: { background: "#7c3aed", border: "#c4b5fd" }, font: { color: "#fff" } },
+      mat_lag:{ color: { background: "#c2410c", border: "#fb923c" }, font: { color: "#fff" } },
+      mat:    { color: { background: "#ea580c", border: "#fdba74" }, font: { color: "#fff" } },
+      dem:    { color: { background: "#be185d", border: "#f472b6" }, font: { color: "#fff" } },
+      prod:   { color: { background: "#15803d", border: "#4ade80" }, font: { color: "#fff" } },
+      fg_lag: { color: { background: "#a16207", border: "#facc15" }, font: { color: "#fff" } },
+      fg:     { color: { background: "#ca8a04", border: "#fde047" }, font: { color: "#fff" } },
+      target: { color: { background: "#b91c1c", border: "#f87171" }, font: { color: "#fff", size: 14, bold: true } },
+    };
+
+    const nodes = new vis.DataSet(nodesData.map(n => ({
+      ...n,
+      shape: "box",
+      margin: 10,
+      borderWidth: 2,
+      shadow: true,
+      ...(groupStyles[n.group] || {})
+    })));
+
+    const edges = new vis.DataSet(edgesData.map(e => ({
+      ...e,
+      arrows: "to",
+      color: { color: "#475569", highlight: "#38bdf8" },
+      width: 1.5,
+      smooth: { type: "cubicBezier", forceDirection: "horizontal", roundness: 0.2 }
+    })));
+
+    const container = document.getElementById("network");
+    const data = { nodes, edges };
+    const options = {
+      layout: {
+        hierarchical: {
+          direction: "LR",
+          sortMethod: "directed",
+          levelSeparation: 220,
+          nodeSpacing: 70
+        }
+      },
+      physics: {
+        hierarchicalRepulsion: { nodeDistance: 90 },
+        solver: "hierarchicalRepulsion"
+      },
+      interaction: { hover: true, tooltipDelay: 100 }
+    };
+
+    const network = new vis.Network(container, data, options);
+
+    network.on("click", function(params) {
+      if (params.nodes.length > 0) {
+        const nodeId = params.nodes[0];
+        const node = nodesData.find(n => n.id === nodeId);
+        
+        // Find parents and children
+        const parents = edgesData.filter(e => e.to === nodeId).map(e => e.from);
+        const children = edgesData.filter(e => e.from === nodeId).map(e => e.to);
+
+        let html = `
+          <div class="detail-row">
+            <div class="detail-label">Node Identifier</div>
+            <div class="detail-value" style="color:#38bdf8; font-weight:700;">${node.id}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Operational Role</div>
+            <div class="detail-value">${node.title}</div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Causal Inputs (${parents.length} Parents)</div>
+            <div class="tag-list">
+              ${parents.length > 0 ? parents.map(p => `<div class="tag-item">${p}</div>`).join("") : "<span style='color:#64748b;'>None (Exogenous Root Node)</span>"}
+            </div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-label">Downstream Impact (${children.length} Children)</div>
+            <div class="tag-list">
+              ${children.length > 0 ? children.map(c => `<div class="tag-item" style="border-left-color:#4ade80;">${c}</div>`).join("") : "<span style='color:#64748b;'>None (Leaf Target Node)</span>"}
+            </div>
+          </div>
+        `;
+        document.getElementById("node-details").innerHTML = html;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,498 @@
+{
+  "P01": {
+    "drivers": [
+      {
+        "label": "Supplier 5 \u2013 receipt fill-rate (fraction of PO received)",
+        "m1_score": 0.0,
+        "m2_score": 0.536286,
+        "node": "supplier_5_receipt_fill_rate",
+        "rank": 1,
+        "tier": "NOISE"
+      },
+      {
+        "label": "Supplier 1 \u2013 receipt fill-rate (fraction of PO received)",
+        "m1_score": 0.0,
+        "m2_score": 0.411411,
+        "node": "supplier_1_receipt_fill_rate",
+        "rank": 2,
+        "tier": "NOISE"
+      },
+      {
+        "label": "Supplier 4 \u2013 purchase-order delay (days)",
+        "m1_score": 0.074188,
+        "m2_score": 0.299183,
+        "node": "supplier_4_po_delay_days",
+        "rank": 3,
+        "tier": "NOISE"
+      }
+    ],
+    "is_no_signal": true,
+    "packet_id": "P01",
+    "research_framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+    "scenario_id": "INC_01",
+    "seeds_used": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "target_labels": [
+      "Material 101 \u2013 stock level (units)",
+      "Product 201 \u2013 actual production (units)"
+    ],
+    "target_nodes": [
+      "material_101_stock",
+      "product_201_actual_production"
+    ],
+    "top_tier": "NOISE",
+    "window_period": "2025-08-17 -> 2025-12-15"
+  },
+  "P02": {
+    "drivers": [
+      {
+        "label": "Product 201 \u2013 capacity shortfall (units)",
+        "m1_score": 0.014263,
+        "m2_score": 0.451163,
+        "node": "product_201_capacity_shortfall_units",
+        "rank": 1,
+        "tier": "NOISE"
+      },
+      {
+        "label": "Supplier 1 \u2013 receipt fill-rate (fraction of PO received)",
+        "m1_score": 0.0,
+        "m2_score": 0.3998,
+        "node": "supplier_1_receipt_fill_rate",
+        "rank": 2,
+        "tier": "NOISE"
+      },
+      {
+        "label": "Supplier 4 \u2013 receipt fill-rate (fraction of PO received)",
+        "m1_score": 0.007599,
+        "m2_score": 0.361285,
+        "node": "supplier_4_receipt_fill_rate",
+        "rank": 3,
+        "tier": "NOISE"
+      }
+    ],
+    "is_no_signal": true,
+    "packet_id": "P02",
+    "research_framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+    "scenario_id": "INC_02",
+    "seeds_used": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "target_labels": [
+      "Product 201 \u2013 actual production (units)",
+      "Product 201 \u2013 due-backlog (units)"
+    ],
+    "target_nodes": [
+      "product_201_actual_production",
+      "product_201_due_backlog_units"
+    ],
+    "top_tier": "NOISE",
+    "window_period": "2025-06-20 -> 2025-10-18"
+  },
+  "P03": {
+    "drivers": [
+      {
+        "label": "Product 201 \u2013 demand (units)",
+        "m1_score": 1.275514,
+        "m2_score": 0.477164,
+        "node": "product_201_demand_units",
+        "rank": 1,
+        "tier": "MEDIUM"
+      },
+      {
+        "label": "calendar month",
+        "m1_score": 0.010913,
+        "m2_score": 0.882491,
+        "node": "month",
+        "rank": 2,
+        "tier": "NOISE"
+      },
+      {
+        "label": "day-of-week",
+        "m1_score": 0.112235,
+        "m2_score": 0.568468,
+        "node": "weekday",
+        "rank": 3,
+        "tier": "LOW"
+      }
+    ],
+    "is_no_signal": false,
+    "packet_id": "P03",
+    "research_framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+    "scenario_id": "INC_03",
+    "seeds_used": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "target_labels": [
+      "Product 201 \u2013 demand (units)",
+      "Product 201 \u2013 due-backlog (units)",
+      "Product 201 \u2013 finished-goods stock (units)"
+    ],
+    "target_nodes": [
+      "product_201_demand_units",
+      "product_201_due_backlog_units",
+      "product_201_fg_stock"
+    ],
+    "top_tier": "MEDIUM",
+    "window_period": "2025-03-29 -> 2025-07-27"
+  },
+  "P04": {
+    "drivers": [
+      {
+        "label": "Product 201 \u2013 capacity shortfall (units)",
+        "m1_score": 2.784418,
+        "m2_score": 0.236614,
+        "node": "product_201_capacity_shortfall_units",
+        "rank": 1,
+        "tier": "MEDIUM"
+      },
+      {
+        "label": "Supplier 5 \u2013 receipt fill-rate (fraction of PO received)",
+        "m1_score": 0.0,
+        "m2_score": 0.569584,
+        "node": "supplier_5_receipt_fill_rate",
+        "rank": 2,
+        "tier": "NOISE"
+      },
+      {
+        "label": "Supplier 4 \u2013 receipt fill-rate (fraction of PO received)",
+        "m1_score": 0.015407,
+        "m2_score": 0.527781,
+        "node": "supplier_4_receipt_fill_rate",
+        "rank": 3,
+        "tier": "NOISE"
+      }
+    ],
+    "is_no_signal": false,
+    "packet_id": "P04",
+    "research_framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+    "scenario_id": "INC_04",
+    "seeds_used": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "target_labels": [
+      "Product 201 \u2013 actual production (units)",
+      "Product 201 \u2013 capacity shortfall (units)"
+    ],
+    "target_nodes": [
+      "product_201_actual_production",
+      "product_201_capacity_shortfall_units"
+    ],
+    "top_tier": "MEDIUM",
+    "window_period": "2025-10-01 -> 2026-01-29"
+  },
+  "P05": {
+    "drivers": [
+      {
+        "label": "Supplier 4 \u2013 receipt fill-rate (fraction of PO received)",
+        "m1_score": 0.175763,
+        "m2_score": 0.355286,
+        "node": "supplier_4_receipt_fill_rate",
+        "rank": 1,
+        "tier": "LOW"
+      },
+      {
+        "label": "Supplier 4 \u2013 purchase-order delay (days)",
+        "m1_score": 0.059398,
+        "m2_score": 0.335885,
+        "node": "supplier_4_po_delay_days",
+        "rank": 2,
+        "tier": "NOISE"
+      },
+      {
+        "label": "Product 201 \u2013 capacity shortfall (units)",
+        "m1_score": 0.022488,
+        "m2_score": 0.339339,
+        "node": "product_201_capacity_shortfall_units",
+        "rank": 3,
+        "tier": "NOISE"
+      }
+    ],
+    "is_no_signal": false,
+    "packet_id": "P05",
+    "research_framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+    "scenario_id": "INC_05",
+    "seeds_used": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "target_labels": [
+      "Material 101 \u2013 stock level (units)",
+      "Product 201 \u2013 actual production (units)"
+    ],
+    "target_nodes": [
+      "material_101_stock",
+      "product_201_actual_production"
+    ],
+    "top_tier": "LOW",
+    "window_period": "2025-10-16 -> 2026-02-13"
+  },
+  "P06": {
+    "drivers": [
+      {
+        "label": "Supplier 1 \u2013 receipt fill-rate (fraction of PO received)",
+        "m1_score": 0.0,
+        "m2_score": 0.774385,
+        "node": "supplier_1_receipt_fill_rate",
+        "rank": 1,
+        "tier": "NOISE"
+      },
+      {
+        "label": "Supplier 4 \u2013 receipt fill-rate (fraction of PO received)",
+        "m1_score": 0.011818,
+        "m2_score": 0.668715,
+        "node": "supplier_4_receipt_fill_rate",
+        "rank": 2,
+        "tier": "NOISE"
+      },
+      {
+        "label": "Supplier 5 \u2013 receipt fill-rate (fraction of PO received)",
+        "m1_score": 0.0,
+        "m2_score": 0.633035,
+        "node": "supplier_5_receipt_fill_rate",
+        "rank": 3,
+        "tier": "NOISE"
+      }
+    ],
+    "is_no_signal": true,
+    "packet_id": "P06",
+    "research_framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+    "scenario_id": "INC_06",
+    "seeds_used": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "target_labels": [
+      "Product 201 \u2013 actual production (units)",
+      "Product 202 \u2013 actual production (units)"
+    ],
+    "target_nodes": [
+      "product_201_actual_production",
+      "product_202_actual_production"
+    ],
+    "top_tier": "NOISE",
+    "window_period": "2025-07-21 -> 2025-11-18"
+  },
+  "P07": {
+    "drivers": [
+      {
+        "label": "Supplier 1 \u2013 purchase-order delay (days)",
+        "m1_score": 0.0,
+        "m2_score": 0.707424,
+        "node": "supplier_1_po_delay_days",
+        "rank": 1,
+        "tier": "NOISE"
+      },
+      {
+        "label": "Supplier 5 \u2013 receipt fill-rate (fraction of PO received)",
+        "m1_score": 0.0,
+        "m2_score": 0.619417,
+        "node": "supplier_5_receipt_fill_rate",
+        "rank": 2,
+        "tier": "NOISE"
+      },
+      {
+        "label": "Supplier 1 \u2013 receipt fill-rate (fraction of PO received)",
+        "m1_score": 0.0,
+        "m2_score": 0.575129,
+        "node": "supplier_1_receipt_fill_rate",
+        "rank": 3,
+        "tier": "NOISE"
+      }
+    ],
+    "is_no_signal": true,
+    "packet_id": "P07",
+    "research_framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+    "scenario_id": "INC_07",
+    "seeds_used": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "target_labels": [
+      "Material 102 \u2013 stock level (units)",
+      "Material 103 \u2013 stock level (units)",
+      "Product 201 \u2013 actual production (units)"
+    ],
+    "target_nodes": [
+      "material_102_stock",
+      "material_103_stock",
+      "product_201_actual_production"
+    ],
+    "top_tier": "NOISE",
+    "window_period": "2025-07-07 -> 2025-11-04"
+  },
+  "P08": {
+    "drivers": [
+      {
+        "label": "Supplier 1 \u2013 purchase-order delay (days)",
+        "m1_score": 0.0,
+        "m2_score": 0.372634,
+        "node": "supplier_1_po_delay_days",
+        "rank": 1,
+        "tier": "NOISE"
+      },
+      {
+        "label": "Supplier 5 \u2013 receipt fill-rate (fraction of PO received)",
+        "m1_score": 0.0,
+        "m2_score": 0.323206,
+        "node": "supplier_5_receipt_fill_rate",
+        "rank": 2,
+        "tier": "NOISE"
+      },
+      {
+        "label": "Supplier 5 \u2013 purchase-order delay (days)",
+        "m1_score": 0.0,
+        "m2_score": 0.312084,
+        "node": "supplier_5_po_delay_days",
+        "rank": 3,
+        "tier": "NOISE"
+      }
+    ],
+    "is_no_signal": true,
+    "packet_id": "P08",
+    "research_framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+    "scenario_id": "INC_08",
+    "seeds_used": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "target_labels": [
+      "Material 103 \u2013 stock level (units)",
+      "Product 201 \u2013 actual production (units)",
+      "Product 201 \u2013 due-backlog (units)"
+    ],
+    "target_nodes": [
+      "material_103_stock",
+      "product_201_actual_production",
+      "product_201_due_backlog_units"
+    ],
+    "top_tier": "NOISE",
+    "window_period": "2025-02-26 -> 2025-06-26"
+  },
+  "P09": {
+    "drivers": [
+      {
+        "label": "Supplier 4 \u2013 purchase-order delay (days)",
+        "m1_score": 0.121535,
+        "m2_score": 0.335269,
+        "node": "supplier_4_po_delay_days",
+        "rank": 1,
+        "tier": "LOW"
+      },
+      {
+        "label": "Product 201 \u2013 capacity shortfall (units)",
+        "m1_score": 0.0,
+        "m2_score": 0.405374,
+        "node": "product_201_capacity_shortfall_units",
+        "rank": 2,
+        "tier": "NOISE"
+      },
+      {
+        "label": "Supplier 2 \u2013 purchase-order delay (days)",
+        "m1_score": 0.0,
+        "m2_score": 0.327958,
+        "node": "supplier_2_po_delay_days",
+        "rank": 3,
+        "tier": "NOISE"
+      }
+    ],
+    "is_no_signal": false,
+    "packet_id": "P09",
+    "research_framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+    "scenario_id": "INC_09",
+    "seeds_used": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "target_labels": [
+      "Material 101 \u2013 stock level (units)",
+      "Product 201 \u2013 due-backlog (units)"
+    ],
+    "target_nodes": [
+      "material_101_stock",
+      "product_201_due_backlog_units"
+    ],
+    "top_tier": "LOW",
+    "window_period": "2025-08-05 -> 2025-12-03"
+  },
+  "P10": {
+    "drivers": [
+      {
+        "label": "Product 202 \u2013 demand (units)",
+        "m1_score": 0.972109,
+        "m2_score": 0.88664,
+        "node": "product_202_demand_units",
+        "rank": 1,
+        "tier": "MEDIUM"
+      },
+      {
+        "label": "calendar month",
+        "m1_score": 0.468493,
+        "m2_score": 1.323525,
+        "node": "month",
+        "rank": 2,
+        "tier": "HIGH"
+      },
+      {
+        "label": "day-of-week",
+        "m1_score": 0.236626,
+        "m2_score": 0.168646,
+        "node": "weekday",
+        "rank": 3,
+        "tier": "MEDIUM"
+      }
+    ],
+    "is_no_signal": false,
+    "packet_id": "P10",
+    "research_framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+    "scenario_id": "INC_10",
+    "seeds_used": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "target_labels": [
+      "Product 202 \u2013 demand (units)",
+      "Product 202 \u2013 due-backlog (units)"
+    ],
+    "target_nodes": [
+      "product_202_demand_units",
+      "product_202_due_backlog_units"
+    ],
+    "top_tier": "HIGH",
+    "window_period": "2025-11-26 -> 2026-03-26"
+  }
+}

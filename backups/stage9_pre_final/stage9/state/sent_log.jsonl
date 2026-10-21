@@ -1,0 +1,5 @@
+{"timestamp": "2026-10-10T17:36:14.288980+00:00", "job": "findings_brief", "as_of": "2025-01-15", "recipients": ["operations-leadership@sage-plant.local"], "status": "SUCCESS_DRY_RUN", "delivery_mode": "dry_run"}
+{"timestamp": "2026-10-10T17:36:15.641083+00:00", "job": "nightly_digest", "as_of": "2025-01-15", "recipients": ["plant-manager@sage-plant.local", "executive-brief@sage-plant.local"], "status": "SUCCESS_DRY_RUN", "delivery_mode": "dry_run"}
+{"timestamp": "2026-10-10T17:36:17.185513+00:00", "job": "test_send", "as_of": "2025-01-15", "recipients": ["dev_test@example.com"], "status": "SUCCESS_DRY_RUN", "delivery_mode": "dry_run"}
+{"timestamp": "2026-10-11T07:43:54.410758+00:00", "job": "nightly_digest", "as_of": "2025-01-22", "recipients": ["plant-manager@sage-plant.local"], "status": "SUCCESS_DRY_RUN", "delivery_mode": "dry_run"}
+{"timestamp": "2026-10-12T06:38:16.881Z", "job": "nightly_digest", "as_of": "2025-02-03", "recipient": "sreeshanmukhtrk@gmail.com", "status": "SUCCESS", "mode": "scheduled", "subject": "SAGE Daily Brief | 3 Feb 2025 | 1 need action"}

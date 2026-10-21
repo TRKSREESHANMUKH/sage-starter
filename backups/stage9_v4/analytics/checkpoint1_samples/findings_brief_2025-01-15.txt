@@ -1,0 +1,39 @@
+SAGE CAUSAL FINDINGS BRIEF | 2025-01-15
+Simulated Data | Status: 3 NEED ATTENTION
+======================================================================
+
+PRIORITY CAUSAL FINDINGS (EXCEPTION VIEW):
+----------------------------------------------------------------------
+[MEDIUM ATTENTION] P03: Product 201 – demand (units)
+  Targets: Product 201 – demand (units), Product 201 – due-backlog (units)
+  What to check: Verify customer sales orders and consider shift overtime reallocation.
+  Inspect: http://127.0.0.1:8000/causal/P03?token=sage_dev_token_2025
+
+[MEDIUM ATTENTION] P04: Product 201 – capacity shortfall (units)
+  Targets: Product 201 – actual production (units), Product 201 – capacity shortfall (units)
+  What to check: Audit machine uptime and staffing throughput on primary assembly lines.
+  Inspect: http://127.0.0.1:8000/causal/P04?token=sage_dev_token_2025
+
+[HIGH ATTENTION] P10: Product 202 – demand (units)
+  Targets: Product 202 – demand (units), Product 202 – due-backlog (units)
+  What to check: Verify customer sales orders and consider shift overtime reallocation.
+  Inspect: http://127.0.0.1:8000/causal/P10?token=sage_dev_token_2025
+
+MONITORED BASELINE & BUFFER HELD:
+----------------------------------------------------------------------
+P01 | Material 101 – stock leve | Within Normal Baseline / Noise
+P02 | Product 201 – actual prod | Within Normal Baseline / Noise
+P05 | Material 101 – stock leve | Low Signal
+P06 | Product 201 – actual prod | Within Normal Baseline / Noise
+P07 | Material 102 – stock leve | Within Normal Baseline / Noise
+P08 | Material 103 – stock leve | Delay observed, buffer held
+P09 | Material 101 – stock leve | Low Signal
+
+======================================================================
+RESEARCH FRAMING:
+SAGE performs controlled synthetic causal-attribution evaluation under
+an expert-defined causal model; it does not claim to prove real-world
+causality.
+
+Simulated data as of 2025-01-15.
+Dashboard: http://127.0.0.1:8000/causal?token=sage_dev_token_2025

@@ -1,0 +1,3 @@
+id,supplier_id,order_date,expected_delivery_date,status
+8,4,2025-03-31,2025-04-09,OPEN
+9,5,2025-03-31,2025-04-12,OPEN

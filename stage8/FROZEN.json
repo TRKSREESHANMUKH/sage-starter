@@ -1,0 +1,28 @@
+{
+  "frozen_at": "2026-10-10T07:50:29.801227+00:00",
+  "stage": 8,
+  "research_framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+  "evidence_packets_sha256": "45211c10eefc6742e7907a1155611aefea3a949d8fe0e4fa3e6fef53680317a5",
+  "narration_results_sha256": "4dc063ea50d9757049a69a8c85fbc567da6f2a2803d310fe697c20e9fc8dbb26",
+  "narrative_evaluation_sha256": "4a86777fc64a915cf344b4ddfd0045a5c1e3091791a5a700292fb3bd4ec49080",
+  "system_prompt_sha256": "f0fe6520d7d86659d8361b8eceb92045c0f2bc84e64e80769472c1196d308ec4",
+  "model_name": "gemma3:4b (executive fallback narrator active)",
+  "fallback_packets": [
+    "P01",
+    "P02",
+    "P03",
+    "P04",
+    "P05",
+    "P06",
+    "P07",
+    "P08",
+    "P09",
+    "P10"
+  ],
+  "n_packets": 10,
+  "first_attempt_pass_rate": 1.0,
+  "final_validation_rate": 1.0,
+  "confidently_wrong_count": 0,
+  "calibration_criterion_met": true,
+  "do_not_modify": "Stage 8 executive narration layer is frozen."
+}

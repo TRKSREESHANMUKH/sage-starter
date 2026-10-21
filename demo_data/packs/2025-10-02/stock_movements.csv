@@ -1,0 +1,2 @@
+id,item_id,date,movement_type,quantity,goods_receipt_line_id,material_issue_id,production_order_id,delivery_line_id
+472,4,2025-10-02,OUT,11,,,,165

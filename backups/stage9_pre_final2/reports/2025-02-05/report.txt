@@ -1,0 +1,33 @@
+SAGE DAILY BRIEF | 5 Feb 2025
+Status: ACTION NEEDED (1 item need action)
+======================================================================
+
+THE BOTTOM LINE:
+P l
+
+TODAY'S NUMBERS IN CONTEXT:
+• Orders Due     : 0 orders due, same as yesterday (7d avg: 0.1)
+• Orders Late    : 0 late orders, same as yesterday (7d avg: 0.0)
+• Units Short    : 0 units short, same as yesterday (7d avg: 1.4)
+• Materials Low  : 1 material low, same as yesterday (7d avg: 0.4)
+
+ORDERS TO PRIORITISE TOMORROW:
+No customer orders requiring intervention tomorrow.
+
+SUPPLIER WATCH:
+No supplier problems today.
+
+WHAT HAPPENED AND WHY (OBSERVED FACTS):
+• Steel Rod 10mm: Closing inventory at 50 kg (1.9 days of cover, safety stock threshold 50 kg). (Seen directly in the data)
+
+FROM PAST ANALYSED CASES (NOT DETECTED TODAY):
+• Supplier 1 delivery delay (Strong evidence): 7-day supplier delay propagated
+  into assembly starvation in past benchmark evaluation.
+• Note: Evidence is limited: SAGE has been tested on simulated data.
+  Trust report: http://127.0.0.1:8000/insights#trust
+
+======================================================================
+FRAMING: SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.
+
+Simulated data. System knows data up to 2025-02-05 only.
+Dashboard: http://127.0.0.1:8000

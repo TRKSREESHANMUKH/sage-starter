@@ -1,0 +1,5 @@
+id,item_id,date,movement_type,quantity,goods_receipt_line_id,material_issue_id,production_order_id,delivery_line_id
+398,5,2025-07-22,OUT,6,,,,133
+399,3,2025-07-22,OUT,5,,178,,
+400,1,2025-07-22,OUT,12,,179,,
+401,5,2025-07-22,IN,10,,,85,

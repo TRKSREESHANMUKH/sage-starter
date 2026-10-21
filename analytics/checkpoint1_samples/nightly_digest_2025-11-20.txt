@@ -1,0 +1,41 @@
+SAGE NIGHTLY OPERATIONS DIGEST | 2025-11-20 (Thursday)
+Simulated Data | Status: NORMAL
+======================================================================
+
+BOTTOM LINE:
+Manufacturing operations proceeded within normal tolerances on
+2025-11-20. Finished goods inventory and production order fulfillment
+remain on schedule with zero active backlog.
+
+TODAY IN NUMBERS:
+  Backlog: 0 u | Shortfall: 0 u
+  Overdue Orders: 0 | Material Stockouts: 0
+
+WHAT HAPPENED TODAY:
+• Steel Rod 10mm: Closing inventory at 133 kg (9.4 days of cover, safety
+  stock threshold 50 kg).
+
+TOMORROW'S PRIORITIES (TOP 5):
+[1] Reorder Steel Rod 10mm (Procurement)
+    Steel Rod 10mm stock at 133 kg is at or below reorder point (150 kg) with 0 open purchase orders
+[2] Audit master production schedule targets (Planner)
+    Verify scheduled workcenter batches against weekly sales order forecasts
+[3] Review supplier on-time delivery scorecards (Procurement)
+    Confirm upcoming replenishment deliveries remain on schedule
+[4] Routine workcenter equipment calibration (Plant Manager)
+    Standard preventative maintenance on primary motor assembly lines
+[5] Safety stock verification audit (Planner)
+    Validate physical inventory cycle counts against ERP closing stock balances
+
+WATCH-LIST:
+• Finished goods warehouse stock health: All finished goods buffers maintained within healthy operating margins
+• Inbound supplier dispatch lead times: Vendor shipment intervals tracking within nominal purchase order parameters
+
+======================================================================
+RESEARCH FRAMING:
+SAGE performs controlled synthetic causal-attribution evaluation under
+an expert-defined causal model; it does not claim to prove real-world
+causality.
+
+Simulated data as of 2025-11-20.
+Dashboard: http://127.0.0.1:8000?token=sage_dev_token_2025

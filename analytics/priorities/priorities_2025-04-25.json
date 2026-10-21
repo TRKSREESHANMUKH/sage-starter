@@ -1,0 +1,35 @@
+{
+  "as_of": "2025-04-25",
+  "metadata": {
+    "as_of_date": "2025-04-25",
+    "rules_source": "stage9/config/rules.yaml",
+    "simulated_data": true
+  },
+  "top_priorities": [
+    {
+      "action": "Prepare receipt for PO-10 from EastCoast Components",
+      "category": "Incoming Supply",
+      "due_date": "2025-05-02",
+      "rank": 1,
+      "reason": "Expected shipment of 359 units of Steel Rod 10mm (Material 101) scheduled for arrival on 2025-05-02",
+      "role": "Procurement"
+    },
+    {
+      "action": "Monitor inventory buffer for Steel Rod 10mm (Material 101)",
+      "category": "Buffer Health",
+      "due_date": "2025-04-25",
+      "rank": 2,
+      "reason": "Steel Rod 10mm (Material 101) has 12.9 days of cover remaining (182 kg on hand)",
+      "role": "Procurement"
+    },
+    {
+      "action": "Monitor inventory buffer for Plastic Granules (Material 102)",
+      "category": "Buffer Health",
+      "due_date": "2025-04-25",
+      "rank": 3,
+      "reason": "Plastic Granules (Material 102) has 50.2 days of cover remaining (215 kg on hand)",
+      "role": "Procurement"
+    }
+  ],
+  "watchlist": []
+}

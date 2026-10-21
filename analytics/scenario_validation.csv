@@ -1,6 +1,6 @@
 scenario_id,run_type,window_period,pre_intervention_equivalence,direct_effect_pass,downstream_effect_pass,unaffected_control_pass,run_isolation_pass,zero_leakage_test,overall_status,win_delta_shortfall,win_peak_backlog,annual_delta_shortfall,annual_peak_backlog,operational_details
 INC_01,isolated,2025-08-17 -> 2025-09-02,PASS,PASS,PASS,PASS,PASS,PASS,PASS,0,0,0,0,Supp 1 PO delay (2.0d vs base 0.0d); Win Shortfall=+0u; Win Backlog=0u
-INC_02,isolated,2025-06-20 -> 2025-07-09,PASS,PASS,PASS,PASS,PASS,PASS,PASS,0,0,0,0,Negative control: 100% panel identity on all 47 columns across all 365 dates
+INC_02,isolated,2025-06-20 -> 2025-07-09,PASS,PASS,PASS,PASS,PASS,PASS,PASS,0,0,0,0,Negative control: 100% panel identity on all 49 columns across all 365 dates
 INC_03,isolated,2025-03-29 -> 2025-04-17,PASS,PASS,PASS,PASS,PASS,PASS,PASS,0,0,0,0,Prod 201 Window Demand: 255u vs base 88u (+167u); Win Shortfall=+0u
 INC_04,isolated,2025-10-01 -> 2025-10-20,PASS,PASS,PASS,PASS,PASS,PASS,PASS,20,0,90,0,"Window Prod 201 output: 70/120u; Win Shortfall=+20u (Mat 101 min stock=53.0, Mat 102=90.0)"
 INC_05,isolated,2025-10-16 -> 2025-11-05,PASS,PASS,PASS,PASS,PASS,PASS,PASS,0,0,0,0,"Overlapping delays: Supp [1, 2] (max delay 7.0d); Win Shortfall=+0u"

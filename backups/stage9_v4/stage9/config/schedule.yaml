@@ -1,0 +1,12 @@
+# stage9/config/schedule.yaml
+timezone: Asia/Kolkata
+
+jobs:
+  nightly_digest: {cron: "0 20 * * *"}
+
+recipients:
+  nightly_digest: ["PUT_REAL_ADDRESSES_HERE"]
+
+replay:
+  replay_start: "2025-02-03"
+  replay_end: "2025-12-31"
