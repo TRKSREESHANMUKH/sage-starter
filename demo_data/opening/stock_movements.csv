@@ -1,0 +1,6 @@
+id,item_id,date,movement_type,quantity,source
+484,1,2025-12-31,ADJUSTMENT,215,demo_seed
+485,2,2025-12-31,ADJUSTMENT,140,demo_seed
+486,3,2025-12-31,ADJUSTMENT,110,demo_seed
+487,4,2025-12-31,ADJUSTMENT,25,demo_seed
+488,5,2025-12-31,ADJUSTMENT,20,demo_seed

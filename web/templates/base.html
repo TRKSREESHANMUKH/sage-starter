@@ -233,7 +233,15 @@
       <div class="header-controls">
         <!-- Global Current Day Info & Dropdown -->
         <div class="current-day-label">
-          <span class="current-day-text">Current day: {{ current_day|default(selected_date) }} (simulated)</span>
+          <span class="current-day-text">
+            Current day: {{ current_day|default(selected_date) }} (simulated)
+            {% if selected_date and selected_date.startswith('2026-01-') %}
+              {% set d_int = selected_date.split('-')[2]|int %}
+              {% if d_int >= 1 and d_int <= 10 %}
+              <span class="sim-tag" style="background:#dbeafe; color:#1e40af; font-weight:700; margin-left:4px;">Demo feed: day {{ d_int }} of 10</span>
+              {% endif %}
+            {% endif %}
+          </span>
           <span class="data-known-text">Data known up to this day only</span>
         </div>
 
@@ -386,20 +394,35 @@
       });
     }
 
-    // 30-second background polling for live updates
+    // 5-second background polling for live updates
+    let lastKnownDay = "{{ current_day|default(selected_date) }}";
     setInterval(async () => {
       try {
         const res = await fetch("/api/snapshot");
         if (res.ok) {
           const data = await res.json();
-          // If viewing today and day advanced, refresh
           const curParam = new URL(window.location.href).searchParams.get("date");
-          if (!curParam && data && data.date && data.date !== "{{ selected_date }}") {
+          if (!curParam && data && data.date && data.date !== lastKnownDay) {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            sessionStorage.setItem("sage_updated_notice", `Updated ${timeStr}`);
             window.location.reload();
           }
         }
       } catch (err) {}
-    }, 30000);
+    }, 5000);
+
+    // Show update notice if reloaded
+    const notice = sessionStorage.getItem("sage_updated_notice");
+    if (notice) {
+      sessionStorage.removeItem("sage_updated_notice");
+      const el = document.createElement("div");
+      el.id = "update-notice-toast";
+      el.style = "position:fixed; bottom:20px; right:20px; background:#1e293b; color:#fff; padding:8px 16px; border-radius:6px; font-size:0.82rem; font-weight:600; box-shadow:0 4px 6px rgba(0,0,0,0.15); z-index:9999;";
+      el.textContent = notice;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 4000);
+    }
   </script>
 </body>
 </html>

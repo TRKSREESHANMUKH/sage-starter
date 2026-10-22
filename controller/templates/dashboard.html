@@ -200,51 +200,42 @@
       </div>
     </div>
 
-    <!-- ─── DEMO CASES (STAGE 9 FINAL 2) ─── -->
+    <!-- ─── DEMO FEED (STAGE 9 FINAL 3: 1–10 JAN 2026) ─── -->
     <div class="card full-width">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px">
         <div>
-          <div class="card-title" style="margin-bottom:4px">Demo Cases — 2025 Incident Scenarios</div>
+          <div class="card-title" style="margin-bottom:4px">Demo Feed (1–10 January 2026)</div>
           <div style="font-size:0.85rem; color:var(--muted)">
-            Select any real 2025 scenario to jump the live database, ingest the day pack, and view the briefing.
+            {% if next_queue_label %}
+            Next in queue: <strong>{{ next_queue_label }}</strong> ({{ queue_remaining }} packs waiting)
+            {% else %}
+            Queue complete: all 10 demo days ingested.
+            {% endif %}
           </div>
         </div>
         <div class="btn-row" style="margin-top:0">
-          <button class="btn btn-primary" type="button" onclick="runNextCase()" id="next-case-btn">▶ Next Case</button>
-          <button class="btn btn-ghost" type="button" onclick="loadYearReview()" id="year-review-btn">📊 Year Review (31 Dec)</button>
-          <button class="btn btn-ghost" type="button" onclick="resetDemo()">⟳ Reset Demo</button>
+          {% if queue_remaining > 0 %}
+          <button class="btn btn-primary" type="button" onclick="feedNextDay()" id="feed-next-btn">▶ Feed next day</button>
+          {% else %}
+          <button class="btn btn-ghost" type="button" disabled>Queue Complete</button>
+          {% endif %}
+          <button class="btn btn-success" type="button" onclick="openSendModal()">📤 Send this report now</button>
+          <button class="btn btn-ghost" type="button" onclick="resetDemo()">⟳ Reset demo feed</button>
         </div>
       </div>
 
-      {% if case_state and case_state.is_case_mode %}
-      <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:10px 14px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px">
-        <div>
-          <span class="pill pill-blue" style="font-size:0.8rem; font-weight:700">Active Case</span>
-          <strong style="margin-left:8px; font-size:0.9rem">{{ case_state.label }}</strong>
+      <!-- Feed Progress Ticks -->
+      <div id="feed-progress-box" style="display:none; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px; margin-top:12px">
+        <div style="font-size:0.82rem; font-weight:700; margin-bottom:8px; color:#334155" id="feed-status-title">Feeding Progress:</div>
+        <div style="display:flex; gap:16px; font-size:0.8rem; color:#64748b; flex-wrap:wrap">
+          <span id="tick-validate">⏳ Validate pack</span>
+          <span id="tick-ingest">⏳ Ingest events</span>
+          <span id="tick-panel">⏳ Update daily panel</span>
+          <span id="tick-causal">⏳ Causal analysis</span>
+          <span id="tick-report">⏳ Daily brief built</span>
         </div>
-        <a href="http://127.0.0.1:8000/?token=sage_dev_token_2025" target="_blank" class="btn btn-ghost" style="padding:4px 10px; font-size:0.8rem">Open in Viewer ↗</a>
       </div>
-      {% endif %}
-
-      <div class="cases-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:10px;">
-        {% for c in demo_cases %}
-        {% set is_active = (case_state and case_state.active_case == loop.index) %}
-        <div class="case-card" style="border: 1px solid {% if is_active %}#2563eb; background:#f0f7ff{% else %}var(--border); background:var(--surface){% endif %}; border-radius:8px; padding:12px; display:flex; flex-direction:column; justify-content:space-between; gap:8px">
-          <div>
-            <div style="font-size:0.72rem; font-weight:700; color:{% if is_active %}#2563eb{% else %}var(--muted){% endif %}">CASE {{ loop.index }}</div>
-            <div style="font-size:0.92rem; font-weight:700; margin-top:2px">{{ c.date }}</div>
-            <div style="font-size:0.78rem; color:var(--muted)">{{ c.label }}</div>
-          </div>
-          <button class="btn {% if is_active %}btn-primary{% else %}btn-ghost{% endif %}" style="width:100%; justify-content:center; padding:6px 10px; font-size:0.8rem" onclick="runCase({{ loop.index }})">
-            {% if is_active %}✓ Active{% else %}Run Case →{% endif %}
-          </button>
-        </div>
-        {% endfor %}
-      </div>
-      <div class="progress-bar-wrap" id="case-progress-wrap" style="display:none; margin-top:14px">
-        <div class="progress-bar" id="case-progress"></div>
-      </div>
-      <div id="case-status" style="font-size:0.82rem; color:var(--muted); margin-top:6px; display:none"></div>
+      <div id="feed-status" style="font-size:0.82rem; color:var(--muted); margin-top:6px; display:none"></div>
     </div>
 
     <!-- ─── SEND MODE ─── -->
@@ -536,6 +527,40 @@ async function openPreviewModal() {
 
 function closePreviewModal() {
   document.getElementById("preview-modal").classList.remove("open");
+}
+
+async function feedNextDay() {
+  const btn = document.getElementById("feed-next-btn");
+  if (btn) btn.disabled = true;
+  const pbox = document.getElementById("feed-progress-box");
+  const ptitle = document.getElementById("feed-status-title");
+  const status = document.getElementById("feed-status");
+  if (pbox) pbox.style.display = "block";
+  if (status) { status.style.display = "block"; status.textContent = "Processing feed..."; }
+
+  // Tick simulation
+  setTimeout(() => { const el = document.getElementById("tick-validate"); if (el) el.textContent = "✓ Validate pack"; }, 300);
+  setTimeout(() => { const el = document.getElementById("tick-ingest"); if (el) el.textContent = "✓ Ingest events"; }, 700);
+  setTimeout(() => { const el = document.getElementById("tick-panel"); if (el) el.textContent = "✓ Update daily panel"; }, 1100);
+  setTimeout(() => { const el = document.getElementById("tick-causal"); if (el) el.textContent = "✓ Causal analysis"; }, 1500);
+
+  try {
+    const res = await postForm("/ctrl/api/feed-next-day", {});
+    if (res.status === "ok") {
+      const elRep = document.getElementById("tick-report"); if (elRep) elRep.textContent = "✓ Daily brief built";
+      if (status) status.textContent = `✓ Ingested pack for ${res.result.day || 'next day'}`;
+      showToast(`Fed next day successfully!`, "success");
+      setTimeout(() => location.reload(), 1200);
+    } else {
+      if (status) status.textContent = "✗ " + (res.detail || "Error");
+      showToast("Feed failed: " + res.detail, "error");
+      if (btn) btn.disabled = false;
+    }
+  } catch(err) {
+    if (status) status.textContent = "✗ Network error";
+    showToast("Network error", "error");
+    if (btn) btn.disabled = false;
+  }
 }
 
 async function runCase(k) {

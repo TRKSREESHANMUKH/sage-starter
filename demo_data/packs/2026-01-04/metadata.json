@@ -1,21 +1,35 @@
 {
   "pack_date": "2026-01-04",
+  "day_number": 4,
+  "scenario_name": "Partial Receipt & Ongoing Steel Delay",
+  "scenario_type": "partial_receipt_and_delay",
   "is_simulated": true,
   "label": "SIMULATED ERP OPERATIONAL PACK",
   "framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
-  "exported_at": "2026-10-17T16:02:15.609478+00:00",
+  "exported_at": "2026-10-22T16:20:21.368992+00:00",
   "row_counts": {
     "purchase_orders": 0,
     "purchase_order_lines": 0,
-    "goods_receipts": 0,
-    "goods_receipt_lines": 0,
+    "goods_receipts": 1,
+    "goods_receipt_lines": 1,
     "sales_orders": 2,
     "sales_order_lines": 2,
     "deliveries": 0,
     "delivery_lines": 0,
-    "production_orders": 0,
-    "material_issues": 0,
-    "stock_movements": 0
+    "production_orders": 2,
+    "material_issues": 5,
+    "stock_movements": 8
   },
-  "total_events": 4
+  "total_events": 21,
+  "closing_stock_simulated": {
+    "materials": {
+      "101": 151.0,
+      "102": 270.0,
+      "103": 94.0
+    },
+    "finished_goods": {
+      "201": 28,
+      "202": 26
+    }
+  }
 }

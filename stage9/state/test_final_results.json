@@ -1,9 +1,9 @@
 {
-  "run_at": "2026-10-21T06:48:40.872057Z",
-  "passed": 64,
+  "run_at": "2026-10-22T16:29:37.207300Z",
+  "passed": 67,
   "failed": 0,
   "skipped": 0,
-  "total": 64,
+  "total": 67,
   "results": [
     {
       "id": "G1",
@@ -99,19 +99,19 @@
       "id": "G5",
       "name": "2025-12-20 banner\u2194subject agree",
       "status": "\u2705 PASS",
-      "note": "banner='Action needed' subject='SAGE Daily Brief | 20 Dec 2025 | 40 need action' actions=40"
+      "note": "banner='Action needed' subject='SAGE Daily Brief | 20 Dec 2025 | 2 need action' actions=2"
     },
     {
       "id": "G5",
       "name": "2025-12-25 banner\u2194subject agree",
       "status": "\u2705 PASS",
-      "note": "banner='Action needed' subject='SAGE Daily Brief | 25 Dec 2025 | 41 need action' actions=41"
+      "note": "banner='Action needed' subject='SAGE Daily Brief | 25 Dec 2025 | 2 need action' actions=2"
     },
     {
       "id": "G5",
       "name": "2025-12-31 banner\u2194subject agree",
       "status": "\u2705 PASS",
-      "note": "banner='Action needed' subject='SAGE Daily Brief | 31 Dec 2025 | 49 need action' actions=49"
+      "note": "banner='Action needed' subject='SAGE Daily Brief | 31 Dec 2025 | 1 need action' actions=1"
     },
     {
       "id": "G6",
@@ -225,7 +225,7 @@
       "id": "G13",
       "name": "Reset completes in < 30 seconds",
       "status": "\u2705 PASS",
-      "note": "elapsed=0.47s"
+      "note": "elapsed=0.29s"
     },
     {
       "id": "G13",
@@ -271,7 +271,7 @@
     },
     {
       "id": "G17",
-      "name": "PDF 'SAGE_Daily_Brief_2025-02-03.pdf' is 1 page",
+      "name": "PDF 'SAGE_Daily_Brief_2026-01-07.pdf' is 1 page",
       "status": "\u2705 PASS",
       "note": "pages=1"
     },
@@ -327,7 +327,7 @@
       "id": "G24",
       "name": "stage9/trace.py exists",
       "status": "\u2705 PASS",
-      "note": "29937 bytes"
+      "note": "32291 bytes"
     },
     {
       "id": "G24",
@@ -386,6 +386,24 @@
     {
       "id": "G30",
       "name": "REALWORLD_REPORT.md is free of 'Seed 99'",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "B3-1",
+      "name": "Zero hardcoded R4 literals in narrative & alert card generation",
+      "status": "\u2705 PASS",
+      "note": "[]"
+    },
+    {
+      "id": "B3-2",
+      "name": "Every PO/SO number on alert cards exists in database",
+      "status": "\u2705 PASS",
+      "note": "[]"
+    },
+    {
+      "id": "B3-3",
+      "name": "Live vs main database equivalence verified via equivalence_proof.json",
       "status": "\u2705 PASS",
       "note": ""
     }

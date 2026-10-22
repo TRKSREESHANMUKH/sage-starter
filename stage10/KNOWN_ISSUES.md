@@ -79,3 +79,17 @@ To avoid breaking the frozen research foundation (which would invalidate all dow
   1. Ground-truth incident INC_09 (`severe_supplier_delay` on Supplier 4 from 2025-08-05 to 2026-01-18) delayed delivery by 166 days.
   2. The simulation MRP logic calculated `inventory_position = on_hand + on_order`. Because PO #18 remained open with 407 units on order, the inventory position remained above the reorder point, so no additional POs were generated.
 * **Classification**: PO #18 is a real stuck order produced by a frozen ground-truth stress incident, not an artifact or data error. All screens display it accurately as `139 days overdue (was due 14 Aug 2025)`.
+* **Date Difference Reconciliation**:
+  - Exact DB PO #18: Placed `2025-08-05`, expected `2025-08-14`. Overdue days as of 2025-12-31 = 139 days.
+  - Incident INC_09 Duration: Disruption window opened on `2025-07-18`, giving 166 days elapsed to year end.
+
+---
+
+### Issue 6: Eventful-Date Scan vs Year-End Overdue Orders (Gate A4)
+
+* **Description**: The earlier eventful-date scan found no problem days after 2025-10-15, yet 48 orders were overdue at year end (63 units on 2025-10-20, rising to 652 units on 2025-12-31).
+* **Investigation & Cause**:
+  1. The eventful-date scan inspected the baseline null panel (`daily_panel.parquet`) where backorders are 0 throughout the year.
+  2. The scan also specifically looked for incident initiation dates (the latest incident, INC_09, began on or before 2025-10-15).
+  3. In the scenario panel (`daily_panel_ext.parquet`) and live database, the operational downstream consequence (depleted finished goods buffer and cascading customer backorders) persisted continuously through December 31.
+* **Resolution**: Causal evaluation correctly references `daily_panel_ext.parquet`, capturing both the incident triggers and the enduring downstream backorders.

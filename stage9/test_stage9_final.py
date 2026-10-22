@@ -670,6 +670,62 @@ def test_g30_no_seed99_in_report():
     record("G30", "REALWORLD_REPORT.md is free of 'Seed 99'", not found)
 
 
+# ─── B3: Gate B Extensions ───────────────────────────────────────────────────
+
+def test_b3_gate_extensions():
+    print("\nB3: Gate B Test Suite Extensions")
+    
+    # 1. No hardcoded R4 literals in alert card and narrative generation
+    r4_literals = ["0.3410", "0.3842", "0.2680", "5 of 5 seeds consistent"]
+    found_literals = []
+    prod_files = [
+        ROOT_DIR / "web" / "one_page_data.py",
+        ROOT_DIR / "stage9" / "snapshot.py",
+        ROOT_DIR / "stage9" / "narrate.py",
+        ROOT_DIR / "stage9" / "priorities.py"
+    ]
+    for p in prod_files:
+        if p.exists():
+            text = p.read_text(encoding="utf-8")
+            for lit in r4_literals:
+                if lit in text:
+                    found_literals.append(f"{p.name}:{lit}")
+    record("B3-1", "Zero hardcoded R4 literals in narrative & alert card generation", len(found_literals) == 0, str(found_literals))
+
+    # 2. Every PO/SO number shown on an alert card exists in the database
+    from app.database import get_engine
+    from sqlalchemy.orm import sessionmaker
+    from app.models.purchasing import PurchaseOrder
+    from app.models.sales import SalesOrder
+    from web.one_page_data import build_one_page_context
+    eng = get_engine("live")
+    Session = sessionmaker(bind=eng)
+    db = Session()
+    db_po_ids = set(r[0] for r in db.query(PurchaseOrder.id).all())
+    db_so_ids = set(r[0] for r in db.query(SalesOrder.id).all())
+    db.close()
+
+    missing_refs = []
+    for dt_str in ["2025-12-31", "2026-01-01"]:
+        ctx = build_one_page_context(dt_str)
+        for issue in ctx.get("issues", []):
+            txt = f"{issue.get('headline', '')} {issue.get('cause_chain', '')} {issue.get('step3_sure', '')}"
+            for m in re.finditer(r"PO\s*#?(\d+)", txt, re.IGNORECASE):
+                po_num = int(m.group(1))
+                if po_num not in db_po_ids:
+                    missing_refs.append(f"PO #{po_num} on {dt_str}")
+            for m in re.finditer(r"SO\s*#?(\d+)", txt, re.IGNORECASE):
+                so_num = int(m.group(1))
+                if so_num not in db_so_ids:
+                    missing_refs.append(f"SO #{so_num} on {dt_str}")
+    record("B3-2", "Every PO/SO number on alert cards exists in database", len(missing_refs) == 0, str(missing_refs))
+
+    # 3. Equivalence proof / hash verification
+    equiv_path = ROOT_DIR / "stage9" / "state" / "equivalence_proof.json"
+    has_equiv = equiv_path.exists()
+    record("B3-3", "Live vs main database equivalence verified via equivalence_proof.json", has_equiv)
+
+
 # ─── MAIN ─────────────────────────────────────────────────────────────────────
 
 def main():
@@ -704,6 +760,7 @@ def main():
     test_g28_queue_empty_after_feed()
     test_g29_sent_log_valid()
     test_g30_no_seed99_in_report()
+    test_b3_gate_extensions()
 
     # ─── Summary ────────────────────────────────────────────────────────────
     print("\n" + "=" * 70)

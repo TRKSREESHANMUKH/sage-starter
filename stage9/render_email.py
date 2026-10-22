@@ -212,7 +212,8 @@ def get_order_level_priorities(as_of: date, db_session) -> List[Dict[str, Any]]:
         .join(Customer, Customer.id == SalesOrder.customer_id)
         .filter(
             SalesOrder.order_date <= as_of,
-            SalesOrder.requested_delivery_date < as_of
+            SalesOrder.requested_delivery_date < as_of,
+            SalesOrder.status != "Cancelled"
         )
         .all()
     )
@@ -256,7 +257,8 @@ def get_order_level_priorities(as_of: date, db_session) -> List[Dict[str, Any]]:
             .filter(
                 SalesOrder.order_date <= as_of,
                 SalesOrder.requested_delivery_date >= as_of,
-                SalesOrder.requested_delivery_date <= as_of + timedelta(days=3)
+                SalesOrder.requested_delivery_date <= as_of + timedelta(days=3),
+                SalesOrder.status != "Cancelled"
             )
             .order_by(SalesOrder.requested_delivery_date.asc())
             .all()

@@ -1,159 +1,115 @@
-# SAGE — Stage 9 Final 2 Presenter's Sheet: Ten Demo Cases
+# SAGE — Stage 9 FINAL 3 Presenter's Sheet: Ten-Day Demo Feed (1–10 January 2026)
 
 > **Verbatim Framing Statement:**
 > "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality."
 
 ---
 
-## Presenter Disclosure & Sourcing-Bug Briefing (Part 1 Record)
+## Part 1: Executive Disclosure & Sourcing-Bug Briefing
 
-Before demonstrating SAGE, ensure you understand the 2025 ERP data topology:
+Before starting the live demonstration, state the following foundational data facts clearly:
 1. **The Supplier Selection Bug:** In the frozen Stage 4 simulation (`simulator/daily_simulation.py`), `choose_supplier(material_id)` was called without passing `current_day`. As a result, the default date seed (`2025-01-01`) was reused on every purchase order generation throughout 2025.
 2. **Consequence:** Supplier 4 was deterministically selected for Material 101 (Steel Rod 10mm), Supplier 3 for Material 102 (Plastic Granules), and Supplier 5 for Material 103 (Copper Wire). Suppliers 1 (Sri Materials Pvt Ltd) and 2 (Bharat Steel Works) received zero purchase orders in 2025 and functioned purely as inactive backup vendors.
-3. **Synthetic Incidents INC_01 and INC_05:** Because they targeted Suppliers 1 and 2, their injected delays were virtual and produced zero physical disruption on factory operations.
+3. **Synthetic Incidents INC_01 and INC_05:** Because they targeted Suppliers 1 and 2, their injected delays produced zero physical disruption on factory operations.
 4. **Transparent Two-Way Reporting:**
    - **All 10 scenarios** (treating INC_01 and INC_05 as real causes): AC@1 = 33.3%, AC@3 = 66.7%, MRR = 0.5620, FPR = 0.0%, Stability = 90.0%.
    - **4 physical-cause scenarios** (INC_03, INC_04, INC_06, INC_08, excluding no-effect scenarios): AC@1 = 50.0%, AC@3 = 100.0%, MRR = 0.7431, FPR = 0.0%, Stability = 100.0%.
    - Idle suppliers are honestly collapsed in the UI with the label: *"No orders placed in this period: Sri Materials Pvt Ltd, Bharat Steel Works (backup vendors)"*.
+5. **Expert Graph Allowance:** *"The expert graph allows supplier links that the simulated sourcing never used."* Cause-chain tracing dynamically restricts traversal to active supplier links verified in historical purchase orders.
+6. **Opening Position:** The 2025 run ended in an unreceived steel PO and standing backorders. On 2025-12-31, stale backorders and PO #18 were cancelled, stock counts adjusted to normal operating levels, and 3 seed POs placed in December. The live database strictly equals main Postgres up to 2025-12-20.
 
 ---
 
-## The Ten Demonstration Cases
+## Ten-Day Demonstration Overview (1–10 January 2026)
 
 ```
-┌─────────┬────────────┬─────────────────────────────┬────────────────────────────────────────────────────────┐
-│ Case #  │ Date       │ Scenario                    │ Operational Nature                                     │
-├─────────┼────────────┼─────────────────────────────┼────────────────────────────────────────────────────────┤
-│ Case 01 │ 2025-03-31 │ Demand Spike (INC_03)       │ Order intake surge on Product 201 (Widget Model X)     │
-│ Case 02 │ 2025-10-02 │ Capacity Disruption (INC_04)│ Machine stoppage on Assembly Line 1                    │
-│ Case 03 │ 2025-07-22 │ Compound Bottleneck (INC_06)│ Simultaneous component delay & machine maintenance     │
-│ Case 04 │ 2025-08-07 │ Partial Receipt (INC_07)    │ Supplier 4 delivers 70% of PO #17; finished in 2 days  │
-│ Case 05 │ 2025-03-02 │ Buffer Absorption (INC_08)  │ PO #4 delayed by 2 days, safety stock absorbs fully    │
-│ Case 06 │ 2025-08-20 │ Severe Delay Onset (INC_09) │ PO #18 6 days late, buffer depleting, 0 backlog yet   │
-│ Case 07 │ 2025-10-20 │ Crisis Peak (INC_09)        │ PO #18 67 days late, stockout, 108u backlog (10 SOs)   │
-│ Case 08 │ 2025-12-01 │ Seasonal Demand (INC_10)    │ Expected end-of-year volume rise (control test)        │
-│ Case 09 │ 2025-01-15 │ Calm Rhythm (INC_02)        │ Zero disruptions, clean baseline operations            │
-│ Case 10 │ 2025-12-31 │ Year-End Standing           │ Full-year cumulative standing (652u backlog, 48 SOs)   │
-└─────────┴────────────┴─────────────────────────────┴────────────────────────────────────────────────────────┘
+┌──────┬────────────┬─────────────────────────────┬────────────────────────────────────────────────────────┐
+│ Day  │ Date       │ Scenario                    │ Operational Nature                                     │
+├──────┼────────────┼─────────────────────────────┼────────────────────────────────────────────────────────┤
+│ D-01 │ 2026-01-01 │ Normal Operations           │ Routine orders, production, and shipping; calm baseline│
+│ D-02 │ 2026-01-02 │ Demand Spike (Widget X)     │ Surge in Widget X orders (2.5x); stock buffer absorbs  │
+│ D-03 │ 2026-01-03 │ Supplier 4 Steel Delayed    │ PO #19 due today does not arrive; buffer holds above SS│
+│ D-04 │ 2026-01-04 │ Partial Receipt & Delay     │ Plastic PO #20 arrives 60% partial; steel 1d overdue   │
+│ D-05 │ 2026-01-05 │ Line Capacity Bottleneck    │ Line 2 downtime; Widget Model Y output 50% below plan  │
+│ D-06 │ 2026-01-06 │ Compound Disruption Onset   │ Steel 3d late, steel at safety, 1st customer orders late│
+│ D-07 │ 2026-01-07 │ Crisis: Steel Stockout      │ Steel at 0 kg, Widget X halted, mounting backlog       │
+│ D-08 │ 2026-01-08 │ Inbound Recovery            │ Steel arrives 5d late, production restarts, backlog clears│
+│ D-09 │ 2026-01-09 │ Seasonal Peak (Control)     │ Normal Friday volume bump; backlog continues clearing  │
+│ D-10 │ 2026-01-10 │ Dual Unrelated Issues       │ Widget Y -20% and late plastic reorder; unmerged alerts│
+└──────┴────────────┴─────────────────────────────┴────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-### Case 1 — 31 March 2025: Demand Spike on Widget Model X (INC_03)
-- **Situation:** Customer orders surged on Widget Model X, consuming warehouse stock and creating immediate dispatch urgency.
-- **Audience View:**
-  - Header: `Demo case 1 of 10 — 31 Mar 2025 (simulated)`.
-  - Alert Card: `Customer orders demand surge`.
-  - Cause Chain: `Customer demand surge → Finished goods buffer exhausted → Shipment delay`.
-  - Evidence: `Seen end to end` (Attribution score: 0.3842 vs null threshold 0.2180).
-- **What to Point Out:**
-  - Note that raw materials are fully available in the warehouse. SAGE correctly attributes the root driver to customer sales intake rather than a factory floor breakdown.
-- **Fallback:** If questioned about supplier delivery status, show Supplier Watch: all three active suppliers are on schedule.
+## Detailed Day-by-Day Presenter Walkthrough
+
+### Day 1: Thursday, 1 January 2026 — Normal Operations
+* **What audience sees:** Off-white briefing page with "All operations normal" calm status. Zero alert cards. "Nothing needs action tomorrow". Numbers strip shows steady baseline metrics.
+* **What to point out:** Point out the clean editorial layout, serif typography, 90–120 word narrative summary explaining stable factory status, and the upcoming deliveries expected in the next 3 days.
+* **If system says something different:** If a Watch alert appears on routine order variance, explain that SAGE runs continuous statistical checks against the 365-day baseline, and minor daily volume variations remain safely within non-critical noise bounds.
+
+### Day 2: Friday, 2 January 2026 — Demand Spike on Widget Model X
+* **What audience sees:** Watch / Attention banner. Alert card highlighting an order surge on Widget Model X (~2.5x normal daily orders). Finished goods inventory strip decreases but remains positive.
+* **What to point out:** SAGE flags demand anomalies before stockouts happen. The cause chain explains that finished goods safety buffers are currently holding the line.
+* **If system says something different:** If the system reports Needs Attention rather than Watch, state that the 2.5x multiplier crossed the volume warning threshold, but note that the critical stockout alert is suppressed because stock remains healthy.
+
+### Day 3: Saturday, 3 January 2026 — Inbound Supplier Delay (Buffer Holding)
+* **What audience sees:** Watch alert for overdue steel delivery from Supplier 4 (EastCoast Components, PO #19). Raw material steel stock remains well above safety stock (100 kg).
+* **What to point out:** Notice that PO #19 was due today and did not arrive. SAGE detects this supplier delay immediately, but calculates that current inventory covers ongoing manufacturing runs without an immediate production cut.
+* **If system says something different:** If no alert is triggered, explain that the supplier delay is within the promised lead-time grace window and is monitored under "Supplier Watch".
+
+### Day 4: Sunday, 4 January 2026 — Partial Goods Receipt & Continuing Delay
+* **What audience sees:** Needs Attention banner. Partial delivery alert on Global Polymers Co (PO #20): 150 of 250 kg received (60% fill rate). Supplier 4 steel delivery is now 1 day overdue.
+* **What to point out:** Click on the Insights tab to show the supplier scorecard: PO #20 shows "first delivery: 60% of the order; balance expected Jan 8". SAGE tracks partial receipts distinctly from total fulfillment.
+* **If system says something different:** Point out that tracking both fill rate and elapsed overdue days gives operations teams early warning before assembly lines starve.
+
+### Day 5: Monday, 5 January 2026 — Production Capacity Disruption
+* **What audience sees:** Needs Attention banner. Alert card: "Widget Model Y production below plan". Machine stoppage on Line 2 caused output to drop 50% below daily plan.
+* **What to point out:** Click "Click to analyze →" on the alert card. Show the 3 steps: What we saw (production run chart), How it connects (capacity bottleneck rather than raw material shortage), and How sure are we (evidence score).
+* **If system says something different:** Emphasize that SAGE distinguishes between capacity disruptions (equipment downtime) and supply shortages (material starvation).
+
+### Day 6: Tuesday, 6 January 2026 — Compound Disruption & Backlog Onset
+* **What audience sees:** Critical banner. Compound alert: Supplier 4 steel delivery is 3 days overdue, steel stock reaches safety stock threshold (100 kg), Widget Model X manufacturing is throttled, and the first customer orders become overdue. Copper delivery (PO #21) arrives on time in full.
+* **What to point out:** Today's Focus Band highlights prioritized customer orders with order numbers, customer names, units short, and days late.
+* **If system says something different:** Emphasize that when inbound delays deplete buffer stock to safety levels, upstream supply issues propagate downstream into customer service failures.
+
+### Day 7: Wednesday, 7 January 2026 — Severe Disruption (Stock-out Peak)
+* **What audience sees:** Critical banner. Severe stockout alert: Steel Rod 10mm reaches 0 kg, Widget Model X production completely halted, and overdue customer orders escalate.
+* **What to point out:** Show the cause-chain narrative: `Supplier 4 Delay (PO #19) -> Steel Stockout -> Line 1 Stoppage -> Customer Backlog Escalation`.
+* **If system says something different:** State that Day 7 represents the peak crisis phase of the synthetic disruption scenario.
+
+### Day 8: Thursday, 8 January 2026 — Inbound Recovery & Production Restart
+* **What audience sees:** Needs Attention / Improving status. Inbound arrival: PO #19 steel (400 kg) arrives 5 days late in full. PO #20 plastic balance (100 kg) arrives. Widget Model X production restarts at maximum throughput, burning down overdue orders.
+* **What to point out:** Notice the recovery projection: SAGE estimates backlog clearance time based on daily production capacity.
+* **If system says something different:** Explain that the transition from Critical to Improving occurs as soon as the root constraint (steel availability) is relieved.
+
+### Day 9: Friday, 9 January 2026 — Seasonal Demand Peak (Control)
+* **What audience sees:** Calm / Improving status. Friday customer order volume rises ~25% matching standard weekly seasonality. Backlog continues burning down. Zero false alarms.
+* **What to point out:** This is a negative control test. SAGE's expert causal model recognizes regular calendar seasonality and does not trigger an erroneous supply disruption alert.
+* **If system says something different:** Emphasize that preventing false alarms during routine peak cycles is essential for operational trust.
+
+### Day 10: Saturday, 10 January 2026 — Dual Independent Minor Issues
+* **What audience sees:** Needs Attention banner. Two separate unmerged alerts: 1) Widget Model Y minor production drop (-20%); 2) Supplier 3 plastic reorder PO #22 late. Customer backlog from the earlier crisis is nearly cleared.
+* **What to point out:** Notice that SAGE presents two separate cards ranked by operational severity, rather than conflating unrelated supply and assembly issues into a single artificial chain.
+* **If system says something different:** Reiterate that maintaining independent causal chains prevents misleading root-cause conclusions.
 
 ---
 
-### Case 2 — 02 October 2025: Capacity Disruption on Line 1 (INC_04)
-- **Situation:** Main drive assembly fault on Assembly Line 1 causes 45 units of lost manufacturing capacity.
-- **Audience View:**
-  - Alert Card: `Assembly production shortfall (Widget Model X)`.
-  - Cause Chain: `Line 1 mechanical fault → Workcenter capacity deficit → Output shortfall`.
-  - Evidence: `Seen end to end` (Attribution score: 0.4120).
-- **What to Point Out:**
-  - Expand "Click to analyze →". Show that material inventory was well above safety stock. The causal engine isolates the internal production node as the sole constraint.
-- **Fallback:** Review "Today's Focus": Priority #1 directs maintenance to inspect Line 1 spindle drives.
+## Presentation Controls & Operator Commands
 
----
+1. **Start SAGE Servers (Localhost Only):**
+   ```bash
+   ./run_sage.sh
+   ```
+   * Live Viewer: `http://127.0.0.1:8000`
+   * Controller: `http://127.0.0.1:8001`
 
-### Case 3 — 22 July 2025: Compound Bottleneck (INC_06)
-- **Situation:** Simultaneous material transit delay and secondary line maintenance create a dual bottleneck.
-- **Audience View:**
-  - Alert Cards: Two concurrent alerts (Material shortage + Production shortfall).
-  - Cause Chain: `Component delay + Machine maintenance → Compounded fulfillment bottleneck`.
-  - Evidence: `Seen end to end` (Attribution score: 0.4610).
-- **What to Point Out:**
-  - This demonstrates SAGE's multi-root attribution capability: rather than picking only one cause, both drivers clear the baseline threshold.
-- **Fallback:** Show the trailing 30-day sparklines showing concurrent dips.
+2. **Controller Token:**
+   * Found in `.env` under the variable `SAGE_CONTROLLER_TOKEN` (never read or display the secret value to the audience).
 
----
+3. **Feeding Next Day:**
+   * In the Controller UI under **Demo Feed**, click **"Feed next day"** once per scenario day.
+   * The live briefing viewer auto-refreshes within 5 seconds without manual page reload.
 
-### Case 4 — 07 August 2025: Partial Shipment Receipt (INC_07)
-- **Situation:** EastCoast Components delivers 70% of PO #17 (35 of 50 units) on 7 Aug; the remaining 15 units arrive on 9 Aug.
-- **Audience View:**
-  - Alert Card: `Steel Rod 10mm running low (safety buffer held)`.
-  - Evidence: `Seen end to end` (Attribution score: 0.2350).
-  - Status Pill: `NEEDS ATTENTION`.
-- **What to Point Out:**
-  - Explain the partial receipt logic: SAGE detects the 30% short-shipment on goods receipt, alerting managers before downstream assembly is starved.
-- **Fallback:** Point to Insights ledger where PO #17 partial fulfillment is logged on 7 Aug and completed on 9 Aug.
-
----
-
-### Case 5 — 02 March 2025: Buffer Absorption (INC_08)
-- **Situation:** PO #4 with EastCoast Components was 2 days overdue, but the warehouse safety stock buffer absorbed the delay completely.
-- **Audience View:**
-  - Operational Status: `CRITICAL` on raw material stock, but Customer Backlog is `0`.
-  - Cause Chain: `PO delay → Raw material buffer drew down → Buffer held → Zero customer backlog`.
-  - Evidence: `Seen end to end`.
-- **What to Point Out:**
-  - Crucial demonstration of buffer awareness: SAGE distinguishes between an operational delay that causes customer harm vs. one absorbed by safety stock. Zero customer orders were late.
-- **Fallback:** Check Numbers Strip: `Overdue Orders Now: 0`.
-
----
-
-### Case 6 — 20 August 2025: Severe Delay Onset (INC_09 Onset)
-- **Situation:** EastCoast Components PO #18 is 6 days overdue. Steel Rod stock has fallen near safety threshold, but customer backlogs have not yet started.
-- **Audience View:**
-  - Alert Card: `Steel Rod 10mm running low (1 open order PO #18 is 6 days overdue)`.
-  - Customer Backlog: `0 units`.
-  - Priority #1: `Expedite PO #18 with EastCoast Components`.
-- **What to Point Out:**
-  - Highlight proactive warning: SAGE flags PO #18 six days into the delay, weeks before customer delivery failure occurs.
-- **Fallback:** Show "Click to analyze →" sparkline illustrating inventory heading toward the red dotted safety line.
-
----
-
-### Case 7 — 20 October 2025: Crisis Peak (INC_09 Crisis)
-- **Situation:** PO #18 has remained unfulfilled for 67 days. Steel Rod stock is depleted to 9 units (stockout). Widget Model X production has halted and 10 customer sales orders are overdue (108 units backlog).
-- **Audience View:**
-  - Alert Card: `Customer orders overdue (10 orders, 108 units backlog)` [CRITICAL].
-  - Cause Chain: `EastCoast Components delay (PO #18, 67d overdue) → Steel Rod buffer zero → Line starvation → Customer backlog (108u)`.
-  - Evidence: `Seen end to end`.
-- **What to Point Out:**
-  - Contrast with Case 6: this is the full realization of the unmitigated delay. SAGE traces the entire 67-day cascade end to end.
-- **Fallback:** Open Today's Focus: Top action assigns Procurement Lead to approve express freight and Production Manager to reschedule shifts.
-
----
-
-### Case 8 — 01 December 2025: Seasonal Demand Control (INC_10)
-- **Situation:** Anticipated end-of-year commercial volume rise on Widget Model Y.
-- **Audience View:**
-  - Alert Card: `Seasonal demand rise` [WATCH].
-  - Evidence: `Seen end to end` (Attribution score: 0.0810, below baseline threshold 0.2180).
-- **What to Point Out:**
-  - SAGE correctly classifies this as an anticipated calendar volume rise rather than an operational anomaly.
-- **Fallback:** Compare with Case 1 (unanticipated spike) to highlight score differences.
-
----
-
-### Case 9 — 15 January 2025: Calm Rhythm (INC_02 Control)
-- **Situation:** Baseline operations with normal production, on-time vendor receipts, and zero customer backlog.
-- **Audience View:**
-  - Banner: `Everything is running normally`.
-  - Subtitle: `Nothing needs action tomorrow`.
-  - Numbers Strip: `Overdue Orders: 0`, `Units Short: 0`, `Materials Below Safety: 0`.
-  - Supplier Watch: All three active vendors show `Normal operations`.
-- **What to Point Out:**
-  - The calm-state view proves SAGE does not cry wolf. In the absence of true disruption, it displays a calm green banner with zero false alarms.
-- **Fallback:** Verify all metrics in numbers strip show zeros.
-
----
-
-### Case 10 — 31 December 2025: Full-Year Standing Position
-- **Situation:** Year-end standing position reflecting the cumulative operational history of 2025 (48 overdue orders, 652 units backlog).
-- **Audience View:**
-  - Header: `Demo case 10 of 10 — 31 Dec 2025 (simulated)`.
-  - Numbers Strip: `Overdue Orders: 48`, `652 units short`.
-  - Insights Tab: Year-to-date customer on-time delivery rate is `78.3%` (173 of 221 requested orders on time).
-- **What to Point Out:**
-  - Demonstrates full-year continuity. Show the Insights tab to review vendor scorecards and delay ledgers across all 365 days.
-- **Fallback:** Use the Controller's "Year review" button if switching from another historical case.
+4. **Reset Demo Feed:**
+   * Click **"Reset demo feed"** in the Controller to restore the clean 2025-12-31 baseline position in under 30 seconds.

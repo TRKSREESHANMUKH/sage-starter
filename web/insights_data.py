@@ -345,7 +345,7 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
                     p_po = partial_pos[0]
                     first_fill = round((p_po["first_quantity_received"] / p_po["quantity_ordered"] * 100.0), 0)
                     days_between = (date.fromisoformat(p_po["receipt_date"]) - date.fromisoformat(p_po["first_receipt_date"])).days
-                    partial_note = f"first delivery: {first_fill:.0f}% of order; completed {format_days_plural(days_between)} after first delivery"
+                    partial_note = f"first delivery: {first_fill:.0f}% of the order; completed {format_days_plural(days_between)} after the first delivery"
                     qty_str = f"{total_rec:,} / {total_ord:,} u ({fill_rate_pct:.0f}% final; {first_fill:.0f}% first)"
                 else:
                     qty_str = f"{total_rec:,} / {total_ord:,} u ({fill_rate_pct:.0f}%)"
@@ -375,7 +375,7 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
             # Open POs now (as of as_of date)
             open_pos = [
                 po for po, pol, s in all_pos
-                if s.id == s_id and po.order_date <= as_of and (pol.quantity_received or 0) < (pol.quantity_ordered or 0)
+                if s.id == s_id and po.order_date <= as_of and (pol.quantity_received or 0) < (pol.quantity_ordered or 0) and po.status != "Cancelled"
             ]
             if open_pos:
                 overdue_open = [p for p in open_pos if p.expected_delivery_date < as_of]
@@ -383,7 +383,7 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
                     oldest = min(overdue_open, key=lambda x: x.expected_delivery_date)
                     oldest_days = (as_of - oldest.expected_delivery_date).days
                     stuck_suffix = " (stuck)" if oldest_days >= 30 else ""
-                    open_orders_str = f"{len(open_pos)} open (PO #{oldest.id}{stuck_suffix}, {format_days_plural(oldest_days)} overdue, was due {oldest.expected_delivery_date.isoformat()})"
+                    open_orders_str = f"{len(open_pos)} open: {format_days_plural(oldest_days)} overdue (was due {oldest.expected_delivery_date.isoformat()}){stuck_suffix}"
                     if oldest_days >= 30:
                         summary_sentence = f"{s_name}: PO #{oldest.id} is stuck ({format_days_plural(oldest_days)} overdue, was due {oldest.expected_delivery_date.isoformat()})."
                 else:
@@ -461,6 +461,7 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
             .join(Customer, Customer.id == SalesOrder.customer_id)
             .join(Product, Product.id == SalesOrderLine.product_id)
             .filter(SalesOrder.order_date <= as_of)
+            .filter(SalesOrder.status != "Cancelled")
             .filter(Product.id >= 200)
             .all()
         )
@@ -629,7 +630,7 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
 
         # Also check open SOs currently overdue as of as_of
         for so, sol, cust, prod in all_sos:
-            if so.requested_delivery_date < as_of and (sol.quantity_fulfilled or 0) < (sol.quantity_ordered or 0):
+            if so.requested_delivery_date < as_of and (sol.quantity_fulfilled or 0) < (sol.quantity_ordered or 0) and so.status != "Cancelled":
                 ov_days = (as_of - so.requested_delivery_date).days
                 late_customer_records.append({
                     "record_type": "Customer Order",

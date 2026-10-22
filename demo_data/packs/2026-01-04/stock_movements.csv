@@ -1,1 +1,9 @@
 id,item_id,date,movement_type,quantity,goods_receipt_line_id,material_issue_id,production_order_id,delivery_line_id
+515,2,2026-01-04,IN,150,23,,,
+516,1,2026-01-04,OUT,12,,219,,
+517,2,2026-01-04,OUT,5,,220,,
+518,3,2026-01-04,OUT,2,,221,,
+519,4,2026-01-04,IN,5,,,159,
+520,1,2026-01-04,OUT,4,,222,,
+521,3,2026-01-04,OUT,2,,223,,
+522,5,2026-01-04,IN,3,,,160,

@@ -13,3 +13,6 @@ desktop.ini
 sage-starter.zip
 scratch/
 analytics/isolated_panels/
+logs/
+.sage.pid
+backups/

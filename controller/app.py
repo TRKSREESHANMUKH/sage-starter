@@ -170,7 +170,15 @@ def _record_failed_login(ip: str) -> None:
 def _base_ctx(request: Request, sess: Optional[Dict] = None) -> Dict[str, Any]:
     cfg = get_runtime_config()
     current_day = get_current_day()
-    queue_days = sorted(d.name for d in QUEUE_DIR.iterdir() if d.is_dir()) if QUEUE_DIR.exists() else []
+    queue_days = sorted(d.name for d in QUEUE_DIR.iterdir() if d.is_dir() and not d.name.startswith(".")) if QUEUE_DIR.exists() else []
+    next_queue_label = None
+    if queue_days:
+        try:
+            d_obj = date.fromisoformat(queue_days[0])
+            d_num = int(queue_days[0].split("-")[2])
+            next_queue_label = f"Day {d_num} of 10 — {d_obj.strftime('%-d %b %Y')}"
+        except Exception:
+            next_queue_label = queue_days[0]
     cases = get_demo_cases()
     case_state = get_case_state()
     return {
@@ -179,6 +187,7 @@ def _base_ctx(request: Request, sess: Optional[Dict] = None) -> Dict[str, Any]:
         "current_day": current_day.isoformat() if current_day else "—",
         "queue_remaining": len(queue_days),
         "queue_days": queue_days[:3],  # show first 3
+        "next_queue_label": next_queue_label,
         "demo_cases": cases,
         "case_state": case_state,
         "send_mode": cfg.get("send_mode", "dry_run"),

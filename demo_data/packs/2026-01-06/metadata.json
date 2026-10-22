@@ -1,21 +1,35 @@
 {
   "pack_date": "2026-01-06",
+  "day_number": 6,
+  "scenario_name": "Compound Disruption: Steel at Safety & Backlog Onset",
+  "scenario_type": "compound_disruption",
   "is_simulated": true,
   "label": "SIMULATED ERP OPERATIONAL PACK",
   "framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
-  "exported_at": "2026-10-17T16:02:15.668830+00:00",
+  "exported_at": "2026-10-22T16:20:21.422730+00:00",
   "row_counts": {
     "purchase_orders": 0,
     "purchase_order_lines": 0,
-    "goods_receipts": 0,
-    "goods_receipt_lines": 0,
+    "goods_receipts": 1,
+    "goods_receipt_lines": 1,
     "sales_orders": 2,
     "sales_order_lines": 2,
-    "deliveries": 0,
-    "delivery_lines": 0,
+    "deliveries": 4,
+    "delivery_lines": 4,
     "production_orders": 2,
-    "material_issues": 0,
-    "stock_movements": 0
+    "material_issues": 5,
+    "stock_movements": 12
   },
-  "total_events": 6
+  "total_events": 33,
+  "closing_stock_simulated": {
+    "materials": {
+      "101": 129.0,
+      "102": 263.0,
+      "103": 289.0
+    },
+    "finished_goods": {
+      "201": 19,
+      "202": 21
+    }
+  }
 }

@@ -12,13 +12,13 @@ TODAY'S NUMBERS IN CONTEXT:
 • Materials Low  : 1 material low, same as yesterday (7d avg: 1.0)
 
 PAST ANALYSED CASES: WHAT CAUSED WHAT:
-• Chain: Supplier 4 delivery late → Steel Rod 10mm below safety level
-  Observed steel rod 10mm below safety level on 31 Dec is consistent with supplier 4 delivery late starting on 25 Dec.
+• Chain: EastCoast delivery late → Steel Rod 10mm below safety level
+  Observed steel rod 10mm below safety level on 31 Dec is consistent with eastcoast delivery late starting on 25 Dec.
   Confidence: Partly seen | Model check: Model inconclusive (Computed just now)
 
 FOCUS TOMORROW (TOP 5 PRIORITIES):
-1. Fix at the root: Supplier 4 delivery late (Supply Chain Lead) - Due Immediate
-   Reason: Observed steel rod 10mm below safety level on 31 Dec is consistent with supplier 4 delivery late starting on 25 Dec. (Confidence: Partly seen)
+1. Fix at the root: EastCoast delivery late (Supply Chain Lead) - Due Immediate
+   Reason: Observed steel rod 10mm below safety level on 31 Dec is consistent with eastcoast delivery late starting on 25 Dec. (Confidence: Partly seen)
 2. Expedite delivery for SO-164 to Metro Distributors (Customer Logistics) - Due 10:00 AM
    Reason: 1 units of Widget Model X are 90 days overdue (was due 02 Oct).
 3. Expedite delivery for SO-165 to Coastal Traders (Customer Logistics) - Due 10:00 AM

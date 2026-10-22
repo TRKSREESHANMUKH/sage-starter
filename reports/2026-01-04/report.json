@@ -1,0 +1,15 @@
+{
+  "as_of": "2026-01-04",
+  "subject": "SAGE Daily Brief | 4 Jan 2026 | 8 need action",
+  "kpis": {
+    "total_backlog_units": 77,
+    "total_overdue_orders": 5,
+    "oldest_overdue_date": "2026-01-02",
+    "total_production_shortfall": 0,
+    "total_material_stockouts": 1,
+    "total_po_overdue_days": 1
+  },
+  "priorities_count": 0,
+  "top_priority": null,
+  "no_new_data": false
+}

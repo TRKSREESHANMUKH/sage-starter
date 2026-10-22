@@ -1,0 +1,41 @@
+SAGE DAILY BRIEF | 8 Jan 2026
+Status: ACTION NEEDED (11 items need action)
+======================================================================
+
+THE BOTTOM LINE:
+P l
+
+TODAY'S NUMBERS IN CONTEXT:
+• Orders Due     : 2 orders due, same as yesterday (7d avg: 2.0)
+• Orders Late    : 9 late orders, same as yesterday (7d avg: 6.0)
+• Units Short    : 109 units short, down from 118 yesterday (7d avg: 86.9)
+• Materials Low  : 1 material low, same as yesterday (7d avg: 1.0)
+
+PAST ANALYSED CASES: WHAT CAUSED WHAT:
+• Chain: Widget Model X orders late
+  Observed widget model x orders late on 08 Jan is consistent with widget model x orders late starting on 08 Jan.
+  Confidence: No upstream explanation found | Model check: Model inconclusive (Computed just now)
+• Chain: Widget Model Y orders late
+  Observed widget model y orders late on 08 Jan is consistent with widget model y orders late starting on 08 Jan.
+  Confidence: No upstream explanation found | Model check: Model inconclusive (Computed just now)
+
+FOCUS TOMORROW (TOP 5 PRIORITIES):
+1. Expedite delivery for SO-220 to Coastal Traders (Customer Logistics) - Due 10:00 AM
+   Reason: 13 units of Widget Model Y are 6 days overdue (was due 02 Jan).
+2. Expedite delivery for SO-225 to Nova Retailers (Customer Logistics) - Due 10:00 AM
+   Reason: 12 units of Widget Model Y are 6 days overdue (was due 02 Jan).
+3. Expedite delivery for SO-226 to Sunrise Wholesalers (Customer Logistics) - Due 10:00 AM
+   Reason: 9 units of Widget Model Y are 6 days overdue (was due 02 Jan).
+4. Expedite delivery for SO-221 to Sunrise Wholesalers (Customer Logistics) - Due 10:00 AM
+   Reason: 8 units of Widget Model Y are 6 days overdue (was due 02 Jan).
+5. Expedite delivery for SO-227 to Sunrise Wholesalers (Customer Logistics) - Due 10:00 AM
+   Reason: 12 units of Widget Model X are 5 days overdue (was due 03 Jan).
+
+SUPPLIER WATCH:
+• PO-18 (EastCoast Components): 407 units Steel Rod 10mm - 147 days late (expected 14 Aug)
+
+======================================================================
+FRAMING: SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.
+
+Simulated data. System knows data up to 2026-01-08 only.
+Dashboard: http://127.0.0.1:8000

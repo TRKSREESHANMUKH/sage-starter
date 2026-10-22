@@ -1,12 +1,12 @@
 {
   "as_of": "2025-12-20",
-  "composite_severity_score": 5637.0,
+  "composite_severity_score": 25.0,
   "kpis": {
-    "oldest_overdue_date": "2025-10-02",
-    "total_backlog_units": 491,
+    "oldest_overdue_date": null,
+    "total_backlog_units": 0,
     "total_material_stockouts": 1,
-    "total_overdue_orders": 38,
-    "total_po_overdue_days": 128,
+    "total_overdue_orders": 0,
+    "total_po_overdue_days": 0,
     "total_production_shortfall": 0
   },
   "materials": {
@@ -14,18 +14,8 @@
       "days_of_cover": null,
       "material_id": 101,
       "name": "Steel Rod 10mm",
-      "open_pos_count": 1,
-      "overdue_pos": [
-        {
-          "days_overdue": 128,
-          "expected_date": "2025-08-14",
-          "pending_quantity": 407,
-          "po_id": 18,
-          "severity": "CRITICAL",
-          "supplier_id": 4,
-          "supplier_name": "EastCoast Components"
-        }
-      ],
+      "open_pos_count": 0,
+      "overdue_pos": [],
       "reorder_point": 150.0,
       "safety_stock": 50.0,
       "severity": "CRITICAL",
@@ -64,11 +54,11 @@
     "201": {
       "actual_production": 0,
       "demand_units": 0,
-      "due_backlog_units": 340,
+      "due_backlog_units": 0,
       "fg_stock": 0.0,
       "name": "Widget Model X",
-      "oldest_due_date": "2025-10-02",
-      "overdue_orders_count": 25,
+      "oldest_due_date": null,
+      "overdue_orders_count": 0,
       "planned_production": 0,
       "product_id": 201,
       "production_shortfall": 0,
@@ -79,11 +69,11 @@
     "202": {
       "actual_production": 0,
       "demand_units": 0,
-      "due_backlog_units": 151,
+      "due_backlog_units": 0,
       "fg_stock": 0.0,
       "name": "Widget Model Y",
-      "oldest_due_date": "2025-10-27",
-      "overdue_orders_count": 13,
+      "oldest_due_date": null,
+      "overdue_orders_count": 0,
       "planned_production": 0,
       "product_id": 202,
       "production_shortfall": 0,

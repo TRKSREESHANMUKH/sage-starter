@@ -109,7 +109,7 @@ def compute_daily_snapshot(
                 db_session.query(func.coalesce(func.sum(StockMovement.quantity), 0))
                 .filter(
                     StockMovement.item_id == item_id,
-                    StockMovement.movement_type == "IN",
+                    StockMovement.movement_type.in_(["IN", "ADJUSTMENT"]),
                     StockMovement.date <= as_of
                 )
                 .scalar()
@@ -156,7 +156,8 @@ def compute_daily_snapshot(
                 .filter(
                     SalesOrderLine.product_id == p_id,
                     SalesOrder.order_date <= as_of,
-                    SalesOrder.requested_delivery_date <= as_of
+                    SalesOrder.requested_delivery_date <= as_of,
+                    SalesOrder.status != "Cancelled"
                 )
                 .all()
             )
@@ -230,7 +231,7 @@ def compute_daily_snapshot(
                 db_session.query(func.coalesce(func.sum(StockMovement.quantity), 0))
                 .filter(
                     StockMovement.item_id == item_id,
-                    StockMovement.movement_type == "IN",
+                    StockMovement.movement_type.in_(["IN", "ADJUSTMENT"]),
                     StockMovement.date <= as_of
                 )
                 .scalar()
@@ -273,7 +274,8 @@ def compute_daily_snapshot(
                 .join(Supplier, Supplier.id == PurchaseOrder.supplier_id)
                 .filter(
                     PurchaseOrderLine.material_id == m_id,
-                    PurchaseOrder.order_date <= as_of
+                    PurchaseOrder.order_date <= as_of,
+                    PurchaseOrder.status != "Cancelled"
                 )
                 .all()
             )

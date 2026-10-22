@@ -103,7 +103,8 @@ def compute_priorities(
             .join(Product, Product.id == SalesOrderLine.product_id)
             .filter(
                 SalesOrder.order_date <= as_of,
-                SalesOrder.requested_delivery_date < as_of
+                SalesOrder.requested_delivery_date < as_of,
+                SalesOrder.status != "Cancelled"
             )
             .all()
         )
@@ -150,7 +151,8 @@ def compute_priorities(
             .filter(
                 SalesOrder.order_date <= as_of,
                 SalesOrder.requested_delivery_date > as_of,
-                SalesOrder.requested_delivery_date <= horizon_end
+                SalesOrder.requested_delivery_date <= horizon_end,
+                SalesOrder.status != "Cancelled"
             )
             .order_by(SalesOrder.requested_delivery_date.asc())
             .all()
@@ -323,7 +325,8 @@ def compute_priorities(
                 .join(Product, Product.id == PurchaseOrderLine.material_id)
                 .filter(
                     PurchaseOrder.order_date <= as_of,
-                    PurchaseOrder.expected_delivery_date >= as_of
+                    PurchaseOrder.expected_delivery_date >= as_of,
+                    PurchaseOrder.status != "Cancelled"
                 )
                 .order_by(PurchaseOrder.expected_delivery_date.asc())
                 .all()

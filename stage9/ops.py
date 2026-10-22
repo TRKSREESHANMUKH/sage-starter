@@ -651,9 +651,16 @@ def reset_demo_v6(user: str = "operator") -> Dict[str, Any]:
             for l in kept_lines:
                 f.write(l + "\n")
 
-    # 5. Clear insights cache
+    # 5. Clear insights cache and 2026 snapshots
     if INSIGHTS_CACHE_DIR.exists():
         for f in INSIGHTS_CACHE_DIR.glob("insights_*.json"):
+            try:
+                f.unlink()
+            except Exception:
+                pass
+    snapshots_dir = ROOT_DIR / "analytics" / "snapshots"
+    if snapshots_dir.exists():
+        for f in snapshots_dir.glob("snapshot_2026-*.json"):
             try:
                 f.unlink()
             except Exception:

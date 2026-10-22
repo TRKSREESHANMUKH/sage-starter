@@ -1,0 +1,46 @@
+SAGE DAILY BRIEF | 6 Jan 2026
+Status: ACTION NEEDED (12 items need action)
+======================================================================
+
+THE BOTTOM LINE:
+P l
+
+TODAY'S NUMBERS IN CONTEXT:
+• Orders Due     : 2 orders due, same as yesterday (7d avg: 1.9)
+• Orders Late    : 8 late orders, up from 7 yesterday (7d avg: 3.4)
+• Units Short    : 115 units short, up from 93 yesterday (7d avg: 61.6)
+• Materials Low  : 1 material low, same as yesterday (7d avg: 1.0)
+
+PAST ANALYSED CASES: WHAT CAUSED WHAT:
+• Chain: EastCoast delivery late → Steel Rod 10mm below safety level
+  Observed steel rod 10mm below safety level on 06 Jan is consistent with eastcoast delivery late starting on 01 Jan.
+  Confidence: Partly seen | Model check: Model inconclusive (Computed just now)
+• Chain: Steel Rod 10mm below safety level → Widget Model X production shortfall
+  Observed widget model x production shortfall on 06 Jan is consistent with steel rod 10mm below safety level starting on 31 Dec.
+  Confidence: Partly seen | Model check: Model inconclusive (Computed just now)
+• Chain: Steel Rod 10mm below safety level → Widget Model Y production shortfall
+  Observed widget model y production shortfall on 06 Jan is consistent with steel rod 10mm below safety level starting on 31 Dec.
+  Confidence: Partly seen | Model check: Model inconclusive (Computed just now)
+
+FOCUS TOMORROW (TOP 5 PRIORITIES):
+1. Fix at the root: EastCoast delivery late (Supply Chain Lead) - Due Immediate
+   Reason: Observed steel rod 10mm below safety level on 06 Jan is consistent with eastcoast delivery late starting on 01 Jan. (Confidence: Partly seen)
+2. Fix at the root: Steel Rod 10mm below safety level (Production Supervisor) - Due Immediate
+   Reason: Observed widget model x production shortfall on 06 Jan is consistent with steel rod 10mm below safety level starting on 31 Dec. (Confidence: Partly seen)
+3. Fix at the root: Steel Rod 10mm below safety level (Production Supervisor) - Due Immediate
+   Reason: Observed widget model y production shortfall on 06 Jan is consistent with steel rod 10mm below safety level starting on 31 Dec. (Confidence: Partly seen)
+4. Expedite delivery for SO-220 to Coastal Traders (Customer Logistics) - Due 10:00 AM
+   Reason: 13 units of Widget Model Y are 4 days overdue (was due 02 Jan).
+5. Expedite delivery for SO-225 to Nova Retailers (Customer Logistics) - Due 10:00 AM
+   Reason: 12 units of Widget Model Y are 4 days overdue (was due 02 Jan).
+
+SUPPLIER WATCH:
+• PO-18 (EastCoast Components): 407 units Steel Rod 10mm - 145 days late (expected 14 Aug)
+• PO-19 (EastCoast Components): 400 units Steel Rod 10mm - 3 days late (expected 03 Jan)
+• PO-20 (Global Polymers Co): 100 units Plastic Granules - 2 days late (expected 04 Jan)
+
+======================================================================
+FRAMING: SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.
+
+Simulated data. System knows data up to 2026-01-06 only.
+Dashboard: http://127.0.0.1:8000

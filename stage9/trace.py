@@ -368,7 +368,7 @@ def compute_cause_trace(
                 }
 
     candidate_chains: List[Dict[str, Any]] = []
-    active_parents_map = get_active_dag_parents(as_of, db_session)
+    active_parents_map = get_active_dag_parents(as_of)
 
     # 2. Walk upstream from each symptom
     for sym in active_symptoms:
@@ -601,7 +601,8 @@ def compute_focus_list(
             .join(Customer, Customer.id == SalesOrder.customer_id)
             .filter(
                 SalesOrder.order_date <= as_of,
-                SalesOrder.requested_delivery_date < as_of
+                SalesOrder.requested_delivery_date < as_of,
+                SalesOrder.status != "Cancelled"
             )
             .all()
         )
@@ -702,7 +703,8 @@ def compute_focus_list(
                 .filter(
                     SalesOrder.order_date <= as_of,
                     SalesOrder.requested_delivery_date >= as_of,
-                    SalesOrder.requested_delivery_date <= as_of + timedelta(days=3)
+                    SalesOrder.requested_delivery_date <= as_of + timedelta(days=3),
+                    SalesOrder.status != "Cancelled"
                 )
                 .order_by(SalesOrder.requested_delivery_date.asc())
                 .all()

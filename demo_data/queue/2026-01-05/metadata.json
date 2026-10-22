@@ -1,9 +1,12 @@
 {
   "pack_date": "2026-01-05",
+  "day_number": 5,
+  "scenario_name": "Production Line Capacity Disruption",
+  "scenario_type": "capacity_bottleneck",
   "is_simulated": true,
   "label": "SIMULATED ERP OPERATIONAL PACK",
   "framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
-  "exported_at": "2026-10-17T16:02:15.636586+00:00",
+  "exported_at": "2026-10-22T16:20:21.396732+00:00",
   "row_counts": {
     "purchase_orders": 0,
     "purchase_order_lines": 0,
@@ -11,11 +14,22 @@
     "goods_receipt_lines": 0,
     "sales_orders": 2,
     "sales_order_lines": 2,
-    "deliveries": 0,
-    "delivery_lines": 0,
+    "deliveries": 2,
+    "delivery_lines": 2,
     "production_orders": 2,
-    "material_issues": 0,
-    "stock_movements": 0
+    "material_issues": 5,
+    "stock_movements": 9
   },
-  "total_events": 6
+  "total_events": 24,
+  "closing_stock_simulated": {
+    "materials": {
+      "101": 138.0,
+      "102": 265.0,
+      "103": 92.0
+    },
+    "finished_goods": {
+      "201": 28,
+      "202": 24
+    }
+  }
 }
