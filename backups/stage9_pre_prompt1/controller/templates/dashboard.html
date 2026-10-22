@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAGE Controller — Dashboard</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f8fafc; --surface: #fff; --border: #e2e8f0;
+      --text: #1e293b; --muted: #64748b; --accent: #2563eb;
+      --green: #16a34a; --amber: #d97706; --red: #dc2626;
+      --radius: 10px;
+    }
+    body { background: var(--bg); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+           color: var(--text); }
+    /* NAV */
+    nav { background: #1e293b; color: #fff; padding: 0 28px; display: flex;
+          align-items: center; gap: 20px; height: 52px; }
+    .nav-logo { font-size: 1.1rem; font-weight: 800; color: #fff; letter-spacing: -0.02em; flex: 1; }
+    .nav-logo span { color: #60a5fa; }
+    .nav-item { font-size: 0.85rem; color: #94a3b8; text-decoration: none; }
+    .nav-item:hover { color: #fff; }
+    .nav-badge { font-size: 0.72rem; background: #f59e0b; color: #1e293b;
+                 padding: 2px 7px; border-radius: 20px; font-weight: 700; }
+    .logout-btn { background: none; border: 1px solid #475569; color: #94a3b8;
+                  padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.82rem; }
+    .logout-btn:hover { background: #334155; color: #fff; }
+    /* LAYOUT */
+    .main { max-width: 1100px; margin: 0 auto; padding: 28px 24px; }
+    .framing-bar { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px;
+                   padding: 10px 16px; font-size: 0.78rem; color: #1d4ed8; margin-bottom: 24px;
+                   font-style: italic; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
+    .card { background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 22px 24px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+    .card-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+                  letter-spacing: 0.06em; color: var(--muted); margin-bottom: 14px; }
+    .stat-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+    .stat-val { font-size: 1.8rem; font-weight: 800; }
+    .stat-label { font-size: 0.88rem; color: var(--muted); }
+    /* PILLS */
+    .pill { display: inline-flex; align-items: center; gap: 5px;
+            padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+    .pill-green { background: #dcfce7; color: var(--green); }
+    .pill-amber { background: #fef3c7; color: var(--amber); }
+    .pill-red { background: #fee2e2; color: var(--red); }
+    .pill-blue { background: #dbeafe; color: var(--accent); }
+    /* BUTTONS */
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px;
+           border-radius: 8px; font-size: 0.88rem; font-weight: 700; cursor: pointer;
+           border: none; transition: background 0.15s; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-success { background: var(--green); color: #fff; }
+    .btn-success:hover { background: #15803d; }
+    .btn-warning { background: var(--amber); color: #fff; }
+    .btn-warning:hover { background: #b45309; }
+    .btn-danger { background: var(--red); color: #fff; }
+    .btn-danger:hover { background: #b91c1c; }
+    .btn-ghost { background: var(--bg); border: 1px solid var(--border); color: var(--text); }
+    .btn-ghost:hover { background: var(--border); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    /* FORM INPUTS */
+    input, select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px;
+                    font-size: 0.9rem; width: 100%; }
+    input:focus, select:focus { border-color: var(--accent); outline: none;
+                                box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+    label { font-size: 0.78rem; font-weight: 600; color: var(--muted);
+            text-transform: uppercase; letter-spacing: 0.04em; display: block;
+            margin-bottom: 5px; margin-top: 12px; }
+    /* TOAST */
+    #toast { position: fixed; bottom: 24px; right: 24px; min-width: 260px;
+             background: #1e293b; color: #fff; padding: 12px 18px; border-radius: 10px;
+             font-size: 0.88rem; opacity: 0; transform: translateY(8px);
+             transition: all 0.25s; z-index: 9999; pointer-events: none; }
+    #toast.show { opacity: 1; transform: translateY(0); }
+    #toast.success { background: var(--green); }
+    #toast.error { background: var(--red); }
+    /* AUDIT LOG */
+    .audit-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 8px; }
+    .audit-table th { text-align: left; padding: 6px 10px; font-size: 0.72rem;
+                      color: var(--muted); border-bottom: 1px solid var(--border);
+                      text-transform: uppercase; letter-spacing: 0.05em; }
+    .audit-table td { padding: 6px 10px; border-bottom: 1px solid #f1f5f9;
+                      vertical-align: top; }
+    .audit-table tr:last-child td { border-bottom: none; }
+    .monospace { font-family: "SF Mono", monospace; font-size: 0.75rem; }
+    /* MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+                     z-index: 1000; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--surface); border-radius: var(--radius); padding: 28px;
+             min-width: 380px; max-width: 500px; box-shadow: 0 8px 40px rgba(0,0,0,0.18); }
+    .modal-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; }
+    .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+    /* PROGRESS */
+    .progress-bar-wrap { height: 6px; background: #e2e8f0; border-radius: 4px;
+                         margin-top: 8px; overflow: hidden; }
+    .progress-bar { height: 100%; background: var(--accent); border-radius: 4px;
+                    width: 0%; transition: width 0.4s; }
+    /* TOGGLE */
+    .toggle-row { display: flex; align-items: center; justify-content: space-between;
+                  gap: 16px; }
+    .toggle-label { font-size: 0.9rem; }
+    .toggle { position: relative; width: 44px; height: 24px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; inset: 0; background: #cbd5e1; border-radius: 24px;
+                     cursor: pointer; transition: background 0.2s; }
+    .toggle input:checked + .toggle-slider { background: var(--accent); }
+    .toggle-slider::before { content: ""; position: absolute; height: 18px; width: 18px;
+                              left: 3px; top: 3px; background: white; border-radius: 50%;
+                              transition: transform 0.2s; }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
+    /* SECTION HEADER */
+    .section-h { font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+                 letter-spacing: 0.06em; color: var(--muted); border-bottom: 1px solid var(--border);
+                 padding-bottom: 8px; margin: 24px 0 16px; }
+    .full-width { grid-column: 1 / -1; }
+    /* ALLOWLIST */
+    .allowlist-item { display: inline-block; background: #f1f5f9; border-radius: 6px;
+                      padding: 3px 10px; font-size: 0.8rem; margin: 3px; }
+  </style>
+</head>
+<body>
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">SAGE <span>Controller</span></div>
+  <a class="nav-item" href="/ctrl/">Dashboard</a>
+  <a class="nav-item" href="/ctrl/schedule">Schedule</a>
+  <a class="nav-item" href="http://127.0.0.1:8000/?token=sage_dev_token_2025" target="_blank">Viewer ↗</a>
+  {% if queue_remaining > 0 %}
+  <span class="nav-badge">{{ queue_remaining }} packs queued</span>
+  {% endif %}
+  <form method="post" action="/ctrl/logout" style="margin-left:auto">
+    <input type="hidden" name="csrf_token" value="{{ csrf }}">
+    <button class="logout-btn" type="submit">Sign out</button>
+  </form>
+</nav>
+
+<div class="main">
+  <!-- FRAMING BAR -->
+  <div class="framing-bar">{{ framing }}</div>
+
+  <div class="grid">
+    <!-- ─── STATUS CARD ─── -->
+    <div class="card">
+      <div class="card-title">System Status</div>
+      <div class="stat-row">
+        <span class="stat-val" id="current-day-val">{{ current_day }}</span>
+        <span class="stat-label">current day</span>
+      </div>
+      <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap">
+        {% if case_state and case_state.is_case_mode %}
+        <span class="pill pill-blue">🎯 Case {{ case_state.active_case }} / {{ case_state.total_cases }}</span>
+        {% endif %}
+        {% if send_mode == "live" %}
+        <span class="pill pill-green">🟢 Live Send</span>
+        {% else %}
+        <span class="pill pill-amber">🟡 Dry Run</span>
+        {% endif %}
+        {% if scheduler_paused %}
+        <span class="pill pill-red">⏸ Scheduler Paused</span>
+        {% else %}
+        <span class="pill pill-green">▶ Scheduler Active</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- ─── SEND REPORT ─── -->
+    <div class="card">
+      <div class="card-title">Send Report Now</div>
+      <p style="font-size:0.88rem; color:var(--muted); margin-bottom:12px">
+        Prepare and dispatch today's brief immediately. Respects current send mode.
+      </p>
+      <label>Recipient</label>
+      <select id="send-recipient">
+        {% for r in allowlist %}
+        <option value="{{ r }}">{{ r }}</option>
+        {% endfor %}
+      </select>
+      <div class="btn-row" style="margin-top:12px">
+        <button class="btn btn-success" onclick="openSendModal()">📤 Send Now</button>
+        <button class="btn btn-ghost" onclick="prepareOnly()">🔧 Prepare Only</button>
+      </div>
+    </div>
+
+    <!-- ─── DEMO CASES (STAGE 9 FINAL 2) ─── -->
+    <div class="card full-width">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px">
+        <div>
+          <div class="card-title" style="margin-bottom:4px">Demo Cases — 2025 Incident Scenarios</div>
+          <div style="font-size:0.85rem; color:var(--muted)">
+            Select any real 2025 scenario to jump the live database, ingest the day pack, and view the briefing.
+          </div>
+        </div>
+        <div class="btn-row" style="margin-top:0">
+          <button class="btn btn-primary" type="button" onclick="runNextCase()" id="next-case-btn">▶ Next Case</button>
+          <button class="btn btn-ghost" type="button" onclick="loadYearReview()" id="year-review-btn">📊 Year Review (31 Dec)</button>
+          <button class="btn btn-ghost" type="button" onclick="resetDemo()">⟳ Reset Demo</button>
+        </div>
+      </div>
+
+      {% if case_state and case_state.is_case_mode %}
+      <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:10px 14px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px">
+        <div>
+          <span class="pill pill-blue" style="font-size:0.8rem; font-weight:700">Active Case</span>
+          <strong style="margin-left:8px; font-size:0.9rem">{{ case_state.label }}</strong>
+        </div>
+        <a href="http://127.0.0.1:8000/?token=sage_dev_token_2025" target="_blank" class="btn btn-ghost" style="padding:4px 10px; font-size:0.8rem">Open in Viewer ↗</a>
+      </div>
+      {% endif %}
+
+      <div class="cases-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:10px;">
+        {% for c in demo_cases %}
+        {% set is_active = (case_state and case_state.active_case == loop.index) %}
+        <div class="case-card" style="border: 1px solid {% if is_active %}#2563eb; background:#f0f7ff{% else %}var(--border); background:var(--surface){% endif %}; border-radius:8px; padding:12px; display:flex; flex-direction:column; justify-content:space-between; gap:8px">
+          <div>
+            <div style="font-size:0.72rem; font-weight:700; color:{% if is_active %}#2563eb{% else %}var(--muted){% endif %}">CASE {{ loop.index }}</div>
+            <div style="font-size:0.92rem; font-weight:700; margin-top:2px">{{ c.date }}</div>
+            <div style="font-size:0.78rem; color:var(--muted)">{{ c.label }}</div>
+          </div>
+          <button class="btn {% if is_active %}btn-primary{% else %}btn-ghost{% endif %}" style="width:100%; justify-content:center; padding:6px 10px; font-size:0.8rem" onclick="runCase({{ loop.index }})">
+            {% if is_active %}✓ Active{% else %}Run Case →{% endif %}
+          </button>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="progress-bar-wrap" id="case-progress-wrap" style="display:none; margin-top:14px">
+        <div class="progress-bar" id="case-progress"></div>
+      </div>
+      <div id="case-status" style="font-size:0.82rem; color:var(--muted); margin-top:6px; display:none"></div>
+    </div>
+
+    <!-- ─── SEND MODE ─── -->
+    <div class="card">
+      <div class="card-title">Send Mode</div>
+      <p style="font-size:0.82rem; color:var(--muted); margin-bottom:14px">
+        <strong>Dry Run</strong>: Email is rendered and logged (SUCCESS_DRY_RUN). No SMTP.<br>
+        <strong>Live</strong>: Real Gmail SMTP with Message-ID logged (SUCCESS_LIVE).<br>
+        Live mode also requires <code>SAGE_SEND_ENABLED=true</code> in .env.
+      </p>
+      <div class="toggle-row">
+        <span class="toggle-label">Dry Run</span>
+        <label class="toggle">
+          <input type="checkbox" id="mode-toggle" onchange="setSendMode(this.checked)"
+            {% if send_mode == 'live' %}checked{% endif %}>
+          <div class="toggle-slider"></div>
+        </label>
+        <span class="toggle-label">Live</span>
+      </div>
+      <div style="margin-top:12px">
+        <div class="toggle-row">
+          <span class="toggle-label">Scheduler</span>
+          <label class="toggle">
+            <input type="checkbox" id="scheduler-toggle" onchange="toggleScheduler(this.checked)"
+              {% if not scheduler_paused %}checked{% endif %}>
+            <div class="toggle-slider"></div>
+          </label>
+          <span class="toggle-label">Active</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── SCHEDULE CARD ─── -->
+    <div class="card">
+      <div class="card-title">Schedule — <a href="/ctrl/schedule" style="color:var(--accent);font-size:0.8rem">Edit full schedule →</a></div>
+      <p style="font-size:0.82rem; color:var(--muted)">
+        Timezone: <strong>{{ timezone }}</strong><br>
+        Prepare: <strong>{{ prepare_time }}</strong> &nbsp;→&nbsp; Send: <strong>{{ send_time }}</strong>
+      </p>
+    </div>
+
+    <!-- ─── ALLOWLIST ─── -->
+    <div class="card">
+      <div class="card-title">Recipient Allowlist</div>
+      <div>
+        {% for addr in allowlist %}
+        <span class="allowlist-item">{{ addr }}</span>
+        {% endfor %}
+      </div>
+      <p style="font-size:0.75rem; color:var(--muted); margin-top:8px">
+        Configured in SAGE_ALLOWED_RECIPIENTS (env) + SAGE_OWNER_EMAIL + SAGE_DEMO_RECIPIENT.<br>
+        Sends to addresses outside this list are refused automatically.
+      </p>
+    </div>
+
+    <!-- ─── AUDIT LOG ─── -->
+    <div class="card full-width">
+      <div class="card-title">Operator Audit Log <span style="font-weight:400">(last 20 actions)</span></div>
+      <div style="overflow-x:auto">
+        <table class="audit-table">
+          <thead>
+            <tr>
+              <th>Timestamp (UTC)</th>
+              <th>Action</th>
+              <th>Parameters</th>
+              <th>Result</th>
+              <th>User</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for entry in audit_entries %}
+            <tr>
+              <td class="monospace">{{ entry.timestamp | default("—") }}</td>
+              <td><strong>{{ entry.action | default("—") }}</strong></td>
+              <td class="monospace" style="max-width:260px; word-break:break-all">
+                {{ entry.parameters | default({}) | tojson }}</td>
+              <td>
+                {% if "SUCCESS" in (entry.result or "") %}
+                <span class="pill pill-green">{{ entry.result }}</span>
+                {% elif "FAIL" in (entry.result or "") or "ERROR" in (entry.result or "") %}
+                <span class="pill pill-red">{{ entry.result }}</span>
+                {% else %}
+                {{ entry.result }}
+                {% endif %}
+              </td>
+              <td>{{ entry.user | default("—") }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" style="color:var(--muted);text-align:center;padding:16px">No audit entries yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SEND MODAL -->
+<div class="modal-overlay" id="send-modal">
+  <div class="modal">
+    <div class="modal-title">Confirm — Send Report Now</div>
+    <p style="font-size:0.88rem; color:var(--muted); margin-bottom:14px">
+      Send today's brief to <strong id="modal-recipient-display">—</strong><br>
+      Mode: <strong id="modal-mode-display">{{ send_mode }}</strong>
+    </p>
+    <div id="send-result" style="display:none; margin-bottom:12px"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeSendModal()">Cancel</button>
+      <button class="btn btn-success" id="confirm-send-btn" onclick="confirmSend()">📤 Confirm Send</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const CSRF = {{ csrf | tojson }};
+
+function showToast(msg, type="") {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = "show " + type;
+  setTimeout(() => t.className = "", 3500);
+}
+
+async function postForm(url, data) {
+  const body = new URLSearchParams(data);
+  body.append("csrf_token", CSRF);
+  const r = await fetch(url, { method: "POST", body });
+  return r.json();
+}
+
+async function runCase(k) {
+  const wrap = document.getElementById("case-progress-wrap");
+  const bar = document.getElementById("case-progress");
+  const status = document.getElementById("case-status");
+  wrap.style.display = "block";
+  status.style.display = "block";
+  status.textContent = `Switching to Case ${k} (re-initialising database & ingesting pack)…`;
+  bar.style.width = "40%";
+  try {
+    const res = await postForm("/ctrl/api/run-case", { case_num: k });
+    bar.style.width = "100%";
+    if (res.status === "ok") {
+      status.textContent = `✓ Switched to Case ${k} (${res.case.date})`;
+      showToast(`Case ${k} active!`, "success");
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      status.textContent = "✗ " + (res.detail || "Error");
+      showToast("Case failed: " + res.detail, "error");
+    }
+  } catch(err) {
+    status.textContent = "✗ Network error";
+    showToast("Network error", "error");
+  }
+}
+
+async function runNextCase() {
+  const btn = document.getElementById("next-case-btn");
+  btn.disabled = true;
+  try {
+    const res = await postForm("/ctrl/api/next-case", {});
+    if (res.status === "ok") {
+      showToast(`Advanced to Case ${res.case.active_case}!`, "success");
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      showToast("Next case failed: " + res.detail, "error");
+      btn.disabled = false;
+    }
+  } catch(err) {
+    showToast("Network error", "error");
+    btn.disabled = false;
+  }
+}
+
+async function loadYearReview() {
+  const btn = document.getElementById("year-review-btn");
+  btn.disabled = true;
+  try {
+    const res = await postForm("/ctrl/api/year-review", {});
+    if (res.status === "ok") {
+      showToast("Loaded full-year review (31 Dec 2025)!", "success");
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      showToast("Year review failed: " + res.detail, "error");
+      btn.disabled = false;
+    }
+  } catch(err) {
+    showToast("Network error", "error");
+    btn.disabled = false;
+  }
+}
+
+async function resetDemo() {
+  if (!confirm("Reset demo? This restores the live DB to 2025-12-31 and refills the queue with 10 packs.")) return;
+  try {
+    const res = await postForm("/ctrl/api/reset-demo", {});
+    if (res.status === "ok") {
+      showToast("Demo reset in " + res.result.elapsed_seconds + "s ✓", "success");
+      setTimeout(() => location.reload(), 1200);
+    } else {
+      showToast("Reset failed: " + res.detail, "error");
+    }
+  } catch(err) {
+    showToast("Network error", "error");
+  }
+}
+
+function openSendModal() {
+  const rec = document.getElementById("send-recipient").value;
+  document.getElementById("modal-recipient-display").textContent = rec;
+  document.getElementById("send-modal").classList.add("open");
+  document.getElementById("send-result").style.display = "none";
+}
+function closeSendModal() {
+  document.getElementById("send-modal").classList.remove("open");
+}
+async function confirmSend() {
+  const rec = document.getElementById("send-recipient").value;
+  const resultEl = document.getElementById("send-result");
+  const btn = document.getElementById("confirm-send-btn");
+  btn.disabled = true;
+  btn.textContent = "Sending…";
+  try {
+    const res = await postForm("/ctrl/api/send-now", { recipient: rec, force_live: "false" });
+    resultEl.style.display = "block";
+    if (res.status === "ok") {
+      const st = res.result?.status || "ok";
+      resultEl.innerHTML = `<span class="pill pill-green">✓ ${st}</span> ${res.result?.message_id ? "Message-ID: " + res.result.message_id : ""}`;
+      showToast("Sent! Status: " + st, "success");
+    } else {
+      resultEl.innerHTML = `<span class="pill pill-red">✗ ${res.detail}</span>`;
+      showToast("Send failed: " + res.detail, "error");
+    }
+  } catch(err) {
+    resultEl.innerHTML = `<span class="pill pill-red">Network error</span>`;
+  }
+  btn.disabled = false;
+  btn.textContent = "📤 Confirm Send";
+}
+
+async function prepareOnly() {
+  const res = await postForm("/ctrl/api/prepare", {});
+  if (res.status === "ok") {
+    showToast("Report prepared ✓ PDF pages: " + (res.result?.pdf_pages || "?"), "success");
+  } else {
+    showToast("Prepare failed: " + res.detail, "error");
+  }
+}
+
+async function setSendMode(live) {
+  const mode = live ? "live" : "dry_run";
+  const res = await postForm("/ctrl/api/set-send-mode", { mode });
+  if (res.status === "ok") showToast("Send mode → " + mode, "success");
+  else showToast("Error: " + res.detail, "error");
+}
+
+async function toggleScheduler(active) {
+  const res = await postForm("/ctrl/api/pause-scheduler", { paused: active ? "false" : "true" });
+  if (res.status === "ok") showToast("Scheduler " + (active ? "resumed" : "paused"), "success");
+  else showToast("Error: " + res.detail, "error");
+}
+
+// Auto-refresh status every 30s
+setInterval(async () => {
+  try {
+    const r = await fetch("/ctrl/api/status");
+    const d = await r.json();
+    const el = document.getElementById("current-day-val");
+    if (el) el.textContent = d.current_day;
+  } catch(_) {}
+}, 30000);
+</script>
+</body>
+</html>

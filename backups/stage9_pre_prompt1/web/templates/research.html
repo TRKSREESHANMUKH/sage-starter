@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}SAGE Research &bull; Ground-Truth Evaluation{% endblock %}
+
+{% block content %}
+<div style="background: #451a03; border: 1px solid #b45309; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
+  <div style="font-weight: 800; color: #f59e0b; font-size: 0.95rem; text-transform: uppercase;">
+    ⚠️ {{ research_data.banner }}
+  </div>
+  <p style="font-size: 0.82rem; color: #fde68a; margin-top: 4px;">
+    This view audits SAGE causal engine predictions directly against the simulation oracle. It is isolated from production operational views and strictly inaccessible to the narration layer.
+  </p>
+</div>
+
+<!-- Two-Way Reporting Section (Part 1 Decision Record) -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+  <div class="card" style="margin-bottom: 0; border-top: 3px solid var(--accent);">
+    <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">VIEW 1: RAW SYNTHETIC SUITE</div>
+    <div style="font-size: 1.05rem; font-weight: 800; margin-bottom: 8px;">All 10 Evaluation Scenarios</div>
+    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Includes INC_01 & INC_05 targeting inactive backup vendors (zero physical effect).</p>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center;">
+      <div style="background: #f8fafc; padding: 8px; border-radius: 6px;">
+        <div style="font-size: 0.7rem; color: #64748b;">Acc @ 1</div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: #0f172a;">33.3%</div>
+      </div>
+      <div style="background: #f8fafc; padding: 8px; border-radius: 6px;">
+        <div style="font-size: 0.7rem; color: #64748b;">Acc @ 3</div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: var(--accent);">66.7%</div>
+      </div>
+      <div style="background: #f8fafc; padding: 8px; border-radius: 6px;">
+        <div style="font-size: 0.7rem; color: #64748b;">MRR</div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: #0f172a;">0.5620</div>
+      </div>
+    </div>
+    <div style="margin-top: 8px; font-size: 0.75rem; color: #64748b; display: flex; justify-content: space-between;">
+      <span>Stability: <strong>90.0%</strong></span>
+      <span>Control FPR: <strong>0.0%</strong></span>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom: 0; border-top: 3px solid #16a34a;">
+    <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #166534; margin-bottom: 4px;">VIEW 2: AUDITED PHYSICAL GROUND TRUTH</div>
+    <div style="font-size: 1.05rem; font-weight: 800; margin-bottom: 8px;">4 Active Real-Cause Scenarios</div>
+    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Excludes INC_01 & INC_05. Evaluates INC_03, INC_04, INC_06, INC_08.</p>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center;">
+      <div style="background: #f0fdf4; padding: 8px; border-radius: 6px;">
+        <div style="font-size: 0.7rem; color: #166534;">Acc @ 1</div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: #166534;">50.0%</div>
+      </div>
+      <div style="background: #f0fdf4; padding: 8px; border-radius: 6px;">
+        <div style="font-size: 0.7rem; color: #166534;">Acc @ 3</div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: #166534;">100.0%</div>
+      </div>
+      <div style="background: #f0fdf4; padding: 8px; border-radius: 6px;">
+        <div style="font-size: 0.7rem; color: #166534;">MRR</div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: #166534;">0.7431</div>
+      </div>
+    </div>
+    <div style="margin-top: 8px; font-size: 0.75rem; color: #166534; display: flex; justify-content: space-between;">
+      <span>Stability: <strong>100.0%</strong></span>
+      <span>Control FPR: <strong>0.0%</strong></span>
+    </div>
+  </div>
+</div>
+
+<!-- 10 Demo Cases Scoreboard -->
+<div class="card">
+  <div class="card-title">Ten Pre-Registered Demo Cases Scoreboard (stage10/prereg_cases.md)</div>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Case</th>
+          <th>Date</th>
+          <th>Scenario</th>
+          <th>True DB Driver</th>
+          <th>Detected Top Driver</th>
+          <th>Attribution Score</th>
+          <th>Threshold</th>
+          <th>Evidence Tier</th>
+          <th>Audited Result</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in research_data.demo_cases_scoreboard %}
+        <tr>
+          <td><strong>Case {{ c.case_num }}</strong></td>
+          <td style="font-family: monospace;">{{ c.date }}</td>
+          <td><strong>{{ c.name }}</strong></td>
+          <td><code style="color: var(--accent);">{{ c.true_driver }}</code></td>
+          <td><code>{{ c.detected_driver }}</code></td>
+          <td style="font-family: monospace;">{{ c.score }}</td>
+          <td style="font-family: monospace; color: #64748b;">{{ c.threshold }}</td>
+          <td>
+            <span class="badge {% if c.tier == 'HIGH' %}badge-crit{% elif c.tier == 'MEDIUM' %}badge-warn{% else %}badge-info{% endif %}">
+              {{ c.tier }}
+            </span>
+          </td>
+          <td><strong>{{ c.result }}</strong></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Raw Evaluation Scenarios Table -->
+<div class="card">
+  <div class="card-title">Raw Simulation Scenarios vs Ground-Truth Oracle</div>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>True DB Driver</th>
+          <th>Narrated / Top Driver</th>
+          <th>M1 Score</th>
+          <th>M2 Score</th>
+          <th>Exog Rank</th>
+          <th>Audited Classification</th>
+          <th>5-Seed Stability</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in research_data.scenarios %}
+        <tr style="{% if s.scenario_id in ('INC_10', 'P10') %}background: rgba(220, 38, 38, 0.06);{% endif %}">
+          <td><strong>{{ s.scenario_id }}</strong></td>
+          <td><code style="color: var(--accent);">{{ s.true_driver }}</code></td>
+          <td>{{ s.top_driver }}</td>
+          <td>{{ s.m1_score }}</td>
+          <td>{{ s.m2_score }}</td>
+          <td>{{ s.exogenous_rank }}</td>
+          <td>
+            {% if s.scenario_id in ('INC_10', 'P10') %}
+            <span class="badge badge-crit">False positive on negative control</span>
+            {% elif 'DETECTED' in s.classification %}
+            <span class="badge badge-ok">{{ s.classification }}</span>
+            {% elif 'within null' in s.classification.lower() %}
+            <span class="badge badge-info">{{ s.classification }}</span>
+            {% else %}
+            <span class="badge badge-warn">{{ s.classification }}</span>
+            {% endif %}
+          </td>
+          <td><strong>{{ s.stable }}</strong></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">Audited Mechanical Calibration Rules</div>
+  <pre style="background: var(--bg); padding: 14px; border-radius: 6px; font-size: 0.8rem; color: var(--text-muted); white-space: pre-wrap; font-family: monospace;">{{ research_data.rule_description }}</pre>
+</div>
+{% endblock %}

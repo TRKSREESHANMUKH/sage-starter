@@ -45,8 +45,8 @@ from app.models.suppliers import Supplier
 
 from stage9.clock import get_as_of_date
 from stage9.current_day import get_current_day, get_ingested_days
-from stage9.snapshot import compute_daily_snapshot
-from stage9.priorities import compute_priorities
+from stage9.snapshot import compute_daily_snapshot, SNAPSHOTS_DIR
+from stage9.priorities import compute_priorities, PRIORITIES_DIR
 from stage9.ops import get_case_state
 from stage9.status import RESEARCH_FRAMING
 
@@ -366,14 +366,32 @@ def build_one_page_context(selected_date_str: Optional[str] = None) -> Dict[str,
 
     try:
         # 4. Snapshot
-        snap = compute_daily_snapshot(cur_d, db_session=db)
+        snap_file = SNAPSHOTS_DIR / f"snapshot_{cur_d.isoformat()}.json"
+        if snap_file.exists():
+            try:
+                with open(snap_file, "r", encoding="utf-8") as f:
+                    snap = json.load(f)
+            except Exception:
+                snap = compute_daily_snapshot(cur_d, db_session=db)
+        else:
+            snap = compute_daily_snapshot(cur_d, db_session=db)
         kpis = snap.get("kpis", {})
 
         # 5. Compute Trailing 7-Day Numbers Strip
         records = []
         c_date = cur_d - timedelta(days=6)
         while c_date <= cur_d:
-            s = compute_daily_snapshot(c_date, db_session=db)
+            snap_file = SNAPSHOTS_DIR / f"snapshot_{c_date.isoformat()}.json"
+            if c_date == cur_d:
+                s = snap
+            elif snap_file.exists():
+                try:
+                    with open(snap_file, "r", encoding="utf-8") as f:
+                        s = json.load(f)
+                except Exception:
+                    s = compute_daily_snapshot(c_date, db_session=db)
+            else:
+                s = compute_daily_snapshot(c_date, db_session=db)
             sk = s.get("kpis", {})
             od_cnt = int(sk.get("total_overdue_orders", 0))
             bl_units = int(sk.get("total_backlog_units", 0))
@@ -693,7 +711,15 @@ def build_one_page_context(selected_date_str: Optional[str] = None) -> Dict[str,
 
         # 9. Today's Focus (Top 5 Actions)
         focus_items = []
-        pri_res = compute_priorities(cur_d, snapshot=snap)
+        pri_file = PRIORITIES_DIR / f"priorities_{cur_d.isoformat()}.json"
+        if pri_file.exists():
+            try:
+                with open(pri_file, "r", encoding="utf-8") as f:
+                    pri_res = json.load(f)
+            except Exception:
+                pri_res = compute_priorities(cur_d, snapshot=snap)
+        else:
+            pri_res = compute_priorities(cur_d, snapshot=snap)
         raw_priorities = pri_res.get("priorities", [])
 
         owner_rotation = [

@@ -534,6 +534,11 @@
     <br>
     <em>* Observed together, not proven cause. Coincidence in time does not imply attribution.</em>
   </div>
+  {% if idle_suppliers_note %}
+    <div class="table-rule-note" style="margin-top: 6px; font-weight: 500; color: #475569;">
+      {{ idle_suppliers_note }}
+    </div>
+  {% endif %}
 </div>
 
 <!-- Block 2: Customer Orders (Service Levels & Top Delayed Orders) -->
@@ -541,11 +546,11 @@
   <div class="insight-section-head">
     <h2 class="insight-section-title">Customer Orders &amp; Service Delivery</h2>
     <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 3px;">
-      Order fulfillment rates, average customer delays, and current outstanding units owed.
+      Order fulfillment rates across the four buckets: On-time complete, Shipped late, Still overdue, and Due later.
     </p>
   </div>
 
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 18px; margin-bottom: 20px;">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 18px; margin-bottom: 20px;">
     <!-- Service by Product -->
     <div>
       <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 8px;">Service by Finished Product</h3>
@@ -554,10 +559,12 @@
           <thead>
             <tr>
               <th>Product</th>
-              <th>Orders</th>
+              <th>Due So Far</th>
+              <th>On-time</th>
+              <th>Late</th>
+              <th>Overdue Now</th>
+              <th>Due Later</th>
               <th>On-time %</th>
-              <th>Avg days late</th>
-              <th>Units owed now</th>
             </tr>
           </thead>
           <tbody>
@@ -565,9 +572,11 @@
             <tr>
               <td><strong>{{ ps.product_name }}</strong></td>
               <td>{{ ps.orders_count }}</td>
+              <td><span style="color: #16a34a; font-weight: 600;">{{ ps.on_time_count }}</span></td>
+              <td>{{ ps.shipped_late_count }}</td>
+              <td><span style="{% if ps.units_overdue_now > 0 %}color: #dc2626; font-weight: 700;{% endif %}">{{ ps.overdue_count }} ({{ ps.units_overdue_now }} u)</span></td>
+              <td><span style="color: #64748b;">{{ ps.due_later_orders }} ({{ ps.units_due_later }} u)</span></td>
               <td><strong>{{ ps.on_time_pct }}</strong></td>
-              <td>{{ ps.avg_days_late }}</td>
-              <td><span style="{% if ps.units_owed_now > 0 %}color: #dc2626; font-weight: 700;{% endif %}">{{ ps.units_owed_now }}</span></td>
             </tr>
             {% endfor %}
           </tbody>
@@ -583,10 +592,12 @@
           <thead>
             <tr>
               <th>Customer</th>
-              <th>Orders</th>
+              <th>Due So Far</th>
+              <th>On-time</th>
+              <th>Late</th>
+              <th>Overdue Now</th>
+              <th>Due Later</th>
               <th>On-time %</th>
-              <th>Avg days late</th>
-              <th>Units owed now</th>
             </tr>
           </thead>
           <tbody>
@@ -594,9 +605,11 @@
             <tr>
               <td><strong>{{ cs.customer_name }}</strong></td>
               <td>{{ cs.orders_count }}</td>
+              <td><span style="color: #16a34a; font-weight: 600;">{{ cs.on_time_count }}</span></td>
+              <td>{{ cs.shipped_late_count }}</td>
+              <td><span style="{% if cs.units_overdue_now > 0 %}color: #dc2626; font-weight: 700;{% endif %}">{{ cs.overdue_count }} ({{ cs.units_overdue_now }} u)</span></td>
+              <td><span style="color: #64748b;">{{ cs.due_later_orders }} ({{ cs.units_due_later }} u)</span></td>
               <td><strong>{{ cs.on_time_pct }}</strong></td>
-              <td>{{ cs.avg_days_late }}</td>
-              <td><span style="{% if cs.units_owed_now > 0 %}color: #dc2626; font-weight: 700;{% endif %}">{{ cs.units_owed_now }}</span></td>
             </tr>
             {% endfor %}
           </tbody>
@@ -901,12 +914,14 @@
                 <p style="margin-bottom: 5px;"><strong>1. What we saw:</strong> {{ case.step1_what_we_saw }}</p>
                 <p style="margin-bottom: 5px;"><strong>2. How it connects:</strong> {{ case.step2_chain }}</p>
                 <p style="margin-bottom: 5px;"><strong>3. How sure are we:</strong> {{ case.step3_sure_explanation }}</p>
+                {% if case.tech_details %}
                 <details style="margin-top: 3px;">
                   <summary style="color: var(--text-muted); font-size: 0.76rem;">Technical details</summary>
                   <p style="font-size: 0.74rem; color: #475569; margin-top: 3px;">
-                    Method: {{ case.tech_details.method }} | Score: {{ case.tech_details.score }} | {{ case.tech_details.rule }}
+                    Method: {{ case.tech_details.method | default('Stage 7 Causal Attribution') }} | Score: {{ case.tech_details.score | default('—') }} | {{ case.tech_details.rule | default('') }}
                   </p>
                 </details>
+                {% endif %}
               </div>
             </details>
           </td>

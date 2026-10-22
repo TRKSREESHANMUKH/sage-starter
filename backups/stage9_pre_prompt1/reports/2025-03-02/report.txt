@@ -1,0 +1,39 @@
+NOTICE: No new ERP data received today.
+
+SAGE DAILY BRIEF | 2 Mar 2025
+Status: ACTION NEEDED (2 items need action)
+======================================================================
+
+THE BOTTOM LINE:
+P l
+
+TODAY'S NUMBERS IN CONTEXT:
+• Orders Due     : 0 orders due, same as yesterday (7d avg: 0.3)
+• Orders Late    : 0 late orders, same as yesterday (7d avg: 0.0)
+• Units Short    : 0 units short, same as yesterday (7d avg: 0.0)
+• Materials Low  : 1 material low, same as yesterday (7d avg: 1.0)
+
+PAST ANALYSED CASES: WHAT CAUSED WHAT:
+• Chain: Supplier 4 delivery late → Steel Rod 10mm below safety level
+  Observed steel rod 10mm below safety level on 02 Mar is consistent with supplier 4 delivery late starting on 02 Mar.
+  Confidence: Partly seen | Model check: Model inconclusive (Computed just now)
+
+FOCUS TOMORROW (TOP 5 PRIORITIES):
+1. Fix at the root: Supplier 4 delivery late (Supply Chain Lead) - Due Immediate
+   Reason: Observed steel rod 10mm below safety level on 02 Mar is consistent with supplier 4 delivery late starting on 02 Mar. (Confidence: Partly seen)
+2. Replenish critical material: Steel Rod 10mm (Procurement Specialist) - Due 12:00 PM
+   Reason: Steel Rod 10mm inventory is 30 kg, at or below safety threshold (50 kg).
+3. Escalate overdue PO-4 for Steel Rod 10mm (Supplier Relations) - Due 11:30 AM
+   Reason: PO-4 is 2 days overdue from expected delivery date (28 Feb).
+4. Prepare shipment for Nova Retailers (Widget Model X) (Warehouse Dispatch) - Due 02:00 PM
+   Reason: Upcoming order for 11 units due in 3 days (05 Mar).
+
+SUPPLIER WATCH:
+• PO-4 (EastCoast Components): 397 units Steel Rod 10mm - 2 days late (expected 28 Feb)
+Receipts expected tomorrow: PO-5 from Copper & Co (154 units Copper Wire) expected tomorrow
+
+======================================================================
+FRAMING: SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.
+
+Simulated data. System knows data up to 2025-03-02 only.
+Dashboard: http://127.0.0.1:8000

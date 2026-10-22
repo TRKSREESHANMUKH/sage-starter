@@ -1,0 +1,627 @@
+{% extends "base.html" %}
+
+{% block title %}SAGE &bull; Daily Briefing &bull; {{ formatted_date }}{% endblock %}
+
+{% block header_meta %}
+  <span class="briefing-date-badge">{{ subtitle_badge }}</span>
+{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* Editorial Morning Briefing Styles */
+  .briefing-hero {
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--surface-border);
+  }
+  .briefing-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .briefing-title {
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #0f172a;
+    line-height: 1.15;
+  }
+  .briefing-date {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+  .briefing-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1d4ed8;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+
+  /* Editorial Lead Paragraph */
+  .editorial-lead {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    font-style: italic;
+    color: #334155;
+    border-left: 3px solid var(--accent);
+    padding: 10px 18px;
+    background: #f8fafc;
+    border-radius: 0 8px 8px 0;
+    margin-top: 14px;
+    max-width: 900px;
+  }
+
+  /* Numbers Strip */
+  .numbers-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .num-card {
+    background: #ffffff;
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  }
+  .num-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .num-val-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .num-val {
+    font-size: 2.0rem;
+    font-weight: 800;
+    line-height: 1;
+    color: #0f172a;
+  }
+  .num-diff {
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .diff-up { background: #fee2e2; color: #dc2626; }
+  .diff-down { background: #dcfce7; color: #16a34a; }
+  .diff-neutral { background: #f1f5f9; color: #64748b; }
+  .num-sub {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+
+  /* Section Headings */
+  .section-h {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 14px;
+    margin-top: 28px;
+    border-bottom: 1px solid var(--surface-border);
+    padding-bottom: 6px;
+  }
+  .section-h-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #1e293b;
+  }
+
+  /* Alert Cards */
+  .alerts-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .alert-card {
+    background: #ffffff;
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  }
+  .alert-card.critical-border {
+    border-left: 4px solid #dc2626;
+  }
+  .alert-card.warning-border {
+    border-left: 4px solid #d97706;
+  }
+  .alert-card.watch-border {
+    border-left: 4px solid #2563eb;
+  }
+  .alert-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .alert-headline {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0f172a;
+  }
+  .alert-pill {
+    padding: 3px 9px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .pill-red { background: #fee2e2; color: #dc2626; }
+  .pill-amber { background: #fef3c7; color: #b45309; }
+  .pill-blue { background: #dbeafe; color: #1d4ed8; }
+
+  .cause-chain-row {
+    font-size: 0.92rem;
+    color: #334155;
+    margin-bottom: 10px;
+    background: #f8fafc;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #f1f5f9;
+  }
+  .cause-chain-row strong {
+    color: #0f172a;
+  }
+  .evidence-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #0369a1;
+    background: #e0f2fe;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 8px;
+  }
+  .what-to-do-row {
+    font-size: 0.9rem;
+    color: #1e293b;
+    margin-bottom: 14px;
+  }
+
+  /* Inline Expander: Click to analyze */
+  details.analyze-expander {
+    border-top: 1px solid #f1f5f9;
+    padding-top: 10px;
+    margin-top: 8px;
+  }
+  details.analyze-expander > summary {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent);
+    cursor: pointer;
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    user-select: none;
+  }
+  details.analyze-expander > summary::-webkit-details-marker {
+    display: none;
+  }
+  details.analyze-expander > summary::after {
+    content: " →";
+  }
+  details.analyze-expander[open] > summary::after {
+    content: " ↓";
+  }
+  .analysis-body {
+    margin-top: 14px;
+    background: #f8fafc;
+    border: 1px solid var(--surface-border);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .step-h {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .step-p {
+    font-size: 0.9rem;
+    color: #1e293b;
+  }
+  .tech-meta {
+    margin-top: 8px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 0.8rem;
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    color: #334155;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 8px;
+  }
+
+  /* Calm day banner */
+  .calm-banner {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: var(--radius);
+    padding: 32px 24px;
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .calm-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #16a34a;
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+  .calm-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #166534;
+    margin-bottom: 4px;
+  }
+  .calm-sub {
+    font-size: 0.95rem;
+    color: #15803d;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* Today's Focus Dark Band */
+  .focus-band {
+    background: #1e293b;
+    color: #ffffff;
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 32px;
+    box-shadow: 0 4px 12px rgba(15,23,42,0.12);
+  }
+  .focus-band-title {
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #94a3b8;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .focus-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+  .focus-table th {
+    text-align: left;
+    padding: 8px 10px;
+    color: #94a3b8;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #334155;
+  }
+  .focus-table td {
+    padding: 10px;
+    border-bottom: 1px solid #334155;
+    vertical-align: top;
+  }
+  .focus-table tr:last-child td {
+    border-bottom: none;
+  }
+  .rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #334155;
+    color: #f1f5f9;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .owner-pill {
+    background: #334155;
+    color: #93c5fd;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* Supplier Watch */
+  .supp-card {
+    background: #ffffff;
+    border: 1px solid var(--surface-border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    margin-bottom: 32px;
+  }
+  .supp-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 10px 0;
+    border-bottom: 1px solid #f1f5f9;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .supp-row:last-child {
+    border-bottom: none;
+  }
+  .supp-name {
+    font-weight: 700;
+    color: #0f172a;
+    font-size: 0.92rem;
+  }
+  .supp-status {
+    font-size: 0.88rem;
+    color: #475569;
+    flex: 1;
+    margin: 0 12px;
+  }
+  .supp-idle-note {
+    margin-top: 12px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-style: italic;
+    padding-top: 8px;
+    border-top: 1px dashed var(--surface-border);
+  }
+
+  /* Framing Footer */
+  .framing-footer {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 0.78rem;
+    color: #64748b;
+    font-style: italic;
+    margin-top: 32px;
+    line-height: 1.5;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+  <!-- Header / Hero -->
+  <section class="briefing-hero">
+    <div class="briefing-title-row">
+      <h1 class="briefing-title">Daily Briefing</h1>
+      <span class="briefing-date">{{ formatted_date }}</span>
+    </div>
+    <div class="briefing-badge">{{ subtitle_badge }}</div>
+
+    <!-- Editorial Lead Paragraph (<= 60 words, fact validated) -->
+    <div class="editorial-lead">
+      {{ editorial_lead }}
+    </div>
+  </section>
+
+  <!-- Numbers Strip (Trailing 7-Day Context) -->
+  <section class="numbers-strip">
+    <div class="num-card">
+      <div class="num-title">Orders Due Today</div>
+      <div class="num-val-row">
+        <span class="num-val">{{ numbers_strip.orders_due.val }}</span>
+        {% if numbers_strip.orders_due.change != "0" %}
+        <span class="num-diff diff-neutral">{{ numbers_strip.orders_due.change }}</span>
+        {% endif %}
+      </div>
+      <div class="num-sub">7-day average: {{ numbers_strip.orders_due.avg7 }}</div>
+    </div>
+
+    <div class="num-card">
+      <div class="num-title">Overdue Orders Now</div>
+      <div class="num-val-row">
+        <span class="num-val">{{ numbers_strip.overdue_orders.val }}</span>
+        {% if numbers_strip.overdue_orders.change.startswith("+") %}
+        <span class="num-diff diff-up">{{ numbers_strip.overdue_orders.change }}</span>
+        {% elif numbers_strip.overdue_orders.change.startswith("-") %}
+        <span class="num-diff diff-down">{{ numbers_strip.overdue_orders.change }}</span>
+        {% else %}
+        <span class="num-diff diff-neutral">0</span>
+        {% endif %}
+      </div>
+      <div class="num-sub">{{ numbers_strip.overdue_orders.units }} units short (7d avg: {{ numbers_strip.overdue_orders.avg7 }})</div>
+    </div>
+
+    <div class="num-card">
+      <div class="num-title">Total Units Short</div>
+      <div class="num-val-row">
+        <span class="num-val">{{ numbers_strip.units_short.val }}</span>
+        {% if numbers_strip.units_short.change.startswith("+") %}
+        <span class="num-diff diff-up">{{ numbers_strip.units_short.change }}</span>
+        {% elif numbers_strip.units_short.change.startswith("-") %}
+        <span class="num-diff diff-down">{{ numbers_strip.units_short.change }}</span>
+        {% else %}
+        <span class="num-diff diff-neutral">0</span>
+        {% endif %}
+      </div>
+      <div class="num-sub">Backlog + shortfall (7d avg: {{ numbers_strip.units_short.avg7 }})</div>
+    </div>
+
+    <div class="num-card">
+      <div class="num-title">Materials Below Safety</div>
+      <div class="num-val-row">
+        <span class="num-val">{{ numbers_strip.materials_low.val }}</span>
+        {% if numbers_strip.materials_low.change.startswith("+") %}
+        <span class="num-diff diff-up">{{ numbers_strip.materials_low.change }}</span>
+        {% elif numbers_strip.materials_low.change.startswith("-") %}
+        <span class="num-diff diff-down">{{ numbers_strip.materials_low.change }}</span>
+        {% else %}
+        <span class="num-diff diff-neutral">0</span>
+        {% endif %}
+      </div>
+      <div class="num-sub">Buffer breach status (7d avg: {{ numbers_strip.materials_low.avg7 }})</div>
+    </div>
+  </section>
+
+  <!-- Alert Cards or Calm Day Banner -->
+  <section class="section-h">
+    <div class="section-h-title">Operational Status</div>
+  </section>
+
+  {% if is_calm %}
+  <div class="calm-banner">
+    <div class="calm-icon">✓</div>
+    <div class="calm-title">Everything is running normally</div>
+    <div class="calm-sub">
+      Nothing needs action tomorrow. All production targets were met, raw material buffers remain above safety thresholds, and no customer orders are overdue.
+    </div>
+  </div>
+  {% else %}
+  <div class="alerts-stack">
+    {% for issue in issues %}
+    <article class="alert-card {% if issue.badge == 'CRITICAL' %}critical-border{% elif issue.badge == 'NEEDS ATTENTION' %}warning-border{% else %}watch-border{% endif %}">
+      <div class="alert-top">
+        <h3 class="alert-headline">{{ issue.headline }}</h3>
+        <span class="alert-pill {{ issue.badge_class }}">{{ issue.badge }}</span>
+      </div>
+
+      <div class="cause-chain-row">
+        <strong>Cause:</strong> {{ issue.cause_chain }}
+        <span class="evidence-badge">{{ issue.evidence_label }}</span>
+      </div>
+
+      <div class="what-to-do-row">
+        <strong>What to do:</strong> {{ issue.what_to_do }}
+      </div>
+
+      <!-- Inline 3-Step Analysis -->
+      <details class="analyze-expander">
+        <summary>Click to analyze</summary>
+        <div class="analysis-body">
+          <div>
+            <div class="step-h">Step 1 &bull; What We Saw (Trailing 30 Days)</div>
+            <p class="step-p">{{ issue.step1_text }}</p>
+            <div style="margin-top:8px">
+              {{ issue.step1_svg | safe }}
+            </div>
+          </div>
+
+          <div>
+            <div class="step-h">Step 2 &bull; How It Connects</div>
+            <p class="step-p" style="font-weight:600; color:#0f172a">{{ issue.step2_chain }}</p>
+          </div>
+
+          <div>
+            <div class="step-h">Step 3 &bull; How Sure Are We</div>
+            <p class="step-p">
+              <strong>{{ issue.evidence_label }}:</strong> {{ issue.step3_sure }}
+            </p>
+            <div class="tech-meta">
+              <div><strong>Method:</strong> {{ issue.tech_details.method }}</div>
+              <div><strong>Attribution Score:</strong> {{ issue.tech_details.score }}</div>
+              <div><strong>Stability:</strong> {{ issue.tech_details.stability }}</div>
+              <div><strong>Verification:</strong> {{ issue.tech_details.validation }}</div>
+            </div>
+          </div>
+        </div>
+      </details>
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Today's Focus Dark Band -->
+  <section class="focus-band">
+    <div class="focus-band-title">
+      <span>Today's Focus &bull; Top 5 Shift Actions</span>
+      <span style="font-size:0.75rem; text-transform:none; color:#cbd5e1">Ranked by operational impact</span>
+    </div>
+
+    <div style="overflow-x:auto">
+      <table class="focus-table">
+        <thead>
+          <tr>
+            <th style="width:36px">#</th>
+            <th>Action</th>
+            <th>Owner</th>
+            <th>Target Time</th>
+            <th>Reason</th>
+            <th>Root Fix</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in focus_items %}
+          <tr>
+            <td><span class="rank-badge">{{ item.rank }}</span></td>
+            <td><strong>{{ item.action }}</strong></td>
+            <td><span class="owner-pill">{{ item.owner }}</span></td>
+            <td style="color:#cbd5e1; font-family:monospace">{{ item.due_time }}</td>
+            <td style="color:#cbd5e1">{{ item.reason }}</td>
+            <td style="color:#93c5fd">{{ item.root_fix }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Supplier Watch -->
+  <section class="section-h">
+    <div class="section-h-title">Supplier Watch</div>
+  </section>
+
+  <div class="supp-card">
+    {% for s in supplier_watch %}
+    <div class="supp-row">
+      <span class="supp-name">{{ s.supplier_name }}</span>
+      <span class="supp-status">{{ s.status_text }}</span>
+      <span class="alert-pill {% if s.status_pill == 'CRITICAL' %}pill-red{% elif s.status_pill == 'NEEDS ATTENTION' %}pill-amber{% else %}pill-blue{% endif %}">
+        {{ s.status_pill }}
+      </span>
+    </div>
+    {% endfor %}
+
+    <div class="supp-idle-note">
+      {{ idle_suppliers_text }}
+    </div>
+  </div>
+
+  <!-- Verbatim Framing Footer -->
+  <div class="framing-footer">
+    {{ framing }}
+  </div>
+{% endblock %}

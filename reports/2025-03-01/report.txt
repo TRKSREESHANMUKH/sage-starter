@@ -1,0 +1,34 @@
+SAGE DAILY BRIEF | 1 Mar 2025
+Status: ACTION NEEDED (2 items need action)
+======================================================================
+
+THE BOTTOM LINE:
+P l
+
+TODAY'S NUMBERS IN CONTEXT:
+• Orders Due     : 0 orders due, same as yesterday (7d avg: 0.3)
+• Orders Late    : 0 late orders, same as yesterday (7d avg: 0.0)
+• Units Short    : 0 units short, same as yesterday (7d avg: 0.0)
+• Materials Low  : 1 material low, same as yesterday (7d avg: 1.0)
+
+PAST ANALYSED CASES: WHAT CAUSED WHAT:
+No abnormal causal cascades observed in the trailing 7 days.
+
+FOCUS TOMORROW (TOP 5 PRIORITIES):
+1. Replenish critical material: Steel Rod 10mm (Procurement Specialist) - Due 12:00 PM
+   Reason: Steel Rod 10mm inventory is 30 kg, at or below safety threshold (50 kg).
+2. Escalate overdue PO-4 for Steel Rod 10mm (Supplier Relations) - Due 11:30 AM
+   Reason: PO-4 is 1 days overdue from expected delivery date (28 Feb).
+3. Prepare shipment for Metro Distributors (Widget Model Y) (Warehouse Dispatch) - Due 02:00 PM
+   Reason: Upcoming order for 9 units due tomorrow (02 Mar).
+4. Prepare shipment for Prime Retail Group (Widget Model X) (Warehouse Dispatch) - Due 02:00 PM
+   Reason: Upcoming order for 11 units due tomorrow (02 Mar).
+
+SUPPLIER WATCH:
+• PO-4 (EastCoast Components): 397 units Steel Rod 10mm - 1 day late (expected 28 Feb)
+
+======================================================================
+FRAMING: SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.
+
+Simulated data. System knows data up to 2025-03-01 only.
+Dashboard: http://127.0.0.1:8000

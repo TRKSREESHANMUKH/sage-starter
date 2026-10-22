@@ -1,0 +1,43 @@
+NOTICE: No new ERP data received today.
+
+SAGE DAILY BRIEF | 20 Oct 2025
+Status: ACTION NEEDED (12 items need action)
+======================================================================
+
+THE BOTTOM LINE:
+P l
+
+TODAY'S NUMBERS IN CONTEXT:
+• Orders Due     : 0 orders due, same as yesterday (7d avg: 0.0)
+• Orders Late    : 10 late orders, same as yesterday (7d avg: 8.9)
+• Units Short    : 108 units short, same as yesterday (7d avg: 102.3)
+• Materials Low  : 1 material low, same as yesterday (7d avg: 1.0)
+
+PAST ANALYSED CASES: WHAT CAUSED WHAT:
+• Chain: Supplier 4 delivery late → Steel Rod 10mm below safety level
+  Observed steel rod 10mm below safety level on 20 Oct is consistent with supplier 4 delivery late starting on 20 Oct.
+  Confidence: Partly seen | Model check: Model inconclusive (Computed just now)
+• Chain: Widget Model X orders late
+  Observed widget model x orders late on 20 Oct is consistent with widget model x orders late starting on 20 Oct.
+  Confidence: No upstream explanation found | Model check: Model inconclusive (Computed just now)
+
+FOCUS TOMORROW (TOP 5 PRIORITIES):
+1. Fix at the root: Supplier 4 delivery late (Supply Chain Lead) - Due Immediate
+   Reason: Observed steel rod 10mm below safety level on 20 Oct is consistent with supplier 4 delivery late starting on 20 Oct. (Confidence: Partly seen)
+2. Expedite delivery for SO-164 to Metro Distributors (Customer Logistics) - Due 10:00 AM
+   Reason: 1 units of Widget Model X are 18 days overdue (was due 02 Oct).
+3. Expedite delivery for SO-165 to Coastal Traders (Customer Logistics) - Due 10:00 AM
+   Reason: 16 units of Widget Model X are 17 days overdue (was due 03 Oct).
+4. Expedite delivery for SO-167 to Sunrise Wholesalers (Customer Logistics) - Due 10:00 AM
+   Reason: 8 units of Widget Model X are 17 days overdue (was due 03 Oct).
+5. Expedite delivery for SO-173 to Metro Distributors (Customer Logistics) - Due 10:00 AM
+   Reason: 13 units of Widget Model X are 11 days overdue (was due 09 Oct).
+
+SUPPLIER WATCH:
+• PO-18 (EastCoast Components): 407 units Steel Rod 10mm - 67 days late (expected 14 Aug)
+
+======================================================================
+FRAMING: SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.
+
+Simulated data. System knows data up to 2025-10-20 only.
+Dashboard: http://127.0.0.1:8000

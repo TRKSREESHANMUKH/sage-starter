@@ -1,0 +1,13 @@
+jobs:
+  prepare:
+    cron: 45 19 * * *
+  send:
+    cron: 0 20 * * *
+recipients:
+  nightly_digest:
+  - sreeshanmukhtrk@gmail.com
+replay:
+  replay_end: '2025-12-31'
+  replay_start: '2025-02-03'
+send_mode: live
+timezone: Asia/Kolkata

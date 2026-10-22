@@ -1,0 +1,15 @@
+{
+  "as_of": "2025-03-31",
+  "subject": "SAGE Daily Brief | 31 Mar 2025 | All normal",
+  "kpis": {
+    "total_backlog_units": 0,
+    "total_overdue_orders": 0,
+    "oldest_overdue_date": null,
+    "total_production_shortfall": 0,
+    "total_material_stockouts": 0,
+    "total_po_overdue_days": 0
+  },
+  "priorities_count": 0,
+  "top_priority": null,
+  "no_new_data": false
+}

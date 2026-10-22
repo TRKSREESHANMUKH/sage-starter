@@ -1,0 +1,34 @@
+NOTICE: No new ERP data received today.
+
+SAGE DAILY BRIEF | 15 Jan 2025
+Status: ALL NORMAL (All operations on schedule)
+======================================================================
+
+THE BOTTOM LINE:
+M a
+
+TODAY'S NUMBERS IN CONTEXT:
+• Orders Due     : 2 orders due, same as yesterday (7d avg: 0.9)
+• Orders Late    : 0 late orders, same as yesterday (7d avg: 0.0)
+• Units Short    : 0 units short, same as yesterday (7d avg: 0.0)
+• Materials Low  : 0 materials low, same as yesterday (7d avg: 0.0)
+
+PAST ANALYSED CASES: WHAT CAUSED WHAT:
+No abnormal causal cascades observed in the trailing 7 days.
+
+FOCUS TOMORROW (TOP 5 PRIORITIES):
+1. Prepare shipment for Nova Retailers (Widget Model Y) (Warehouse Dispatch) - Due 02:00 PM
+   Reason: Upcoming order for 10 units due tomorrow (16 Jan).
+2. Prepare shipment for Coastal Traders (Widget Model X) (Warehouse Dispatch) - Due 02:00 PM
+   Reason: Upcoming order for 16 units due in 2 days (17 Jan).
+3. Prepare shipment for Metro Distributors (Widget Model X) (Warehouse Dispatch) - Due 02:00 PM
+   Reason: Upcoming order for 15 units due in 2 days (17 Jan).
+
+SUPPLIER WATCH:
+No supplier problems today.
+
+======================================================================
+FRAMING: SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.
+
+Simulated data. System knows data up to 2025-01-15 only.
+Dashboard: http://127.0.0.1:8000

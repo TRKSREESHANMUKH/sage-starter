@@ -1,0 +1,15 @@
+{
+  "as_of": "2025-10-20",
+  "subject": "SAGE Daily Brief | 20 Oct 2025 | 12 need action",
+  "kpis": {
+    "total_backlog_units": 108,
+    "total_overdue_orders": 10,
+    "oldest_overdue_date": "2025-10-02",
+    "total_production_shortfall": 0,
+    "total_material_stockouts": 1,
+    "total_po_overdue_days": 67
+  },
+  "priorities_count": 0,
+  "top_priority": null,
+  "no_new_data": true
+}

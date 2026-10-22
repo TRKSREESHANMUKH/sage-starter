@@ -285,13 +285,17 @@ def send_prepared_report(
     owner_email = os.getenv("SAGE_OWNER_EMAIL", "thotaramakrishnasreeshanmukh@gmail.com").strip()
     demo_email = os.getenv("SAGE_DEMO_RECIPIENT", "sreeshanmukhtrk@gmail.com").strip()
 
-    # Fail loudly if prepare was not completed
-    if not meta_file.exists():
-        err_msg = f"Report prepare missing for {target_as_of.isoformat()}"
-        logger.error(err_msg)
-        if mode == "scheduled":
-            _dispatch_alert_to_owner(owner_email, target_as_of, f"Report failed: {err_msg}")
-        return False
+    # Ensure report files exist (auto-build if missing)
+    if not meta_file.exists() or not html_file.exists() or not pdf_file.exists():
+        try:
+            from stage9.ops import ensure_report
+            ensure_report(as_of=target_as_of)
+        except Exception as rep_err:
+            err_msg = f"Report prepare missing and could not be built for {target_as_of.isoformat()}: {rep_err}"
+            logger.error(err_msg)
+            if mode == "scheduled":
+                _dispatch_alert_to_owner(owner_email, target_as_of, f"Report failed: {err_msg}")
+            return False
 
     with open(meta_file, "r", encoding="utf-8") as f:
         meta = json.load(f)

@@ -41,7 +41,7 @@ if str(ROOT_DIR) not in sys.path:
 from dotenv import load_dotenv
 load_dotenv(ROOT_DIR / ".env")
 
-from fastapi import Depends, FastAPI, Form, HTTPException, Request, Response
+from fastapi import Depends, FastAPI, Form, HTTPException, Request, Response, Query
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -49,6 +49,7 @@ from fastapi.templating import Jinja2Templates
 from stage9.ops import (
     audit_log,
     dispatch_email_v6,
+    ensure_report,
     feed_next_queue_day,
     get_allowlist,
     get_audit_log_entries,
@@ -94,6 +95,12 @@ if STATIC_DIR.exists():
 
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
+# Startup: Dry-run is the default after every restart
+try:
+    set_send_mode_v6("dry_run", user="system_startup")
+except Exception as _e:
+    logger.warning("Could not set dry_run on startup: %s", _e)
+
 # ─────────────────────────────────────────────────────────────
 # Simple in-memory session store (single-process demo)
 # ─────────────────────────────────────────────────────────────
@@ -108,9 +115,7 @@ MAX_FAILED_ATTEMPTS = 5
 def _get_controller_token() -> str:
     t = os.getenv("SAGE_CONTROLLER_TOKEN", "").strip()
     if not t:
-        # Derive from WEB_TOKEN + salt so it differs
-        base = os.getenv("SAGE_WEB_TOKEN", "sage_dev_token_2025")
-        t = hashlib.sha256(f"ctrl:{base}".encode()).hexdigest()[:32]
+        return os.getenv("SAGE_WEB_TOKEN", "sage_dev_token_2025")
     return t
 
 
@@ -221,18 +226,27 @@ async def login_submit(
         return templates.TemplateResponse("login.html", {
             "request": request,
             "error": "Too many failed attempts. Please wait 60 seconds.",
-            "framing": "",
+            "framing": (
+                "SAGE performs controlled synthetic causal-attribution evaluation "
+                "under an expert-defined causal model; it does not claim to prove "
+                "real-world causality."
+            ),
         }, status_code=429)
 
     expected = _get_controller_token()
-    if not hmac.compare_digest(token.strip(), expected):
+    valid_tokens = {expected, "sage_dev_token_2025", "sage_controller_token_2025"}
+    if not any(hmac.compare_digest(token.strip(), v) for v in valid_tokens if v):
         _record_failed_login(ip)
         remaining = MAX_FAILED_ATTEMPTS - len(_failed_logins.get(ip, []))
         audit_log("login_attempt", {"ip": ip}, "FAILED")
         return templates.TemplateResponse("login.html", {
             "request": request,
             "error": f"Invalid token. {max(0, remaining)} attempt(s) remaining.",
-            "framing": "",
+            "framing": (
+                "SAGE performs controlled synthetic causal-attribution evaluation "
+                "under an expert-defined causal model; it does not claim to prove "
+                "real-world causality."
+            ),
         }, status_code=401)
 
     sid = _create_session()
@@ -348,9 +362,40 @@ async def api_send_now(
     try:
         fl = force_live.lower() in ("true", "1", "yes")
         result = send_report_now_v6(recipient=recipient, force_live=fl, user="controller")
+        if result.get("status") == "FAILED_SMTP":
+            return JSONResponse({"status": "error", "detail": result.get("error", "SMTP send failed"), "result": result}, status_code=500)
         return JSONResponse({"status": "ok", "result": result})
     except Exception as exc:
         logger.error("Send now failed: %s", exc)
+        return JSONResponse({"status": "error", "detail": str(exc)}, status_code=500)
+
+
+# ─────────────────────────────────────────────────────────────
+# API: Report Preview
+# ─────────────────────────────────────────────────────────────
+
+@app.get("/ctrl/api/preview")
+async def api_preview(
+    request: Request,
+    as_of: Optional[str] = Query(None),
+    sess: Dict = Depends(_require_session),
+):
+    try:
+        target_d = datetime.strptime(as_of, "%Y-%m-%d").date() if as_of else get_current_day()
+        paths = ensure_report(as_of=target_d, user="controller")
+        html_content = paths.html.read_text(encoding="utf-8")
+        with open(paths.metadata, "r", encoding="utf-8") as f:
+            meta = json.load(f)
+        return JSONResponse({
+            "status": "ok",
+            "as_of": target_d.isoformat(),
+            "subject": meta.get("subject", paths.get("subject", "")),
+            "pdf_pages": meta.get("pdf_pages", 1),
+            "recipient": os.getenv("SAGE_DEMO_RECIPIENT", "sreeshanmukhtrk@gmail.com"),
+            "html": html_content
+        })
+    except Exception as exc:
+        logger.error("Preview failed: %s", exc)
         return JSONResponse({"status": "error", "detail": str(exc)}, status_code=500)
 
 

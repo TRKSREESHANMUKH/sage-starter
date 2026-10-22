@@ -1,0 +1,40 @@
+NOTICE: No new ERP data received today.
+
+SAGE DAILY BRIEF | 31 Dec 2025
+Status: ACTION NEEDED (49 items need action)
+======================================================================
+
+THE BOTTOM LINE:
+P l
+
+TODAY'S NUMBERS IN CONTEXT:
+• Orders Due     : 1 order due, down from 2 yesterday (7d avg: 1.0)
+• Orders Late    : 47 late orders, same as yesterday (7d avg: 42.6)
+• Units Short    : 702 units short, up from 630 yesterday (7d avg: 596.0)
+• Materials Low  : 1 material low, same as yesterday (7d avg: 1.0)
+
+PAST ANALYSED CASES: WHAT CAUSED WHAT:
+• Chain: Supplier 4 delivery late → Steel Rod 10mm below safety level
+  Observed steel rod 10mm below safety level on 31 Dec is consistent with supplier 4 delivery late starting on 25 Dec.
+  Confidence: Partly seen | Model check: Model inconclusive (Computed just now)
+
+FOCUS TOMORROW (TOP 5 PRIORITIES):
+1. Fix at the root: Supplier 4 delivery late (Supply Chain Lead) - Due Immediate
+   Reason: Observed steel rod 10mm below safety level on 31 Dec is consistent with supplier 4 delivery late starting on 25 Dec. (Confidence: Partly seen)
+2. Expedite delivery for SO-164 to Metro Distributors (Customer Logistics) - Due 10:00 AM
+   Reason: 1 units of Widget Model X are 90 days overdue (was due 02 Oct).
+3. Expedite delivery for SO-165 to Coastal Traders (Customer Logistics) - Due 10:00 AM
+   Reason: 16 units of Widget Model X are 89 days overdue (was due 03 Oct).
+4. Expedite delivery for SO-167 to Sunrise Wholesalers (Customer Logistics) - Due 10:00 AM
+   Reason: 8 units of Widget Model X are 89 days overdue (was due 03 Oct).
+5. Expedite delivery for SO-173 to Metro Distributors (Customer Logistics) - Due 10:00 AM
+   Reason: 13 units of Widget Model X are 83 days overdue (was due 09 Oct).
+
+SUPPLIER WATCH:
+• PO-18 (EastCoast Components): 407 units Steel Rod 10mm - 139 days late (expected 14 Aug)
+
+======================================================================
+FRAMING: SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.
+
+Simulated data. System knows data up to 2025-12-31 only.
+Dashboard: http://127.0.0.1:8000

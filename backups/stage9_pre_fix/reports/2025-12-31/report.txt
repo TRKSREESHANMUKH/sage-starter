@@ -1,0 +1,39 @@
+SAGE DAILY BRIEF | 31 Dec 2025
+Status: ACTION NEEDED (11 items need action)
+======================================================================
+
+THE BOTTOM LINE:
+P l
+
+TODAY'S NUMBERS IN CONTEXT:
+• Orders Due     : 0 orders due, same as yesterday (7d avg: 0.0)
+• Orders Late    : 9 late orders, same as yesterday (7d avg: 9.0)
+• Units Short    : 131 units short, same as yesterday (7d avg: 131.0)
+• Materials Low  : 0 materials low, same as yesterday (7d avg: 0.0)
+
+PAST ANALYSED CASES: WHAT CAUSED WHAT:
+• Chain: Supplier 4 delivery late → Steel Rod 10mm below safety level
+  Observed steel rod 10mm below safety level on 31 Dec is consistent with supplier 4 delivery late starting on 25 Dec.
+  Confidence: Partly seen | Model check: Model inconclusive (Computed just now)
+
+FOCUS TOMORROW (TOP 5 PRIORITIES):
+1. Fix at the root: Supplier 4 delivery late (Supply Chain Lead) - Due Immediate
+   Reason: Observed steel rod 10mm below safety level on 31 Dec is consistent with supplier 4 delivery late starting on 25 Dec. (Confidence: Partly seen)
+2. Expedite delivery for SO-58 to Metro Distributors (Customer Logistics) - Due 10:00 AM
+   Reason: 7 units of Widget Model Y are 274 days overdue (was due 01 Apr).
+3. Expedite delivery for SO-62 to Prime Retail Group (Customer Logistics) - Due 10:00 AM
+   Reason: 13 units of Widget Model X are 273 days overdue (was due 02 Apr).
+4. Expedite delivery for SO-55 to Coastal Traders (Customer Logistics) - Due 10:00 AM
+   Reason: 20 units of Widget Model X are 272 days overdue (was due 03 Apr).
+5. Expedite delivery for SO-60 to Nova Retailers (Customer Logistics) - Due 10:00 AM
+   Reason: 15 units of Widget Model X are 271 days overdue (was due 04 Apr).
+
+SUPPLIER WATCH:
+• PO-8 (EastCoast Components): 369 units Steel Rod 10mm - 266 days late (expected 09 Apr)
+• PO-9 (Copper & Co): 172 units Copper Wire - 263 days late (expected 12 Apr)
+
+======================================================================
+FRAMING: SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.
+
+Simulated data. System knows data up to 2025-12-31 only.
+Dashboard: http://127.0.0.1:8000

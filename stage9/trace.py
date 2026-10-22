@@ -31,16 +31,16 @@ logger = logging.getLogger("stage9.trace")
 
 # Plain English labels for nodes
 NODE_LABELS = {
-    "supplier_1_po_delay_days": "Supplier 1 delivery late",
-    "supplier_2_po_delay_days": "Supplier 2 delivery late",
-    "supplier_3_po_delay_days": "Supplier 3 delivery late",
-    "supplier_4_po_delay_days": "Supplier 4 delivery late",
-    "supplier_5_po_delay_days": "Supplier 5 delivery late",
-    "supplier_1_receipt_fill_rate": "Supplier 1 short shipment",
-    "supplier_2_receipt_fill_rate": "Supplier 2 short shipment",
-    "supplier_3_receipt_fill_rate": "Supplier 3 short shipment",
-    "supplier_4_receipt_fill_rate": "Supplier 4 short shipment",
-    "supplier_5_receipt_fill_rate": "Supplier 5 short shipment",
+    "supplier_1_po_delay_days": "Sri Materials delivery late",
+    "supplier_2_po_delay_days": "Bharat Steel delivery late",
+    "supplier_3_po_delay_days": "Global Polymers delivery late",
+    "supplier_4_po_delay_days": "EastCoast delivery late",
+    "supplier_5_po_delay_days": "Copper & Co delivery late",
+    "supplier_1_receipt_fill_rate": "Sri Materials short shipment",
+    "supplier_2_receipt_fill_rate": "Bharat Steel short shipment",
+    "supplier_3_receipt_fill_rate": "Global Polymers short shipment",
+    "supplier_4_receipt_fill_rate": "EastCoast short shipment",
+    "supplier_5_receipt_fill_rate": "Copper & Co short shipment",
     "material_101_stock": "Steel Rod 10mm below safety level",
     "material_102_stock": "Plastic Granules below safety level",
     "material_103_stock": "Copper Wire below safety level",
@@ -108,6 +108,65 @@ DAG_PARENTS: Dict[str, List[str]] = {
         "product_202_fg_stock", "product_202_demand_units"
     ],
 }
+
+
+def get_active_dag_parents(as_of: date, db_session=None) -> Dict[str, List[str]]:
+    """
+    F7: Filters DAG_PARENTS so material nodes only include parents from suppliers
+    with at least one purchase order in history up to as_of (derived from data).
+    Edges from suppliers that never supplied a material are ignored.
+    """
+    active_pairs = set()
+    close_sess = False
+    if db_session is None:
+        try:
+            from app.database import SessionLocal
+            db_session = SessionLocal(source="live")
+            close_sess = True
+        except Exception:
+            pass
+
+    if db_session is not None:
+        try:
+            from app.models.purchasing import PurchaseOrder, PurchaseOrderLine
+            rows = (
+                db_session.query(PurchaseOrder.supplier_id, PurchaseOrderLine.material_id)
+                .join(PurchaseOrderLine, PurchaseOrderLine.po_id == PurchaseOrder.id)
+                .filter(PurchaseOrder.order_date <= as_of)
+                .distinct()
+                .all()
+            )
+            for s_id, m_id in rows:
+                active_pairs.add((s_id, m_id))
+        except Exception:
+            pass
+        finally:
+            if close_sess:
+                db_session.close()
+
+    # Fallback to known 2025 active links if DB unavailable
+    if not active_pairs:
+        active_pairs = {(4, 101), (3, 102), (5, 103)}
+
+    active_dag = {}
+    for child, parents in DAG_PARENTS.items():
+        if child.startswith("material_"):
+            try:
+                m_id = int(child.split("_")[1])
+                filtered_parents = []
+                for p in parents:
+                    if p.startswith("supplier_"):
+                        s_id = int(p.split("_")[1])
+                        if (s_id, m_id) in active_pairs:
+                            filtered_parents.append(p)
+                    else:
+                        filtered_parents.append(p)
+                active_dag[child] = filtered_parents
+            except Exception:
+                active_dag[child] = list(parents)
+        else:
+            active_dag[child] = list(parents)
+    return active_dag
 
 # Root exogenous candidate types
 ROOT_EXOGENOUS_TYPES = {
@@ -309,14 +368,15 @@ def compute_cause_trace(
                 }
 
     candidate_chains: List[Dict[str, Any]] = []
+    active_parents_map = get_active_dag_parents(as_of, db_session)
 
     # 2. Walk upstream from each symptom
     for sym in active_symptoms:
         sym_node = sym["node"]
 
-        # Breadth/depth walk upstream through DAG_PARENTS
+        # Breadth/depth walk upstream through active DAG parents (F7: Stage 9 active routing)
         def find_paths(current_node: str, current_date: date, path: List[Dict[str, Any]]) -> List[List[Dict[str, Any]]]:
-            parents = DAG_PARENTS.get(current_node, [])
+            parents = active_parents_map.get(current_node, [])
             if not parents:
                 return [path]
 

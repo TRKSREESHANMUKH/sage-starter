@@ -19,8 +19,8 @@ materials:
 # 2. Finished Goods Inventory Rules
 products:
   safety_stock:
-    201: 15.0   # Standard Motor (units)
-    202: 10.0   # Heavy Duty Motor (units)
+    201: 15.0   # Widget Model X (units)
+    202: 10.0   # Widget Model Y (units)
   reorder_point:
     201: 30.0
     202: 25.0

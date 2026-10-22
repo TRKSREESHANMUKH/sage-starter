@@ -361,16 +361,19 @@ def dispatch_email_v6(
 
     cfg = get_runtime_config()
     send_mode_cfg = cfg.get("send_mode", "dry_run")
-    is_live = force_live or (send_mode_cfg == "live" and os.getenv("SAGE_SEND_ENABLED", "false").lower() in ("true", "1", "yes"))
+    is_live = force_live or (send_mode_cfg == "live")
 
     # Generate Message-ID
     msg_id = f"<{uuid.uuid4()}@sage-operations.local>"
 
     host = os.getenv("SMTP_HOST", "smtp.gmail.com")
     port = int(os.getenv("SMTP_PORT", "587"))
-    user = os.getenv("SMTP_USER", "")
-    password = os.getenv("SMTP_PASSWORD", "")
-    from_addr = f'SAGE Daily Brief <{os.getenv("SMTP_FROM", user or "sage-alerts@internal.corp")}>'
+    user = os.getenv("SMTP_USER", "").strip()
+    password = os.getenv("SMTP_PASSWORD", "").strip()
+
+    # From header MUST equal the authenticated Gmail address to satisfy strict Gmail policy
+    from_email = user if user else os.getenv("SMTP_FROM", "sage-alerts@internal.corp").strip()
+    from_addr = f'SAGE Daily Brief <{from_email}>'
 
     # Assemble MIME
     msg = MIMEMultipart("mixed")
@@ -393,7 +396,7 @@ def dispatch_email_v6(
         msg.attach(pdf_attach)
 
     # Dry-Run Path
-    if not is_live or password == "dev_dummy_password":
+    if not is_live:
         log_entry = log_sent_event_v6(
             job="nightly_digest",
             as_of=as_of,
@@ -411,20 +414,41 @@ def dispatch_email_v6(
             "sent_at": log_entry["timestamp"]
         }
 
-    # Live Delivery Path
+    # Live Delivery Path — Must fail loudly on any credential or SMTP error!
     t0 = time.time()
+    if not user or not password or password == "dev_dummy_password":
+        conn_time_ms = round((time.time() - t0) * 1000.0, 2)
+        plain_err = "Live delivery failed: Gmail SMTP credentials are not configured or are using placeholder password. Please add your 16-character Gmail App Password to .env."
+        logger.error(plain_err)
+        log_entry = log_sent_event_v6(
+            job="nightly_digest",
+            as_of=as_of,
+            recipient=recipient,
+            status="FAILED_SMTP",
+            mode=mode,
+            subject=subject,
+            message_id=msg_id,
+            connection_time_ms=conn_time_ms,
+            error=plain_err
+        )
+        return {
+            "status": "FAILED_SMTP",
+            "error": plain_err,
+            "message_id": msg_id
+        }
+
     try:
         if port == 465:
-            server = smtplib.SMTP_SSL(host, port, timeout=10)
+            server = smtplib.SMTP_SSL(host, port, timeout=15)
+            server.ehlo()
         else:
-            server = smtplib.SMTP(host, port, timeout=10)
-            if port == 587 or os.getenv("SMTP_USE_TLS", "false").lower() == "true":
-                server.starttls()
+            server = smtplib.SMTP(host, port, timeout=15)
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
 
-        if user and password:
-            server.login(user, password)
-
-        smtp_res = server.sendmail(user or from_addr, [recipient], msg.as_string())
+        server.login(user, password)
+        server.sendmail(user, [recipient], msg.as_string())
         server.quit()
         conn_time_ms = round((time.time() - t0) * 1000.0, 2)
 
@@ -450,7 +474,16 @@ def dispatch_email_v6(
         }
     except Exception as exc:
         conn_time_ms = round((time.time() - t0) * 1000.0, 2)
-        logger.error("Live SMTP send error: %s", exc)
+        raw_err = str(exc)
+        logger.error("Live SMTP send error: %s", raw_err)
+
+        if "535" in raw_err or "BadCredentials" in raw_err or "Username and Password not accepted" in raw_err:
+            plain_err = "Gmail authentication failed. Please verify that SMTP_USER is your full Gmail address and SMTP_PASSWORD is your valid 16-character Gmail App Password."
+        elif "Connection unexpectedly closed" in raw_err:
+            plain_err = "SMTP connection closed unexpectedly by server. Please check your credentials and network connection."
+        else:
+            plain_err = f"SMTP delivery error: {raw_err}"
+
         log_entry = log_sent_event_v6(
             job="nightly_digest",
             as_of=as_of,
@@ -460,11 +493,11 @@ def dispatch_email_v6(
             subject=subject,
             message_id=msg_id,
             connection_time_ms=conn_time_ms,
-            error=str(exc)
+            error=plain_err
         )
         return {
             "status": "FAILED_SMTP",
-            "error": str(exc),
+            "error": plain_err,
             "message_id": msg_id
         }
 
@@ -526,8 +559,7 @@ def validate_and_ingest_pack_v6(pack_dir: Path, user: str = "operator") -> Dict[
 
         # Rebuild daily report for this newly ingested day
         try:
-            from stage9.daily_run import prepare_daily_run
-            prepare_daily_run(as_of=p_date)
+            ensure_report(as_of=p_date, user=user)
         except Exception as report_err:
             logger.warning("Could not automatically rebuild report for %s: %s", p_date, report_err)
 
@@ -630,20 +662,180 @@ def reset_demo_v6(user: str = "operator") -> Dict[str, Any]:
     # 6. Reset demo case state
     set_case_state({"is_case_mode": False, "active_case": None, "case_id": None, "date": None, "label": ""})
 
+    # 7. Ensure report for 2025-12-31 exists
+    try:
+        ensure_report(as_of=date(2025, 12, 31), user=user)
+    except Exception as rep_err:
+        logger.warning("Could not auto-generate report for 2025-12-31 on reset: %s", rep_err)
+
     elapsed = round(time.time() - t0, 3)
     audit_log("reset_demo", {"target_date": "2025-12-31", "elapsed_seconds": elapsed}, "SUCCESS", user=user)
     logger.info("Demo reset complete in %.3fs! Current Day is 2025-12-31.", elapsed)
     return {"status": "ok", "current_day": "2025-12-31", "elapsed_seconds": elapsed}
 
 
-def ensure_report(as_of: Optional[date] = None, user: str = "operator") -> Path:
-    """Ensures report.html, report.txt, and PDF are prepared under reports/<YYYY-MM-DD>/."""
+class ReportPaths(dict):
+    """Container for report paths supporting both dict access and property access."""
+    @property
+    def dir(self) -> Path:
+        return self["dir"]
+    @property
+    def html(self) -> Path:
+        return self["html"]
+    @property
+    def text(self) -> Path:
+        return self["text"]
+    @property
+    def json(self) -> Path:
+        return self["json"]
+    @property
+    def pdf(self) -> Path:
+        return self["pdf"]
+    @property
+    def metadata(self) -> Path:
+        return self["metadata"]
+    def __str__(self) -> str:
+        return str(self["dir"])
+    def __fspath__(self) -> str:
+        return str(self["dir"])
+
+
+def compute_db_input_hash(as_of: date) -> str:
+    """Computes a lightweight hash of the database state as of as_of to detect if report is stale."""
+    import sqlite3
+    db_path = ROOT_DIR / "live" / "sage_live.db"
+    if not db_path.exists():
+        return f"{as_of.isoformat()}:no_db"
+    try:
+        conn = sqlite3.connect(str(db_path))
+        c = conn.cursor()
+        h = hashlib.sha256()
+        h.update(as_of.isoformat().encode())
+        for tbl in ["customer_orders", "purchase_orders", "deliveries", "inventory_snapshots", "production_orders"]:
+            try:
+                c.execute(f"SELECT COUNT(*), MAX(rowid) FROM {tbl}")
+                row = c.fetchone()
+                h.update(f"{tbl}:{row[0]}:{row[1]}".encode())
+            except Exception:
+                pass
+        conn.close()
+        return h.hexdigest()[:16]
+    except Exception:
+        return f"{as_of.isoformat()}:err"
+
+
+def ensure_report(as_of: Optional[date] = None, user: str = "operator") -> ReportPaths:
+    """
+    Ensures report.html, report.txt, report.json, metadata.json, and strictly 1-page A4 PDF
+    are prepared under reports/<YYYY-MM-DD>/.
+    If reports/<date>/ is missing or stale (input hash changed), builds it automatically:
+    - snapshot, priorities, trace, narration fallback, HTML, text, PDF.
+    Returns ReportPaths with paths and metadata.
+    Fails loudly with plain-English error if generation fails.
+    """
     target_d = as_of or get_current_day()
     day_dir = REPORTS_DIR / target_d.isoformat()
+    html_file = day_dir / "report.html"
+    text_file = day_dir / "report.txt"
+    json_file = day_dir / "report.json"
     pdf_file = day_dir / f"SAGE_Daily_Brief_{target_d.isoformat()}.pdf"
-    if not (day_dir / "metadata.json").exists() or not (day_dir / "report.html").exists() or not pdf_file.exists():
-        prepare_daily_run_v6(as_of=target_d, user=user)
-    return day_dir
+    meta_file = day_dir / "metadata.json"
+
+    current_hash = compute_db_input_hash(target_d)
+
+    # Check if up-to-date report already exists
+    if html_file.exists() and text_file.exists() and json_file.exists() and pdf_file.exists() and meta_file.exists():
+        try:
+            with open(meta_file, "r", encoding="utf-8") as f:
+                meta = json.load(f)
+            if meta.get("input_hash") == current_hash and meta.get("pdf_pages", 0) > 0:
+                return ReportPaths({
+                    "dir": day_dir,
+                    "html": html_file,
+                    "text": text_file,
+                    "json": json_file,
+                    "pdf": pdf_file,
+                    "metadata": meta_file,
+                    "subject": meta.get("subject", f"SAGE Daily Brief | {target_d.isoformat()}"),
+                    "pdf_pages": meta.get("pdf_pages", 1),
+                    "as_of": target_d.isoformat()
+                })
+        except Exception:
+            pass
+
+    # Build report directly for target_d
+    try:
+        from stage9.snapshot import compute_daily_snapshot
+        from stage9.priorities import compute_priorities
+        from stage9.narrate import generate_executive_narrative
+        from stage9.render_email import render_nightly_digest, assert_one_page_pdf
+
+        logger.info("ensure_report: Building operational intelligence for %s...", target_d.isoformat())
+        snap = compute_daily_snapshot(target_d)
+        pri = compute_priorities(target_d, snapshot=snap)
+        narr = generate_executive_narrative(snap, pri)
+
+        subject, html_body, text_body, sparkline_png = render_nightly_digest(target_d, return_sparkline=True)
+        is_single, page_cnt, pdf_bytes = assert_one_page_pdf(html_body, sparkline_png=sparkline_png)
+
+        day_dir.mkdir(parents=True, exist_ok=True)
+        with open(html_file, "w", encoding="utf-8") as f:
+            f.write(html_body)
+        with open(text_file, "w", encoding="utf-8") as f:
+            f.write(text_body)
+        if pdf_bytes:
+            with open(pdf_file, "wb") as f:
+                f.write(pdf_bytes)
+
+        report_data = {
+            "as_of": target_d.isoformat(),
+            "subject": subject,
+            "kpis": snap.get("kpis", {}),
+            "priorities_count": len(pri.get("actionable_orders", [])),
+            "top_priority": pri.get("actionable_orders", [{}])[0] if pri.get("actionable_orders") else None,
+            "no_new_data": False
+        }
+        with open(json_file, "w", encoding="utf-8") as f:
+            json.dump(report_data, f, indent=2)
+
+        meta = {
+            "status": "PREPARED",
+            "as_of": target_d.isoformat(),
+            "prepared_at": datetime.now(timezone.utc).isoformat(),
+            "subject": subject,
+            "no_new_data": False,
+            "for_owner_only": False,
+            "pdf_pages": page_cnt or 1,
+            "pdf_path": str(pdf_file.relative_to(ROOT_DIR)),
+            "sparkline_bytes": len(sparkline_png) if sparkline_png else 0,
+            "input_hash": current_hash
+        }
+        with open(meta_file, "w", encoding="utf-8") as f:
+            json.dump(meta, f, indent=2)
+
+        audit_log("ensure_report", {"as_of": target_d.isoformat(), "pdf_pages": page_cnt}, "SUCCESS", user=user)
+        logger.info("ensure_report: Successfully generated report for %s at %s", target_d.isoformat(), day_dir)
+
+        return ReportPaths({
+            "dir": day_dir,
+            "html": html_file,
+            "text": text_file,
+            "json": json_file,
+            "pdf": pdf_file,
+            "metadata": meta_file,
+            "subject": subject,
+            "pdf_pages": page_cnt or 1,
+            "as_of": target_d.isoformat()
+        })
+    except Exception as exc:
+        logger.exception("ensure_report: Failed to build report for %s: %s", target_d.isoformat(), exc)
+        plain_date = target_d.strftime("%-d %b %Y")
+        short_reason = str(exc).split("\n")[0]
+        import re
+        short_reason = re.sub(r'/[^\s]+', '', short_reason).strip()
+        if not short_reason:
+            short_reason = "internal data processing error"
+        raise RuntimeError(f"The report for {plain_date} could not be built: {short_reason}")
 
 
 def get_demo_cases() -> List[Dict[str, Any]]:
@@ -768,27 +960,25 @@ def send_report_now_v6(
     Sends report immediately for current or specified day:
     - Enforces 10-second rate limit.
     - Refuses placeholders, .local, or non-allowlisted recipients.
-    - Ensures report is prepared.
+    - Ensures report is prepared via ensure_report (auto-rebuilding if missing or stale).
     - Audits every action.
     """
     target_d = as_of or get_current_day()
     rec = recipient or os.getenv("SAGE_DEMO_RECIPIENT", "sreeshanmukhtrk@gmail.com")
 
-    day_dir = REPORTS_DIR / target_d.isoformat()
-    if not (day_dir / "metadata.json").exists() or not (day_dir / "report.html").exists():
-        prepare_daily_run_v6(as_of=target_d, user=user)
+    # Ensure report is generated and ready
+    rep = ensure_report(as_of=target_d, user=user)
 
-    with open(day_dir / "report.html", "r", encoding="utf-8") as f:
+    with open(rep.html, "r", encoding="utf-8") as f:
         html_body = f.read()
-    with open(day_dir / "report.txt", "r", encoding="utf-8") as f:
+    with open(rep.text, "r", encoding="utf-8") as f:
         text_body = f.read()
 
-    pdf_file = day_dir / f"SAGE_Daily_Brief_{target_d.isoformat()}.pdf"
-    pdf_bytes = pdf_file.read_bytes() if pdf_file.exists() else None
+    pdf_bytes = rep.pdf.read_bytes() if rep.pdf.exists() else None
 
     from stage9.status import compute_daily_status_and_actions
     status_info = compute_daily_status_and_actions(target_d)
-    subject = status_info["subject"]
+    subject = status_info.get("subject") or rep.get("subject") or f"SAGE Daily Brief | {target_d.isoformat()}"
 
     res = dispatch_email_v6(
         subject=subject,

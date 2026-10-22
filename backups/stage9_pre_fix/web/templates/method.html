@@ -78,6 +78,31 @@
   </table>
 </div>
 
+<div class="card" style="border-top: 3px solid #2563eb;">
+  <div class="card-title">Operational Scope &amp; Monitored Entities</div>
+  <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
+    SAGE monitors an integrated manufacturing and fulfillment plant operating across 2025:
+  </p>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; font-size: 0.82rem;">
+    <div style="background: var(--bg); padding: 12px; border-radius: 6px;">
+      <strong style="color: var(--accent);">Customers (5)</strong>
+      <p style="color: var(--text-muted); margin-top: 4px;">Alpha Retailers, Apex Wholesale, Metro Distribution, Sterling Tech, Zenith Goods.</p>
+    </div>
+    <div style="background: var(--bg); padding: 12px; border-radius: 6px;">
+      <strong style="color: #16a34a;">Finished Products (2)</strong>
+      <p style="color: var(--text-muted); margin-top: 4px;">Product 201 (Widget Model X) and Product 202 (Widget Model Y).</p>
+    </div>
+    <div style="background: var(--bg); padding: 12px; border-radius: 6px;">
+      <strong style="color: #d97706;">Raw Materials (3)</strong>
+      <p style="color: var(--text-muted); margin-top: 4px;">Material 101 (Steel Rod 10mm), Material 102 (Plastic Granules), Material 103 (Copper Wire).</p>
+    </div>
+    <div style="background: var(--bg); padding: 12px; border-radius: 6px;">
+      <strong style="color: #9333ea;">Suppliers (5)</strong>
+      <p style="color: var(--text-muted); margin-top: 4px;">Active vendors: Global Polymers Co, EastCoast Components, Copper &amp; Co. Backup idle vendors: Sri Materials Pvt Ltd, Bharat Steel Works.</p>
+    </div>
+  </div>
+</div>
+
 <div class="card">
   <div class="card-title">Documented Structural Limitations &amp; Sampling Bounds</div>
   <ul style="padding-left: 20px; font-size: 0.85rem; color: var(--text-main); line-height: 1.7;">
@@ -89,6 +114,12 @@
     </li>
     <li>
       <strong>Zero Baseline Variance (INC_07):</strong> In synthetic training data, Supplier 5 never exhibited partial receipts (fill_rate = 1.0 constant). Linear SCM fits &beta; = 0.0, rendering upstream attribution mathematically impossible.
+    </li>
+    <li>
+      <strong>Sourcing Bug &amp; Two-Way Attribution Reporting:</strong> Two of the ten designed scenarios (INC_01 and INC_05) did not produce an effect because of a sourcing bug found in our own audit. The results are reported with and without them: AC@1 is 33.3% across all 10 scenarios versus 50.0% across the 4 valid real-cause scenarios; AC@3 is 66.7% versus 100.0%; MRR is 0.5620 versus 0.7431.
+    </li>
+    <li>
+      <strong>Expert Graph Sourcing vs Actual Routing:</strong> The expert graph allows supplier links that the simulated sourcing never used (e.g., theoretical links to backup vendors Sri Materials Pvt Ltd and Bharat Steel Works). Stage 9 cause-chain tracing dynamically restricts traversal to active supplier links verified in historical purchase orders.
     </li>
     <li>
       <strong>Lag-State Dominance (INC_09):</strong> Autoregressive inventory continuity (lag1) captures 60–80% of Shapley variance during prolonged stockouts, suppressing the exogenous supplier delay rank.

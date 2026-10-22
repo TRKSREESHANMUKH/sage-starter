@@ -1,0 +1,393 @@
+{
+  "run_at": "2026-10-21T06:48:40.872057Z",
+  "passed": 64,
+  "failed": 0,
+  "skipped": 0,
+  "total": 64,
+  "results": [
+    {
+      "id": "G1",
+      "name": "stage7 fitted model sha256 matches FROZEN.json",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G1",
+      "name": "stage7 attribution results sha256 matches FROZEN.json",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G1",
+      "name": "stage8 evidence packets sha256 matches FROZEN.json",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G1",
+      "name": "stage8 narration results sha256 matches FROZEN.json",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G1",
+      "name": "stage8 narrative evaluation sha256 matches FROZEN.json",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G2",
+      "name": "Seed 99 absent from all output files",
+      "status": "\u2705 PASS",
+      "note": "clean"
+    },
+    {
+      "id": "G3",
+      "name": "Test A has sha256 field",
+      "status": "\u2705 PASS",
+      "note": "file sha256=a929adcd85b2\u2026"
+    },
+    {
+      "id": "G3",
+      "name": "Test A has mtime field",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G3",
+      "name": "Test A has seed field",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G3",
+      "name": "Test A2 has sha256 field",
+      "status": "\u2705 PASS",
+      "note": "file sha256=fbdfce73bf0f\u2026"
+    },
+    {
+      "id": "G3",
+      "name": "Test A2 has mtime field",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G3",
+      "name": "Test A2 has seed field",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G4",
+      "name": "Figure 7.726 in report AND in analytics/scenario_causal_evaluation.json",
+      "status": "\u2705 PASS",
+      "note": "report=True, source=True"
+    },
+    {
+      "id": "G4",
+      "name": "Figure 0.880 in report AND in analytics/scenario_causal_evaluation.json",
+      "status": "\u2705 PASS",
+      "note": "report=True, source=True"
+    },
+    {
+      "id": "G4",
+      "name": "Figure 1.344 in report AND in analytics/scenario_causal_evaluation.json",
+      "status": "\u2705 PASS",
+      "note": "report=True, source=True"
+    },
+    {
+      "id": "G5",
+      "name": "2025-12-20 banner\u2194subject agree",
+      "status": "\u2705 PASS",
+      "note": "banner='Action needed' subject='SAGE Daily Brief | 20 Dec 2025 | 40 need action' actions=40"
+    },
+    {
+      "id": "G5",
+      "name": "2025-12-25 banner\u2194subject agree",
+      "status": "\u2705 PASS",
+      "note": "banner='Action needed' subject='SAGE Daily Brief | 25 Dec 2025 | 41 need action' actions=41"
+    },
+    {
+      "id": "G5",
+      "name": "2025-12-31 banner\u2194subject agree",
+      "status": "\u2705 PASS",
+      "note": "banner='Action needed' subject='SAGE Daily Brief | 31 Dec 2025 | 49 need action' actions=49"
+    },
+    {
+      "id": "G6",
+      "name": "No bare SUCCESS in sent_log",
+      "status": "\u2705 PASS",
+      "note": "clean"
+    },
+    {
+      "id": "G7",
+      "name": "Week summary has no banner/subject contradictions",
+      "status": "\u2705 PASS",
+      "note": "clean"
+    },
+    {
+      "id": "G8",
+      "name": "Schedule timezone is Asia/Kolkata",
+      "status": "\u2705 PASS",
+      "note": "tz=Asia/Kolkata"
+    },
+    {
+      "id": "G9",
+      "name": "current_day.json readable",
+      "status": "\u2705 PASS",
+      "note": "current_day=2025-12-31"
+    },
+    {
+      "id": "G9",
+      "name": "sage_live_baseline.db exists",
+      "status": "\u2705 PASS",
+      "note": "/Users/asl/Desktop/sage-starter/live/sage_live_baseline.db"
+    },
+    {
+      "id": "G10",
+      "name": "Exactly 10 packs in demo_data/packs",
+      "status": "\u2705 PASS",
+      "note": "found: ['2026-01-01', '2026-01-02', '2026-01-03', '2026-01-04', '2026-01-05', '2026-01-06', '2026-01-07', '2026-01-08', '2026-01-09', '2026-01-10']"
+    },
+    {
+      "id": "G10",
+      "name": "Pack 2026-01-01 has metadata.json",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G10",
+      "name": "Pack 2026-01-02 has metadata.json",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G10",
+      "name": "Pack 2026-01-03 has metadata.json",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G10",
+      "name": "Pack 2026-01-04 has metadata.json",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G10",
+      "name": "Pack 2026-01-05 has metadata.json",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G10",
+      "name": "Pack 2026-01-06 has metadata.json",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G10",
+      "name": "Pack 2026-01-07 has metadata.json",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G10",
+      "name": "Pack 2026-01-08 has metadata.json",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G10",
+      "name": "Pack 2026-01-09 has metadata.json",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G10",
+      "name": "Pack 2026-01-10 has metadata.json",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G11",
+      "name": "Far-future pack raises error or returns rejected",
+      "status": "\u2705 PASS",
+      "note": "Sequence violation: Pack date is 2099-01-01 but expected date is 2026-01-01 (cur"
+    },
+    {
+      "id": "G12",
+      "name": "Sequential feed rejection works",
+      "status": "\u2705 PASS",
+      "note": "Sequence violation: Pack date is 2026-01-02 but expected date is 2026-01-01 (cur"
+    },
+    {
+      "id": "G13",
+      "name": "Reset completes in < 30 seconds",
+      "status": "\u2705 PASS",
+      "note": "elapsed=0.47s"
+    },
+    {
+      "id": "G13",
+      "name": "Reset returns current_day=2025-12-31",
+      "status": "\u2705 PASS",
+      "note": "current_day=2025-12-31"
+    },
+    {
+      "id": "G13",
+      "name": "current_day.json is 2025-12-31 after reset",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G14",
+      "name": "Equivalence proof has 30 dates",
+      "status": "\u2705 PASS",
+      "note": "total=30"
+    },
+    {
+      "id": "G14",
+      "name": "All dates pass (byte-identical)",
+      "status": "\u2705 PASS",
+      "note": "passed=30/30"
+    },
+    {
+      "id": "G15",
+      "name": "Framing in HTML email body",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G15",
+      "name": "Framing in plain-text email body",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G16",
+      "name": "Word 'caused' absent before Past cases section",
+      "status": "\u2705 PASS",
+      "note": "found 0 occurrences"
+    },
+    {
+      "id": "G17",
+      "name": "PDF 'SAGE_Daily_Brief_2025-02-03.pdf' is 1 page",
+      "status": "\u2705 PASS",
+      "note": "pages=1"
+    },
+    {
+      "id": "G18",
+      "name": "controller/app.py exists",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G19",
+      "name": "Login endpoint defined (/ctrl/login GET)",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G20",
+      "name": "Session cookie set on successful login",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G21",
+      "name": "CSRF check present in POST handlers",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G21",
+      "name": "CSRF uses hmac.compare_digest (timing-safe)",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G19",
+      "name": "Brute-force lockout implemented",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G22",
+      "name": "Non-allowlisted recipient refused",
+      "status": "\u2705 PASS",
+      "note": "status=REFUSED_PLACEHOLDER"
+    },
+    {
+      "id": "G23",
+      "name": "Second send within 10s refused",
+      "status": "\u2705 PASS",
+      "note": "refused=True, msg=Rate limit: At most 1 send per 10 seconds. Please wait 9.9s."
+    },
+    {
+      "id": "G24",
+      "name": "stage9/trace.py exists",
+      "status": "\u2705 PASS",
+      "note": "29937 bytes"
+    },
+    {
+      "id": "G24",
+      "name": "trace.py has compute_cause_trace or compute_focus_list function",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G24",
+      "name": "trace.py references frozen DAG/causal model",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G25",
+      "name": "web/app.py does NOT access 'business_events_demo'",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G25",
+      "name": "web/app.py does NOT access 'ground_truth'",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G25",
+      "name": "web/app.py does NOT access 'evaluation_results'",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G26",
+      "name": "Insights has Year so far as default period",
+      "status": "\u2705 PASS",
+      "note": ""
+    },
+    {
+      "id": "G27",
+      "name": "Controller token derived from viewer (distinct)",
+      "status": "\u2705 PASS",
+      "note": "derived=5760f41b808d..."
+    },
+    {
+      "id": "G28",
+      "name": "After reset, queue has 10 packs",
+      "status": "\u2705 PASS",
+      "note": "found=10: ['2026-01-01', '2026-01-02', '2026-01-03']..."
+    },
+    {
+      "id": "G29",
+      "name": "All sent_log entries have valid status codes",
+      "status": "\u2705 PASS",
+      "note": "clean"
+    },
+    {
+      "id": "G30",
+      "name": "REALWORLD_REPORT.md is free of 'Seed 99'",
+      "status": "\u2705 PASS",
+      "note": ""
+    }
+  ]
+}

@@ -145,6 +145,11 @@
   <!-- FRAMING BAR -->
   <div class="framing-bar">{{ framing }}</div>
 
+  <!-- PERMANENT DRY-RUN RED BANNER -->
+  <div id="dryrun-alert-banner" style="{% if send_mode == 'live' %}display:none;{% endif %} background:#fee2e2; border:1px solid #ef4444; color:#b91c1c; font-weight:700; padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:0.92rem; display:flex; align-items:center; gap:8px;">
+    ⚠️ DRY-RUN: emails are NOT being delivered
+  </div>
+
   <div class="grid">
     <!-- ─── STATUS CARD ─── -->
     <div class="card">
@@ -154,47 +159,20 @@
         <span class="stat-label">current day</span>
       </div>
       <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap">
+        {% if case_state and case_state.is_case_mode %}
+        <span class="pill pill-blue">🎯 Case {{ case_state.active_case }} / {{ case_state.total_cases }}</span>
+        {% endif %}
         {% if send_mode == "live" %}
-        <span class="pill pill-green">🟢 Live Send</span>
+        <span class="pill pill-green" id="status-mode-pill">🟢 Live Send</span>
         {% else %}
-        <span class="pill pill-amber">🟡 Dry Run</span>
+        <span class="pill pill-amber" id="status-mode-pill">🟡 Dry Run</span>
         {% endif %}
         {% if scheduler_paused %}
         <span class="pill pill-red">⏸ Scheduler Paused</span>
         {% else %}
         <span class="pill pill-green">▶ Scheduler Active</span>
         {% endif %}
-        <span class="pill pill-blue">📦 {{ queue_remaining }} packs in queue</span>
       </div>
-    </div>
-
-    <!-- ─── FEED NEXT DAY ─── -->
-    <div class="card">
-      <div class="card-title">Feed Next Day</div>
-      <p style="font-size:0.88rem; color:var(--muted); margin-bottom:12px">
-        Ingest the next sealed day pack from the queue. Advances current day by exactly one day.
-        {% if queue_remaining == 0 %}All 10 demo days have been fed.{% endif %}
-      </p>
-      {% if queue_days %}
-      <div style="font-size:0.82rem; color:var(--muted); margin-bottom:10px">
-        Next: <strong>{{ queue_days[0] }}</strong>
-        {% if queue_remaining > 1 %}&nbsp;+{{ queue_remaining - 1 }} more{% endif %}
-      </div>
-      {% endif %}
-      <div class="progress-bar-wrap" id="feed-progress-wrap" style="display:none">
-        <div class="progress-bar" id="feed-progress"></div>
-      </div>
-      <div id="feed-status" style="font-size:0.8rem; color:var(--muted); margin-top:6px; display:none"></div>
-      <form id="feed-form" onsubmit="feedNextDay(event)">
-        <input type="hidden" name="csrf_token" value="{{ csrf }}">
-        <div class="btn-row">
-          <button class="btn btn-primary" type="submit" id="feed-btn"
-            {% if queue_remaining == 0 %}disabled{% endif %}>
-            ▶ Feed Next Day
-          </button>
-          <button class="btn btn-ghost" type="button" onclick="resetDemo()">⟳ Reset Demo</button>
-        </div>
-      </form>
     </div>
 
     <!-- ─── SEND REPORT ─── -->
@@ -209,10 +187,60 @@
         <option value="{{ r }}">{{ r }}</option>
         {% endfor %}
       </select>
-      <div class="btn-row" style="margin-top:12px">
-        <button class="btn btn-success" onclick="openSendModal()">📤 Send Now</button>
+      <div class="btn-row" style="margin-top:12px; gap:8px; flex-wrap:wrap">
+        <button class="btn btn-success" id="main-send-btn" onclick="openSendModal()">
+          {% if send_mode == 'live' %}📤 Send Report Now{% else %}Dry run (nothing will be sent){% endif %}
+        </button>
+        <button class="btn btn-primary" onclick="openPreviewModal()">👁 Preview</button>
         <button class="btn btn-ghost" onclick="prepareOnly()">🔧 Prepare Only</button>
       </div>
+    </div>
+
+    <!-- ─── DEMO CASES (STAGE 9 FINAL 2) ─── -->
+    <div class="card full-width">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px">
+        <div>
+          <div class="card-title" style="margin-bottom:4px">Demo Cases — 2025 Incident Scenarios</div>
+          <div style="font-size:0.85rem; color:var(--muted)">
+            Select any real 2025 scenario to jump the live database, ingest the day pack, and view the briefing.
+          </div>
+        </div>
+        <div class="btn-row" style="margin-top:0">
+          <button class="btn btn-primary" type="button" onclick="runNextCase()" id="next-case-btn">▶ Next Case</button>
+          <button class="btn btn-ghost" type="button" onclick="loadYearReview()" id="year-review-btn">📊 Year Review (31 Dec)</button>
+          <button class="btn btn-ghost" type="button" onclick="resetDemo()">⟳ Reset Demo</button>
+        </div>
+      </div>
+
+      {% if case_state and case_state.is_case_mode %}
+      <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:10px 14px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px">
+        <div>
+          <span class="pill pill-blue" style="font-size:0.8rem; font-weight:700">Active Case</span>
+          <strong style="margin-left:8px; font-size:0.9rem">{{ case_state.label }}</strong>
+        </div>
+        <a href="http://127.0.0.1:8000/?token=sage_dev_token_2025" target="_blank" class="btn btn-ghost" style="padding:4px 10px; font-size:0.8rem">Open in Viewer ↗</a>
+      </div>
+      {% endif %}
+
+      <div class="cases-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap:10px;">
+        {% for c in demo_cases %}
+        {% set is_active = (case_state and case_state.active_case == loop.index) %}
+        <div class="case-card" style="border: 1px solid {% if is_active %}#2563eb; background:#f0f7ff{% else %}var(--border); background:var(--surface){% endif %}; border-radius:8px; padding:12px; display:flex; flex-direction:column; justify-content:space-between; gap:8px">
+          <div>
+            <div style="font-size:0.72rem; font-weight:700; color:{% if is_active %}#2563eb{% else %}var(--muted){% endif %}">CASE {{ loop.index }}</div>
+            <div style="font-size:0.92rem; font-weight:700; margin-top:2px">{{ c.date }}</div>
+            <div style="font-size:0.78rem; color:var(--muted)">{{ c.label }}</div>
+          </div>
+          <button class="btn {% if is_active %}btn-primary{% else %}btn-ghost{% endif %}" style="width:100%; justify-content:center; padding:6px 10px; font-size:0.8rem" onclick="runCase({{ loop.index }})">
+            {% if is_active %}✓ Active{% else %}Run Case →{% endif %}
+          </button>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="progress-bar-wrap" id="case-progress-wrap" style="display:none; margin-top:14px">
+        <div class="progress-bar" id="case-progress"></div>
+      </div>
+      <div id="case-status" style="font-size:0.82rem; color:var(--muted); margin-top:6px; display:none"></div>
     </div>
 
     <!-- ─── SEND MODE ─── -->
@@ -226,7 +254,7 @@
       <div class="toggle-row">
         <span class="toggle-label">Dry Run</span>
         <label class="toggle">
-          <input type="checkbox" id="mode-toggle" onchange="setSendMode(this.checked)"
+          <input type="checkbox" id="mode-toggle" onchange="handleModeToggleChange(this)"
             {% if send_mode == 'live' %}checked{% endif %}>
           <div class="toggle-slider"></div>
         </label>
@@ -312,16 +340,66 @@
 
 <!-- SEND MODAL -->
 <div class="modal-overlay" id="send-modal">
-  <div class="modal">
-    <div class="modal-title">Confirm — Send Report Now</div>
+  <div class="modal" style="max-width:480px">
+    <div class="modal-title" id="send-modal-title">Confirm Dispatch</div>
+    <div id="modal-dryrun-warning" style="{% if send_mode == 'live' %}display:none;{% endif %} background:#fffbeb; border:1px solid #fde68a; color:#92400e; padding:10px 14px; border-radius:6px; font-size:0.85rem; margin-bottom:14px; line-height:1.4">
+      ⚠️ <strong>Dry-run mode:</strong> no email will be sent. Switch to Live to deliver.<br>
+      <button class="btn btn-ghost" type="button" style="margin-top:8px; padding:4px 10px; font-size:0.78rem; border-color:#d97706; color:#b45309" onclick="closeSendModal(); promptSwitchLive();">Switch to Live →</button>
+    </div>
+    <div id="modal-live-info" style="{% if send_mode != 'live' %}display:none;{% endif %} background:#ecfdf5; border:1px solid #a7f3d0; color:#065f46; padding:10px 14px; border-radius:6px; font-size:0.85rem; margin-bottom:14px; line-height:1.4">
+      ⚡ <strong>Live mode active:</strong> Email will be delivered via Gmail SMTP.
+    </div>
     <p style="font-size:0.88rem; color:var(--muted); margin-bottom:14px">
-      Send today's brief to <strong id="modal-recipient-display">—</strong><br>
+      Recipient: <strong id="modal-recipient-display">—</strong><br>
       Mode: <strong id="modal-mode-display">{{ send_mode }}</strong>
     </p>
     <div id="send-result" style="display:none; margin-bottom:12px"></div>
     <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeSendModal()">Cancel</button>
-      <button class="btn btn-success" id="confirm-send-btn" onclick="confirmSend()">📤 Confirm Send</button>
+      <button class="btn btn-ghost" type="button" onclick="closeSendModal()">Cancel</button>
+      <button class="btn btn-success" type="button" id="confirm-send-btn" onclick="confirmSend()">
+        {% if send_mode == 'live' %}📤 Send Report Now{% else %}Dry run (nothing will be sent){% endif %}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- SWITCH TO LIVE MODAL -->
+<div class="modal-overlay" id="switch-live-modal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-title" style="color:#b91c1c">⚠️ Switch to LIVE Email Delivery</div>
+    <p style="font-size:0.86rem; color:var(--text); margin-bottom:12px; line-height:1.5">
+      In <strong>Live mode</strong>, the daily brief will be delivered via real Gmail SMTP.
+    </p>
+    <div style="background:#f8fafc; border:1px solid var(--border); border-radius:6px; padding:10px 12px; margin-bottom:14px">
+      <div style="font-size:0.75rem; font-weight:700; color:var(--muted); text-transform:uppercase; margin-bottom:6px">Configured Recipients</div>
+      {% for r in allowlist %}
+      <div style="font-size:0.82rem; font-family:monospace; color:#1e293b">• {{ r }}</div>
+      {% endfor %}
+    </div>
+    <label style="font-size:0.82rem; font-weight:600">Type <span style="color:#dc2626; font-family:monospace">LIVE</span> to confirm:</label>
+    <input type="text" id="live-confirm-input" placeholder="LIVE" style="margin-bottom:14px" oninput="checkLiveInput(this.value)">
+    <div class="modal-footer">
+      <button class="btn btn-ghost" type="button" onclick="cancelSwitchLive()">Cancel</button>
+      <button class="btn btn-danger" type="button" id="confirm-live-btn" disabled onclick="executeSwitchLive()">Switch to LIVE</button>
+    </div>
+  </div>
+</div>
+
+<!-- PREVIEW MODAL -->
+<div class="modal-overlay" id="preview-modal">
+  <div class="modal" style="max-width:850px; width:95%; max-height:90vh; display:flex; flex-direction:column">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
+      <div>
+        <div class="modal-title" style="margin-bottom:2px">Email & PDF Report Preview</div>
+        <div id="preview-meta-info" style="font-size:0.82rem; color:var(--muted)">Loading preview...</div>
+      </div>
+      <button class="btn btn-ghost" type="button" onclick="closePreviewModal()" style="padding:4px 8px; font-size:0.85rem">✕ Close</button>
+    </div>
+    <div id="preview-content-area" style="flex:1; overflow-y:auto; border:1px solid var(--border); border-radius:6px; background:#fff; padding:16px; min-height:400px">
+      <div style="text-align:center; padding:40px; color:var(--muted)">Rendering report...</div>
+    </div>
+    <div class="modal-footer" style="margin-top:12px">
+      <button class="btn btn-ghost" type="button" onclick="closePreviewModal()">Close</button>
     </div>
   </div>
 </div>
@@ -330,6 +408,7 @@
 
 <script>
 const CSRF = {{ csrf | tojson }};
+let currentSendMode = {{ send_mode | tojson }};
 
 function showToast(msg, type="") {
   const t = document.getElementById("toast");
@@ -345,31 +424,168 @@ async function postForm(url, data) {
   return r.json();
 }
 
-async function feedNextDay(e) {
-  e.preventDefault();
-  const btn = document.getElementById("feed-btn");
-  const wrap = document.getElementById("feed-progress-wrap");
-  const bar = document.getElementById("feed-progress");
-  const status = document.getElementById("feed-status");
-  btn.disabled = true;
+function updateSendModeUI(mode) {
+  currentSendMode = mode;
+  const isLive = (mode === "live");
+  
+  // Top Banner
+  const banner = document.getElementById("dryrun-alert-banner");
+  if (banner) banner.style.display = isLive ? "none" : "flex";
+
+  // Toggle Checkbox
+  const toggle = document.getElementById("mode-toggle");
+  if (toggle) toggle.checked = isLive;
+
+  // Status Pill
+  const pill = document.getElementById("status-mode-pill");
+  if (pill) {
+    pill.className = isLive ? "pill pill-green" : "pill pill-amber";
+    pill.textContent = isLive ? "🟢 Live Send" : "🟡 Dry Run";
+  }
+
+  // Main Send Button
+  const mainBtn = document.getElementById("main-send-btn");
+  if (mainBtn) mainBtn.textContent = isLive ? "📤 Send Report Now" : "Dry run (nothing will be sent)";
+
+  // Send Modal Elements
+  const dryWarn = document.getElementById("modal-dryrun-warning");
+  if (dryWarn) dryWarn.style.display = isLive ? "none" : "block";
+  const liveInfo = document.getElementById("modal-live-info");
+  if (liveInfo) liveInfo.style.display = isLive ? "block" : "none";
+  const modeDisp = document.getElementById("modal-mode-display");
+  if (modeDisp) modeDisp.textContent = mode;
+  const confirmBtn = document.getElementById("confirm-send-btn");
+  if (confirmBtn) confirmBtn.textContent = isLive ? "📤 Confirm Live Send" : "Dry run (nothing will be sent)";
+}
+
+function handleModeToggleChange(checkbox) {
+  if (checkbox.checked) {
+    checkbox.checked = false;
+    promptSwitchLive();
+  } else {
+    setSendModeDirect("dry_run");
+  }
+}
+
+function promptSwitchLive() {
+  const input = document.getElementById("live-confirm-input");
+  if (input) input.value = "";
+  const btn = document.getElementById("confirm-live-btn");
+  if (btn) btn.disabled = true;
+  document.getElementById("switch-live-modal").classList.add("open");
+}
+
+function cancelSwitchLive() {
+  document.getElementById("switch-live-modal").classList.remove("open");
+  const toggle = document.getElementById("mode-toggle");
+  if (toggle) toggle.checked = (currentSendMode === "live");
+}
+
+function checkLiveInput(val) {
+  const btn = document.getElementById("confirm-live-btn");
+  btn.disabled = (val.trim() !== "LIVE");
+}
+
+async function executeSwitchLive() {
+  document.getElementById("switch-live-modal").classList.remove("open");
+  await setSendModeDirect("live");
+}
+
+async function setSendModeDirect(mode) {
+  const res = await postForm("/ctrl/api/set-send-mode", { mode });
+  if (res.status === "ok") {
+    updateSendModeUI(mode);
+    showToast("Send mode → " + mode, "success");
+  } else {
+    showToast("Error: " + res.detail, "error");
+    updateSendModeUI(currentSendMode);
+  }
+}
+
+async function openPreviewModal() {
+  const modal = document.getElementById("preview-modal");
+  const infoEl = document.getElementById("preview-meta-info");
+  const contentEl = document.getElementById("preview-content-area");
+  modal.classList.add("open");
+  infoEl.textContent = "Generating / verifying report...";
+  contentEl.innerHTML = '<div style="text-align:center; padding:40px; color:var(--muted)">Building snapshot, priorities, narration, and PDF...</div>';
+
+  try {
+    const resp = await fetch("/ctrl/api/preview");
+    const data = await resp.json();
+    if (data.status === "ok") {
+      infoEl.innerHTML = `<strong>Subject:</strong> ${data.subject} &nbsp;|&nbsp; <strong>PDF:</strong> <span class="pill pill-green">${data.pdf_pages} page (A4)</span> &nbsp;|&nbsp; <strong>Date:</strong> ${data.as_of}`;
+      contentEl.innerHTML = data.html;
+    } else {
+      infoEl.innerHTML = `<span class="pill pill-red">Preview Error</span>`;
+      contentEl.innerHTML = `<div style="color:#b91c1c; padding:20px">${data.detail}</div>`;
+    }
+  } catch(err) {
+    infoEl.innerHTML = `<span class="pill pill-red">Network Error</span>`;
+    contentEl.innerHTML = `<div style="color:#b91c1c; padding:20px">Failed to load preview: ${err.message}</div>`;
+  }
+}
+
+function closePreviewModal() {
+  document.getElementById("preview-modal").classList.remove("open");
+}
+
+async function runCase(k) {
+  const wrap = document.getElementById("case-progress-wrap");
+  const bar = document.getElementById("case-progress");
+  const status = document.getElementById("case-status");
   wrap.style.display = "block";
   status.style.display = "block";
-  status.textContent = "Validating pack…";
-  bar.style.width = "30%";
+  status.textContent = `Switching to Case ${k} (re-initialising database & ingesting pack)…`;
+  bar.style.width = "40%";
   try {
-    const res = await postForm("/ctrl/api/feed-next-day", {});
+    const res = await postForm("/ctrl/api/run-case", { case_num: k });
     bar.style.width = "100%";
     if (res.status === "ok") {
-      status.textContent = "✓ Pack fed. " + JSON.stringify(res.result);
-      showToast("Day fed successfully!", "success");
-      setTimeout(() => location.reload(), 1200);
+      status.textContent = `✓ Switched to Case ${k} (${res.case.date})`;
+      showToast(`Case ${k} active!`, "success");
+      setTimeout(() => location.reload(), 1000);
     } else {
-      status.textContent = "✗ " + (res.detail || "Unknown error");
-      showToast("Feed failed: " + res.detail, "error");
-      btn.disabled = false;
+      status.textContent = "✗ " + (res.detail || "Error");
+      showToast("Case failed: " + res.detail, "error");
     }
   } catch(err) {
     status.textContent = "✗ Network error";
+    showToast("Network error", "error");
+  }
+}
+
+async function runNextCase() {
+  const btn = document.getElementById("next-case-btn");
+  btn.disabled = true;
+  try {
+    const res = await postForm("/ctrl/api/next-case", {});
+    if (res.status === "ok") {
+      showToast(`Advanced to Case ${res.case.active_case}!`, "success");
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      showToast("Next case failed: " + res.detail, "error");
+      btn.disabled = false;
+    }
+  } catch(err) {
+    showToast("Network error", "error");
+    btn.disabled = false;
+  }
+}
+
+async function loadYearReview() {
+  const btn = document.getElementById("year-review-btn");
+  btn.disabled = true;
+  try {
+    const res = await postForm("/ctrl/api/year-review", {});
+    if (res.status === "ok") {
+      showToast("Loaded full-year review (31 Dec 2025)!", "success");
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      showToast("Year review failed: " + res.detail, "error");
+      btn.disabled = false;
+    }
+  } catch(err) {
     showToast("Network error", "error");
     btn.disabled = false;
   }
@@ -396,9 +612,11 @@ function openSendModal() {
   document.getElementById("send-modal").classList.add("open");
   document.getElementById("send-result").style.display = "none";
 }
+
 function closeSendModal() {
   document.getElementById("send-modal").classList.remove("open");
 }
+
 async function confirmSend() {
   const rec = document.getElementById("send-recipient").value;
   const resultEl = document.getElementById("send-result");
@@ -406,21 +624,32 @@ async function confirmSend() {
   btn.disabled = true;
   btn.textContent = "Sending…";
   try {
-    const res = await postForm("/ctrl/api/send-now", { recipient: rec, force_live: "false" });
+    const isLive = (currentSendMode === "live");
+    const res = await postForm("/ctrl/api/send-now", { recipient: rec, force_live: isLive ? "true" : "false" });
     resultEl.style.display = "block";
     if (res.status === "ok") {
       const st = res.result?.status || "ok";
-      resultEl.innerHTML = `<span class="pill pill-green">✓ ${st}</span> ${res.result?.message_id ? "Message-ID: " + res.result.message_id : ""}`;
-      showToast("Sent! Status: " + st, "success");
+      if (st === "SUCCESS_DRY_RUN") {
+        resultEl.innerHTML = `<span class="pill pill-amber">✓ Dry run complete</span> Nothing was sent.`;
+        showToast("Dry run complete. Nothing was sent.", "success");
+      } else if (st === "SUCCESS_LIVE") {
+        const sentTime = res.result?.sent_at || new Date().toLocaleTimeString();
+        resultEl.innerHTML = `<span class="pill pill-green">✓ Sent to ${rec}</span> at ${sentTime}`;
+        showToast(`Sent to ${rec} at ${sentTime}`, "success");
+      } else {
+        resultEl.innerHTML = `<span class="pill pill-green">✓ ${st}</span>`;
+        showToast("Complete: " + st, "success");
+      }
     } else {
       resultEl.innerHTML = `<span class="pill pill-red">✗ ${res.detail}</span>`;
       showToast("Send failed: " + res.detail, "error");
     }
   } catch(err) {
     resultEl.innerHTML = `<span class="pill pill-red">Network error</span>`;
+    showToast("Network error", "error");
   }
   btn.disabled = false;
-  btn.textContent = "📤 Confirm Send";
+  btn.textContent = (currentSendMode === "live") ? "📤 Confirm Live Send" : "Dry run (nothing will be sent)";
 }
 
 async function prepareOnly() {
@@ -430,13 +659,6 @@ async function prepareOnly() {
   } else {
     showToast("Prepare failed: " + res.detail, "error");
   }
-}
-
-async function setSendMode(live) {
-  const mode = live ? "live" : "dry_run";
-  const res = await postForm("/ctrl/api/set-send-mode", { mode });
-  if (res.status === "ok") showToast("Send mode → " + mode, "success");
-  else showToast("Error: " + res.detail, "error");
 }
 
 async function toggleScheduler(active) {

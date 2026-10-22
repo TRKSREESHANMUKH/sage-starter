@@ -163,7 +163,14 @@ def prepare_daily_run(as_of: Optional[date] = None, force_pack: Optional[Path] =
     4. Sends nothing!
     """
     no_new_data = False
-    pack_to_ingest = force_pack or get_next_queue_pack()
+    if force_pack:
+        pack_to_ingest = force_pack
+    elif as_of is not None and as_of <= get_current_day():
+        pack_to_ingest = None
+        target_as_of = as_of
+        no_new_data = False
+    else:
+        pack_to_ingest = get_next_queue_pack()
 
     if pack_to_ingest:
         logger.info("Ingesting operational pack: %s", pack_to_ingest)
@@ -278,13 +285,17 @@ def send_prepared_report(
     owner_email = os.getenv("SAGE_OWNER_EMAIL", "thotaramakrishnasreeshanmukh@gmail.com").strip()
     demo_email = os.getenv("SAGE_DEMO_RECIPIENT", "sreeshanmukhtrk@gmail.com").strip()
 
-    # Fail loudly if prepare was not completed
-    if not meta_file.exists():
-        err_msg = f"Report prepare missing for {target_as_of.isoformat()}"
-        logger.error(err_msg)
-        if mode == "scheduled":
-            _dispatch_alert_to_owner(owner_email, target_as_of, f"Report failed: {err_msg}")
-        return False
+    # Ensure report files exist (auto-build if missing)
+    if not meta_file.exists() or not html_file.exists() or not pdf_file.exists():
+        try:
+            from stage9.ops import ensure_report
+            ensure_report(as_of=target_as_of)
+        except Exception as rep_err:
+            err_msg = f"Report prepare missing and could not be built for {target_as_of.isoformat()}: {rep_err}"
+            logger.error(err_msg)
+            if mode == "scheduled":
+                _dispatch_alert_to_owner(owner_email, target_as_of, f"Report failed: {err_msg}")
+            return False
 
     with open(meta_file, "r", encoding="utf-8") as f:
         meta = json.load(f)

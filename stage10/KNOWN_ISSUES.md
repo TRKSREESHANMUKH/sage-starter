@@ -58,3 +58,24 @@ To avoid breaking the frozen research foundation (which would invalidate all dow
 
 * **Description**: In `simulator/incidents.yaml`, INC_08 is defined as delay absorbed by safety stock on Supplier 5 for Material 103. In the database `business_events` table (Event #1), it was logged with `entity_type: supplier, entity_id: 4`.
 * **Resolution**: Documented as a frozen metadata discrepancy. Handled transparently by tracing actual purchase order lines.
+
+---
+
+### Issue 4: Customer Backlog Reconciled Across Sources (Part R1 & R2)
+
+* **Description**: An apparent contradiction arose between the live database holding 48 overdue customer orders (652 units) at year-end, while the baseline panel (`daily_panel.parquet`) showed 0 backlog units throughout the year.
+* **Resolution**:
+  1. `daily_panel.parquet` (sha256: `ba6f33c0...`) is the frozen *null baseline* run (zero incidents injected), which appropriately holds 0 due backlog.
+  2. `daily_panel_ext.parquet` (sha256: `2de6861f...`) represents the *scenario incident run*, which records exactly 652 units of due backlog on 2025-12-31 (Product 201: 475u, Product 202: 177u), matching the database and `snapshot.py` to the exact unit.
+  3. Total customer orders requested $\le$ 2025-12-31: 221 orders. 173 were shipped on time, 0 shipped late, 2 partially shipped and overdue, and 46 unshipped and overdue (total 48 overdue orders).
+  4. Across the entire simulation, 57 orders experienced backorders (48 requested in 2025 + 9 requested in 2026), matching Stage 4 simulator statistics (`orders_ever_backordered = 57`) exactly.
+
+---
+
+### Issue 5: EastCoast Components PO #18 (Material 101) Stuck Order (Part R3)
+
+* **Description**: PO #18 (placed 2025-08-05, expected 2025-08-14, 407 units of Steel Rod 10mm) received zero goods receipts through 2025-12-31 (139 days overdue).
+* **Investigation & Cause**:
+  1. Ground-truth incident INC_09 (`severe_supplier_delay` on Supplier 4 from 2025-08-05 to 2026-01-18) delayed delivery by 166 days.
+  2. The simulation MRP logic calculated `inventory_position = on_hand + on_order`. Because PO #18 remained open with 407 units on order, the inventory position remained above the reorder point, so no additional POs were generated.
+* **Classification**: PO #18 is a real stuck order produced by a frozen ground-truth stress incident, not an artifact or data error. All screens display it accurately as `139 days overdue (was due 14 Aug 2025)`.
