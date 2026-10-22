@@ -14,7 +14,7 @@
       "days_of_cover": 0.7,
       "material_id": 101,
       "name": "Steel Rod 10mm",
-      "open_pos_count": 0,
+      "open_pos_count": 1,
       "overdue_pos": [],
       "reorder_point": 150.0,
       "safety_stock": 50.0,
@@ -36,11 +36,11 @@
       "days_of_cover": 7.1,
       "material_id": 103,
       "name": "Copper Wire",
-      "open_pos_count": 0,
+      "open_pos_count": 1,
       "overdue_pos": [],
       "reorder_point": 100.0,
       "safety_stock": 30.0,
-      "severity": "WARNING",
+      "severity": "NORMAL",
       "stock": 53.0
     }
   },
