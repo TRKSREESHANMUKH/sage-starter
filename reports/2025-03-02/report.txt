@@ -1,5 +1,3 @@
-NOTICE: No new ERP data received today.
-
 SAGE DAILY BRIEF | 2 Mar 2025
 Status: ACTION NEEDED (2 items need action)
 ======================================================================
@@ -14,13 +12,13 @@ TODAY'S NUMBERS IN CONTEXT:
 • Materials Low  : 1 material low, same as yesterday (7d avg: 1.0)
 
 PAST ANALYSED CASES: WHAT CAUSED WHAT:
-• Chain: Supplier 4 delivery late → Steel Rod 10mm below safety level
-  Observed steel rod 10mm below safety level on 02 Mar is consistent with supplier 4 delivery late starting on 02 Mar.
-  Confidence: Partly seen | Model check: Model inconclusive (Computed just now)
+• Chain: EastCoast delivery late → Steel Rod 10mm below safety level
+  Observed steel rod 10mm below safety level on 02 Mar is consistent with eastcoast delivery late starting on 02 Mar.
+  Confidence: Partly seen | Model check: Model check not run for this day (Not scheduled)
 
 FOCUS TOMORROW (TOP 5 PRIORITIES):
-1. Fix at the root: Supplier 4 delivery late (Supply Chain Lead) - Due Immediate
-   Reason: Observed steel rod 10mm below safety level on 02 Mar is consistent with supplier 4 delivery late starting on 02 Mar. (Confidence: Partly seen)
+1. Fix at the root: EastCoast delivery late (Supply Chain Lead) - Due Immediate
+   Reason: Observed steel rod 10mm below safety level on 02 Mar is consistent with eastcoast delivery late starting on 02 Mar. (Confidence: Partly seen)
 2. Replenish critical material: Steel Rod 10mm (Procurement Specialist) - Due 12:00 PM
    Reason: Steel Rod 10mm inventory is 30 kg, at or below safety threshold (50 kg).
 3. Escalate overdue PO-4 for Steel Rod 10mm (Supplier Relations) - Due 11:30 AM

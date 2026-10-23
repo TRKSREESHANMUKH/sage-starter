@@ -5,9 +5,14 @@ stage9/capture_screenshots.py — Captures all required UI screenshots for Final
 from __future__ import annotations
 
 import os
+import sys
 from pathlib import Path
-from playwright.sync_api import sync_playwright
 
+ROOT_DIR = Path(__file__).resolve().parent.parent
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
+from playwright.sync_api import sync_playwright
 from stage9.ops import jump_to_case
 
 ARTIFACT_DIR = Path("/Users/asl/.gemini/antigravity/brain/54922590-fb4c-4090-afba-eccf52787f8d")
@@ -22,7 +27,7 @@ def capture_all():
         print("Capturing Case 7 (Crisis peak)...")
         jump_to_case(7, user="screenshot_tool")
         page = browser.new_page(viewport={"width": 1280, "height": 1100})
-        page.goto("http://127.0.0.1:8000/?token=sage_dev_token_2025", wait_until="networkidle")
+        page.goto("http://127.0.0.1:8000/?token=sage_dev_token_2025", wait_until="domcontentloaded")
         # Open click to analyze
         details = page.locator("details.analyze-expander").first
         if details.count() > 0:
@@ -35,7 +40,7 @@ def capture_all():
         # 2. Case 5 (Buffer held with Click to analyze open)
         print("Capturing Case 5 (Buffer held)...")
         jump_to_case(5, user="screenshot_tool")
-        page.goto("http://127.0.0.1:8000/?token=sage_dev_token_2025", wait_until="networkidle")
+        page.goto("http://127.0.0.1:8000/?token=sage_dev_token_2025", wait_until="domcontentloaded")
         details = page.locator("details.analyze-expander").first
         if details.count() > 0:
             details.evaluate("el => el.open = true")
@@ -47,7 +52,7 @@ def capture_all():
         # 3. Case 9 (Quiet day with green banner)
         print("Capturing Case 9 (Quiet control day)...")
         jump_to_case(9, user="screenshot_tool")
-        page.goto("http://127.0.0.1:8000/?token=sage_dev_token_2025", wait_until="networkidle")
+        page.goto("http://127.0.0.1:8000/?token=sage_dev_token_2025", wait_until="domcontentloaded")
         page.wait_for_timeout(1000)
         c9_path = ARTIFACT_DIR / "case_09_quiet_day.png"
         page.screenshot(path=str(c9_path), full_page=True)
@@ -55,7 +60,7 @@ def capture_all():
 
         # 4. Method Tab (Coverage Block)
         print("Capturing Method Tab Coverage Block...")
-        page.goto("http://127.0.0.1:8000/method?token=sage_dev_token_2025", wait_until="networkidle")
+        page.goto("http://127.0.0.1:8000/method?token=sage_dev_token_2025", wait_until="domcontentloaded")
         page.wait_for_timeout(1000)
         method_path = ARTIFACT_DIR / "method_coverage_block.png"
         page.screenshot(path=str(method_path), full_page=True)
@@ -63,7 +68,7 @@ def capture_all():
 
         # 5. Controller Demo Cases Section
         print("Capturing Controller Demo Cases Section...")
-        page.goto("http://127.0.0.1:8001/ctrl/login", wait_until="networkidle")
+        page.goto("http://127.0.0.1:8001/ctrl/login", wait_until="domcontentloaded")
         # Login to controller
         ctrl_token = os.getenv("SAGE_CONTROLLER_TOKEN", "sage_operator_token_2025")
         page.fill("input[name='token']", ctrl_token)

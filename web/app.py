@@ -64,12 +64,17 @@ def verify_token(
     authorization: Optional[str] = Header(None)
 ) -> str:
     """
-    Validates token from ?token=<token> or Authorization: Bearer <token>.
+    Validates token from session cookie, ?token=<token>, or Authorization: Bearer <token>.
     If SAGE_WEB_TOKEN is not configured in .env, allows local access.
     """
     expected_token = os.getenv("SAGE_WEB_TOKEN")
     if not expected_token:
         return "dev"
+
+    # Check session cookie (no tokens required in URLs)
+    cookie_token = request.cookies.get("sage_token")
+    if cookie_token and cookie_token == expected_token:
+        return cookie_token
 
     # Check query param
     if token and token == expected_token:
@@ -83,8 +88,18 @@ def verify_token(
 
     raise HTTPException(
         status_code=401,
-        detail="Unauthorized: Valid SAGE_WEB_TOKEN required via ?token= or Authorization: Bearer <token>"
+        detail="Unauthorized: Valid SAGE_WEB_TOKEN required via cookie, ?token=, or Authorization: Bearer <token>"
     )
+
+
+@app.middleware("http")
+async def cookie_auth_middleware(request: Request, call_next):
+    token = request.query_params.get("token")
+    expected_token = os.getenv("SAGE_WEB_TOKEN")
+    response = await call_next(request)
+    if token and expected_token and token == expected_token:
+        response.set_cookie(key="sage_token", value=token, httponly=True, samesite="lax")
+    return response
 
 
 # ──────────────────────────────────────────────────────────────────────────────

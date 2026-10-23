@@ -95,6 +95,8 @@ def compute_daily_snapshot(
         products_data: Dict[str, Any] = {}
         total_backlog_units = 0
         total_overdue_orders = 0
+        total_due_today_orders = 0
+        total_due_today_units = 0
         oldest_due_dates = []
 
         for p_id in PRODUCTS:
@@ -162,8 +164,10 @@ def compute_daily_snapshot(
                 .all()
             )
 
-            due_backlog = 0
+            overdue_backlog_units = 0
             overdue_count = 0
+            due_today_units = 0
+            due_today_count = 0
             p_oldest_due: Optional[str] = None
 
             for so_line, so in candidate_so_lines:
@@ -179,21 +183,26 @@ def compute_daily_snapshot(
                 ) or 0
                 rem = max(0, qty_ord - shipped_qty)
                 if rem > 0:
-                    due_backlog += rem
                     if so.requested_delivery_date < as_of:
                         overdue_count += 1
+                        overdue_backlog_units += rem
                         oldest_due_dates.append(so.requested_delivery_date)
                         if p_oldest_due is None or so.requested_delivery_date.isoformat() < p_oldest_due:
                             p_oldest_due = so.requested_delivery_date.isoformat()
+                    elif so.requested_delivery_date == as_of:
+                        due_today_count += 1
+                        due_today_units += rem
 
-            total_backlog_units += due_backlog
+            total_backlog_units += overdue_backlog_units
             total_overdue_orders += overdue_count
+            total_due_today_orders += due_today_count
+            total_due_today_units += due_today_units
 
             # Thresholds and severity
             safety_stock = float(prod_rules.get("safety_stock", {}).get(p_id, 15.0))
             reorder_point = float(prod_rules.get("reorder_point", {}).get(p_id, 30.0))
 
-            if fg_stock <= 0 or due_backlog > 0:
+            if fg_stock <= 0 or overdue_backlog_units > 0:
                 p_severity = "CRITICAL"
             elif fg_stock <= safety_stock or shortfall > 0:
                 p_severity = "WARNING"
@@ -210,8 +219,10 @@ def compute_daily_snapshot(
                 "planned_production": int(planned_production),
                 "actual_production": int(actual_production),
                 "production_shortfall": int(shortfall),
-                "due_backlog_units": int(due_backlog),
+                "due_backlog_units": int(overdue_backlog_units),
                 "overdue_orders_count": int(overdue_count),
+                "due_today_units": int(due_today_units),
+                "due_today_orders_count": int(due_today_count),
                 "oldest_due_date": p_oldest_due,
                 "severity": p_severity
             }
@@ -375,10 +386,52 @@ def compute_daily_snapshot(
             1
         )
 
-        if severity_score >= 50.0 or total_backlog_units > 0 or total_material_stockouts > 0:
+        # Yesterday's overdue backlog to detect actively rising customer backlog
+        yest_date = as_of - timedelta(days=1)
+        yest_so_lines = (
+            db_session.query(SalesOrderLine, SalesOrder)
+            .join(SalesOrder, SalesOrder.id == SalesOrderLine.sales_order_id)
+            .filter(
+                SalesOrder.order_date <= yest_date,
+                SalesOrder.requested_delivery_date < yest_date,
+                SalesOrder.status != "Cancelled"
+            )
+            .all()
+        )
+        yest_overdue_units = 0
+        for so_line, so in yest_so_lines:
+            qty_ord = so_line.quantity_ordered or 0
+            shipped_qty = (
+                db_session.query(func.coalesce(func.sum(DeliveryLine.quantity_shipped), 0))
+                .join(Delivery, Delivery.id == DeliveryLine.delivery_id)
+                .filter(
+                    DeliveryLine.sales_order_line_id == so_line.id,
+                    Delivery.ship_date <= yest_date
+                )
+                .scalar()
+            ) or 0
+            rem = max(0, qty_ord - shipped_qty)
+            if rem > 0:
+                yest_overdue_units += rem
+
+        backlog_rising = (total_backlog_units > yest_overdue_units) and (total_backlog_units > 0)
+
+        # Structural severity rules (v2 pre-registered, decoupling standing backlog from Critical)
+        mat_stockout = any(float(m["stock"]) <= 0.0 for m in materials_data.values())
+        mat_safety_with_po_overdue = any(
+            float(m["stock"]) <= float(m["safety_stock"]) and len(m.get("overdue_pos", [])) > 0
+            for m in materials_data.values()
+        )
+        has_overdue_po = any(len(m.get("overdue_pos", [])) > 0 for m in materials_data.values())
+        has_partial_receipt = any(r.get("fill_rate", 1.0) < 1.0 for r in receipts_today)
+        has_elevated_demand = any(p.get("demand_units", 0) >= 10 for p in products_data.values())
+
+        if mat_stockout or mat_safety_with_po_overdue or (backlog_rising and (has_overdue_po or total_shortfall > 0)):
             plant_severity = "CRITICAL"
-        elif severity_score > 0.0 or total_shortfall > 0 or total_po_overdue_days > 0:
-            plant_severity = "WARNING"
+        elif total_backlog_units > 0 or has_overdue_po or total_shortfall > 0:
+            plant_severity = "NEEDS_ATTENTION"
+        elif has_partial_receipt or has_elevated_demand:
+            plant_severity = "WATCH"
         else:
             plant_severity = "NORMAL"
 
@@ -390,6 +443,9 @@ def compute_daily_snapshot(
             "kpis": {
                 "total_backlog_units": int(total_backlog_units),
                 "total_overdue_orders": int(total_overdue_orders),
+                "total_due_today_units": int(total_due_today_units),
+                "total_due_today_orders": int(total_due_today_orders),
+                "backlog_rising": bool(backlog_rising),
                 "oldest_overdue_date": oldest_overdue_str,
                 "total_production_shortfall": int(total_shortfall),
                 "total_material_stockouts": int(total_material_stockouts),

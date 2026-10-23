@@ -1,26 +1,26 @@
 SAGE DAILY BRIEF | 3 Jan 2026
-Status: ACTION NEEDED (6 items need action)
+Status: ACTION NEEDED (5 items need action)
 ======================================================================
 
 THE BOTTOM LINE:
-P l
+M a
 
 TODAY'S NUMBERS IN CONTEXT:
 • Orders Due     : 2 orders due, same as yesterday (7d avg: 1.4)
 • Orders Late    : 4 late orders, up from 0 yesterday (7d avg: 0.6)
-• Units Short    : 54 units short, up from 42 yesterday (7d avg: 20.9)
-• Materials Low  : 1 material low, same as yesterday (7d avg: 1.0)
+• Units Short    : 42 units short, up from 0 yesterday (7d avg: 13.1)
+• Materials Low  : 0 materials low, same as yesterday (7d avg: 0.4)
 
 PAST ANALYSED CASES: WHAT CAUSED WHAT:
 • Chain: EastCoast delivery late → Steel Rod 10mm below safety level
   Observed steel rod 10mm below safety level on 03 Jan is consistent with eastcoast delivery late starting on 01 Jan.
-  Confidence: Partly seen | Model check: Model inconclusive (Computed just now)
+  Confidence: Partly seen | Model check: Model agrees (Precomputed for the demo feed)
 • Chain: Customer demand spike for Widget Model Y → Widget Model Y orders late
   Observed widget model y orders late on 03 Jan is consistent with customer demand spike for widget model y starting on 29 Dec.
-  Confidence: Partly seen | Model check: Model inconclusive (Computed just now)
+  Confidence: Partly seen | Model check: Model check not run for this day (Not scheduled)
 • Chain: Widget Model X orders late
   Observed widget model x orders late on 03 Jan is consistent with widget model x orders late starting on 03 Jan.
-  Confidence: No upstream explanation found | Model check: Model inconclusive (Computed just now)
+  Confidence: No upstream explanation found | Model check: Model check not run for this day (Not scheduled)
 
 FOCUS TOMORROW (TOP 5 PRIORITIES):
 1. Fix at the root: EastCoast delivery late (Supply Chain Lead) - Due Immediate

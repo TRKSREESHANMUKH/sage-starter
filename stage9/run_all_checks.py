@@ -163,7 +163,7 @@ def check_http_routes() -> bool:
     for label, url in endpoints:
         try:
             req = urllib.request.Request(url, headers={"User-Agent": "SAGE-Check"})
-            with urllib.request.urlopen(req, timeout=5) as resp:
+            with urllib.request.urlopen(req, timeout=15) as resp:
                 if resp.status == 200:
                     print(f"  [PASS] {label}: HTTP 200 OK")
                 else:

@@ -4,8 +4,11 @@
   "kpis": {
     "total_backlog_units": 109,
     "total_overdue_orders": 9,
+    "total_due_today_units": 0,
+    "total_due_today_orders": 0,
+    "backlog_rising": true,
     "oldest_overdue_date": "2026-01-02",
-    "total_production_shortfall": 9,
+    "total_production_shortfall": 14,
     "total_material_stockouts": 1,
     "total_po_overdue_days": 7
   },

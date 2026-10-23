@@ -211,3 +211,80 @@
 {"timestamp": "2026-10-22T22:02:29.064273+05:30", "user": "run_all_checks", "action": "load_year_review", "parameters": {"date": "2025-12-31"}, "result": "SUCCESS"}
 {"timestamp": "2026-10-22T22:02:31.453668+05:30", "user": "test_suite", "action": "feed_pack", "parameters": {"pack_date": "2025-03-31", "rows_loaded": null}, "result": "SUCCESS"}
 {"timestamp": "2026-10-22T22:02:31.455951+05:30", "user": "test_suite", "action": "jump_to_case", "parameters": {"case": 1, "case_id": "case_01", "date": "2025-03-31"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-22T22:59:47.989784+05:30", "user": "audit_script", "action": "load_year_review", "parameters": {"date": "2025-12-31"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-22T23:02:50.694816+05:30", "user": "operator", "action": "login", "parameters": {"ip": "127.0.0.1"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-22T23:03:24.738733+05:30", "user": "controller", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-22T23:03:24.739043+05:30", "user": "controller", "action": "set_send_mode", "parameters": {"send_mode": "live"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-22T23:04:02.695601+05:30", "user": "controller", "action": "send_report_now", "parameters": {"as_of": "2025-12-31", "recipient": "sreeshanmukhtrk@gmail.com", "mode": "manual", "force_live": true}, "result": "SUCCESS_LIVE"}
+{"timestamp": "2026-10-23T11:59:35.369852+05:30", "user": "operator", "action": "login", "parameters": {"ip": "127.0.0.1"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T11:59:40.464126+05:30", "user": "controller", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T11:59:40.466174+05:30", "user": "controller", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:43:53.621601+05:30", "user": "feed_evaluator", "action": "reset_demo", "parameters": {"target_date": "2025-12-31", "elapsed_seconds": 2.152}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:44:50.802151+05:30", "user": "feed_evaluator", "action": "ensure_report", "parameters": {"as_of": "2026-01-01", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:44:50.806335+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-01", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:45:29.769333+05:30", "user": "feed_evaluator", "action": "ensure_report", "parameters": {"as_of": "2026-01-02", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:45:29.782759+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-02", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:46:02.745377+05:30", "user": "feed_evaluator", "action": "ensure_report", "parameters": {"as_of": "2026-01-03", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:46:02.754565+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-03", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:51:22.149359+05:30", "user": "operator", "action": "ensure_report", "parameters": {"as_of": "2025-12-31", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:53:02.810427+05:30", "user": "test", "action": "ensure_report", "parameters": {"as_of": "2025-12-31", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:53:02.812209+05:30", "user": "test", "action": "reset_demo", "parameters": {"target_date": "2025-12-31", "elapsed_seconds": 34.854}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:54:03.592680+05:30", "user": "test", "action": "ensure_report", "parameters": {"as_of": "2026-01-01", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:54:03.594718+05:30", "user": "test", "action": "feed_pack", "parameters": {"pack_date": "2026-01-01", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:55:05.156381+05:30", "user": "feed_evaluator", "action": "reset_demo", "parameters": {"target_date": "2025-12-31", "elapsed_seconds": 2.555}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:55:07.197208+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-01", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:55:42.679673+05:30", "user": "feed_evaluator", "action": "ensure_report", "parameters": {"as_of": "2026-01-02", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:55:42.681757+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-02", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:56:07.463601+05:30", "user": "feed_evaluator", "action": "ensure_report", "parameters": {"as_of": "2026-01-03", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:56:07.464990+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-03", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:56:53.952207+05:30", "user": "feed_evaluator", "action": "ensure_report", "parameters": {"as_of": "2026-01-04", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:56:53.953868+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-04", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:57:44.749492+05:30", "user": "feed_evaluator", "action": "ensure_report", "parameters": {"as_of": "2026-01-05", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:57:44.753630+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-05", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:59:07.136598+05:30", "user": "feed_evaluator", "action": "ensure_report", "parameters": {"as_of": "2026-01-06", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T12:59:07.140352+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-06", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T13:16:52.747272+05:30", "user": "feed_evaluator", "action": "ensure_report", "parameters": {"as_of": "2026-01-07", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T13:16:52.752569+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-07", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T13:52:53.643451+05:30", "user": "feed_evaluator", "action": "ensure_report", "parameters": {"as_of": "2026-01-08", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T13:52:53.650044+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-08", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T13:53:26.401057+05:30", "user": "feed_evaluator", "action": "ensure_report", "parameters": {"as_of": "2026-01-09", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T13:53:26.402833+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-09", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T13:54:07.589121+05:30", "user": "feed_evaluator", "action": "ensure_report", "parameters": {"as_of": "2026-01-10", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T13:54:07.596645+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-10", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T13:54:46.494441+05:30", "user": "test", "action": "feed_pack", "parameters": {"pack_date": "2099-01-01", "expected": "2026-01-11"}, "result": "REJECTED: Sequence violation: Pack date is 2099-01-01 but expected date is 2026-01-11 (current day is 2026-01-10)."}
+{"timestamp": "2026-10-23T13:54:46.996117+05:30", "user": "test_g13", "action": "reset_demo", "parameters": {"target_date": "2025-12-31", "elapsed_seconds": 0.499}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:10:42.286984+05:30", "user": "test_g28", "action": "reset_demo", "parameters": {"target_date": "2025-12-31", "elapsed_seconds": 0.26}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:49:49.034522+05:30", "user": "run_all_checks", "action": "ensure_report", "parameters": {"as_of": "2025-12-31", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:49:49.040653+05:30", "user": "run_all_checks", "action": "load_year_review", "parameters": {"date": "2025-12-31"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:49:59.115734+05:30", "user": "test_suite", "action": "feed_pack", "parameters": {"pack_date": "2025-03-31", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:49:59.123473+05:30", "user": "test_suite", "action": "jump_to_case", "parameters": {"case": 1, "case_id": "case_01", "date": "2025-03-31"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:50:53.965023+05:30", "user": "test", "action": "feed_pack", "parameters": {"pack_date": "2099-01-01", "expected": "2025-04-01"}, "result": "REJECTED: Sequence violation: Pack date is 2099-01-01 but expected date is 2025-04-01 (current day is 2025-03-31)."}
+{"timestamp": "2026-10-23T14:50:53.969287+05:30", "user": "test", "action": "feed_pack", "parameters": {"pack_date": "2026-01-02", "expected": "2025-04-01"}, "result": "REJECTED: Sequence violation: Pack date is 2026-01-02 but expected date is 2025-04-01 (current day is 2025-03-31)."}
+{"timestamp": "2026-10-23T14:51:13.991393+05:30", "user": "test_g13", "action": "ensure_report", "parameters": {"as_of": "2025-12-31", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:51:13.993266+05:30", "user": "test_g13", "action": "reset_demo", "parameters": {"target_date": "2025-12-31", "elapsed_seconds": 20.023}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:51:30.803485+05:30", "user": "test_g28", "action": "reset_demo", "parameters": {"target_date": "2025-12-31", "elapsed_seconds": 1.479}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:52:18.448546+05:30", "user": "test", "action": "feed_pack", "parameters": {"pack_date": "2099-01-01", "expected": "2026-01-01"}, "result": "REJECTED: Sequence violation: Pack date is 2099-01-01 but expected date is 2026-01-01 (current day is 2025-12-31)."}
+{"timestamp": "2026-10-23T14:52:18.451208+05:30", "user": "test", "action": "feed_pack", "parameters": {"pack_date": "2026-01-02", "expected": "2026-01-01"}, "result": "REJECTED: Sequence violation: Pack date is 2026-01-02 but expected date is 2026-01-01 (current day is 2025-12-31)."}
+{"timestamp": "2026-10-23T14:52:20.095589+05:30", "user": "test_g13", "action": "reset_demo", "parameters": {"target_date": "2025-12-31", "elapsed_seconds": 1.643}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:52:48.348027+05:30", "user": "test_g28", "action": "reset_demo", "parameters": {"target_date": "2025-12-31", "elapsed_seconds": 0.397}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:53:46.777548+05:30", "user": "run_all_checks", "action": "ensure_report", "parameters": {"as_of": "2025-12-31", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:53:46.782052+05:30", "user": "run_all_checks", "action": "load_year_review", "parameters": {"date": "2025-12-31"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:54:26.197261+05:30", "user": "run_all_checks", "action": "load_year_review", "parameters": {"date": "2025-12-31"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:54:28.613982+05:30", "user": "test_suite", "action": "feed_pack", "parameters": {"pack_date": "2025-03-31", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:54:28.617418+05:30", "user": "test_suite", "action": "jump_to_case", "parameters": {"case": 1, "case_id": "case_01", "date": "2025-03-31"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:56:31.436222+05:30", "user": "screenshot_tool", "action": "ensure_report", "parameters": {"as_of": "2025-10-20", "pdf_pages": 0}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:56:31.444326+05:30", "user": "screenshot_tool", "action": "feed_pack", "parameters": {"pack_date": "2025-10-20", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:56:31.459340+05:30", "user": "screenshot_tool", "action": "jump_to_case", "parameters": {"case": 7, "case_id": "case_07", "date": "2025-10-20"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:56:48.709477+05:30", "user": "screenshot_tool", "action": "ensure_report", "parameters": {"as_of": "2025-03-02", "pdf_pages": 0}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:56:48.710569+05:30", "user": "screenshot_tool", "action": "feed_pack", "parameters": {"pack_date": "2025-03-02", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:56:48.713145+05:30", "user": "screenshot_tool", "action": "jump_to_case", "parameters": {"case": 5, "case_id": "case_05", "date": "2025-03-02"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:57:03.737001+05:30", "user": "screenshot_tool", "action": "ensure_report", "parameters": {"as_of": "2025-01-15", "pdf_pages": 0}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:57:03.738269+05:30", "user": "screenshot_tool", "action": "feed_pack", "parameters": {"pack_date": "2025-01-15", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:57:03.745833+05:30", "user": "screenshot_tool", "action": "jump_to_case", "parameters": {"case": 9, "case_id": "case_09", "date": "2025-01-15"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:57:10.185223+05:30", "user": "operator", "action": "login_attempt", "parameters": {"ip": "127.0.0.1"}, "result": "FAILED"}
+{"timestamp": "2026-10-23T14:58:33.996981+05:30", "user": "final_park", "action": "ensure_report", "parameters": {"as_of": "2025-12-31", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:58:33.998807+05:30", "user": "final_park", "action": "reset_demo", "parameters": {"target_date": "2025-12-31", "elapsed_seconds": 37.007}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:59:29.456204+05:30", "user": "test", "action": "feed_pack", "parameters": {"pack_date": "2099-01-01", "expected": "2026-01-01"}, "result": "REJECTED: Sequence violation: Pack date is 2099-01-01 but expected date is 2026-01-01 (current day is 2025-12-31)."}
+{"timestamp": "2026-10-23T14:59:29.499480+05:30", "user": "test", "action": "feed_pack", "parameters": {"pack_date": "2026-01-02", "expected": "2026-01-01"}, "result": "REJECTED: Sequence violation: Pack date is 2026-01-02 but expected date is 2026-01-01 (current day is 2025-12-31)."}
+{"timestamp": "2026-10-23T14:59:30.935083+05:30", "user": "test_g13", "action": "reset_demo", "parameters": {"target_date": "2025-12-31", "elapsed_seconds": 1.434}, "result": "SUCCESS"}
+{"timestamp": "2026-10-23T14:59:41.652100+05:30", "user": "test_g28", "action": "reset_demo", "parameters": {"target_date": "2025-12-31", "elapsed_seconds": 0.574}, "result": "SUCCESS"}

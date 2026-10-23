@@ -192,32 +192,47 @@ def generate_packs():
         # 2. Manufacturing & Production Orders
         # -------------------------------------------------------------
         # Planned production targets
-        p201_plan = 5
-        p202_plan = 3
+        p201_plan = 10
+        p202_plan = 4
 
-        if day_num == 5:
-            # Capacity disruption: Line 2 downtime, Widget Y -50%
-            p202_act = 1
-            p201_act = 5
-        elif day_num == 6:
-            # Steel reaches safety level, production of Widget X cut short
-            p201_plan = 8
-            p201_act = 2
-            p202_act = 3
-        elif day_num == 7:
-            # Steel stockout: Widget X halted completely (0 units)
-            p201_plan = 8
-            p201_act = 0
-            p202_act = 2
-        elif day_num == 8:
-            # Recovery surge: production resumes in full
-            p201_plan = 12
+        if day_num == 1:
+            p201_act = 10
+            p202_act = 4
+        elif day_num == 2:
             p201_act = 12
             p202_act = 4
+        elif day_num == 3:
+            p201_act = 10
+            p202_act = 4
+        elif day_num == 4:
+            p201_act = 10
+            p202_act = 4
+        elif day_num == 5:
+            # Capacity disruption: Line 2 downtime, Widget Y -50% (planned 4, actual 2)
+            p201_act = 10
+            p202_act = 2
+        elif day_num == 6:
+            # Steel reaches safety level, production short (cut to 2 units)
+            p201_plan = 12
+            p201_act = 2
+            p202_act = 1
+        elif day_num == 7:
+            # Steel stockout: Widget X halted completely (0 units)
+            p201_plan = 10
+            p201_act = 0
+            p202_plan = 4
+            p202_act = 0
+        elif day_num == 8:
+            # Recovery surge: production resumes in full
+            p201_plan = 16
+            p201_act = 16
+            p202_plan = 6
+            p202_act = 6
         elif day_num == 9:
             # High throughput for clearance
-            p201_plan = 10
-            p201_act = 10
+            p201_plan = 14
+            p201_act = 14
+            p202_plan = 4
             p202_act = 4
         elif day_num == 10:
             # Dual issues: Widget Y -20% below plan (planned 5, actual 4)
@@ -242,14 +257,17 @@ def generate_packs():
             # Material issues and stock adjustments for 201
             if p201_act > 0:
                 for mid, factor in BOM[201].items():
-                    iss_qty = int(round(p201_act * factor))
+                    if day_num == 6 and mid == 101:
+                        iss_qty = int(mat_stock[101])
+                    else:
+                        iss_qty = int(round(p201_act * factor))
                     iss_id = next_issue_id; next_issue_id += 1
                     day_issues.append({
                         "id": iss_id, "production_order_id": prod_id, "item_id": INV_ITEM_MAP[mid],
                         "planned_quantity": int(round(p201_plan * factor)), "planned_issue_date": day_str,
                         "quantity_issued": iss_qty, "issue_date": day_str
                     })
-                    mat_stock[mid] -= iss_qty
+                    mat_stock[mid] = max(0.0, mat_stock[mid] - iss_qty)
                     sm_id = next_mov_id; next_mov_id += 1
                     day_movs.append({
                         "id": sm_id, "item_id": INV_ITEM_MAP[mid], "date": day_str, "movement_type": "OUT",
@@ -285,7 +303,7 @@ def generate_packs():
                         "planned_quantity": int(round(p202_plan * factor)), "planned_issue_date": day_str,
                         "quantity_issued": iss_qty, "issue_date": day_str
                     })
-                    mat_stock[mid] -= iss_qty
+                    mat_stock[mid] = max(0.0, mat_stock[mid] - iss_qty)
                     sm_id = next_mov_id; next_mov_id += 1
                     day_movs.append({
                         "id": sm_id, "item_id": INV_ITEM_MAP[mid], "date": day_str, "movement_type": "OUT",
@@ -309,26 +327,26 @@ def generate_packs():
         if day_num == 1:
             new_orders = [(1, 201, 5, 1), (2, 202, 3, 1)]
         elif day_num == 2:
-            # Demand spike on 201 (~12 units, 2.5x normal)
-            new_orders = [(1, 201, 7, 1), (3, 201, 5, 1), (2, 202, 3, 1)]
+            # Demand spike on 201 (~28 units, 2.8x normal)
+            new_orders = [(1, 201, 16, 1), (3, 201, 12, 1), (2, 202, 4, 1)]
         elif day_num == 3:
-            new_orders = [(4, 201, 5, 2), (5, 202, 3, 2)]
+            new_orders = [(4, 201, 10, 1), (5, 202, 4, 1)]
         elif day_num == 4:
-            new_orders = [(1, 201, 5, 2), (2, 202, 3, 2)]
+            new_orders = [(1, 201, 10, 1), (2, 202, 4, 1)]
         elif day_num == 5:
-            new_orders = [(3, 201, 6, 1), (4, 202, 3, 1)]
+            new_orders = [(3, 201, 10, 1), (4, 202, 4, 1)]
         elif day_num == 6:
-            # Elevated demand on 201
-            new_orders = [(1, 201, 8, 1), (5, 202, 3, 1)]
+            # Elevated demand on 201 (14 units)
+            new_orders = [(1, 201, 8, 1), (2, 201, 6, 1), (5, 202, 4, 1)]
         elif day_num == 7:
-            new_orders = [(2, 201, 6, 1), (3, 202, 3, 1)]
+            new_orders = [(2, 201, 10, 1), (3, 202, 4, 1)]
         elif day_num == 8:
-            new_orders = [(4, 201, 5, 1), (1, 202, 3, 1)]
+            new_orders = [(4, 201, 8, 1), (1, 202, 4, 1)]
         elif day_num == 9:
             # Friday seasonal peak (control, 1.25x normal)
             new_orders = [(1, 201, 6, 1), (2, 202, 4, 1)]
         elif day_num == 10:
-            new_orders = [(3, 201, 4, 1), (4, 202, 3, 1)]
+            new_orders = [(3, 201, 6, 1), (4, 202, 4, 1)]
 
         for cust_id, prod_id, qty, lead_d in new_orders:
             so_id = next_so_id; next_so_id += 1

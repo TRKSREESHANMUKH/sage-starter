@@ -432,6 +432,12 @@
     </div>
     <div class="briefing-badge">{{ subtitle_badge }}</div>
 
+    {% if selected_date in ["2025-12-31", "2026-01-01"] %}
+    <div class="opening-position-banner" style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:12px 16px;margin:16px 0;font-size:0.88rem;color:#1e40af;line-height:1.5;">
+      <strong>Demo Baseline Notice:</strong> Opening position set on 31 Dec 2025 for the demo: 48 stale customer backorders cancelled, PO #18 (139d overdue) cancelled, and warehouse inventory reset to standard operating buffers above reorder thresholds.
+    </div>
+    {% endif %}
+
     <!-- Editorial Lead Paragraph (<= 60 words, fact validated) -->
     <div class="editorial-lead">
       {{ editorial_lead }}
@@ -555,6 +561,7 @@
               <div><strong>Attribution Score:</strong> {{ issue.tech_details.score }}</div>
               <div><strong>Stability:</strong> {{ issue.tech_details.stability }}</div>
               <div><strong>Verification:</strong> {{ issue.tech_details.validation }}</div>
+              <div><strong>Model Check:</strong> {{ issue.tech_details.model_check }}</div>
             </div>
           </div>
         </div>

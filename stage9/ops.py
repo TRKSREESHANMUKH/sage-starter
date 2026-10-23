@@ -612,6 +612,10 @@ def reset_demo_v6(user: str = "operator") -> Dict[str, Any]:
     else:
         LIVE_DB_PATH.touch()
 
+    # 1c. Apply pre-registered opening position to establish clean starting operating position
+    from stage10.demo_feed.create_opening_position import setup_opening_position
+    setup_opening_position()
+
     # 1b. Restore daily_panel_live.parquet from baseline daily_panel.parquet
     if (ROOT_DIR / "analytics" / "daily_panel.parquet").exists():
         shutil.copy2(ROOT_DIR / "analytics" / "daily_panel.parquet", ROOT_DIR / "analytics" / "daily_panel_live.parquet")
@@ -626,6 +630,10 @@ def reset_demo_v6(user: str = "operator") -> Dict[str, Any]:
     for p in QUEUE_DIR.iterdir():
         if p.is_dir():
             shutil.rmtree(p)
+    if PACKS_DIR.exists():
+        for p in PACKS_DIR.iterdir():
+            if p.is_dir() and not p.name.startswith("2026-"):
+                shutil.rmtree(p, ignore_errors=True)
 
     for day_num in range(1, 11):
         d_str = f"2026-01-{day_num:02d}"
@@ -892,10 +900,11 @@ def jump_to_case(k: int, user: str = "operator") -> Dict[str, Any]:
     set_current_day(d_minus_1)
 
     # 2. Feed exported pack for target_d
-    pack_dir = ROOT_DIR / "demo_data" / "packs" / target_d.isoformat()
+    case_packs_dir = ROOT_DIR / "demo_data" / "case_packs"
+    pack_dir = case_packs_dir / target_d.isoformat()
     if not pack_dir.exists():
         from stage10.export_day_pack import export_day_pack
-        export_day_pack(target_d)
+        export_day_pack(target_d, out_dir=case_packs_dir)
 
     validate_and_ingest_pack_v6(pack_dir, user=user)
 

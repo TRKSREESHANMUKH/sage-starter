@@ -1,11 +1,12 @@
 {
   "status": "PREPARED",
   "as_of": "2025-10-20",
-  "prepared_at": "2026-10-21T16:47:17.918112+00:00",
+  "prepared_at": "2026-10-23T09:26:31.434874+00:00",
   "subject": "SAGE Daily Brief | 20 Oct 2025 | 12 need action",
-  "no_new_data": true,
-  "for_owner_only": true,
-  "pdf_pages": 0,
+  "no_new_data": false,
+  "for_owner_only": false,
+  "pdf_pages": 1,
   "pdf_path": "reports/2025-10-20/SAGE_Daily_Brief_2025-10-20.pdf",
-  "sparkline_bytes": 11959
+  "sparkline_bytes": 12464,
+  "input_hash": "c14892397e359487"
 }

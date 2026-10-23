@@ -343,9 +343,11 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
                 partial_pos = [p for p in s_po_dict.values() if p.get("receipt_count", 1) > 1 and p.get("first_quantity_received", 0) < p.get("quantity_ordered", 0)]
                 if partial_pos:
                     p_po = partial_pos[0]
-                    first_fill = round((p_po["first_quantity_received"] / p_po["quantity_ordered"] * 100.0), 0)
+                    first_qty = p_po["first_quantity_received"]
+                    po_ord_qty = p_po["quantity_ordered"]
+                    first_fill = round((first_qty / po_ord_qty * 100.0), 0)
                     days_between = (date.fromisoformat(p_po["receipt_date"]) - date.fromisoformat(p_po["first_receipt_date"])).days
-                    partial_note = f"first delivery: {first_fill:.0f}% of the order; completed {format_days_plural(days_between)} after the first delivery"
+                    partial_note = f"first receipt {first_qty} of {po_ord_qty} units ({first_fill:.0f}%), completed {format_days_plural(days_between)} after the first delivery"
                     qty_str = f"{total_rec:,} / {total_ord:,} u ({fill_rate_pct:.0f}% final; {first_fill:.0f}% first)"
                 else:
                     qty_str = f"{total_rec:,} / {total_ord:,} u ({fill_rate_pct:.0f}%)"
@@ -944,6 +946,17 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
 
         has_data = len(delay_ledger) > 0 or len(episodes) > 0 or any(c["deliveries_count"] > 0 for c in supplier_cards)
 
+        # Delivery delay takeaway computed strictly from data
+        worst_supp = max(
+            [c for c in supplier_cards if c["deliveries_count"] > 0 and c["worst_delay_str"] != "—" and "0 days" not in c["worst_delay_str"]],
+            key=lambda c: [int(s) for s in c["worst_delay_str"].split() if s.isdigit()][0] if any(s.isdigit() for s in c["worst_delay_str"].split()) else 0,
+            default=None
+        )
+        if worst_supp:
+            takeaway_delays = f"Longest delays coincided with {worst_supp['supplier_name']} receipts ({worst_supp['worst_delay_str']})."
+        else:
+            takeaway_delays = "All deliveries arrived on or ahead of scheduled dates."
+
         return {
             "as_of": as_of_str,
             "period": period_str,
@@ -964,7 +977,7 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
             "weekly_chart_late_units": weekly_chart_late_units,
             "chart_delivery_delays": {
                 "title": "Were deliveries on time?",
-                "takeaway": "Longest delays coincided with Supplier 1 receipts (up to 7 days)." if any(c["worst_delay_str"] != "—" and "0 days" not in c["worst_delay_str"] for c in supplier_cards) else "All deliveries arrived on or ahead of scheduled dates.",
+                "takeaway": takeaway_delays,
                 "points": chart_delivery_delays
             },
             "episodes": {

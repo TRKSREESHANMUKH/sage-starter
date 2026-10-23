@@ -59,9 +59,9 @@
       "role": "Planner"
     },
     {
-      "item": "At risk: Order SO-228",
-      "reason": "Order SO-228 (Widget Model Y (Product 202)) due in 1 days (18 units) exceeds projected availability of 3 units",
-      "role": "Planner"
+      "item": "Chase supplier EastCoast Components (PO-19)",
+      "reason": "PO-19 for Steel Rod 10mm (Material 101) (400 units) is 2 days overdue from EastCoast Components",
+      "role": "Procurement"
     }
   ]
 }

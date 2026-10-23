@@ -193,7 +193,7 @@
       </div>
       <div class="btn-row" style="margin-top:12px; gap:8px; flex-wrap:wrap">
         <button class="btn btn-success" id="main-send-btn" onclick="openSendModal()">
-          {% if send_mode == 'live' %}📤 Send Report Now{% else %}Dry run (nothing will be sent){% endif %}
+          {% if send_mode == 'live' %}📤 Send Report Now [LIVE]{% else %}🧪 Dry Run (Nothing will be sent) [DRY-RUN]{% endif %}
         </button>
         <button class="btn btn-primary" onclick="openPreviewModal()">👁 Preview</button>
         <button class="btn btn-ghost" onclick="prepareOnly()">🔧 Prepare Only</button>
@@ -219,7 +219,6 @@
           {% else %}
           <button class="btn btn-ghost" type="button" disabled>Queue Complete</button>
           {% endif %}
-          <button class="btn btn-success" type="button" onclick="openSendModal()">📤 Send this report now</button>
           <button class="btn btn-ghost" type="button" onclick="resetDemo()">⟳ Reset demo feed</button>
         </div>
       </div>
@@ -352,7 +351,7 @@
     <div class="modal-footer">
       <button class="btn btn-ghost" type="button" onclick="closeSendModal()">Cancel</button>
       <button class="btn btn-success" type="button" id="confirm-send-btn" onclick="confirmSend()">
-        {% if send_mode == 'live' %}📤 Send Report Now{% else %}Dry run (nothing will be sent){% endif %}
+        {% if send_mode == 'live' %}📤 Confirm Send [LIVE]{% else %}🧪 Dry Run (Nothing will be sent) [DRY-RUN]{% endif %}
       </button>
     </div>
   </div>
@@ -440,7 +439,7 @@ function updateSendModeUI(mode) {
 
   // Main Send Button
   const mainBtn = document.getElementById("main-send-btn");
-  if (mainBtn) mainBtn.textContent = isLive ? "📤 Send Report Now" : "Dry run (nothing will be sent)";
+  if (mainBtn) mainBtn.textContent = isLive ? "📤 Send Report Now [LIVE]" : "🧪 Dry Run (Nothing will be sent) [DRY-RUN]";
 
   // Send Modal Elements
   const dryWarn = document.getElementById("modal-dryrun-warning");
@@ -450,7 +449,7 @@ function updateSendModeUI(mode) {
   const modeDisp = document.getElementById("modal-mode-display");
   if (modeDisp) modeDisp.textContent = mode;
   const confirmBtn = document.getElementById("confirm-send-btn");
-  if (confirmBtn) confirmBtn.textContent = isLive ? "📤 Confirm Live Send" : "Dry run (nothing will be sent)";
+  if (confirmBtn) confirmBtn.textContent = isLive ? "📤 Confirm Send [LIVE]" : "🧪 Dry Run (Nothing will be sent) [DRY-RUN]";
 }
 
 function handleModeToggleChange(checkbox) {

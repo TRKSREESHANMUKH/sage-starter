@@ -8,19 +8,19 @@ P l
 TODAY'S NUMBERS IN CONTEXT:
 • Orders Due     : 2 orders due, same as yesterday (7d avg: 1.9)
 • Orders Late    : 8 late orders, up from 7 yesterday (7d avg: 3.4)
-• Units Short    : 115 units short, up from 93 yesterday (7d avg: 61.6)
-• Materials Low  : 1 material low, same as yesterday (7d avg: 1.0)
+• Units Short    : 104 units short, up from 79 yesterday (7d avg: 47.0)
+• Materials Low  : 1 material low, up from 0 yesterday (7d avg: 0.1)
 
 PAST ANALYSED CASES: WHAT CAUSED WHAT:
 • Chain: EastCoast delivery late → Steel Rod 10mm below safety level
   Observed steel rod 10mm below safety level on 06 Jan is consistent with eastcoast delivery late starting on 01 Jan.
-  Confidence: Partly seen | Model check: Model inconclusive (Computed just now)
+  Confidence: Partly seen | Model check: Model agrees (Precomputed for the demo feed)
 • Chain: Steel Rod 10mm below safety level → Widget Model X production shortfall
   Observed widget model x production shortfall on 06 Jan is consistent with steel rod 10mm below safety level starting on 31 Dec.
-  Confidence: Partly seen | Model check: Model inconclusive (Computed just now)
+  Confidence: Partly seen | Model check: Model agrees (Precomputed for the demo feed)
 • Chain: Steel Rod 10mm below safety level → Widget Model Y production shortfall
   Observed widget model y production shortfall on 06 Jan is consistent with steel rod 10mm below safety level starting on 31 Dec.
-  Confidence: Partly seen | Model check: Model inconclusive (Computed just now)
+  Confidence: Partly seen | Model check: Model agrees (Precomputed for the demo feed)
 
 FOCUS TOMORROW (TOP 5 PRIORITIES):
 1. Fix at the root: EastCoast delivery late (Supply Chain Lead) - Due Immediate

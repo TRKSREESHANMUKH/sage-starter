@@ -1,13 +1,16 @@
 {
   "as_of": "2025-12-31",
-  "subject": "SAGE Daily Brief | 31 Dec 2025 | 49 need action",
+  "subject": "SAGE Daily Brief | 31 Dec 2025 | All normal",
   "kpis": {
-    "total_backlog_units": 652,
-    "total_overdue_orders": 47,
-    "oldest_overdue_date": "2025-10-02",
-    "total_production_shortfall": 50,
-    "total_material_stockouts": 1,
-    "total_po_overdue_days": 139
+    "total_backlog_units": 0,
+    "total_overdue_orders": 0,
+    "total_due_today_units": 0,
+    "total_due_today_orders": 0,
+    "backlog_rising": false,
+    "oldest_overdue_date": null,
+    "total_production_shortfall": 0,
+    "total_material_stockouts": 0,
+    "total_po_overdue_days": 0
   },
   "priorities_count": 0,
   "top_priority": null,

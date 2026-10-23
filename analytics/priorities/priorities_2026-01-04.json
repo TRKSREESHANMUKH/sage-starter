@@ -49,18 +49,13 @@
   ],
   "watchlist": [
     {
-      "item": "At risk: Order SO-228",
-      "reason": "Order SO-228 (Widget Model Y (Product 202)) due in 2 days (18 units) exceeds projected availability of 3 units",
-      "role": "Planner"
+      "item": "Chase supplier EastCoast Components (PO-19)",
+      "reason": "PO-19 for Steel Rod 10mm (Material 101) (400 units) is 1 days overdue from EastCoast Components",
+      "role": "Procurement"
     },
     {
-      "item": "At risk: Order SO-229",
-      "reason": "Order SO-229 (Widget Model X (Product 201)) due in 1 days (14 units) exceeds projected availability of 5 units",
-      "role": "Planner"
-    },
-    {
-      "item": "Expedite urgent replenishment for Steel Rod 10mm (Material 101)",
-      "reason": "Steel Rod 10mm (Material 101) stock at 9 kg is at or below safety stock (50 kg). no recent use",
+      "item": "Steel Rod 10mm (Material 101) inventory monitoring",
+      "reason": "Steel Rod 10mm (Material 101) is at 90 kg (below reorder point 150 kg), tracking 1 open replenishment POs",
       "role": "Procurement"
     }
   ]

@@ -1,8 +1,7 @@
 {
-  "is_case_mode": true,
-  "active_case": 1,
-  "case_id": "case_01",
-  "date": "2025-03-31",
-  "total_cases": 10,
-  "label": "Demo case 1 of 10 \u2014 31 Mar 2025 (simulated)"
+  "is_case_mode": false,
+  "active_case": null,
+  "case_id": null,
+  "date": null,
+  "label": ""
 }

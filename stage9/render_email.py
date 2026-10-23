@@ -793,7 +793,7 @@ def assert_one_page_pdf(html_content: str, sparkline_png: Optional[bytes] = None
         with sync_playwright() as p:
             browser = p.chromium.launch()
             page = browser.new_page()
-            page.set_content(html_content, wait_until="networkidle")
+            page.set_content(html_content, wait_until="domcontentloaded")
             pdf_bytes = page.pdf(
                 format="A4",
                 print_background=True,

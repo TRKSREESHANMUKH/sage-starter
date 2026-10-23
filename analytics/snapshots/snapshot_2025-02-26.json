@@ -2,8 +2,11 @@
   "as_of": "2025-02-26",
   "composite_severity_score": 25.0,
   "kpis": {
+    "backlog_rising": false,
     "oldest_overdue_date": null,
     "total_backlog_units": 0,
+    "total_due_today_orders": 0,
+    "total_due_today_units": 0,
     "total_material_stockouts": 1,
     "total_overdue_orders": 0,
     "total_po_overdue_days": 0,
@@ -49,12 +52,14 @@
     "simulated_data": true,
     "source": "PostgreSQL committed operational ERP schema"
   },
-  "plant_severity": "CRITICAL",
+  "plant_severity": "WATCH",
   "products": {
     "201": {
       "actual_production": 0,
       "demand_units": 19,
       "due_backlog_units": 0,
+      "due_today_orders_count": 0,
+      "due_today_units": 0,
       "fg_stock": 205.0,
       "name": "Widget Model X",
       "oldest_due_date": null,
@@ -70,6 +75,8 @@
       "actual_production": 0,
       "demand_units": 0,
       "due_backlog_units": 0,
+      "due_today_orders_count": 0,
+      "due_today_units": 0,
       "fg_stock": 83.0,
       "name": "Widget Model Y",
       "oldest_due_date": null,

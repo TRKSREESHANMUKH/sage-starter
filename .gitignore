@@ -16,3 +16,4 @@ analytics/isolated_panels/
 logs/
 .sage.pid
 backups/
+demo_data/case_packs/

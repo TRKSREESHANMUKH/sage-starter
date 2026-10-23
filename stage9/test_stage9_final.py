@@ -676,13 +676,22 @@ def test_b3_gate_extensions():
     print("\nB3: Gate B Test Suite Extensions")
     
     # 1. No hardcoded R4 literals in alert card and narrative generation
-    r4_literals = ["0.3410", "0.3842", "0.2680", "5 of 5 seeds consistent"]
+    r4_literals = [
+        "0.3410", "0.3842", "0.2680", "5 of 5 seeds consistent",
+        "1004", "Supplier 1's delivery", "Raw steel is running low",
+        "Standard Motor", "Heavy Duty Motor", "Electric Motors",
+        "Gear Assemblies", "Electronic housings", "Plastic resin"
+    ]
     found_literals = []
     prod_files = [
         ROOT_DIR / "web" / "one_page_data.py",
+        ROOT_DIR / "web" / "insights_data.py",
         ROOT_DIR / "stage9" / "snapshot.py",
         ROOT_DIR / "stage9" / "narrate.py",
-        ROOT_DIR / "stage9" / "priorities.py"
+        ROOT_DIR / "stage9" / "priorities.py",
+        ROOT_DIR / "stage9" / "render_email.py",
+        ROOT_DIR / "stage9" / "report_builder.py",
+        ROOT_DIR / "controller" / "app.py"
     ]
     for p in prod_files:
         if p.exists():

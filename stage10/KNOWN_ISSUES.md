@@ -93,3 +93,25 @@ To avoid breaking the frozen research foundation (which would invalidate all dow
   2. The scan also specifically looked for incident initiation dates (the latest incident, INC_09, began on or before 2025-10-15).
   3. In the scenario panel (`daily_panel_ext.parquet`) and live database, the operational downstream consequence (depleted finished goods buffer and cascading customer backorders) persisted continuously through December 31.
 * **Resolution**: Causal evaluation correctly references `daily_panel_ext.parquet`, capturing both the incident triggers and the enduring downstream backorders.
+
+---
+
+### Issue 7: Simulator Backorder Settlement Limitation (Late-But-Delivered is Zero by Construction)
+
+* **Description**: In the simulator engine (`simulator/daily_simulation.py`), customer order shipments are evaluated exclusively on their requested delivery date. If stock is insufficient, available units are delivered, and the balance is marked `Backorder`.
+* **Mechanical Finding**: The simulator contains no retroactive shipment sweep for aged backorders once their requested date has passed. Consequently, orders that encounter stockouts remain permanently backordered rather than being fulfilled late.
+* **Impact**: Across all 221 customer orders requested on or before 2025-12-31, "Shipped Complete AFTER Requested Date" is strictly **0**. Late deliveries manifest entirely as open standing backlog.
+
+---
+
+### Issue 8: Post-Hoc Disclosure — Ten-Day Demo Feed Rules v2 & Standing Backlog Decoupling
+
+* **Disclosure Date**: 2026-10-23
+* **Context**: Review of initial demo feed execution revealed that treating any positive standing backlog (`due_backlog_units > 0`) as `CRITICAL` caused the operational status banner to stay pegged at Critical on Days 2, 3, and 8, and produced a false alarm on Day 9 (the pre-registered seasonal control day).
+* **Remediation**: Transitioned from raw numeric backlog thresholding to structural operational conditions (codified in `stage9/config/rules.yaml` and `stage10/prereg_demo_feed_v2.md`):
+  1. **CRITICAL**: Requires an active material stockout (0 units), OR material at/below safety stock with an overdue PO, OR customer backlog units rising vs yesterday with a traced cause.
+  2. **NEEDS ATTENTION**: Assigned when standing backlog is steady or burning down, an overdue PO exists, or production is below plan.
+  3. **WATCH**: Assigned for elevated customer demand intake or partial goods receipts.
+  4. **NORMAL**: Operations within standard tolerances; no active daily disruptions.
+  5. Backlog is documented as a consequence line inside the root-cause alert card rather than a separate lead card.
+* **Results Table Before vs After**: Documented in the Master Final Report and `stage10/demo_feed_results.md`.

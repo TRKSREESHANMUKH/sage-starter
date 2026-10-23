@@ -39,29 +39,19 @@
       "role": "Planner"
     },
     {
-      "action": "At risk: Order SO-228",
-      "category": "Rule 2",
-      "due_date": "2026-01-06",
+      "action": "Prepare dispatch for order SO-224 (Widget Model Y (Product 202))",
+      "category": "Upcoming Order",
+      "due_date": "2026-01-04",
       "rank": 5,
-      "reason": "Order SO-228 (Widget Model Y (Product 202)) due in 3 days (18 units) exceeds projected availability of 3 units",
+      "reason": "Order SO-224 (14 units) requested for delivery on 2026-01-04",
       "role": "Planner"
     }
   ],
   "watchlist": [
     {
-      "item": "At risk: Order SO-224",
-      "reason": "Order SO-224 (Widget Model Y (Product 202)) due in 1 days (14 units) exceeds projected availability of 3 units",
-      "role": "Planner"
-    },
-    {
-      "item": "At risk: Order SO-229",
-      "reason": "Order SO-229 (Widget Model X (Product 201)) due in 2 days (14 units) exceeds projected availability of 5 units",
-      "role": "Planner"
-    },
-    {
-      "item": "At risk: Order SO-230",
-      "reason": "Order SO-230 (Widget Model Y (Product 202)) due in 1 days (9 units) exceeds projected availability of 3 units",
-      "role": "Planner"
+      "item": "Steel Rod 10mm (Material 101) inventory monitoring",
+      "reason": "Steel Rod 10mm (Material 101) is at 120 kg (below reorder point 150 kg), tracking 1 open replenishment POs",
+      "role": "Procurement"
     }
   ]
 }

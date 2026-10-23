@@ -1,5 +1,5 @@
 {
-  "run_at": "2026-10-22T16:29:37.207300Z",
+  "run_at": "2026-10-23T09:29:42.654910Z",
   "passed": 67,
   "failed": 0,
   "skipped": 0,
@@ -99,19 +99,19 @@
       "id": "G5",
       "name": "2025-12-20 banner\u2194subject agree",
       "status": "\u2705 PASS",
-      "note": "banner='Action needed' subject='SAGE Daily Brief | 20 Dec 2025 | 2 need action' actions=2"
+      "note": "banner='All normal' subject='SAGE Daily Brief | 20 Dec 2025 | All normal' actions=0"
     },
     {
       "id": "G5",
       "name": "2025-12-25 banner\u2194subject agree",
       "status": "\u2705 PASS",
-      "note": "banner='Action needed' subject='SAGE Daily Brief | 25 Dec 2025 | 2 need action' actions=2"
+      "note": "banner='All normal' subject='SAGE Daily Brief | 25 Dec 2025 | All normal' actions=0"
     },
     {
       "id": "G5",
       "name": "2025-12-31 banner\u2194subject agree",
       "status": "\u2705 PASS",
-      "note": "banner='Action needed' subject='SAGE Daily Brief | 31 Dec 2025 | 1 need action' actions=1"
+      "note": "banner='All normal' subject='SAGE Daily Brief | 31 Dec 2025 | All normal' actions=0"
     },
     {
       "id": "G6",
@@ -225,7 +225,7 @@
       "id": "G13",
       "name": "Reset completes in < 30 seconds",
       "status": "\u2705 PASS",
-      "note": "elapsed=0.29s"
+      "note": "elapsed=1.43s"
     },
     {
       "id": "G13",
@@ -327,7 +327,7 @@
       "id": "G24",
       "name": "stage9/trace.py exists",
       "status": "\u2705 PASS",
-      "note": "32291 bytes"
+      "note": "32879 bytes"
     },
     {
       "id": "G24",

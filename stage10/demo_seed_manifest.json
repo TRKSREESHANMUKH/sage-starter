@@ -1,386 +1,66 @@
 [
   {
-    "id": 164,
+    "id": 3,
     "table": "sales_orders",
     "date": "2025-12-31",
-    "quantity": 1,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-10-02, 1 units unfulfilled)",
+    "quantity": 7,
+    "reason": "Year-end cancellation of stale customer backorder (due 2025-01-15, 7 units unfulfilled)",
     "source": "demo_seed"
   },
   {
-    "id": 165,
+    "id": 4,
+    "table": "sales_orders",
+    "date": "2025-12-31",
+    "quantity": 10,
+    "reason": "Year-end cancellation of stale customer backorder (due 2025-01-16, 10 units unfulfilled)",
+    "source": "demo_seed"
+  },
+  {
+    "id": 5,
+    "table": "sales_orders",
+    "date": "2025-12-31",
+    "quantity": 12,
+    "reason": "Year-end cancellation of stale customer backorder (due 2025-01-21, 12 units unfulfilled)",
+    "source": "demo_seed"
+  },
+  {
+    "id": 6,
     "table": "sales_orders",
     "date": "2025-12-31",
     "quantity": 16,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-10-03, 16 units unfulfilled)",
+    "reason": "Year-end cancellation of stale customer backorder (due 2025-01-17, 16 units unfulfilled)",
     "source": "demo_seed"
   },
   {
-    "id": 167,
+    "id": 7,
     "table": "sales_orders",
     "date": "2025-12-31",
     "quantity": 8,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-10-03, 8 units unfulfilled)",
+    "reason": "Year-end cancellation of stale customer backorder (due 2025-01-22, 8 units unfulfilled)",
     "source": "demo_seed"
   },
   {
-    "id": 173,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 13,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-10-09, 13 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 174,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 11,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-10-12, 11 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 175,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 17,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-10-12, 17 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 176,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 11,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-10-14, 11 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 177,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 12,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-10-15, 12 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 178,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 10,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-10-15, 10 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 179,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 9,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-10-16, 9 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 184,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 3,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-10-27, 3 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 185,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 22,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-10-31, 22 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 186,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 10,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-10-31, 10 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 187,
+    "id": 8,
     "table": "sales_orders",
     "date": "2025-12-31",
     "quantity": 15,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-10-29, 15 units unfulfilled)",
+    "reason": "Year-end cancellation of stale customer backorder (due 2025-01-17, 15 units unfulfilled)",
     "source": "demo_seed"
   },
   {
-    "id": 188,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 8,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-11-03, 8 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 189,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 10,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-11-06, 10 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 190,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 8,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-11-10, 8 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 191,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 15,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-11-14, 15 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 192,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 20,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-11-12, 20 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 193,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 16,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-11-15, 16 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 194,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 10,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-11-24, 10 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 195,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 13,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-11-19, 13 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 196,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 22,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-11-27, 22 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 197,
+    "id": 9,
     "table": "sales_orders",
     "date": "2025-12-31",
     "quantity": 18,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-11-27, 18 units unfulfilled)",
+    "reason": "Year-end cancellation of stale customer backorder (due 2025-01-20, 18 units unfulfilled)",
     "source": "demo_seed"
   },
   {
-    "id": 198,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 9,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-11-28, 9 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 199,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 8,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-12-03, 8 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 200,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 13,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-11-28, 13 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 201,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 15,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-11-27, 15 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 202,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 17,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-12-01, 17 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 203,
+    "id": 10,
     "table": "sales_orders",
     "date": "2025-12-31",
     "quantity": 10,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-12-02, 10 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 204,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 12,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-12-02, 12 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 205,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 18,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-12-03, 18 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 206,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 13,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-12-03, 13 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 207,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 19,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-12-01, 19 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 208,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 10,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-12-08, 10 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 209,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 13,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-12-19, 13 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 210,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 23,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-12-15, 23 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 211,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 13,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-12-14, 13 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 212,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 17,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-12-26, 17 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 213,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 12,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-12-23, 12 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 214,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 21,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-12-29, 21 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 215,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 12,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-12-28, 12 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 216,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 13,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-12-26, 13 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 217,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 15,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-12-29, 15 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 218,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 23,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-12-27, 23 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 219,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 11,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-12-29, 11 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 222,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 15,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-12-29, 15 units unfulfilled)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 223,
-    "table": "sales_orders",
-    "date": "2025-12-31",
-    "quantity": 22,
-    "reason": "Year-end cancellation of stale customer backorder (due 2025-12-31, 22 units unfulfilled)",
+    "reason": "Year-end cancellation of stale customer backorder (due 2025-01-21, 10 units unfulfilled)",
     "source": "demo_seed"
   },
   {
@@ -395,24 +75,8 @@
     "id": 484,
     "table": "stock_movements",
     "date": "2025-12-31",
-    "quantity": 215,
+    "quantity": 206,
     "reason": "Reset Steel Rod 10mm stock to 215 kg (above reorder point 200kg)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 485,
-    "table": "stock_movements",
-    "date": "2025-12-31",
-    "quantity": 140,
-    "reason": "Reset Plastic Granules stock to 140 kg (above reorder point 120kg)",
-    "source": "demo_seed"
-  },
-  {
-    "id": 486,
-    "table": "stock_movements",
-    "date": "2025-12-31",
-    "quantity": 110,
-    "reason": "Reset Copper Wire stock to 110 m (above reorder point 90m)",
     "source": "demo_seed"
   },
   {

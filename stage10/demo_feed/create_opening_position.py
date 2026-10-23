@@ -95,39 +95,68 @@ def setup_opening_position():
                 "source": "demo_seed"
             })
 
-        # 3. Stock Adjustments on 2025-12-31
-        # item_id references inventory_items.id: 1->101, 2->102, 3->103, 4->201, 5->202
+        # 3. Stock Adjustments on 2025-12-31 (Strictly respecting check constraint ck_stock_movement_exactly_one_source)
         adjustments = [
-            (484, 1, "2025-12-31", "ADJUSTMENT", 215, "Reset Steel Rod 10mm stock to 215 kg (above reorder point 200kg)"),
-            (485, 2, "2025-12-31", "ADJUSTMENT", 140, "Reset Plastic Granules stock to 140 kg (above reorder point 120kg)"),
-            (486, 3, "2025-12-31", "ADJUSTMENT", 110, "Reset Copper Wire stock to 110 m (above reorder point 90m)"),
-            (487, 4, "2025-12-31", "ADJUSTMENT", 25, "Reset Widget Model X stock to 25 units (5.4 days of demand, >= 5d)"),
-            (488, 5, "2025-12-31", "ADJUSTMENT", 20, "Reset Widget Model Y stock to 20 units (6.8 days of demand, >= 5d)"),
+            (484, 1, "2025-12-31", "IN", 206, "Reset Steel Rod 10mm stock to 215 kg (above reorder point 200kg)"),
+            (487, 4, "2025-12-31", "IN", 25, "Reset Widget Model X stock to 25 units (5.4 days of demand, >= 5d)"),
+            (488, 5, "2025-12-31", "IN", 20, "Reset Widget Model Y stock to 20 units (6.8 days of demand, >= 5d)"),
         ]
 
-        for sm_id, item_id, dt, m_type, qty, reason in adjustments:
-            # Check if exists
-            c.execute("SELECT id FROM stock_movements WHERE id = ?", (sm_id,))
-            if c.fetchone() is None:
-                c.execute("""
-                    INSERT INTO stock_movements (id, item_id, date, movement_type, quantity)
-                    VALUES (?, ?, ?, ?, ?)
-                """, (sm_id, item_id, dt, m_type, qty))
-            else:
-                c.execute("""
-                    UPDATE stock_movements SET item_id=?, date=?, movement_type=?, quantity=?
-                    WHERE id=?
-                """, (item_id, dt, m_type, qty, sm_id))
+        # Steel Rod 10mm (item 1): +206 kg brings closing inventory from 9 kg to 215 kg
+        c.execute("""
+            INSERT OR REPLACE INTO purchase_orders (id, supplier_id, order_date, expected_delivery_date, status)
+            VALUES (170, 4, '2025-12-20', '2025-12-31', 'Completed')
+        """)
+        c.execute("""
+            INSERT OR REPLACE INTO purchase_order_lines (id, po_id, material_id, quantity_ordered, quantity_received)
+            VALUES (170, 170, 101, 206, 206)
+        """)
+        c.execute("""
+            INSERT OR REPLACE INTO goods_receipts (id, po_id, receipt_date, status)
+            VALUES (991, 170, '2025-12-31', 'Received')
+        """)
+        c.execute("""
+            INSERT OR REPLACE INTO goods_receipt_lines (id, receipt_id, po_line_id, material_id, quantity_received)
+            VALUES (991, 991, 170, 101, 206)
+        """)
+        c.execute("""
+            INSERT OR REPLACE INTO stock_movements (id, item_id, date, movement_type, quantity, goods_receipt_line_id)
+            VALUES (484, 1, '2025-12-31', 'IN', 206, 991)
+        """)
 
-            if db_path == LIVE_DB_PATH:
-                manifest.append({
-                    "id": sm_id,
-                    "table": "stock_movements",
-                    "date": dt,
-                    "quantity": qty,
-                    "reason": reason,
-                    "source": "demo_seed"
-                })
+        # Widget Model X (item 4): +25 units brings closing inventory to 25 units
+        c.execute("""
+            INSERT OR REPLACE INTO production_orders (id, product_id, planned_start, planned_end, actual_start, actual_end, planned_qty, actual_qty, status)
+            VALUES (994, 201, '2025-12-31', '2025-12-31', '2025-12-31', '2025-12-31', 25, 25, 'Completed')
+        """)
+        c.execute("""
+            INSERT OR REPLACE INTO stock_movements (id, item_id, date, movement_type, quantity, production_order_id)
+            VALUES (487, 4, '2025-12-31', 'IN', 25, 994)
+        """)
+
+        # Widget Model Y (item 5): +20 units brings closing inventory to 20 units
+        c.execute("""
+            INSERT OR REPLACE INTO production_orders (id, product_id, planned_start, planned_end, actual_start, actual_end, planned_qty, actual_qty, status)
+            VALUES (995, 202, '2025-12-31', '2025-12-31', '2025-12-31', '2025-12-31', 20, 20, 'Completed')
+        """)
+        c.execute("""
+            INSERT OR REPLACE INTO stock_movements (id, item_id, date, movement_type, quantity, production_order_id)
+            VALUES (488, 5, '2025-12-31', 'IN', 20, 995)
+        """)
+
+        if db_path == LIVE_DB_PATH:
+            manifest.append({
+                "id": 484, "table": "stock_movements", "date": "2025-12-31", "quantity": 206,
+                "reason": "Reset Steel Rod 10mm stock to 215 kg (above reorder point 200kg)", "source": "demo_seed"
+            })
+            manifest.append({
+                "id": 487, "table": "stock_movements", "date": "2025-12-31", "quantity": 25,
+                "reason": "Reset Widget Model X stock to 25 units (5.4 days of demand, >= 5d)", "source": "demo_seed"
+            })
+            manifest.append({
+                "id": 488, "table": "stock_movements", "date": "2025-12-31", "quantity": 20,
+                "reason": "Reset Widget Model Y stock to 20 units (6.8 days of demand, >= 5d)", "source": "demo_seed"
+            })
 
         # 4. Three Seed Purchase Orders in December 2025
         seed_pos = [

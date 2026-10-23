@@ -525,27 +525,36 @@ def get_model_check_summary(root_node: str, symptom_node: str, as_of: date) -> D
     Precomputed for demo packs; tagged precomputed vs computed.
     Labels: 'Model agrees', 'Model disagrees', 'Model inconclusive'.
     """
-    # Demo 2026 precomputed mapping
-    is_demo_period = (as_of >= date(2026, 1, 1) and as_of <= date(2026, 1, 10))
-    if is_demo_period:
-        # Supplier 1 delay on Jan 3-8
-        if "supplier_1" in root_node:
-            return {
-                "label": "Model agrees",
-                "tag": "Precomputed for the demo pack",
-                "details": "Method 1 attribution score 1.284 cleared null threshold (p95 = 0.218). Top exogenous driver matches Supplier 1 delay."
-            }
-        elif "demand" in root_node and "201" in root_node:
-            return {
-                "label": "Model agrees",
-                "tag": "Precomputed for the demo pack",
-                "details": "Method 1 attribution score 2.410 cleared null threshold (p95 = 0.218). Top exogenous driver matches Product 201 demand spike."
-            }
+    # Demo 2026 precomputed mapping (F5: real checks ran on Days 2, 3, 6, 8)
+    if as_of == date(2026, 1, 2) and ("demand" in root_node or "201" in root_node):
+        return {
+            "label": "Model agrees",
+            "tag": "Precomputed for the demo feed",
+            "details": "Method 1 attribution score 2.410 cleared null threshold (p95 = 0.218). Top exogenous driver matches Product 201 demand spike."
+        }
+    elif as_of == date(2026, 1, 3) and ("supplier_4" in root_node or "po_19" in root_node or "steel" in root_node.lower()):
+        return {
+            "label": "Model agrees",
+            "tag": "Precomputed for the demo feed",
+            "details": "Method 1 attribution score 1.284 cleared null threshold (p95 = 0.218). Top exogenous driver matches EastCoast Components (Supplier 4) delivery delay."
+        }
+    elif as_of == date(2026, 1, 6):
+        return {
+            "label": "Model agrees",
+            "tag": "Precomputed for the demo feed",
+            "details": "Method 1 attribution score 1.842 cleared null threshold (p95 = 0.218). Top driver traces to ongoing Supplier 4 transit delay depleting steel stock."
+        }
+    elif as_of == date(2026, 1, 8):
+        return {
+            "label": "Model agrees",
+            "tag": "Precomputed for the demo feed",
+            "details": "Method 1 attribution score 1.412 confirms inbound delivery receipt resolves active upstream supply bottleneck."
+        }
 
     return {
-        "label": "Model inconclusive",
-        "tag": "Computed just now",
-        "details": "Attribution completed within 5m cap; confidence threshold not exceeded."
+        "label": "Model check not run for this day",
+        "tag": "Not scheduled",
+        "details": "Model check not run for this day."
     }
 
 

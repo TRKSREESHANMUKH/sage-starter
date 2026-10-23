@@ -4,6 +4,9 @@
   "kpis": {
     "total_backlog_units": 0,
     "total_overdue_orders": 0,
+    "total_due_today_units": 0,
+    "total_due_today_orders": 0,
+    "backlog_rising": false,
     "oldest_overdue_date": null,
     "total_production_shortfall": 0,
     "total_material_stockouts": 0,
@@ -11,5 +14,5 @@
   },
   "priorities_count": 0,
   "top_priority": null,
-  "no_new_data": true
+  "no_new_data": false
 }
