@@ -12,31 +12,101 @@
   </p>
 </div>
 
-<div class="kpi-strip">
-  <div class="kpi-card">
-    <div class="kpi-label">Attribution Acc @ 1</div>
-    <div class="kpi-val" style="color: var(--accent);">{{ "%.1f"|format(research_data.aggregate_metrics.ac1) }}%</div>
+<!-- Two-Way Reporting Section (Part 1 Decision Record) -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+  <div class="card" style="margin-bottom: 0; border-top: 3px solid var(--accent);">
+    <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">VIEW 1: RAW SYNTHETIC SUITE</div>
+    <div style="font-size: 1.05rem; font-weight: 800; margin-bottom: 8px;">All 10 Evaluation Scenarios</div>
+    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Includes INC_01 & INC_05 targeting inactive backup vendors (zero physical effect).</p>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center;">
+      <div style="background: #f8fafc; padding: 8px; border-radius: 6px;">
+        <div style="font-size: 0.7rem; color: #64748b;">Acc @ 1</div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: #0f172a;">33.3%</div>
+      </div>
+      <div style="background: #f8fafc; padding: 8px; border-radius: 6px;">
+        <div style="font-size: 0.7rem; color: #64748b;">Acc @ 3</div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: var(--accent);">66.7%</div>
+      </div>
+      <div style="background: #f8fafc; padding: 8px; border-radius: 6px;">
+        <div style="font-size: 0.7rem; color: #64748b;">MRR</div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: #0f172a;">0.5620</div>
+      </div>
+    </div>
+    <div style="margin-top: 8px; font-size: 0.75rem; color: #64748b; display: flex; justify-content: space-between;">
+      <span>Stability: <strong>90.0%</strong></span>
+      <span>Control FPR: <strong>0.0%</strong></span>
+    </div>
   </div>
-  <div class="kpi-card">
-    <div class="kpi-label">Attribution Acc @ 3</div>
-    <div class="kpi-val" style="color: var(--accent);">{{ "%.1f"|format(research_data.aggregate_metrics.ac3) }}%</div>
-  </div>
-  <div class="kpi-card">
-    <div class="kpi-label">MRR Score</div>
-    <div class="kpi-val">{{ "%.3f"|format(research_data.aggregate_metrics.mrr) }}</div>
-  </div>
-  <div class="kpi-card">
-    <div class="kpi-label">Control False Positives</div>
-    <div class="kpi-val" style="color: var(--ok-text);">{{ "%.1f"|format(research_data.aggregate_metrics.fpr) }}%</div>
-  </div>
-  <div class="kpi-card">
-    <div class="kpi-label">5-Seed Stability</div>
-    <div class="kpi-val">{{ "%.1f"|format(research_data.aggregate_metrics.stability_pass_rate) }}%</div>
+
+  <div class="card" style="margin-bottom: 0; border-top: 3px solid #16a34a;">
+    <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #166534; margin-bottom: 4px;">VIEW 2: AUDITED PHYSICAL GROUND TRUTH</div>
+    <div style="font-size: 1.05rem; font-weight: 800; margin-bottom: 8px;">4 Active Real-Cause Scenarios</div>
+    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Excludes INC_01 & INC_05. Evaluates INC_03, INC_04, INC_06, INC_08.</p>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center;">
+      <div style="background: #f0fdf4; padding: 8px; border-radius: 6px;">
+        <div style="font-size: 0.7rem; color: #166534;">Acc @ 1</div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: #166534;">50.0%</div>
+      </div>
+      <div style="background: #f0fdf4; padding: 8px; border-radius: 6px;">
+        <div style="font-size: 0.7rem; color: #166534;">Acc @ 3</div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: #166534;">100.0%</div>
+      </div>
+      <div style="background: #f0fdf4; padding: 8px; border-radius: 6px;">
+        <div style="font-size: 0.7rem; color: #166534;">MRR</div>
+        <div style="font-size: 1.2rem; font-weight: 800; color: #166534;">0.7431</div>
+      </div>
+    </div>
+    <div style="margin-top: 8px; font-size: 0.75rem; color: #166534; display: flex; justify-content: space-between;">
+      <span>Stability: <strong>100.0%</strong></span>
+      <span>Control FPR: <strong>0.0%</strong></span>
+    </div>
   </div>
 </div>
 
+<!-- 10 Demo Cases Scoreboard -->
 <div class="card">
-  <div class="card-title">All Ten Evaluation Scenarios vs Ground-Truth Oracle</div>
+  <div class="card-title">Ten Pre-Registered Demo Cases Scoreboard (stage10/prereg_cases.md)</div>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Case</th>
+          <th>Date</th>
+          <th>Scenario</th>
+          <th>True DB Driver</th>
+          <th>Detected Top Driver</th>
+          <th>Attribution Score</th>
+          <th>Threshold</th>
+          <th>Evidence Tier</th>
+          <th>Audited Result</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in research_data.demo_cases_scoreboard %}
+        <tr>
+          <td><strong>Case {{ c.case_num }}</strong></td>
+          <td style="font-family: monospace;">{{ c.date }}</td>
+          <td><strong>{{ c.name }}</strong></td>
+          <td><code style="color: var(--accent);">{{ c.true_driver }}</code></td>
+          <td><code>{{ c.detected_driver }}</code></td>
+          <td style="font-family: monospace;">{{ c.score }}</td>
+          <td style="font-family: monospace; color: #64748b;">{{ c.threshold }}</td>
+          <td>
+            <span class="badge {% if c.tier == 'HIGH' %}badge-crit{% elif c.tier == 'MEDIUM' %}badge-warn{% else %}badge-info{% endif %}">
+              {{ c.tier }}
+            </span>
+          </td>
+          <td><strong>{{ c.result }}</strong></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Raw Evaluation Scenarios Table -->
+<div class="card">
+  <div class="card-title">Raw Simulation Scenarios vs Ground-Truth Oracle</div>
   <div class="table-container">
     <table>
       <thead>
@@ -53,7 +123,7 @@
       </thead>
       <tbody>
         {% for s in research_data.scenarios %}
-        <tr style="{% if s.scenario_id in ('INC_10', 'P10') %}background: rgba(220, 38, 38, 0.1);{% endif %}">
+        <tr style="{% if s.scenario_id in ('INC_10', 'P10') %}background: rgba(220, 38, 38, 0.06);{% endif %}">
           <td><strong>{{ s.scenario_id }}</strong></td>
           <td><code style="color: var(--accent);">{{ s.true_driver }}</code></td>
           <td>{{ s.top_driver }}</td>

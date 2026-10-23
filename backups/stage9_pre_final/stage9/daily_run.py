@@ -163,7 +163,14 @@ def prepare_daily_run(as_of: Optional[date] = None, force_pack: Optional[Path] =
     4. Sends nothing!
     """
     no_new_data = False
-    pack_to_ingest = force_pack or get_next_queue_pack()
+    if force_pack:
+        pack_to_ingest = force_pack
+    elif as_of is not None and as_of <= get_current_day():
+        pack_to_ingest = None
+        target_as_of = as_of
+        no_new_data = False
+    else:
+        pack_to_ingest = get_next_queue_pack()
 
     if pack_to_ingest:
         logger.info("Ingesting operational pack: %s", pack_to_ingest)
@@ -278,13 +285,17 @@ def send_prepared_report(
     owner_email = os.getenv("SAGE_OWNER_EMAIL", "thotaramakrishnasreeshanmukh@gmail.com").strip()
     demo_email = os.getenv("SAGE_DEMO_RECIPIENT", "sreeshanmukhtrk@gmail.com").strip()
 
-    # Fail loudly if prepare was not completed
-    if not meta_file.exists():
-        err_msg = f"Report prepare missing for {target_as_of.isoformat()}"
-        logger.error(err_msg)
-        if mode == "scheduled":
-            _dispatch_alert_to_owner(owner_email, target_as_of, f"Report failed: {err_msg}")
-        return False
+    # Ensure report files exist (auto-build if missing)
+    if not meta_file.exists() or not html_file.exists() or not pdf_file.exists():
+        try:
+            from stage9.ops import ensure_report
+            ensure_report(as_of=target_as_of)
+        except Exception as rep_err:
+            err_msg = f"Report prepare missing and could not be built for {target_as_of.isoformat()}: {rep_err}"
+            logger.error(err_msg)
+            if mode == "scheduled":
+                _dispatch_alert_to_owner(owner_email, target_as_of, f"Report failed: {err_msg}")
+            return False
 
     with open(meta_file, "r", encoding="utf-8") as f:
         meta = json.load(f)
@@ -538,64 +549,12 @@ def run_week_summary(send_emails: bool = False) -> str:
 
 def reset_demo_state() -> None:
     """
-    Restores the live database from baseline, repopulates the queue with 2025-02-03..2025-02-09,
-    resets current day to 2025-02-02, and clears demo sent logs.
+    Restores the live database to 2025-12-31 baseline, repopulates queue with 10 packs
+    (2026-01-01 to 2026-01-10), and clears demo sent logs.
     """
-    logger.info("Resetting SAGE demo environment...")
-
-    # 1. Restore SQLite live DB from baseline
-    if LIVE_BASELINE_PATH.exists():
-        shutil.copy2(LIVE_BASELINE_PATH, LIVE_DB_PATH)
-        logger.info("Restored live database from %s", LIVE_BASELINE_PATH)
-    else:
-        from stage9.init_live_db import init_live_db
-        init_live_db()
-
-    # 2. Reset current_day.json to 2025-02-02
-    set_current_day(date(2025, 2, 2), ingested_days=["2025-02-02"])
-    set_replay_date(date(2025, 2, 2))
-
-    # 3. Refill queue with day packs 2025-02-03 through 2025-02-09
-    QUEUE_DIR.mkdir(parents=True, exist_ok=True)
-    for p in QUEUE_DIR.iterdir():
-        if p.is_dir():
-            shutil.rmtree(p)
-
-    for day_num in range(3, 10):
-        src_pack = PACKS_DIR / f"2025-02-0{day_num}"
-        dst_pack = QUEUE_DIR / f"2025-02-0{day_num}"
-        if src_pack.exists():
-            shutil.copytree(src_pack, dst_pack)
-
-    logger.info("Queue refilled with 7 day packs (2025-02-03 to 2025-02-09).")
-
-    # 4. Filter sent_log.jsonl to remove demo entries past 2025-02-02
-    if SENT_LOG_PATH.exists():
-        kept_lines = []
-        with open(SENT_LOG_PATH, "r", encoding="utf-8") as f:
-            for line in f:
-                line_str = line.strip()
-                if not line_str:
-                    continue
-                try:
-                    entry = json.loads(line_str)
-                    if entry.get("as_of", "") <= "2025-02-02":
-                        kept_lines.append(line_str)
-                except Exception:
-                    pass
-        with open(SENT_LOG_PATH, "w", encoding="utf-8") as f:
-            for l in kept_lines:
-                f.write(l + "\n")
-
-    # 5. Clear insights cache
-    if INSIGHTS_CACHE_DIR.exists():
-        for f in INSIGHTS_CACHE_DIR.glob("insights_*.json"):
-            try:
-                f.unlink()
-            except Exception:
-                pass
-
-    logger.info("Demo reset complete! Current Day is 2025-02-02.")
+    from stage9.ops import reset_demo_v6
+    res = reset_demo_v6(user="cli")
+    print(f"SUCCESS: Reset demo state to 2025-12-31 in {res.get('elapsed_seconds', 0)}s.")
 
 
 # ──────────────────────────────────────────────────────────────────────────────

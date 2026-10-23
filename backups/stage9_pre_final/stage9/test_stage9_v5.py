@@ -122,15 +122,15 @@ def test_live_vs_main_equivalence_7_days():
 def test_pack_validation_rejection():
     import tempfile
     with tempfile.TemporaryDirectory() as tmp_dir:
-        pack_dir = Path(tmp_dir) / "2025-02-03"
+        pack_dir = Path(tmp_dir) / "2026-01-01"
         pack_dir.mkdir()
 
-        meta = {"pack_date": "2025-02-03", "created_at": "2026-10-12T00:00:00Z"}
+        meta = {"pack_date": "2026-01-01", "created_at": "2026-10-12T00:00:00Z"}
         with open(pack_dir / "metadata.json", "w") as f:
             json.dump(meta, f)
 
         # Copy files from real pack
-        real_pack = ROOT_DIR / "demo_data" / "packs" / "2025-02-03"
+        real_pack = ROOT_DIR / "demo_data" / "packs" / "2026-01-01"
         for f in real_pack.glob("*.csv"):
             shutil.copy2(f, pack_dir / f.name)
 
@@ -139,7 +139,7 @@ def test_pack_validation_rejection():
         with open(po_csv, "w", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(["id", "supplier_id", "order_date", "expected_delivery_date", "status"])
-            writer.writerow([9999, 1, "2025-02-15", "2025-02-20", "Open"])  # Future date violation
+            writer.writerow([9999, 1, "2026-01-15", "2026-01-20", "Open"])  # Future date violation
 
         rejected = False
         try:

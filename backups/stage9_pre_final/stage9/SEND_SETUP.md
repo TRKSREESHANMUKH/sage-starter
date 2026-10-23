@@ -1,6 +1,6 @@
-# SAGE 8:00 PM Daily Email — Real Sending Setup & Scheduling Guide (Stage 9 v5)
+# SAGE 8:00 PM Daily Email — Real Sending Setup & Scheduling Guide (Stage 9 Prompt 1)
 
-This guide provides copy-paste steps to configure automated, unattended, two-phase daily email dispatch for SAGE.
+This guide provides copy-paste steps to configure automated, unattended, two-phase daily email dispatch for SAGE with real Gmail SMTP.
 
 ---
 
@@ -29,32 +29,57 @@ SAGE_SOURCE=live
 SAGE_DEMO=true
 ```
 
-### How to Generate a Gmail App Password
+### Exact Steps to Generate a Gmail App Password
 1. Open your Google Account Security settings: https://myaccount.google.com/security
-2. Enable **2-Step Verification** if not already enabled.
-3. Search for **App passwords** or visit: https://myaccount.google.com/apppasswords
-4. Name the application (e.g., `SAGE Daily Brief`).
-5. Click **Create** and copy the generated 16-character password (e.g. `abcd efgh ijkl mnop`).
-6. Paste the 16 characters (without spaces) into `.env` as `SMTP_PASSWORD=abcdefghijklmnop`.
+2. Enable **2-Step Verification** on your Google account (mandatory prerequisite; Gmail will not generate app passwords without 2-Step Verification enabled).
+3. Open **App passwords** directly: https://myaccount.google.com/apppasswords
+4. In the "App name" field, enter `SAGE Daily Brief`.
+5. Click **Create**. Google displays a yellow box with a 16-character password (e.g., `abcd efgh ijkl mnop`).
+6. Copy the password and remove all spaces (exactly 16 characters).
+7. Paste into `.env`:
+   ```bash
+   SMTP_USER=thotaramakrishnasreeshanmukh@gmail.com
+   SMTP_PASSWORD=abcdefghijklmnop
+   SMTP_FROM=thotaramakrishnasreeshanmukh@gmail.com
+   ```
+   *Note: `SMTP_USER` must be your full Gmail address, and the `From` header must match this address to satisfy Gmail's authentication policies.*
 
 ---
 
-## 2. Test Real Live Sending
+## 2. Test Real Live Sending & Verification
 
-Test live dispatch immediately from terminal:
+### A. Controller UI Verification (Port 8001)
+1. Open http://localhost:8001 (Controller).
+2. By default after every restart, mode is **Dry Run** and a red banner `DRY-RUN: emails are NOT being delivered` is permanently shown.
+3. To switch to **Live**: toggle "Send Mode" to Live. A security prompt will ask you to review the recipient list (`sreeshanmukhtrk@gmail.com`) and type `LIVE` to confirm.
+4. Click **👁 Preview** to inspect the rendered briefing HTML and verify the strictly 1-page A4 PDF page assertion.
+5. Click **📤 Send Report Now**. In Live mode, this immediately delivers the report via Gmail SMTP and records `SUCCESS_LIVE` with response code 250, connection time in ms, and unique Message-ID header.
+
+### B. Terminal / CLI Verification
+Test live dispatch directly using the virtual environment:
 
 ```bash
-# 1. Prepare current day's report (builds snapshot, priorities, narration, 1-page PDF)
-python -m stage9.daily_run --prepare
+# 1. Prepare / ensure current day's report
+./venv/bin/python -c "from stage9.ops import ensure_report; print(ensure_report())"
 
-# 2. Test send immediately to allowlisted demo recipient
-python -m stage9.daily_run --send-now
+# 2. Test live dispatch directly to allowlisted demo recipient
+./venv/bin/python -c "from stage9.ops import send_report_now_v6; print(send_report_now_v6(recipient='sreeshanmukhtrk@gmail.com', force_live=True))"
 ```
 
-Terminal log will show:
-```
-[INFO] Attempting live SMTP delivery...
-[INFO] Send step completed in 0.016s for sreeshanmukhtrk@gmail.com (status: SUCCESS)
+Logs in `stage9/state/sent_log.jsonl` will record:
+```json
+{
+  "timestamp": "2026-10-22T06:50:00.123Z",
+  "job": "nightly_digest",
+  "as_of": "2025-12-31",
+  "recipient": "sreeshanmukhtrk@gmail.com",
+  "status": "SUCCESS_LIVE",
+  "mode": "manual",
+  "subject": "SAGE Daily Brief | 31 Dec 2025 | 11 need action",
+  "message_id": "<...>",
+  "smtp_code": 250,
+  "connection_time_ms": 142.5
+}
 ```
 
 ---

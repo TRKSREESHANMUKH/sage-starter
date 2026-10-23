@@ -19,8 +19,8 @@ materials:
 # 2. Finished Goods Inventory Rules
 products:
   safety_stock:
-    201: 15.0   # Standard Motor (units)
-    202: 10.0   # Heavy Duty Motor (units)
+    201: 15.0   # Widget Model X (units)
+    202: 10.0   # Widget Model Y (units)
   reorder_point:
     201: 30.0
     202: 25.0
@@ -34,12 +34,34 @@ planning:
   critical_days_of_cover: 3.0       # <= 3 days is critical
   warning_days_of_cover: 7.0        # <= 7 days is warning
 
-# 4. Severity Scoring Formulas (Printed in documentation & headers)
-# - Material Critical: stock <= safety_stock
-# - Material Warning: (stock <= reorder_point AND open_pos == 0) OR (days_of_cover <= 7.0)
-# - Product Critical: fg_stock <= 0 OR due_backlog > 0
-# - Product Warning: fg_stock <= safety_stock OR shortfall > 0
-# - PO Overdue: days_overdue > 0 (Critical if days_overdue >= 3, Warning if days_overdue < 3)
+# 4. Severity Scoring Formulas (v2 Pre-registered structural rules)
+# Banner Tiers (F2):
+# - Critical:
+#     - Any raw material stock == 0 (stock-out)
+#     - OR Any material stock <= safety_stock AND an overdue PO exists
+#     - OR Overdue customer backlog units rising vs yesterday WITH a traced cause
+# - Needs Attention:
+#     - Standing overdue customer backlog not rising
+#     - OR An overdue PO exists (days_overdue > 0)
+#     - OR Production below plan (shortfall > 0)
+# - Watch:
+#     - Elevated customer demand intake
+#     - OR A partial goods receipt (quantity_received < quantity_ordered)
+# - Normal:
+#     - None of the above conditions met. Standing unchanged backlog does NOT keep banner Critical.
+severity_rules_v2:
+  critical_conditions:
+    material_stockout: true
+    material_safety_with_po_overdue: true
+    backlog_rising_with_traced_cause: true
+  needs_attention_conditions:
+    standing_backlog_steady: true
+    po_overdue: true
+    production_shortfall: true
+  watch_conditions:
+    demand_elevated: true
+    partial_receipt: true
+
 severity_weights:
   due_backlog_per_unit: 10.0
   order_overdue_per_day: 5.0
@@ -58,4 +80,23 @@ supplier_rating:
   grade_a_on_time_min: 90.0
   grade_a_received_min: 95.0
   grade_b_on_time_min: 70.0
+
+# 6. Part E Abnormal Detection & Cause-Chain Trace Rules (Pre-registered)
+abnormal_detection:
+  baseline_reference: "analytics/daily_panel_baseline.parquet"
+  modified_z_threshold: 3.5
+  modified_z_multiplier: 0.6745
+  zero_inflated_percentile: 99.0
+  trailing_window_days: 7
+  max_reported_chains: 3
+  symptom_nodes:
+    - "product_201_due_backlog_units"
+    - "product_202_due_backlog_units"
+    - "product_201_production_shortfall_units"
+    - "product_202_production_shortfall_units"
+    - "product_201_capacity_shortfall_units"
+    - "product_202_capacity_shortfall_units"
+    - "material_101_stock"
+    - "material_102_stock"
+    - "material_103_stock"
 

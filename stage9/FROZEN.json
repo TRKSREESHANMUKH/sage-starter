@@ -1,6 +1,6 @@
 {
-  "stage": "Stage 9 Finish (All Gates & Feed Passed)",
-  "frozen_at": "2026-10-23T09:29:17.067111+00:00",
+  "stage": "Stage 9 Final (All Phases 0-8 Complete)",
+  "frozen_at": "2026-10-23T17:47:34.969506+00:00",
   "framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
   "files": {
     "stage9/SEND_SETUP.md": "0a886236f1bcc94fc27cde2a0b81fb362326132409134f88fde78e0f26a8bc74",
@@ -27,18 +27,18 @@
     "stage9/test_stage9_v4.py": "d443db2d43ddac5d86f3d93497011ce17aadeccf9c87797dcab0b1258546a5ed",
     "stage9/test_stage9_v5.py": "096c4c6004b9e8b88f53adba7b7f2df295cf45270e19dce21b52fb21a4f5ad23",
     "stage9/test_stage9_final.py": "c1d210a30bcdeb72c8763dd61c2071112b64bf346720b4d16cb82dd9eeed919b",
-    "controller/app.py": "0ba4bfa53bfcfb8df3894aa5c89d2734de377a5d91826ac1fd6688c1e93cd6a0",
+    "controller/app.py": "decbe03bc00fdec5f3328791b09e0c123bf175f554e5b9854901a3f0cc80e7a4",
     "controller/templates/login.html": "c74cb88fdb269f94b1f7d28864bf6180251088a88a9c030e29720eb41a89e940",
     "controller/templates/dashboard.html": "3ce989595db292bea543d3bd4fa338bb341a834bedc7e9ac51aed88800d392db",
     "controller/templates/schedule.html": "177b2d73518fcb15caa4baba7d05760c340fbb54ebeb2f3675605d82acfc8eb3",
     "DEMO.md": "9fb1c84331999456323f0d5e523f49dafbb66d7ae5b222b0417981dac1114331",
-    "web/app.py": "9292de0dbbf85b5360c182b4d1c9cca0dc7031e3cca3b39d7621516bb4826d23",
-    "web/insights_data.py": "d67c43da9b5784661c27b1e6090c1a46db1954ca799fbeb5829885a28aeb60a1",
+    "web/app.py": "a136f0edf1422bfcc50769d68d12c15a3b29eb6424b83206503ee4032562420d",
+    "web/insights_data.py": "6cebeb99d1587d458b92fa9c1c388bb6ca945d9e158f47adf9095edf5f9be4d3",
     "web/one_page_data.py": "4dd8bffc53463e9b9f7a255c8577e2e450db4207bd8bae28003dd44df2e2068b",
     "web/research_view.py": "5ec5f7093aa4fabac4b29713a55a66faed5ddf951bc6af19391d4a7faeb88485",
     "web/templates/base.html": "1963a958c2b17a269e02a65915fe0bddc5fe3ce9741aff3ea708c9dfd7864dca",
-    "web/templates/home.html": "623e8fc956473f39eba8eb373e4da981c976b0167b1044e29bfafbf50c86e269",
-    "web/templates/insights.html": "7840d5f038afa3f47732bcb89d6bd570571018a2f8b39634c5c5d93dad1b8b47",
+    "web/templates/home.html": "4d716c3b682dde8ef2eb8823030ae8f6314481458049631b6ffd3877f158287f",
+    "web/templates/insights.html": "1533c7ce04221505224d5f454dd715dec06d93e86bb6157cb530941d1a91be29",
     "reports/week_summary.md": "660e35d768232d7da1e87c1f2fe15e4a68571bb2609941a2e697654bc611947f",
     "stage9/run_all_checks.py": "c33782ed8535b63cd4849b9687cdba05f4928e31ae21ea68ce4792c959f37a5e",
     "stage9/test_cases.py": "87e67b7f593ba934eee3dff67cc44a9964c3707483d5ea95a42a860c0ee76fd4",
@@ -55,7 +55,7 @@
     "stage10/demo_feed/validate_feed.py": "38bfc974e2c80b7e1b71630c1c79bf2477758e37df37259c0b755f9f7879a92f",
     "stage10/demo_feed/run_feed_evaluation.py": "f36aeadd4677d10795472631d0672c8ec8b1e41449947456a9417a742ccdfed3",
     "stage9/send_check.py": "179218988aa53d62a6bb5f358fa90a7d02d4d7021c0ff47641b058c46ba22bc7",
-    "run_sage.sh": "73f2834bc5d0a94e9177834f75caca6a16c4802e7aa4b38ef310561e57d42bfb",
-    "stop_sage.sh": "133a3432e9a49c06f5856a98ec2ebbe57ba9623e44f98fb936f246c21dc9401f"
+    "run_sage.sh": "2621507ddf59dcdea87afb80a4a3366adf85c2a54667fac347df55558fca3d75",
+    "stop_sage.sh": "115709a18afda03975fc6277cb79e30d1bc922c160d2f4c54922cb87d57f02bd"
   }
 }

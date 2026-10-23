@@ -24,7 +24,7 @@ import json
 import os
 import shutil
 import sys
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
@@ -118,6 +118,17 @@ def validate_pack(pack_dir: Path, live_engine) -> Tuple[date, Dict[str, List[Dic
         pack_date = datetime.strptime(pack_date_str, "%Y-%m-%d").date()
     except Exception:
         raise PackValidationError(f"Invalid pack_date format: {pack_date_str}")
+
+    # Enforce strict date continuity: exactly the day after current_day
+    from stage9.current_day import get_current_day
+    cur_day = get_current_day()
+    expected_day = cur_day + timedelta(days=1)
+    if pack_date != expected_day:
+        raise PackValidationError(
+            f"Date violation: date continuity error: this pack is for {pack_date.day} {pack_date.strftime('%b %Y')} "
+            f"but the current day is {cur_day.day} {cur_day.strftime('%b %Y')}, "
+            f"so {expected_day.day} {expected_day.strftime('%b %Y')} was expected."
+        )
 
     parsed_data: Dict[str, List[Dict[str, Any]]] = {}
 
@@ -253,6 +264,20 @@ def ingest_pack(pack_dir: Path) -> Dict[str, Any]:
     # Update global current_day and clock
     register_ingested_day(pack_date)
     set_replay_date(pack_date)
+
+    # Update daily_panel_live.parquet
+    EXT_PANEL_PATH = ROOT_DIR / "analytics" / "daily_panel_ext.parquet"
+    if EXT_PANEL_PATH.exists() and LIVE_PANEL_PATH.exists():
+        try:
+            ext_df = pd.read_parquet(EXT_PANEL_PATH)
+            live_df = pd.read_parquet(LIVE_PANEL_PATH)
+            matching_row = ext_df[ext_df["date"] == pack_date_str]
+            if not matching_row.empty:
+                live_df = live_df[live_df["date"] != pack_date_str]
+                updated_live_df = pd.concat([live_df, matching_row], ignore_index=True)
+                updated_live_df.to_parquet(LIVE_PANEL_PATH, index=False)
+        except Exception as exc:
+            print(f"Warning updating live panel: {exc}")
 
     # Invalidate insights cache
     if INSIGHTS_CACHE_DIR.exists():

@@ -19,7 +19,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 CURRENT_DAY_FILE = ROOT_DIR / "stage9" / "state" / "current_day.json"
 INGEST_LOG_FILE = ROOT_DIR / "stage9" / "state" / "ingest_log.jsonl"
 
-DEFAULT_INITIAL_DAY = date(2025, 2, 3)
+DEFAULT_INITIAL_DAY = date(2025, 12, 31)
 BASE_HISTORY_START = date(2025, 1, 1)
 
 

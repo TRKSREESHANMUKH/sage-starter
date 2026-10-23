@@ -90,6 +90,10 @@ app = FastAPI(
     redoc_url=None,
 )
 
+@app.get("/health")
+def health_check():
+    return {"status": "ok", "app": "controller"}
+
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 

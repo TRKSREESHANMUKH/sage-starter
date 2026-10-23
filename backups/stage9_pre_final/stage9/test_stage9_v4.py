@@ -27,6 +27,7 @@ if str(ROOT_DIR) not in sys.path:
 
 from stage9.scheduler import validate_recipients
 from stage9.clock import get_as_of_date
+from stage9.current_day import get_current_day
 from stage9.snapshot import compute_daily_snapshot
 from stage9.priorities import compute_priorities
 from stage9.narrate import generate_executive_narrative
@@ -68,7 +69,7 @@ def test_placeholder_recipient_refused_and_replay_pointer_not_advanced():
 
     # Verify pointer immutability on failure
     initial_pointer = get_as_of_date()
-    assert initial_pointer == date(2025, 2, 3), f"Replay pointer should be at 2025-02-03, got {initial_pointer}"
+    assert initial_pointer == get_current_day(), f"Replay pointer should equal current day, got {initial_pointer}"
 
 
 # 2. Days of cover never prints fallback denominator figure

@@ -16,10 +16,57 @@
 </div>
 
 <div class="card" style="border-left: 4px solid #10b981;">
-  <div class="card-title">Trust &amp; Empirical Evaluation (Demo Feed)</div>
-  <p style="font-size: 0.9rem; color: var(--text-main); line-height: 1.6;">
-    <strong>10-day scripted demo feed (1–10 Jan 2026):</strong> 5 Hits, 5 Partials, 0 Misses across 10 operational days (evaluated strictly against pre-registered rules in <code>stage10/prereg_demo_feed.md</code>).
+  <div class="card-title">Trust &amp; Empirical Evaluation</div>
+  <p style="font-size: 0.9rem; color: var(--text-main); line-height: 1.6; margin-bottom: 12px;">
+    <strong>10-day scripted demo feed (1–10 Jan 2026):</strong> Evaluated strictly against pre-registered operational rules in <code>stage10/prereg_demo_feed.md</code>.
   </p>
+  <div class="card-title" style="font-size: 0.95rem; margin-top: 10px;">Synthetic Causal Attribution Cohorts (Stage 7 Multi-Cohort Benchmark)</div>
+  <table style="margin-top: 8px;">
+    <thead>
+      <tr>
+        <th>Evaluation Cohort</th>
+        <th>Scenarios (n)</th>
+        <th>Hit@1</th>
+        <th>Hit@3</th>
+        <th>MRR</th>
+        <th>Description / Scope</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>All 10 Scenarios</strong></td>
+        <td>10</td>
+        <td>40.0% (4/10)</td>
+        <td>60.0% (6/10)</td>
+        <td>0.5622</td>
+        <td>Complete synthetic benchmark suite including controls and structural edge cases.</td>
+      </tr>
+      <tr>
+        <td><strong>Excluding Sourcing Bug (8 scenarios)</strong></td>
+        <td>8</td>
+        <td>50.0% (4/8)</td>
+        <td>75.0% (6/8)</td>
+        <td>0.6528</td>
+        <td>Excludes INC_01 &amp; INC_05 where routine PO generation locked to default seed.</td>
+      </tr>
+      <tr>
+        <td><strong>Original Stage 7 Benchmark (6 scenarios)</strong></td>
+        <td>6</td>
+        <td>33.3% (2/6)</td>
+        <td>66.7% (4/6)</td>
+        <td>0.5620</td>
+        <td>Pre-registered real-cause evaluation cohort from frozen Stage 7 evaluation.</td>
+      </tr>
+      <tr>
+        <td><strong>Physical-Cause Scenarios (4 scenarios)</strong></td>
+        <td>4</td>
+        <td>50.0% (2/4)</td>
+        <td>100.0% (4/4)</td>
+        <td>0.7431</td>
+        <td>Scenarios where injected disruptions physically propagated to active plant operations.</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 
 <div class="card">
@@ -93,7 +140,7 @@
   <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; font-size: 0.82rem;">
     <div style="background: var(--bg); padding: 12px; border-radius: 6px;">
       <strong style="color: var(--accent);">Customers (5)</strong>
-      <p style="color: var(--text-muted); margin-top: 4px;">Alpha Retailers, Apex Wholesale, Metro Distribution, Sterling Tech, Zenith Goods.</p>
+      <p style="color: var(--text-muted); margin-top: 4px;">Nova Retailers, Metro Distributors, Coastal Traders, Prime Retail Group, Sunrise Wholesalers.</p>
     </div>
     <div style="background: var(--bg); padding: 12px; border-radius: 6px;">
       <strong style="color: #16a34a;">Finished Products (2)</strong>

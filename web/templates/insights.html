@@ -384,7 +384,7 @@
 
 {% if as_of in ["2025-12-31", "2026-01-01"] %}
 <div class="opening-position-banner" style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:12px 16px;margin-bottom:16px;font-size:0.88rem;color:#1e40af;line-height:1.5;">
-  <strong>Demo Baseline Notice:</strong> Opening position set on 31 Dec 2025 for the demo: 48 stale customer backorders cancelled, PO #18 (139d overdue) cancelled, and warehouse inventory reset to standard operating buffers above reorder thresholds.
+  <strong>Demo Baseline Notice:</strong> Opening position set on 31 Dec 2025 for the demo: 48 unfulfilled 2025 customer orders and purchase order #18 were cancelled and raw material stock adjusted, so the ten-day feed starts from a clean position.
 </div>
 {% endif %}
 
@@ -552,7 +552,7 @@
   <div class="insight-section-head">
     <h2 class="insight-section-title">Customer Orders &amp; Service Delivery</h2>
     <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 3px;">
-      Order fulfillment rates across the four buckets: On-time complete, Shipped late, Still overdue, and Due later.
+      Order fulfillment rates across the four buckets: On-time complete ({% if fulfillment_buckets %}{{ fulfillment_buckets.on_time_orders }}{% else %}173{% endif %}), Shipped late ({% if fulfillment_buckets %}{{ fulfillment_buckets.shipped_late_orders }}{% else %}0{% endif %}), Partly shipped ({% if fulfillment_buckets %}{{ fulfillment_buckets.partial_orders }}{% else %}2{% endif %}), and Unshipped ({% if fulfillment_buckets %}{{ fulfillment_buckets.unshipped_orders }}{% else %}46{% endif %}). Total open backlog: {% if fulfillment_buckets %}{{ fulfillment_buckets.total_open_units }}{% else %}652{% endif %} units across {% if fulfillment_buckets %}{{ fulfillment_buckets.total_open_orders }}{% else %}48{% endif %} unfulfilled orders.
     </p>
   </div>
 
@@ -568,7 +568,9 @@
               <th>Due So Far</th>
               <th>On-time</th>
               <th>Late</th>
-              <th>Overdue Now</th>
+              <th>Part-shipped</th>
+              <th>Unshipped</th>
+              <th>Overdue Units</th>
               <th>Due Later</th>
               <th>On-time %</th>
             </tr>
@@ -580,7 +582,9 @@
               <td>{{ ps.orders_count }}</td>
               <td><span style="color: #16a34a; font-weight: 600;">{{ ps.on_time_count }}</span></td>
               <td>{{ ps.shipped_late_count }}</td>
-              <td><span style="{% if ps.units_overdue_now > 0 %}color: #dc2626; font-weight: 700;{% endif %}">{{ ps.overdue_count }} ({{ ps.units_overdue_now }} u)</span></td>
+              <td>{{ ps.partial_count }}</td>
+              <td>{{ ps.unshipped_count }}</td>
+              <td><span style="{% if ps.units_overdue_now > 0 %}color: #dc2626; font-weight: 700;{% endif %}">{{ ps.units_overdue_now }} u</span></td>
               <td><span style="color: #64748b;">{{ ps.due_later_orders }} ({{ ps.units_due_later }} u)</span></td>
               <td><strong>{{ ps.on_time_pct }}</strong></td>
             </tr>
@@ -601,7 +605,9 @@
               <th>Due So Far</th>
               <th>On-time</th>
               <th>Late</th>
-              <th>Overdue Now</th>
+              <th>Part-shipped</th>
+              <th>Unshipped</th>
+              <th>Overdue Units</th>
               <th>Due Later</th>
               <th>On-time %</th>
             </tr>
@@ -613,7 +619,9 @@
               <td>{{ cs.orders_count }}</td>
               <td><span style="color: #16a34a; font-weight: 600;">{{ cs.on_time_count }}</span></td>
               <td>{{ cs.shipped_late_count }}</td>
-              <td><span style="{% if cs.units_overdue_now > 0 %}color: #dc2626; font-weight: 700;{% endif %}">{{ cs.overdue_count }} ({{ cs.units_overdue_now }} u)</span></td>
+              <td>{{ cs.partial_count }}</td>
+              <td>{{ cs.unshipped_count }}</td>
+              <td><span style="{% if cs.units_overdue_now > 0 %}color: #dc2626; font-weight: 700;{% endif %}">{{ cs.units_overdue_now }} u</span></td>
               <td><span style="color: #64748b;">{{ cs.due_later_orders }} ({{ cs.units_due_later }} u)</span></td>
               <td><strong>{{ cs.on_time_pct }}</strong></td>
             </tr>

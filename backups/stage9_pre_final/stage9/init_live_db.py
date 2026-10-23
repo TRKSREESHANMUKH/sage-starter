@@ -33,7 +33,7 @@ LIVE_BASELINE_PATH = LIVE_DIR / "sage_live_baseline.db"
 from app.database import Base
 from app.models import suppliers, purchasing, inventory, production, sales
 
-CUTOFF_DATE = date(2025, 2, 2)
+CUTOFF_DATE = date(2025, 12, 31)
 
 
 def init_live_db(cutoff: date = CUTOFF_DATE) -> Path:

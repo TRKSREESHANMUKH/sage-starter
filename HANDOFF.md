@@ -1,53 +1,88 @@
-# SAGE Stage 9 v6 — Final Delivery & System Status: COMPLETE & VERIFIED
+# SAGE Stage 9 Final — HANDOFF
 
-## Executive Summary: ALL PARTS A through G COMPLETE
+## Status: COMPLETE (Phases 0 through 8 Verified & Passing)
 
-### 1. Verification Summary
-- **Test Suite**: `stage9/test_stage9_final.py` — **64/64 PASSED** (0 failed, 0 skipped).
-- **Core Integrities (Part A)**:
-  - Raw output files, timestamps, scripts, and SHA256 hashes traced for Test A (`stage10/test_a_results.json`), Test A2 (`stage10/test_a2_results.json`), and baseline (`analytics/scenario_causal_evaluation.json`).
-  - "Seed 99" completely eradicated across the repository.
-  - Mail logging strictly distinguishes `SUCCESS_DRY_RUN` from `SUCCESS_LIVE` (which records Message-ID, SMTP code, and ms latency).
-  - Single canonical status function (`compute_daily_status_and_actions`) ensures 100% agreement between status banner, issue count, top priority, and email subject.
-- **Data Engine & Equivalence (Part B)**:
-  - Live system holds complete history to `2025-12-31`.
-  - 10 day packs (`2026-01-01` to `2026-01-10`) staged in `demo_data/packs/` and `demo_data/queue/`.
-  - Ingestion enforces sequential invariant (`current_day + 1`) with rollback on error.
-  - Instant demo reset restores database to `2025-12-31` and repopulates queue in < 1 second.
-  - Equivalence proof passes with 30 dates (20 in 2025 + 10 in 2026) byte-identical between Postgres and SQLite.
-- **Delivery & Scheduler (Part C)**:
-  - Two-phase scheduled delivery: Prepare at 19:45, Send at 20:00 (Asia/Kolkata).
-  - Strictly 1-page A4 PDF generated via Playwright Chromium (`SAGE_Daily_Brief_<date>.pdf`).
-  - Mandatory framing sentence verbatim on every report, email, and dashboard.
-- **Operator Controller (Part D)**:
-  - Independent application at `http://127.0.0.1:8001/ctrl/` with token authentication (`SAGE_CONTROLLER_TOKEN`), session cookies, CSRF protection, and brute-force lockout (5 attempts → 60s).
-  - Real-time "Feed Next Day", "Send Now" preview, runtime schedule editor, allowlist inspector, and demo reset.
-  - Comprehensive operator audit log at `stage9/state/controller_audit.jsonl`.
-- **Cause-Chain Trace & Models (Part E)**:
-  - `stage9/trace.py` executes DAG upstream traversals, baseline abnormality checks (Median/MAD), model validation, and top focus generation in < 2 seconds.
-- **Executive Viewer (Part F)**:
-  - Read-only dashboard at `http://127.0.0.1:8000/` with 30s background auto-polling and direct Controller link.
-- **Final Packaging (Part G)**:
-  - `stage9/FROZEN.json` updated with 37 file hashes.
-  - `DEMO.md` updated with the complete 10-minute demonstration script.
+All phases executed in strict sequence according to protocol. Stages 1–8 strictly frozen. Main PostgreSQL database protected read-only. Unified verification script `./verify_all.sh` exits 0 with 67/67 tests passing.
 
 ---
 
-## 2. Quick Command Reference
+## Master Checklist
 
-```bash
-# 1. Reset demo environment to 2025-12-31 baseline (<1s)
-./venv/bin/python -m stage9.daily_run --reset-demo
+### Phase 0 — Safety, Stale Processes, Backups
+- [x] Back up stage9/ web/ controller/ live/ demo_data/ reports/ stage10/ to backups/stage9_pre_final/ (30 MB)
+- [x] Stop stale processes on 8000/8001 (verified ports free)
+- [x] Make run_sage.sh / stop_sage.sh robust (bind 127.0.0.1, stop pids, health URL checks)
+- [x] Controller starts in Dry-run
 
-# 2. Run comprehensive 64-test automated suite
-./venv/bin/python stage9/test_stage9_final.py
+### Phase 1 — Truth Layer & Forensic Reconciliation
+- [x] Write stage9/baseline_hashes.json (64 hashes matching frozen stages)
+- [x] Print DB row counts (main Postgres source of truth vs live SQLite)
+- [x] Explain 10 orders vs 221 orders discrepancy (SQLite post-opening position vs Postgres 2025 history)
+- [x] Create stage10/audit/truth.py → truth.json with independent cross-check (Method 1: 173, Method 2: 173, match=True)
+- [x] Rewrite audit scripts (orders_audit.py, r5_audit.py, metrics_audit.py, gate_a_full.py, audit_reconcile_r.py)
+- [x] Verify known facts:
+  - Backorder behavior: simulator does not ship late (0 late-but-delivered by construction)
+  - Supplier selection bug: choose_supplier called without current_day in daily_simulation.py (S1 & S2 idle)
+  - PO #18: EastCoast Components, Steel Rod 10mm, 407 units, placed 2025-08-05, expected 2025-08-14, 0 received, 139 days overdue at 2025-12-31
+  - PO #17: Supplier 5, ordered 150u, first receipt 105u (70%) on 2025-08-07, balance 45u on 2025-08-09
+  - Master names: Suppliers 1 Sri Materials, 2 Bharat Steel, 3 Global Polymers, 4 EastCoast Components, 5 Copper & Co. Products 201 Widget Model X, 202 Widget Model Y. Materials 101 Steel Rod 10mm, 102 Plastic Granules, 103 Copper Wire.
 
-# 3. Start Executive Viewer (Port 8000)
-PYTHONPATH=. ./venv/bin/uvicorn web.app:app --host 0.0.0.0 --port 8000
+### Phase 2 — Propagate Truth Everywhere
+- [x] Replace hand-typed figures in all pages/docs with truth.json values
+- [x] Grep for stale/projected numbers (2348, 2367, 3000, 1981, forbidden literals) -> 0 occurrences outside tests/audits
+- [x] Update web/insights_data.py & web/templates/insights.html (4 fulfillment buckets: 173 on-time, 0 late, 2 partial, 46 unshipped; 652 open units; 78.3%)
+- [x] Update opening position notice on home.html and insights.html verbatim
+- [x] Update method.html with 4-cohort benchmark table and verified customer names
+- [x] Document simulator settlement limitation and post-hoc disclosures in KNOWN_ISSUES.md
 
-# 4. Start Operator Controller (Port 8001)
-PYTHONPATH=. ./venv/bin/uvicorn controller.app:app --host 0.0.0.0 --port 8001
+### Phase 3 — Product Logic Verification (F1–F7)
+- [x] F1 end-of-day operational semantics
+- [x] F2 banner tiers (CRITICAL, NEEDS ATTENTION, WATCH, NORMAL)
+- [x] F3 alerts as root causes (standing backlog decoupled from banner tier)
+- [x] F4 cause chains in plain words
+- [x] F5 model-check line
+- [x] F6 data-driven summaries (90–120 words verified across days)
+- [x] F7 cards structure (headline, cause sentence, evidence label, 3-step expander)
 
-# 5. Feed next queued day pack via CLI
-./venv/bin/python -m stage9.feed
-```
+### Phase 4 — Ten-Day Feed & Deterministic Scoring
+- [x] Deterministic generator & 10 pack hashes verified
+- [x] score.py scoring against prereg_demo_feed_v2.md: 6 HITS, 4 PARTIALS, 0 MISSES (0 false alarms on control day)
+- [x] Viewer polling and controller buttons verified functional
+
+### Phase 5 — Security & Mail Dispatch
+- [x] Timing-safe controller auth (`hmac.compare_digest`) and session cookies
+- [x] SAGE_CONTROLLER_TOKEN distinct from SAGE_WEB_TOKEN
+- [x] send_check command with safe dry-run (SUCCESS_DRY_RUN) and live flags
+- [x] Daily scheduler (19:45 prep / 20:00 send Asia/Kolkata timezone)
+
+### Phase 6 — Unified Verification (verify_all.sh)
+- [x] Created executable `./verify_all.sh` covering frozen hashes, truth generation, forensic audits, scoring, forbidden literals, dry-run mail, and pytest suite
+- [x] Verified `./verify_all.sh` runs cleanly to exit 0
+
+### Phase 7 — Rehearsal Artifacts & Presentation Guides
+- [x] 5 fresh screenshots captured via Playwright into artifact directory & `analytics/screenshots/final/`
+- [x] Comprehensive presenter guide in `DEMO.md`
+- [x] Owner's quick reference checklist in `OWNER_CHECKLIST.md`
+
+### Phase 8 — Self-Audit & Packaging
+- [x] Comprehensive requirements traceability matrix written in `REQUIREMENTS_TRACE.md`
+- [x] Clean `./verify_all.sh` run (all 67 tests passed, 0 failed)
+- [x] `stage9/FROZEN.json` hash registry updated
+- [x] Committed repository state as `stage9 final`
+
+---
+
+## Verified Truth Figures (`stage10/audit/truth.json`)
+- **Total customer orders requested $\le$ 2025-12-31:** 221
+- **On-time complete:** 173 orders (1,981 units)
+- **Shipped late:** 0 orders (0 units) — simulator settlement limitation
+- **Partly shipped:** 2 orders (23 ordered, 19 shipped, 4 open units — SO #164 & SO #184)
+- **Unshipped:** 46 orders (648 open units)
+- **Total unfulfilled:** 48 orders (652 open units)
+- **Total ordered:** 2,652 units; **Total shipped:** 2,000 units; **Total open:** 652 units
+- **On-time delivery rate:** 78.3%
+- **Orders due in Jan 2026:** 9 orders (109 units)
+- **Total sales orders in database:** 230
+- **Total purchase orders in 2025:** 18 (S1: 0, S2: 0, S3: 4, S4: 10, S5: 4)
+- **PO #18:** Supplier 4 (EastCoast Components), 407 units Steel Rod 10mm, ordered 2025-08-05, expected 2025-08-14, 0 received, 139 days overdue at 2025-12-31 (stuck order)
+- **PO #17:** Supplier 5 (Copper & Co), 150 units Copper Wire, ordered 2025-07-26, expected 2025-08-07, received 105 units (70%) on 2025-08-07, balance 45 units on 2025-08-09

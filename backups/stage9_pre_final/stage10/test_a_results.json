@@ -404,5 +404,9 @@
         }
       ]
     }
-  }
+  },
+  "file_sha256": "31c2e1e7895d8cf1f94fe90c30aede9dd01b77b60d8788bfc5692bb72caa2100",
+  "file_mtime": "2026-10-11T09:30:51.424399Z",
+  "source_script": "stage10/run_validation.py",
+  "raw_data_file": "analytics/scenario_causal_evaluation.json"
 }

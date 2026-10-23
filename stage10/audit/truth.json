@@ -1,0 +1,716 @@
+{
+  "generated_at": "2026-10-23T17:48:47.619062+00:00",
+  "cutoff": "2025-12-31",
+  "framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+  "fulfillment": {
+    "cutoff": "2025-12-31",
+    "total_orders": 221,
+    "total_ordered": 2652,
+    "total_shipped": 2000,
+    "total_open": 652,
+    "on_time": {
+      "orders": 173,
+      "ordered": 1981,
+      "shipped": 1981,
+      "open": 0
+    },
+    "late": {
+      "orders": 0,
+      "ordered": 0,
+      "shipped": 0,
+      "open": 0
+    },
+    "partial": {
+      "orders": 2,
+      "ordered": 23,
+      "shipped": 19,
+      "open": 4
+    },
+    "unshipped": {
+      "orders": 46,
+      "ordered": 648,
+      "shipped": 0,
+      "open": 648
+    },
+    "on_time_pct": 78.3,
+    "partial_details": [
+      {
+        "so_id": 164,
+        "product_id": 201,
+        "requested": "2025-10-02",
+        "ordered": 12,
+        "shipped": 11,
+        "open": 1,
+        "last_ship": "2025-10-02"
+      },
+      {
+        "so_id": 184,
+        "product_id": 202,
+        "requested": "2025-10-27",
+        "ordered": 11,
+        "shipped": 8,
+        "open": 3,
+        "last_ship": "2025-10-27"
+      }
+    ]
+  },
+  "orders_due_jan_2026": {
+    "orders": 9,
+    "units": 109
+  },
+  "suppliers": [
+    {
+      "id": 1,
+      "name": "Sri Materials Pvt Ltd",
+      "po_count": 0,
+      "receipt_count": 0,
+      "materials": "none"
+    },
+    {
+      "id": 2,
+      "name": "Bharat Steel Works",
+      "po_count": 0,
+      "receipt_count": 0,
+      "materials": "none"
+    },
+    {
+      "id": 3,
+      "name": "Global Polymers Co",
+      "po_count": 4,
+      "receipt_count": 4,
+      "materials": "Plastic Granules"
+    },
+    {
+      "id": 4,
+      "name": "EastCoast Components",
+      "po_count": 10,
+      "receipt_count": 13,
+      "materials": "Steel Rod 10mm"
+    },
+    {
+      "id": 5,
+      "name": "Copper & Co",
+      "po_count": 4,
+      "receipt_count": 5,
+      "materials": "Copper Wire"
+    }
+  ],
+  "po_17": {
+    "id": 17,
+    "order_date": "2025-07-26",
+    "expected_delivery_date": "2025-08-07",
+    "status": "Complete",
+    "supplier_id": 5,
+    "supplier_name": "Copper & Co",
+    "material_id": 103,
+    "material_name": "Copper Wire",
+    "quantity_ordered": 150,
+    "quantity_received": 150,
+    "days_overdue_at_cutoff": 146,
+    "receipts": [
+      {
+        "id": 21,
+        "date": "2025-08-07",
+        "status": "Partial",
+        "qty": 105
+      },
+      {
+        "id": 22,
+        "date": "2025-08-09",
+        "status": "Complete",
+        "qty": 45
+      }
+    ]
+  },
+  "po_18": {
+    "id": 18,
+    "order_date": "2025-08-05",
+    "expected_delivery_date": "2025-08-14",
+    "status": "Pending",
+    "supplier_id": 4,
+    "supplier_name": "EastCoast Components",
+    "material_id": 101,
+    "material_name": "Steel Rod 10mm",
+    "quantity_ordered": 407,
+    "quantity_received": 0,
+    "days_overdue_at_cutoff": 139,
+    "receipts": []
+  },
+  "products_fulfillment": [
+    {
+      "id": 201,
+      "name": "Widget Model X",
+      "ordered": 1676,
+      "shipped": 1180,
+      "open": 496
+    },
+    {
+      "id": 202,
+      "name": "Widget Model Y",
+      "ordered": 997,
+      "shipped": 820,
+      "open": 177
+    }
+  ],
+  "customers_fulfillment": [
+    {
+      "id": 1,
+      "name": "Nova Retailers",
+      "orders": 43,
+      "ordered": 613,
+      "shipped": 473,
+      "open": 140
+    },
+    {
+      "id": 2,
+      "name": "Metro Distributors",
+      "orders": 47,
+      "ordered": 482,
+      "shipped": 375,
+      "open": 107
+    },
+    {
+      "id": 3,
+      "name": "Coastal Traders",
+      "orders": 37,
+      "ordered": 615,
+      "shipped": 405,
+      "open": 210
+    },
+    {
+      "id": 4,
+      "name": "Prime Retail Group",
+      "orders": 52,
+      "ordered": 598,
+      "shipped": 477,
+      "open": 121
+    },
+    {
+      "id": 5,
+      "name": "Sunrise Wholesalers",
+      "orders": 42,
+      "ordered": 365,
+      "shipped": 270,
+      "open": 95
+    }
+  ],
+  "stage7_scenarios": [
+    {
+      "scenario_id": "INC_01",
+      "true_sources": "supplier_1_po_delay_days,supplier_1_receipt_fill_rate",
+      "top_driver": "material_101_stock_lag1",
+      "m1_score_str": "1.009302 +/- 0.167873",
+      "m1_mean": 1.0093016,
+      "m1_std": 0.16787265767313034,
+      "m1_p95": 0.218006,
+      "m2_score_mean": 0.5057387999999999,
+      "m2_p95": 0.922611,
+      "avg_rank": 5.0,
+      "classification": "Below Null Threshold / Unattributed",
+      "stable": "Y",
+      "category": "supply"
+    },
+    {
+      "scenario_id": "INC_02",
+      "true_sources": "none",
+      "top_driver": "material_101_stock_lag1",
+      "m1_score_str": "0.000000 +/- 0.000000",
+      "m1_mean": 0.0,
+      "m1_std": 0.0,
+      "m1_p95": 0.218006,
+      "m2_score_mean": 0.0,
+      "m2_p95": 0.922611,
+      "avg_rank": 99.0,
+      "classification": "within null",
+      "stable": "Y",
+      "category": "negative_control"
+    },
+    {
+      "scenario_id": "INC_03",
+      "true_sources": "product_201_demand_units",
+      "top_driver": "product_201_fg_stock_lag1",
+      "m1_score_str": "7.726094 +/- 0.379771",
+      "m1_mean": 7.7260942,
+      "m1_std": 0.3797707696089314,
+      "m1_p95": 0.218006,
+      "m2_score_mean": 0.9249240000000001,
+      "m2_p95": 0.922611,
+      "avg_rank": 2.4,
+      "classification": "DETECTED (M1 Only)",
+      "stable": "N",
+      "category": "demand"
+    },
+    {
+      "scenario_id": "INC_04",
+      "true_sources": "product_201_capacity_shortfall_units",
+      "top_driver": "product_201_planned_production",
+      "m1_score_str": "0.880037 +/- 0.155131",
+      "m1_mean": 0.8800366000000001,
+      "m1_std": 0.15513077772460243,
+      "m1_p95": 0.218006,
+      "m2_score_mean": 1.1671722,
+      "m2_p95": 0.922611,
+      "avg_rank": 1.8,
+      "classification": "DETECTED + SUPPORTED",
+      "stable": "Y",
+      "category": "capacity"
+    },
+    {
+      "scenario_id": "INC_05",
+      "true_sources": "supplier_1_po_delay_days,supplier_2_po_delay_days",
+      "top_driver": "material_101_stock_lag1",
+      "m1_score_str": "0.814384 +/- 0.173456",
+      "m1_mean": 0.8143835999999999,
+      "m1_std": 0.17345645522101508,
+      "m1_p95": 0.218006,
+      "m2_score_mean": 0.7518882,
+      "m2_p95": 0.922611,
+      "avg_rank": 5.0,
+      "classification": "Below Null Threshold / Unattributed",
+      "stable": "Y",
+      "category": "supply"
+    },
+    {
+      "scenario_id": "INC_06",
+      "true_sources": "supplier_2_po_delay_days,product_202_capacity_shortfall_units",
+      "top_driver": "product_202_planned_production",
+      "m1_score_str": "1.344424 +/- 0.081580",
+      "m1_mean": 1.3444238,
+      "m1_std": 0.08158006887812731,
+      "m1_p95": 0.218006,
+      "m2_score_mean": 1.8466798,
+      "m2_p95": 0.922611,
+      "avg_rank": 1.0,
+      "classification": "DETECTED + SUPPORTED",
+      "stable": "Y",
+      "category": "multi_branch"
+    },
+    {
+      "scenario_id": "INC_07",
+      "true_sources": "supplier_5_receipt_fill_rate",
+      "top_driver": "material_103_stock_lag1",
+      "m1_score_str": "1.616708 +/- 0.298363",
+      "m1_mean": 1.6167076000000002,
+      "m1_std": 0.2983631820453723,
+      "m1_p95": 0.218006,
+      "m2_score_mean": 1.3993346,
+      "m2_p95": 0.922611,
+      "avg_rank": 4.0,
+      "classification": "Structurally Un-attributable (Zero Baseline Variance)",
+      "stable": "Y",
+      "category": "supply"
+    },
+    {
+      "scenario_id": "INC_08",
+      "true_sources": "supplier_4_po_delay_days",
+      "top_driver": "material_103_stock_lag1",
+      "m1_score_str": "1.988699 +/- 0.304850",
+      "m1_mean": 1.9886994000000002,
+      "m1_std": 0.30484956654559975,
+      "m1_p95": 0.218006,
+      "m2_score_mean": 1.0673496,
+      "m2_p95": 0.922611,
+      "avg_rank": 1.0,
+      "classification": "Safety Stock Absorption (Asymmetric Pass)",
+      "stable": "Y",
+      "category": "safety_stock_absorption"
+    },
+    {
+      "scenario_id": "INC_09",
+      "true_sources": "supplier_4_po_delay_days",
+      "top_driver": "material_101_stock_lag1",
+      "m1_score_str": "1.299460 +/- 0.140169",
+      "m1_mean": 1.2994597999999997,
+      "m1_std": 0.14016898113976575,
+      "m1_p95": 0.218006,
+      "m2_score_mean": 0.7923252,
+      "m2_p95": 1.092598,
+      "avg_rank": 1.0,
+      "classification": "Lag-State Dominance (M1 clears; exog rank suppressed by stockout persistence)",
+      "stable": "Y",
+      "category": "supply"
+    },
+    {
+      "scenario_id": "INC_10",
+      "true_sources": "month,weekday",
+      "top_driver": "month",
+      "m1_score_str": "0.936986 +/- 0.081447",
+      "m1_mean": 0.9369856000000001,
+      "m1_std": 0.08144713815131872,
+      "m1_p95": 0.218006,
+      "m2_score_mean": 2.6470506000000005,
+      "m2_p95": 0.922611,
+      "avg_rank": 1.0,
+      "classification": "Seasonal Pattern (Expected \u2014 Not Anomaly)",
+      "stable": "Y",
+      "category": "seasonal_control"
+    }
+  ],
+  "stage7_cohorts": {
+    "all_10": {
+      "label": "All 10 scenarios",
+      "n": 10,
+      "hit_at_1": 40.0,
+      "hit_at_3": 60.0,
+      "mrr": 0.5622,
+      "ids": [
+        "INC_01",
+        "INC_02",
+        "INC_03",
+        "INC_04",
+        "INC_05",
+        "INC_06",
+        "INC_07",
+        "INC_08",
+        "INC_09",
+        "INC_10"
+      ],
+      "reason": "Complete synthetic benchmark suite including controls and structural edge cases"
+    },
+    "excl_01_05": {
+      "label": "Excluding INC_01 & INC_05 (8 scenarios)",
+      "n": 8,
+      "hit_at_1": 50.0,
+      "hit_at_3": 75.0,
+      "mrr": 0.6528,
+      "ids": [
+        "INC_02",
+        "INC_03",
+        "INC_04",
+        "INC_06",
+        "INC_07",
+        "INC_08",
+        "INC_09",
+        "INC_10"
+      ],
+      "reason": "Suppliers 1 & 2 never received POs due to simulator choose_supplier date bug"
+    },
+    "original_stage7_six": {
+      "label": "Original Stage 7 Six-Case Benchmark",
+      "n": 6,
+      "hit_at_1": 33.3,
+      "hit_at_3": 66.7,
+      "mrr": 0.562,
+      "ids": [
+        "INC_01",
+        "INC_03",
+        "INC_04",
+        "INC_05",
+        "INC_06",
+        "INC_08"
+      ],
+      "reason": "Pre-registered real-cause evaluation cohort from frozen Stage 7 evaluate_against_ground_truth.py"
+    },
+    "physical_four": {
+      "label": "Four Physical-Cause Scenarios",
+      "n": 4,
+      "hit_at_1": 50.0,
+      "hit_at_3": 100.0,
+      "mrr": 0.7431,
+      "ids": [
+        "INC_03",
+        "INC_04",
+        "INC_06",
+        "INC_08"
+      ],
+      "reason": "Only scenarios where injected disruptions physically propagated downstream to active plant operations"
+    }
+  },
+  "actual_sourcing_edges": [
+    {
+      "supplier_id": 3,
+      "supplier_name": "Global Polymers Co",
+      "material_id": 102,
+      "material_name": "Plastic Granules"
+    },
+    {
+      "supplier_id": 4,
+      "supplier_name": "EastCoast Components",
+      "material_id": 101,
+      "material_name": "Steel Rod 10mm"
+    },
+    {
+      "supplier_id": 5,
+      "supplier_name": "Copper & Co",
+      "material_id": 103,
+      "material_name": "Copper Wire"
+    }
+  ],
+  "dag_supplier_edges": [
+    {
+      "supplier_id": 1,
+      "supplier_name": "Sri Materials Pvt Ltd",
+      "material_id": 101,
+      "material_name": "Steel Rod 10mm",
+      "active_in_2025": false
+    },
+    {
+      "supplier_id": 2,
+      "supplier_name": "Bharat Steel Works",
+      "material_id": 101,
+      "material_name": "Steel Rod 10mm",
+      "active_in_2025": false
+    },
+    {
+      "supplier_id": 4,
+      "supplier_name": "EastCoast Components",
+      "material_id": 101,
+      "material_name": "Steel Rod 10mm",
+      "active_in_2025": true
+    },
+    {
+      "supplier_id": 3,
+      "supplier_name": "Global Polymers Co",
+      "material_id": 102,
+      "material_name": "Plastic Granules",
+      "active_in_2025": true
+    },
+    {
+      "supplier_id": 5,
+      "supplier_name": "Copper & Co",
+      "material_id": 103,
+      "material_name": "Copper Wire",
+      "active_in_2025": true
+    }
+  ],
+  "incidents": [
+    {
+      "id": "INC_01",
+      "type": "supplier_delay",
+      "yaml_target": "Supplier 1 (Sri Materials)",
+      "business_events": [
+        {
+          "event_type": "supplier_delay",
+          "entity_type": "supplier",
+          "entity_id": 1,
+          "start": "2025-08-17",
+          "end": "2025-08-18"
+        }
+      ],
+      "po_actually_delayed": null,
+      "physical_impact": "None (Supplier 1 had 0 POs in 2025 due to simulator choose_supplier bug)"
+    },
+    {
+      "id": "INC_02",
+      "type": "no_incident",
+      "yaml_target": "None (negative control)",
+      "business_events": [],
+      "po_actually_delayed": null,
+      "physical_impact": "None (negative control)"
+    },
+    {
+      "id": "INC_03",
+      "type": "demand_spike",
+      "yaml_target": "Product 201 (Widget Model X)",
+      "business_events": [
+        {
+          "event_type": "demand_spike",
+          "entity_type": "product",
+          "entity_id": 201,
+          "start": "2025-03-29",
+          "end": "2025-04-02"
+        }
+      ],
+      "po_actually_delayed": null,
+      "physical_impact": "Demand surge 1.87x absorbed by buffer"
+    },
+    {
+      "id": "INC_04",
+      "type": "capacity_disruption",
+      "yaml_target": "Product 201 (Widget Model X)",
+      "business_events": [
+        {
+          "event_type": "capacity_disruption",
+          "entity_type": "product",
+          "entity_id": 201,
+          "start": "2025-10-01",
+          "end": "2025-10-05"
+        }
+      ],
+      "po_actually_delayed": null,
+      "physical_impact": "34.2% capacity loss on Line 1"
+    },
+    {
+      "id": "INC_05",
+      "type": "overlapping_supplier_delay",
+      "yaml_target": "Supplier 1 & Supplier 2",
+      "business_events": [
+        {
+          "event_type": "overlapping_supplier_delay",
+          "entity_type": "supplier",
+          "entity_id": 1,
+          "start": "2025-10-16",
+          "end": "2025-10-21"
+        },
+        {
+          "event_type": "overlapping_supplier_delay",
+          "entity_type": "supplier",
+          "entity_id": 2,
+          "start": "2025-10-18",
+          "end": "2025-10-23"
+        }
+      ],
+      "po_actually_delayed": null,
+      "physical_impact": "None (Suppliers 1 & 2 had 0 POs in 2025 due to simulator bug)"
+    },
+    {
+      "id": "INC_06",
+      "type": "simultaneous_independent",
+      "yaml_target": "Supplier 2 & Product 202 (Widget Model Y)",
+      "business_events": [
+        {
+          "event_type": "independent_supplier_delay",
+          "entity_type": "supplier",
+          "entity_id": 2,
+          "start": "2025-07-21",
+          "end": "2025-07-23"
+        },
+        {
+          "event_type": "indep_capacity_disruption",
+          "entity_type": "product",
+          "entity_id": 202,
+          "start": "2025-07-21",
+          "end": "2025-07-23"
+        }
+      ],
+      "po_actually_delayed": null,
+      "physical_impact": "Line 2 capacity reduced 30.8% (Supplier 2 delay had no effect)"
+    },
+    {
+      "id": "INC_07",
+      "type": "partial_receipt",
+      "yaml_target": "Supplier 5 (Copper & Co)",
+      "business_events": [
+        {
+          "event_type": "partial_receipt",
+          "entity_type": "supplier",
+          "entity_id": 5,
+          "start": "2025-07-07",
+          "end": "2025-07-07"
+        }
+      ],
+      "po_actually_delayed": 17,
+      "physical_impact": "PO #17 partial receipt: 105 of 150 units (70.1%) on 2025-08-07, balance completed 2025-08-09"
+    },
+    {
+      "id": "INC_08",
+      "type": "delay_absorbed_by_safety_stock",
+      "yaml_target": "Supplier 4 (EastCoast Components)",
+      "business_events": [
+        {
+          "event_type": "delay_absorbed",
+          "entity_type": "supplier",
+          "entity_id": 4,
+          "start": "2025-02-26",
+          "end": "2025-03-01"
+        }
+      ],
+      "po_actually_delayed": 4,
+      "physical_impact": "PO #04 delayed 4 days, absorbed by raw material safety stock without stockout"
+    },
+    {
+      "id": "INC_09",
+      "type": "severe_supplier_delay_stockout",
+      "yaml_target": "Supplier 4 (EastCoast Components)",
+      "business_events": [
+        {
+          "event_type": "severe_supplier_delay",
+          "entity_type": "supplier",
+          "entity_id": 4,
+          "start": "2025-08-05",
+          "end": "2026-01-18"
+        }
+      ],
+      "po_actually_delayed": 18,
+      "physical_impact": "PO #18 severe delay: 407 units steel due 2025-08-14 never delivered (139d overdue at cutoff)"
+    },
+    {
+      "id": "INC_10",
+      "type": "seasonal_demand",
+      "yaml_target": "Product 202 (Widget Model Y)",
+      "business_events": [
+        {
+          "event_type": "seasonal_demand",
+          "entity_type": "product",
+          "entity_id": 202,
+          "start": "2025-11-26",
+          "end": "2025-12-11"
+        }
+      ],
+      "po_actually_delayed": null,
+      "physical_impact": "Normal Q4 calendar seasonality (control pattern)"
+    }
+  ],
+  "cross_check": {
+    "on_time_orders_method_1": 173,
+    "on_time_orders_method_2": 173,
+    "match": true
+  },
+  "master_suppliers": [
+    {
+      "id": 1,
+      "name": "Sri Materials Pvt Ltd"
+    },
+    {
+      "id": 2,
+      "name": "Bharat Steel Works"
+    },
+    {
+      "id": 3,
+      "name": "Global Polymers Co"
+    },
+    {
+      "id": 4,
+      "name": "EastCoast Components"
+    },
+    {
+      "id": 5,
+      "name": "Copper & Co"
+    }
+  ],
+  "master_materials": [
+    {
+      "id": 101,
+      "name": "Steel Rod 10mm",
+      "uom": "kg"
+    },
+    {
+      "id": 102,
+      "name": "Plastic Granules",
+      "uom": "kg"
+    },
+    {
+      "id": 103,
+      "name": "Copper Wire",
+      "uom": "meters"
+    }
+  ],
+  "master_products": [
+    {
+      "id": 201,
+      "name": "Widget Model X",
+      "uom": "units"
+    },
+    {
+      "id": 202,
+      "name": "Widget Model Y",
+      "uom": "units"
+    }
+  ],
+  "pg_row_counts": {
+    "customers": 5,
+    "sales_orders": 230,
+    "sales_order_lines": 230,
+    "deliveries": 176,
+    "delivery_lines": 176,
+    "purchase_orders": 18,
+    "purchase_order_lines": 18,
+    "goods_receipts": 22,
+    "goods_receipt_lines": 22,
+    "suppliers": 5,
+    "products": 5,
+    "inventory_items": 5,
+    "stock_movements": 483,
+    "production_orders": 152
+  }
+}

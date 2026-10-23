@@ -42,6 +42,10 @@ app = FastAPI(
     version="2.0.0"
 )
 
+@app.get("/health")
+def health_check():
+    return {"status": "ok", "app": "viewer"}
+
 TEMPLATES_DIR = ROOT_DIR / "web" / "templates"
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 

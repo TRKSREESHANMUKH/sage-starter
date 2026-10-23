@@ -64,12 +64,17 @@ def verify_token(
     authorization: Optional[str] = Header(None)
 ) -> str:
     """
-    Validates token from ?token=<token> or Authorization: Bearer <token>.
+    Validates token from session cookie, ?token=<token>, or Authorization: Bearer <token>.
     If SAGE_WEB_TOKEN is not configured in .env, allows local access.
     """
     expected_token = os.getenv("SAGE_WEB_TOKEN")
     if not expected_token:
         return "dev"
+
+    # Check session cookie (no tokens required in URLs)
+    cookie_token = request.cookies.get("sage_token")
+    if cookie_token and cookie_token == expected_token:
+        return cookie_token
 
     # Check query param
     if token and token == expected_token:
@@ -83,8 +88,18 @@ def verify_token(
 
     raise HTTPException(
         status_code=401,
-        detail="Unauthorized: Valid SAGE_WEB_TOKEN required via ?token= or Authorization: Bearer <token>"
+        detail="Unauthorized: Valid SAGE_WEB_TOKEN required via cookie, ?token=, or Authorization: Bearer <token>"
     )
+
+
+@app.middleware("http")
+async def cookie_auth_middleware(request: Request, call_next):
+    token = request.query_params.get("token")
+    expected_token = os.getenv("SAGE_WEB_TOKEN")
+    response = await call_next(request)
+    if token and expected_token and token == expected_token:
+        response.set_cookie(key="sage_token", value=token, httponly=True, samesite="lax")
+    return response
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -215,18 +230,17 @@ def download_daily_report_pdf(
 ):
     selected = date or as_of
     target_d = datetime.strptime(selected, "%Y-%m-%d").date() if selected else get_current_day()
-    day_dir = REPORTS_DIR / target_d.isoformat()
-    pdf_path = day_dir / f"SAGE_Daily_Brief_{target_d.isoformat()}.pdf"
-
-    if not pdf_path.exists():
-        from stage9.daily_run import prepare_daily_run
-        prepare_daily_run(as_of=target_d)
-
-    if not pdf_path.exists():
-        raise HTTPException(status_code=404, detail="PDF report could not be generated")
-
-    with open(pdf_path, "rb") as f:
-        pdf_bytes = f.read()
+    try:
+        from stage9.ops import ensure_report
+        rep = ensure_report(as_of=target_d, user="viewer")
+        if not rep.pdf.exists():
+            raise HTTPException(status_code=404, detail="PDF report could not be generated")
+        with open(rep.pdf, "rb") as f:
+            pdf_bytes = f.read()
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
 
     # Strictly assert page count == 1
     import re
@@ -248,18 +262,17 @@ def view_daily_report_html(
 ):
     selected = date or as_of
     target_d = datetime.strptime(selected, "%Y-%m-%d").date() if selected else get_current_day()
-    day_dir = REPORTS_DIR / target_d.isoformat()
-    html_path = day_dir / "report.html"
-
-    if not html_path.exists():
-        from stage9.daily_run import prepare_daily_run
-        prepare_daily_run(as_of=target_d)
-
-    if not html_path.exists():
-        raise HTTPException(status_code=404, detail="HTML report could not be generated")
-
-    with open(html_path, "r", encoding="utf-8") as f:
-        html_content = f.read()
+    try:
+        from stage9.ops import ensure_report
+        rep = ensure_report(as_of=target_d, user="viewer")
+        if not rep.html.exists():
+            raise HTTPException(status_code=404, detail="HTML report could not be generated")
+        with open(rep.html, "r", encoding="utf-8") as f:
+            html_content = f.read()
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
 
     return HTMLResponse(content=html_content)
 
@@ -275,8 +288,8 @@ def api_demo_send_report(
         raise HTTPException(status_code=429, detail="Rate limit exceeded: please wait 10 seconds between sends.")
 
     target_d = datetime.strptime(date, "%Y-%m-%d").date() if date else get_current_day()
-    from stage9.daily_run import send_report_now
-    res = send_report_now(as_of=target_d)
+    from stage9.ops import send_report_now_v6
+    res = send_report_now_v6(as_of=target_d, user="viewer")
     _LAST_DEMO_SEND_TS = time.time()
     return res
 

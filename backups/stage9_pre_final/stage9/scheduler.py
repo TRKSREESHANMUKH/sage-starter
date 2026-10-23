@@ -45,6 +45,11 @@ if str(ROOT_DIR) not in sys.path:
 from stage9.clock import get_as_of_date, advance_replay_date
 from stage9.render_email import render_causal_findings_brief, render_nightly_digest, assert_one_page_pdf
 
+kolkata_tz = pytz.timezone("Asia/Kolkata")
+def kolkata_converter(*args):
+    return datetime.now(kolkata_tz).timetuple()
+logging.Formatter.converter = kolkata_converter
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("stage9.scheduler")
 

@@ -46,7 +46,7 @@ def run_r1():
     if p_ext_path.exists():
         print(f"Panel 'daily_panel_ext.parquet' sha256: {sha256(p_ext_path)} (Scenario extension)")
     
-    db = SessionLocal(source="live")
+    db = SessionLocal(source="main")
     
     print("\nDate Breakdown:")
     for dt in test_dates:
@@ -108,7 +108,7 @@ def run_r2():
     print("\n" + "=" * 70)
     print("R2: CUSTOMER ORDER BUCKETS AUDIT (Requested <= 2025-12-31)")
     print("=" * 70)
-    db = SessionLocal(source="live")
+    db = SessionLocal(source="main")
     cutoff = date(2025, 12, 31)
     
     # Query all orders requested <= 2025-12-31
@@ -297,7 +297,7 @@ def run_r5():
         print(f"  {src} -> {dst}")
         
     # 2. Actual sourcing in 2025 from PO lines
-    db = SessionLocal(source="live")
+    db = SessionLocal(source="main")
     pos = (
         db.query(PurchaseOrder.supplier_id, PurchaseOrderLine.material_id)
         .join(PurchaseOrderLine, PurchaseOrderLine.po_id == PurchaseOrder.id)

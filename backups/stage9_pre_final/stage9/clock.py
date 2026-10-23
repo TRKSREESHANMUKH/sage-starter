@@ -22,7 +22,7 @@ POINTER_FILE = ROOT_DIR / "stage9" / "state" / "replay_pointer.json"
 SCHEDULE_CONFIG_FILE = ROOT_DIR / "stage9" / "config" / "schedule.yaml"
 
 MIN_SIMULATION_DATE = date(2025, 1, 1)
-MAX_SIMULATION_DATE = date(2025, 12, 31)
+MAX_SIMULATION_DATE = date(2026, 12, 31)
 
 
 def load_default_start_date() -> date:

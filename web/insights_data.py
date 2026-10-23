@@ -156,7 +156,9 @@ def get_insights_data(
     if period_str == "full_year" and not is_demo:
         period_str = "ytd"
 
-    source = os.getenv("SAGE_SOURCE", "live")
+    source = os.getenv("SAGE_SOURCE", "main")
+    if cur_as_of <= date(2025, 12, 31) or period_str == "full_year":
+        source = "main"
     cache_file = CACHE_DIR / f"insights_{source}_{cur_as_of.isoformat()}_{period_str}.json"
 
     if cache_file.exists() and not force_refresh:
@@ -204,6 +206,8 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
         panel_window = pd.DataFrame()
 
     db = SessionLocal(source=source)
+    if source == "main":
+        db.execute(text("SET default_transaction_read_only = on"))
 
     try:
         sql_guard_check("purchase_orders")
@@ -523,6 +527,8 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
             
             p_ontime = 0
             p_shipped_late = 0
+            p_partial = 0
+            p_unshipped = 0
             p_overdue = 0
             p_overdue_u = 0
             p_due_later = 0
@@ -543,6 +549,10 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
                         else:
                             p_shipped_late += 1
                     else:
+                        if tot_ful > 0:
+                            p_partial += 1
+                        else:
+                            p_unshipped += 1
                         p_overdue += 1
                         p_overdue_u += max(0, rem)
                 else:
@@ -557,6 +567,8 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
                 "orders_count": req_so_far,
                 "on_time_count": p_ontime,
                 "shipped_late_count": p_shipped_late,
+                "partial_count": p_partial,
+                "unshipped_count": p_unshipped,
                 "overdue_count": p_overdue,
                 "on_time_pct": p_ontime_pct,
                 "units_overdue_now": p_overdue_u,
@@ -572,6 +584,8 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
 
             c_ontime = 0
             c_shipped_late = 0
+            c_partial = 0
+            c_unshipped = 0
             c_overdue = 0
             c_overdue_u = 0
             c_due_later = 0
@@ -591,6 +605,10 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
                         else:
                             c_shipped_late += 1
                     else:
+                        if tot_ful > 0:
+                            c_partial += 1
+                        else:
+                            c_unshipped += 1
                         c_overdue += 1
                         c_overdue_u += max(0, rem)
                 else:
@@ -605,6 +623,8 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
                 "orders_count": req_so_far,
                 "on_time_count": c_ontime,
                 "shipped_late_count": c_shipped_late,
+                "partial_count": c_partial,
+                "unshipped_count": c_unshipped,
                 "overdue_count": c_overdue,
                 "on_time_pct": c_ontime_pct,
                 "units_overdue_now": c_overdue_u,
@@ -726,7 +746,27 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
         # 9. Summary Strip Numbers (Existing 4 KPI cards)
         total_req_all = sum(p["orders_count"] for p in product_service)
         total_ontime_all = sum(p["on_time_count"] for p in product_service)
+        total_late_all = sum(p["shipped_late_count"] for p in product_service)
+        total_partial_all = sum(p.get("partial_count", 0) for p in product_service)
+        total_unshipped_all = sum(p.get("unshipped_count", 0) for p in product_service)
+        total_overdue_all = sum(p["overdue_count"] for p in product_service)
+        total_overdue_u_all = sum(p["units_overdue_now"] for p in product_service)
+        total_due_later_all = sum(p["due_later_orders"] for p in product_service)
+        total_due_later_u_all = sum(p["units_due_later"] for p in product_service)
         cust_on_time_pct = round((total_ontime_all / total_req_all) * 100.0, 1) if total_req_all > 0 else 100.0
+
+        fulfillment_buckets = {
+            "total_orders": total_req_all,
+            "on_time_orders": total_ontime_all,
+            "shipped_late_orders": total_late_all,
+            "partial_orders": total_partial_all,
+            "unshipped_orders": total_unshipped_all,
+            "total_open_orders": total_overdue_all,
+            "total_open_units": total_overdue_u_all,
+            "due_later_orders": total_due_later_all,
+            "due_later_units": total_due_later_u_all,
+            "on_time_pct": cust_on_time_pct
+        }
 
         days_with_overdue_orders = 0
         days_cust_overdue = 0
@@ -966,6 +1006,7 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
             "empty_period_notice": "Nothing happened in this period. Consider selecting a longer period such as 'Year so far'." if not has_data else "",
             "is_demo_full_year": (period_str == "full_year" and is_demo),
             "summary_strip": summary_strip,
+            "fulfillment_buckets": fulfillment_buckets,
             "what_changed_strip": what_changed_strip,
             "supplier_cards": supplier_cards,
             "customer_service": customer_service,
