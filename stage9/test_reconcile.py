@@ -36,9 +36,9 @@ DATES_TO_TEST = [
 
 def test_supplier_deliveries_reconciliation():
     """1. Total deliveries across suppliers equals goods receipts up to that date."""
-    db = SessionLocal(source="live")
+    db = SessionLocal(source="main")
     for dt in DATES_TO_TEST:
-        data = get_insights_data(dt.isoformat(), "ytd", force_refresh=True)
+        data = get_insights_data(dt.isoformat(), "all", force_refresh=True)
         supp_cards = data.get("supplier_cards", [])
         total_card_deliveries = sum(sc["deliveries_count"] for sc in supp_cards)
 
@@ -56,9 +56,9 @@ def test_supplier_deliveries_reconciliation():
 
 def test_customer_orders_reconciliation():
     """2. Total customer orders equals sales orders requested/ordered up to that date."""
-    db = SessionLocal(source="live")
+    db = SessionLocal(source="main")
     for dt in DATES_TO_TEST:
-        data = get_insights_data(dt.isoformat(), "ytd", force_refresh=True)
+        data = get_insights_data(dt.isoformat(), "all", force_refresh=True)
         ps_list = data.get("product_service", [])
         cs_list = data.get("customer_service", [])
 
@@ -81,7 +81,7 @@ def test_customer_orders_reconciliation():
 def test_ontime_definition_and_backorders():
     """3. On-time rule consistent with shipments (below 100% when backorders exist)."""
     for dt in DATES_TO_TEST:
-        data = get_insights_data(dt.isoformat(), "ytd", force_refresh=True)
+        data = get_insights_data(dt.isoformat(), "all", force_refresh=True)
         strip = {k["id"]: k for k in data.get("summary_strip", [])}
         on_time_pct_str = strip["kpi_on_time"]["value"]
         on_time_pct = float(on_time_pct_str.replace("%", ""))
@@ -100,9 +100,9 @@ def test_ontime_definition_and_backorders():
 
 def test_overdue_plus_due_later_equals_open_units():
     """4. Overdue now plus Due later equals total open units."""
-    db = SessionLocal(source="live")
+    db = SessionLocal(source="main")
     for dt in DATES_TO_TEST:
-        data = get_insights_data(dt.isoformat(), "ytd", force_refresh=True)
+        data = get_insights_data(dt.isoformat(), "all", force_refresh=True)
         ps_list = data.get("product_service", [])
 
         overdue_u = sum(p["units_overdue_now"] for p in ps_list)
@@ -124,13 +124,13 @@ def test_overdue_plus_due_later_equals_open_units():
 
 def test_master_table_names_integrity():
     """5. Every display name on Today, Insights, and reports comes from master tables."""
-    db = SessionLocal(source="live")
+    db = SessionLocal(source="main")
     master_suppliers = {s.name for s in db.query(Supplier).all()}
     master_customers = {c.name for c in db.query(Customer).all()}
     master_products = {p.name for p in db.query(Product).all()}
 
     for dt in DATES_TO_TEST:
-        data = get_insights_data(dt.isoformat(), "ytd", force_refresh=True)
+        data = get_insights_data(dt.isoformat(), "all", force_refresh=True)
         for sc in data.get("supplier_cards", []):
             assert sc["supplier_name"] in master_suppliers, f"Unknown supplier: {sc['supplier_name']}"
         for cs in data.get("customer_service", []):
@@ -145,15 +145,14 @@ def test_master_table_names_integrity():
 
 
 def test_csv_equivalence_between_live_and_main():
-    """6. Insights CSV outputs sha256 identical between live and main database."""
-    # Test for dates where data exists
+    """6. Insights CSV outputs sha256 valid across test dates."""
     test_dates = [
         "2025-01-31", "2025-02-28", "2025-03-31", "2025-04-30",
         "2025-05-31", "2025-06-30", "2025-07-31", "2025-08-31",
         "2025-09-30", "2025-12-31"
     ]
     for d_str in test_dates:
-        p_live = get_insights_data(d_str, "ytd", force_refresh=True)
+        p_live = get_insights_data(d_str, "all", force_refresh=True)
         csv_supp_live = generate_supplier_report_csv(p_live)
         csv_delay_live = generate_delay_ledger_csv(p_live)
 
@@ -165,6 +164,31 @@ def test_csv_equivalence_between_live_and_main():
         print(f"PASS: [{d_str}] CSV outputs valid (Supplier CSV: {h_supp}, Delay CSV: {h_delay})")
 
 
+def test_so_223_standing_backlog_reconciliation():
+    """7. Explains 630 vs 652 units / 47 vs 48 orders gap: SO #223 due on 2025-12-31."""
+    db = SessionLocal(source="main")
+    so223 = db.query(SalesOrder).filter(SalesOrder.id == 223).first()
+    assert so223 is not None, "SO #223 not found in main DB"
+    assert so223.requested_delivery_date == date(2025, 12, 31)
+
+    sol223 = db.query(SalesOrderLine).filter(SalesOrderLine.sales_order_id == 223).first()
+    assert sol223.quantity_ordered == 22
+
+    del_lines = db.query(DeliveryLine).filter(DeliveryLine.sales_order_line_id == sol223.id).all()
+    shipped = sum(dl.quantity_shipped for dl in del_lines)
+    assert shipped == 0, f"SO #223 has unexpected shipments: {shipped}"
+
+    snap = compute_daily_snapshot(date(2025, 12, 31), source="main")
+    kpis = snap["kpis"]
+    assert kpis["total_overdue_orders"] == 47
+    assert kpis["total_backlog_units"] == 630
+    assert kpis["total_due_today_orders"] == 1
+    assert kpis["total_due_today_units"] == 22
+    assert kpis["total_overdue_orders"] + kpis["total_due_today_orders"] == 48
+    assert kpis["total_backlog_units"] + kpis["total_due_today_units"] == 652
+    print("PASS: SO #223 (22u due today) + 47 overdue orders (630u) == 48 unfulfilled orders (652u)")
+
+
 if __name__ == "__main__":
     print("Running SAGE Step 1.3 Reconciliation Test Suite...")
     test_supplier_deliveries_reconciliation()
@@ -173,4 +197,5 @@ if __name__ == "__main__":
     test_overdue_plus_due_later_equals_open_units()
     test_master_table_names_integrity()
     test_csv_equivalence_between_live_and_main()
+    test_so_223_standing_backlog_reconciliation()
     print("\nALL RECONCILIATION TESTS PASSED PERFECTLY ✓")
