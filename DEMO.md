@@ -1,7 +1,24 @@
-# SAGE — Stage 9 FINAL 3 Presenter's Sheet: Ten-Day Demo Feed (1–10 January 2026)
+# SAGE — Stage 9 Presenter's Sheet: Ten-Day Demo Feed (1–10 January 2026)
 
-> **Verbatim Framing Statement:**
-> "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality."
+> **Mandatory Scientific Framing Statement:**  
+> *"SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality."*
+
+---
+
+## Part 0: Two-Minute Opening Statement (Read Verbatim to Mentor)
+
+"Good morning / afternoon. Welcome to this demonstration of SAGE — Strategic Analytics for Guided Execution.
+
+SAGE is a causal decision-intelligence platform built for synthetic manufacturing and sales environments. In operations management, managers are routinely inundated by alarm storms—dashboards showing red KPIs, depleted buffers, and backordered customer shipments. But standard ERP and BI tools only show *correlation* and downstream *symptoms*. They tell you what broke, not *why* it broke, or what specific root action will resolve it.
+
+SAGE connects discrete daily operations to an expert-defined, frozen causal directed acyclic graph. Rather than confusing correlation with causation, SAGE traces operational anomalies upstream through material buffers and supplier purchase orders. It provides an executive morning briefing, nightly email digests, and a single-page printable PDF that delivers plain-English, causal explanations: what happened, how it connects upstream, and what the operations team must focus on today.
+
+Before we demonstrate the 10-day scripted feed, I want to disclose our foundational findings with complete academic honesty:
+1. **The Simulator Sourcing Assignment**: In our frozen simulation engine, a supplier selection function omitted the daily timestamp, deterministically assigning routine purchase orders to three active vendors while leaving two backup vendors idle. We discovered this during our forensic audit, kept the foundation frozen, and transparently report our evaluation metrics across all cohorts.
+2. **Backorder Settlement Mechanics**: In our simulation, customer shipments evaluate strictly on their requested delivery date; unfulfilled orders remain as standing backorder rather than shipping late.
+3. **The 10-Day January 2026 Scripted Rehearsal**: We will step through 10 days of operations—from routine baseline, to an inbound steel delay, safety stock erosion, assembly line starvation, crisis peak, and recovery. In our automated pre-registered evaluation, SAGE achieves 9 Hits, 0 Partials, and 1 honest Miss.
+
+Let's begin the live feed from the controller."
 
 ---
 
@@ -141,4 +158,23 @@ Before starting the live demonstration, state the following foundational data fa
 ### Honest Cause of Misses and Partials
 * **Day 8 (MISS)**: On Day 8, steel arrived in full (400 kg), but a secondary PO for plastic granules arrived partial (40% fill rate). SAGE's priority engine correctly surfaced the active incoming shortfall (`Partial delivery from Global Polymers Co (PO #26)`) rather than an alert stating "Recovery in progress". Because the pre-registered protocol expected "recovery" as the primary alert headline, this day is honestly scored as a MISS under the deterministic rule.
 * **Standing Backlog on Control Day (Day 9)**: On Day 9, the plant experienced zero supplier failures and normal seasonal volume, but 9 customer orders (109 units) from the Day 7 stockout remained in backlog. SAGE correctly assigned `NEEDS_ATTENTION` to monitor this ongoing backlog burn-down rather than `NORMAL`, while avoiding any false `CRITICAL` alarm.
+
+---
+
+## Part 5: Likely Mentor Questions & Expert Answers
+
+### Q1: "Why does the DAG allow 7 supplier-material edges when only 3 were actually used in 2025?"
+**Answer:** The causal DAG represents domain expert causal topology—all physically possible supply routes permitted by factory contracts (e.g. Sri Materials and Bharat Steel are certified alternate vendors for Steel Rod 10mm). In real-world enterprise deployments, secondary vendors exist on contract even if routine ERP reorder logic routes orders to a primary vendor. When evaluating causal chains, SAGE dynamically filters DAG traversal to active edges observed in historical purchase orders.
+
+### Q2: "Why are there 0 late deliveries in the fulfillment table? Why does everything go to backorder?"
+**Answer:** This is a mechanical settlement characteristic of the discrete-event simulator engine (`simulator/daily_simulation.py`). In the simulator, customer orders evaluate strictly on their requested delivery date. If stock is unavailable, the order is flagged as `Backorder`. The simulator does not run a retroactive fulfillment pass for backordered orders once the requested date passes. We disclose this limitation plainly: across all 221 orders requested in 2025, 173 were fulfilled on time (78.3%), 0 were fulfilled late, and 48 remain in open standing backlog (652 units).
+
+### Q3: "Why did you keep Stages 1 to 8 frozen instead of fixing the simulator code and re-running?"
+**Answer:** In scientific research and causal benchmark evaluation, data integrity requires strict separation between model fitting and post-hoc tuning. If we re-ran the simulator to fix the vendor selection bug, we would invalidate the pre-registered frozen benchmark datasets, the fitted causal model parameters in Stage 7, and the narration evaluation in Stage 8. Keeping Stages 1 to 8 frozen and reporting the verified truth across multiple cohorts (all 10 scenarios vs 8 active vs 4 physical-cause) demonstrates true academic rigor.
+
+### Q4: "How does SAGE ensure no look-ahead bias during the 10-day demo feed?"
+**Answer:** The live operational database (`live/sage_live.db`) holds strictly transactions up to the current simulated day (`as_of`). Each scenario day is packaged in a discrete daily data pack (`demo_data/packs/YYYY-MM-DD/`). When the operator clicks "Feed next day", only that day's pack is validated, ingested, and committed. Queries and causal evaluations run strictly with `requested_delivery_date <= as_of` and `order_date <= as_of`. The system has zero access to future packs.
+
+### Q5: "What makes SAGE's scoring objective rather than tuned to pass?"
+**Answer:** All scoring rules are codified deterministically in `stage10/demo_feed/score.py` and unit-tested in `stage10/test_score.py`. When SAGE evaluates Day 8, it does not artificially force a pass: because the primary alert headline reflected an active partial plastic delivery rather than "recovery", the deterministic scorer flagged Day 8 as a MISS. We report 9 Hits, 0 Partials, and 1 Miss transparently.
 

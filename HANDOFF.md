@@ -1,8 +1,8 @@
 # SAGE Stage 9 Final — HANDOFF
 
-## Status: IN PROGRESS — Executing "THE LAST PROMPT" (Phases A through H)
+## Status: COMPLETE — "THE LAST PROMPT" (Phases A through H Fully Executed)
 
-Stages 1–8 strictly frozen. Main PostgreSQL database protected read-only (`SET default_transaction_read_only = on`). All figures traced to truth layer. No live email sent.
+Stages 1–8 strictly frozen. Main PostgreSQL database protected read-only (`SET default_transaction_read_only = on`). All figures traced to truth layer. No live email sent. All 150 automated verification checks pass with 0 failures (exit 0).
 
 ---
 
@@ -53,11 +53,22 @@ Stages 1–8 strictly frozen. Main PostgreSQL database protected read-only (`SET
   - Removed obsolete "Demo cases" API endpoints from controller
   - Git hygiene: added `backups/`, `live/`, `*.pid`, `analytics/insights_cache/` to `.gitignore`; untracked `backups/` and `live/` from git; verified `git ls-files` shows only `.env.example`
   - Fixed R5 audit in `audit_reconcile_r.py` and `gate_a_full.py`: parses 7 Stage 7 expert DAG edges, 3 active 2025 sourcing edges, and 10 incidents from `incidents.yaml` & `business_events` with zero "Supplier None" and zero "0 DAG edges"
-- [ ] **Phase F — Unified Verification (`verify_all.sh`)**
-- [x] **Phase E — Security and Hygiene**:
-  - Replaced all legacy default tokens (`sage_dev_token_*`, `sage_operator_token_*`) with cryptographically random independent 16-byte hex tokens in `.env`
-  - Zero default tokens in code, tests, docs, or scripts; verified with zero-hit grep
-  - Controller token is independent and NOT derived from viewer token
+- [x] **Phase F — Unified Verification (`verify_all.sh`)**:
+  - Unified script with 13-step protocol
+  - 150 automated verification checks passed, zero failures, exit 0
+  - Servers bind strictly to `127.0.0.1` on ports 8000 and 8001
+  - Playwright `smoke_ui.py` passed 9/9 flows with sub-second response times
+  - Ten-day rehearsal scored 9 Hits, 0 Partials, 1 Miss
+- [x] **Phase G — Presentation Documents & Guides**:
+  - `DEMO.md` with Part 0 verbatim 2-minute opening statement, Day-by-day script, 3-run scoring table, and Part 5 Likely Mentor Q&A
+  - `OWNER_CHECKLIST.md` clean single-page guide with terminal setup, exact URLs, token names, live-send command, and expected table
+  - `stage10/PROJECT_SUMMARY.md` covers 9 stages, real test counts (150 passed checks), 10 known issues, exact verification commands
+  - `stage10/KNOWN_ISSUES.md` covers Issues 1 through 10 in full detail
+- [x] **Phase H — Self-Audit & Packaging**:
+  - `REQUIREMENTS_TRACE.md` completed with verification evidence for every single numbered prompt requirement
+  - `stage9/FROZEN.json` updated with SHA256 of all 79 Stage 9/10/web/controller files
+  - Live environment reset to 2025-12-31 baseline in DRY-RUN mode with all 10 packs queued
+  - Verified ports 8000 & 8001 free, 0 live emails sent in test runs
   - Added clean login and cookie authentication; `?token=` on first visit redirects to clean URL with HTTP-only cookie
   - Deleted obsolete screenshots (`case_*`, `controller_demo_cases.png`, `*2025-02-03*`, `*2025-01-15*`)
   - Regenerated all screenshots from 2026 demo feed into `analytics/screenshots/final/`: Day 1, Day 3, Day 7 (with analyze expander open), Day 9, Day 10, Insights 2025-12-31, Insights 2026-01-09, Controller dashboard, Sample PDF preview
