@@ -43,7 +43,7 @@
       "category": "Upcoming Order",
       "due_date": "2026-01-02",
       "rank": 5,
-      "reason": "Order SO-231 (10 units) requested for delivery on 2026-01-02",
+      "reason": "Order SO-231 (5 units) requested for delivery on 2026-01-02",
       "role": "Planner"
     }
   ],

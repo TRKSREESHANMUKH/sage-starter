@@ -8,7 +8,7 @@ M a
 TODAY'S NUMBERS IN CONTEXT:
 • Orders Due     : 2 orders due, same as yesterday (7d avg: 2.0)
 • Orders Late    : 9 late orders, same as yesterday (7d avg: 8.0)
-• Units Short    : 110 units short, up from 109 yesterday (7d avg: 98.3)
+• Units Short    : 110 units short, up from 109 yesterday (7d avg: 97.7)
 • Materials Low  : 0 materials low, same as yesterday (7d avg: 0.3)
 
 PAST ANALYSED CASES: WHAT CAUSED WHAT:

@@ -16,9 +16,33 @@ Stages 1–8 strictly frozen. Main PostgreSQL database protected read-only (`SET
   - Scheduled send idempotency checks `sent_log.jsonl` for existing `SUCCESS_LIVE` on same date/recipient
   - `run_sage.sh` resets send mode to dry_run on start, wraps with `caffeinate -i` on macOS, and prints next scheduled run times (19:45 prepare / 20:00 send Asia/Kolkata)
   - Added and passed `stage9/test_mail_safety.py` (4/4 tests passed; sent_log line count preserved)
-- [ ] **Phase B — Insights Equals Truth Layer**
-- [ ] **Phase C — Opening Position, One Source**
-- [ ] **Phase D — Feed, Scoring and Honesty**
+- [x] **Phase B — Insights Equals Truth Layer**:
+  - PO #17 (completed) days overdue fixed to 0, receipt breakdown formatted clearly
+  - PO #18 shows 139 days overdue (was due 2025-08-14)
+  - Unified dual-source order analysis: Postgres for history <= 2025-12-31, SQLite for 2026
+  - Cancelled-at-opening orders (48 orders, 652 units) accounted for in denominator
+  - Dynamic table columns and footnote explaining 0 late-but-delivered units
+  - Tested on 2025-12-31 (78.3%), 2026-01-09 (75.2%) across all periods (3/3 unit tests passed)
+- [x] **Phase C — Opening Position, One Source**:
+  - Demo Baseline Notice updated verbatim on `home.html` and `insights.html`
+  - Documented 8 vs 48 orders and 630 vs 652 units (47 vs 48 orders) in `KNOWN_ISSUES.md` (Issue 9)
+  - Detailed SO #223 unfulfilled on 2025-12-31 (22 units ordered, 0 shipped)
+  - Added `test_so_223_standing_backlog_reconciliation` in `stage9/test_reconcile.py` (all tests passed)
+  - Stated database equivalence range in `KNOWN_ISSUES.md` (Issue 10: strictly equal <= 2025-12-20)
+- [x] **Phase D — Feed, Scoring and Honesty**:
+  - Timestamped `stage10/prereg_demo_feed_v3.md` before regenerating feed
+  - Corrected PO #19 expected date to 2 Jan in generator (making it 1 day overdue on 3 Jan under end-of-day semantics)
+  - Separated Day 6 ("at safety stock (47 kg remaining)") vs Day 7 ("Raw material stockout on Steel Rod 10mm (0 kg in stock)") headlines
+  - Regenerated feed deterministically with identical SHA256 pack hashes (`556c710259...`)
+  - Validated all 6 feed checks via `validate_feed.py`
+  - Fixed summary generator in `web/one_page_data.py`: 6-7 lines, 90-120 words, strictly fact-driven, intact framing sentence
+  - Verified Day 1, 3, 7, 9 summaries verbatim (113, 113, 107, 110 words)
+  - Implemented strict deterministic scoring rules in `stage10/demo_feed/score.py`
+  - Added and passed unit tests in `stage10/test_score.py` (5/5 passed)
+  - Evaluated and documented 3 scoring runs (First run: 10 Critical; v2 rules: 8 Hits, 0 Partials, 2 Misses; v3 rules: 9 Hits, 0 Partials, 1 Miss)
+  - Documented honest cause of Day 8 Miss in `DEMO.md`
+  - Reset live demo environment cleanly to Day 0 (2025-12-31 baseline)
+- [ ] **Phase E — Security and Hygiene**
 - [ ] **Phase E — Security and Hygiene**
 - [ ] **Phase F — Unified Verification (`verify_all.sh`)**
 - [ ] **Phase G — Presentation Documents & Guides**

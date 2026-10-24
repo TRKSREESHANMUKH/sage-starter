@@ -64,7 +64,7 @@ def generate_packs():
     # Tracking persistent simulation state across days
     open_sales_orders = []    # list of active sales orders
     open_pos = {
-        19: {"supplier_id": 4, "material_id": 101, "ordered_qty": 400, "rec_qty": 0, "order_date": "2025-12-25", "expected_date": "2026-01-03", "status": "Pending"},
+        19: {"supplier_id": 4, "material_id": 101, "ordered_qty": 400, "rec_qty": 0, "order_date": "2025-12-25", "expected_date": "2026-01-02", "status": "Pending"},
         20: {"supplier_id": 3, "material_id": 102, "ordered_qty": 250, "rec_qty": 0, "order_date": "2025-12-21", "expected_date": "2026-01-04", "status": "Pending"},
         21: {"supplier_id": 5, "material_id": 103, "ordered_qty": 200, "rec_qty": 0, "order_date": "2025-12-25", "expected_date": "2026-01-06", "status": "Pending"}
     }
@@ -212,9 +212,9 @@ def generate_packs():
             p201_act = 10
             p202_act = 2
         elif day_num == 6:
-            # Steel reaches safety level, production short (cut to 2 units)
+            # Steel reaches safety level, production short (cut to 6 units)
             p201_plan = 12
-            p201_act = 2
+            p201_act = 6
             p202_act = 1
         elif day_num == 7:
             # Steel stockout: Widget X halted completely (0 units)
@@ -257,10 +257,7 @@ def generate_packs():
             # Material issues and stock adjustments for 201
             if p201_act > 0:
                 for mid, factor in BOM[201].items():
-                    if day_num == 6 and mid == 101:
-                        iss_qty = int(mat_stock[101])
-                    else:
-                        iss_qty = int(round(p201_act * factor))
+                    iss_qty = int(round(p201_act * factor))
                     iss_id = next_issue_id; next_issue_id += 1
                     day_issues.append({
                         "id": iss_id, "production_order_id": prod_id, "item_id": INV_ITEM_MAP[mid],
@@ -318,6 +315,24 @@ def generate_packs():
                     "id": sm_id, "item_id": INV_ITEM_MAP[202], "date": day_str, "movement_type": "IN",
                     "quantity": p202_act, "goods_receipt_line_id": "", "material_issue_id": "",
                     "production_order_id": prod_id, "delivery_line_id": ""
+                })
+
+        # Day 7: Deplete remaining steel buffer to 0.0 kg (Stockout event)
+        if day_num == 7:
+            rem_steel = int(mat_stock[101])
+            if rem_steel > 0:
+                iss_id = next_issue_id; next_issue_id += 1
+                day_issues.append({
+                    "id": iss_id, "production_order_id": next_prod_id - 1, "item_id": INV_ITEM_MAP[101],
+                    "planned_quantity": rem_steel, "planned_issue_date": day_str,
+                    "quantity_issued": rem_steel, "issue_date": day_str
+                })
+                mat_stock[101] = 0.0
+                sm_id = next_mov_id; next_mov_id += 1
+                day_movs.append({
+                    "id": sm_id, "item_id": INV_ITEM_MAP[101], "date": day_str, "movement_type": "OUT",
+                    "quantity": rem_steel, "goods_receipt_line_id": "", "material_issue_id": iss_id,
+                    "production_order_id": "", "delivery_line_id": ""
                 })
 
         # -------------------------------------------------------------
@@ -440,7 +455,7 @@ def generate_packs():
             "is_simulated": True,
             "label": "SIMULATED ERP OPERATIONAL PACK",
             "framing": FRAMING,
-            "exported_at": datetime.now(timezone.utc).isoformat(),
+            "exported_at": f"{day_str}T20:00:00+05:30",
             "row_counts": row_counts,
             "total_events": sum(row_counts.values()),
             "closing_stock_simulated": {

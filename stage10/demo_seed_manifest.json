@@ -420,7 +420,7 @@
     "table": "purchase_orders",
     "date": "2025-12-25",
     "quantity": 400,
-    "reason": "Seed PO for Steel Rod 10mm (expected Jan 3, 9d lead time)",
+    "reason": "Seed PO for Steel Rod 10mm (expected Jan 2, 8d lead time)",
     "source": "demo_seed"
   },
   {

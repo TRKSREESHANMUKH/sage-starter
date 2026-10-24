@@ -6,7 +6,7 @@
   "is_simulated": true,
   "label": "SIMULATED ERP OPERATIONAL PACK",
   "framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
-  "exported_at": "2026-10-23T07:24:48.034255+00:00",
+  "exported_at": "2026-01-07T20:00:00+05:30",
   "row_counts": {
     "purchase_orders": 0,
     "purchase_order_lines": 0,
@@ -17,18 +17,18 @@
     "deliveries": 3,
     "delivery_lines": 3,
     "production_orders": 2,
-    "material_issues": 0,
-    "stock_movements": 3
+    "material_issues": 1,
+    "stock_movements": 4
   },
-  "total_events": 15,
+  "total_events": 17,
   "closing_stock_simulated": {
     "materials": {
       "101": 0.0,
-      "102": 236.0,
-      "103": 284.0
+      "102": 232.0,
+      "103": 283.0
     },
     "finished_goods": {
-      "201": 2,
+      "201": 6,
       "202": 16
     }
   }

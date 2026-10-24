@@ -39,12 +39,12 @@
       "role": "Planner"
     },
     {
-      "action": "Prepare dispatch for order SO-224 (Widget Model Y (Product 202))",
-      "category": "Upcoming Order",
-      "due_date": "2026-01-04",
+      "action": "Chase supplier EastCoast Components (PO-19)",
+      "category": "Rule 4",
+      "due_date": "2026-01-03",
       "rank": 5,
-      "reason": "Order SO-224 (14 units) requested for delivery on 2026-01-04",
-      "role": "Planner"
+      "reason": "PO-19 for Steel Rod 10mm (Material 101) (400 units) is 1 days overdue from EastCoast Components",
+      "role": "Procurement"
     }
   ],
   "watchlist": [

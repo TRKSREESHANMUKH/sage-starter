@@ -264,5 +264,15 @@
     "status": "SUCCESS",
     "delivery_mode": "run_due",
     "extra_key": "nightly_digest:real_2026-10-17"
+  },
+  {
+    "timestamp": "2026-10-24T07:18:42.180699+00:00",
+    "job": "nightly_digest",
+    "as_of": "2025-06-15",
+    "recipients": [
+      "sreeshanmukhtrk@gmail.com"
+    ],
+    "status": "SUCCESS_LIVE",
+    "delivery_mode": "live_smtp"
   }
 ]

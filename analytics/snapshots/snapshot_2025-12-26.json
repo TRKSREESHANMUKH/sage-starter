@@ -1,16 +1,16 @@
 {
   "as_of": "2025-12-26",
-  "composite_severity_score": 0.0,
+  "composite_severity_score": 125.0,
   "kpis": {
     "backlog_rising": false,
     "oldest_overdue_date": null,
     "total_backlog_units": 0,
     "total_due_today_orders": 0,
     "total_due_today_units": 0,
-    "total_material_stockouts": 0,
+    "total_material_stockouts": 1,
     "total_overdue_orders": 0,
     "total_po_overdue_days": 0,
-    "total_production_shortfall": 0
+    "total_production_shortfall": 50
   },
   "materials": {
     "101": {
@@ -21,8 +21,8 @@
       "overdue_pos": [],
       "reorder_point": 150.0,
       "safety_stock": 50.0,
-      "severity": "NORMAL",
-      "stock": 213.0
+      "severity": "CRITICAL",
+      "stock": 9.0
     },
     "102": {
       "days_of_cover": null,
@@ -33,7 +33,7 @@
       "reorder_point": 120.0,
       "safety_stock": 40.0,
       "severity": "NORMAL",
-      "stock": 220.0
+      "stock": 204.0
     },
     "103": {
       "days_of_cover": null,
@@ -44,7 +44,7 @@
       "reorder_point": 100.0,
       "safety_stock": 30.0,
       "severity": "NORMAL",
-      "stock": 206.0
+      "stock": 184.0
     }
   },
   "metadata": {
@@ -52,24 +52,24 @@
     "simulated_data": true,
     "source": "PostgreSQL committed operational ERP schema"
   },
-  "plant_severity": "NORMAL",
+  "plant_severity": "NEEDS_ATTENTION",
   "products": {
     "201": {
       "actual_production": 0,
-      "demand_units": 0,
+      "demand_units": 22,
       "due_backlog_units": 0,
       "due_today_orders_count": 0,
       "due_today_units": 0,
-      "fg_stock": 120.0,
+      "fg_stock": 0.0,
       "name": "Widget Model X",
       "oldest_due_date": null,
       "overdue_orders_count": 0,
-      "planned_production": 0,
+      "planned_production": 30,
       "product_id": 201,
-      "production_shortfall": 0,
+      "production_shortfall": 30,
       "reorder_point": 30.0,
       "safety_stock": 15.0,
-      "severity": "NORMAL"
+      "severity": "CRITICAL"
     },
     "202": {
       "actual_production": 0,
@@ -77,16 +77,16 @@
       "due_backlog_units": 0,
       "due_today_orders_count": 0,
       "due_today_units": 0,
-      "fg_stock": 100.0,
+      "fg_stock": 0.0,
       "name": "Widget Model Y",
       "oldest_due_date": null,
       "overdue_orders_count": 0,
-      "planned_production": 0,
+      "planned_production": 20,
       "product_id": 202,
-      "production_shortfall": 0,
+      "production_shortfall": 20,
       "reorder_point": 25.0,
       "safety_stock": 10.0,
-      "severity": "NORMAL"
+      "severity": "CRITICAL"
     }
   },
   "receipts_today": [],

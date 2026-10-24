@@ -1,6 +1,6 @@
 {
   "as_of": "2025-12-31",
-  "subject": "SAGE Daily Brief | 31 Dec 2025 | All normal",
+  "subject": "SAGE Daily Brief | 31 Dec 2025 | 1 need action",
   "kpis": {
     "total_backlog_units": 0,
     "total_overdue_orders": 0,
@@ -8,7 +8,7 @@
     "total_due_today_orders": 0,
     "backlog_rising": false,
     "oldest_overdue_date": null,
-    "total_production_shortfall": 0,
+    "total_production_shortfall": 50,
     "total_material_stockouts": 0,
     "total_po_overdue_days": 0
   },

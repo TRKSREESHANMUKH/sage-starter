@@ -121,19 +121,6 @@ def run_validation():
             if int(sol["product_id"]) not in valid_products:
                 fk_errors.append(f"Invalid product_id {sol['product_id']} in SOL #{sol['id']}")
 
-        # Deliveries
-        dels = load_csv(p_dir / "deliveries.csv")
-        dells = load_csv(p_dir / "delivery_lines.csv")
-        for dl in dels:
-            if dl["ship_date"] != d_str:
-                date_errors.append(f"Delivery ship_date {dl['ship_date']} != {d_str}")
-        for dell in dells:
-            pid = int(dell["product_id"])
-            qty = float(dell["quantity_shipped"])
-            fg_stock[pid] -= qty
-            if fg_stock[pid] < 0:
-                neg_stock_errors.append(f"Negative FG stock on {d_str} for product {pid}: {fg_stock[pid]}")
-
         # Production Orders
         prods = load_csv(p_dir / "production_orders.csv")
         issues = load_csv(p_dir / "material_issues.csv")
@@ -151,6 +138,19 @@ def run_validation():
             mat_stock[mid] -= qty
             if mat_stock[mid] < 0:
                 neg_stock_errors.append(f"Negative Material stock on {d_str} for item {mid}: {mat_stock[mid]}")
+
+        # Deliveries
+        dels = load_csv(p_dir / "deliveries.csv")
+        dells = load_csv(p_dir / "delivery_lines.csv")
+        for dl in dels:
+            if dl["ship_date"] != d_str:
+                date_errors.append(f"Delivery ship_date {dl['ship_date']} != {d_str}")
+        for dell in dells:
+            pid = int(dell["product_id"])
+            qty = float(dell["quantity_shipped"])
+            fg_stock[pid] -= qty
+            if fg_stock[pid] < 0:
+                neg_stock_errors.append(f"Negative FG stock on {d_str} for product {pid}: {fg_stock[pid]}")
 
         # Stock Movements check
         movs = load_csv(p_dir / "stock_movements.csv")

@@ -8,7 +8,7 @@ P l
 TODAY'S NUMBERS IN CONTEXT:
 • Orders Due     : 2 orders due, same as yesterday (7d avg: 1.9)
 • Orders Late    : 8 late orders, up from 7 yesterday (7d avg: 3.4)
-• Units Short    : 104 units short, up from 79 yesterday (7d avg: 47.0)
+• Units Short    : 100 units short, up from 79 yesterday (7d avg: 46.4)
 • Materials Low  : 1 material low, up from 0 yesterday (7d avg: 0.1)
 
 PAST ANALYSED CASES: WHAT CAUSED WHAT:
@@ -36,7 +36,7 @@ FOCUS TOMORROW (TOP 5 PRIORITIES):
 
 SUPPLIER WATCH:
 • PO-18 (EastCoast Components): 407 units Steel Rod 10mm - 145 days late (expected 14 Aug)
-• PO-19 (EastCoast Components): 400 units Steel Rod 10mm - 3 days late (expected 03 Jan)
+• PO-19 (EastCoast Components): 400 units Steel Rod 10mm - 4 days late (expected 02 Jan)
 • PO-20 (Global Polymers Co): 100 units Plastic Granules - 2 days late (expected 04 Jan)
 
 ======================================================================

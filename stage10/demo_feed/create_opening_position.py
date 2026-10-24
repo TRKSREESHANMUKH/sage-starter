@@ -160,7 +160,7 @@ def setup_opening_position():
 
         # 4. Three Seed Purchase Orders in December 2025
         seed_pos = [
-            (19, 4, "2025-12-25", "2026-01-03", "Pending", 19, 101, 400, "Seed PO for Steel Rod 10mm (expected Jan 3, 9d lead time)"),
+            (19, 4, "2025-12-25", "2026-01-02", "Pending", 19, 101, 400, "Seed PO for Steel Rod 10mm (expected Jan 2, 8d lead time)"),
             (20, 3, "2025-12-21", "2026-01-04", "Pending", 20, 102, 250, "Seed PO for Plastic Granules (expected Jan 4, 14d lead time)"),
             (21, 5, "2025-12-25", "2026-01-06", "Pending", 21, 103, 200, "Seed PO for Copper Wire (expected Jan 6, 12d lead time)"),
         ]

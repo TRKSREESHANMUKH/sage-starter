@@ -1,12 +1,12 @@
 {
   "status": "PREPARED",
   "as_of": "2025-12-31",
-  "prepared_at": "2026-10-23T09:28:33.993655+00:00",
-  "subject": "SAGE Daily Brief | 31 Dec 2025 | All normal",
+  "prepared_at": "2026-10-24T09:24:19.440903+00:00",
+  "subject": "SAGE Daily Brief | 31 Dec 2025 | 1 need action",
   "no_new_data": false,
   "for_owner_only": false,
   "pdf_pages": 1,
   "pdf_path": "reports/2025-12-31/SAGE_Daily_Brief_2025-12-31.pdf",
-  "sparkline_bytes": 11318,
-  "input_hash": "3648d1117d4db55e"
+  "sparkline_bytes": 15115,
+  "input_hash": "dd03e3f485bfd790"
 }

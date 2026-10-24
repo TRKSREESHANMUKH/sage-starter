@@ -36,6 +36,7 @@ FOCUS TOMORROW (TOP 5 PRIORITIES):
 
 SUPPLIER WATCH:
 • PO-18 (EastCoast Components): 407 units Steel Rod 10mm - 140 days late (expected 14 Aug)
+Receipts expected tomorrow: PO-19 from EastCoast Components (400 units Steel Rod 10mm) expected tomorrow
 
 ======================================================================
 FRAMING: SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.

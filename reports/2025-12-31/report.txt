@@ -1,15 +1,15 @@
 SAGE DAILY BRIEF | 31 Dec 2025
-Status: ALL NORMAL (All operations on schedule)
+Status: ACTION NEEDED (1 item need action)
 ======================================================================
 
 THE BOTTOM LINE:
 M a
 
 TODAY'S NUMBERS IN CONTEXT:
-• Orders Due     : 0 orders due, same as yesterday (7d avg: 0.0)
+• Orders Due     : 1 order due, down from 2 yesterday (7d avg: 1.0)
 • Orders Late    : 0 late orders, same as yesterday (7d avg: 0.0)
-• Units Short    : 0 units short, same as yesterday (7d avg: 0.0)
-• Materials Low  : 0 materials low, same as yesterday (7d avg: 0.0)
+• Units Short    : 50 units short, up from 0 yesterday (7d avg: 14.3)
+• Materials Low  : 0 materials low, down from 1 yesterday (7d avg: 0.9)
 
 PAST ANALYSED CASES: WHAT CAUSED WHAT:
 • Chain: EastCoast delivery late → Steel Rod 10mm below safety level
@@ -19,9 +19,17 @@ PAST ANALYSED CASES: WHAT CAUSED WHAT:
 FOCUS TOMORROW (TOP 5 PRIORITIES):
 1. Fix at the root: EastCoast delivery late (Supply Chain Lead) - Due Immediate
    Reason: Observed steel rod 10mm below safety level on 31 Dec is consistent with eastcoast delivery late starting on 25 Dec. (Confidence: Partly seen)
+2. Escalate overdue PO-18 for Steel Rod 10mm (Supplier Relations) - Due 11:30 AM
+   Reason: PO-18 is 139 days overdue from expected delivery date (14 Aug).
+3. Prepare shipment for Coastal Traders (Widget Model Y) (Warehouse Dispatch) - Due 02:00 PM
+   Reason: Upcoming order for 13 units due in 2 days (02 Jan).
+4. Prepare shipment for Sunrise Wholesalers (Widget Model Y) (Warehouse Dispatch) - Due 02:00 PM
+   Reason: Upcoming order for 8 units due in 2 days (02 Jan).
+5. Prepare shipment for Nova Retailers (Widget Model Y) (Warehouse Dispatch) - Due 02:00 PM
+   Reason: Upcoming order for 12 units due in 2 days (02 Jan).
 
 SUPPLIER WATCH:
-No supplier problems today.
+• PO-18 (EastCoast Components): 407 units Steel Rod 10mm - 139 days late (expected 14 Aug)
 
 ======================================================================
 FRAMING: SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.

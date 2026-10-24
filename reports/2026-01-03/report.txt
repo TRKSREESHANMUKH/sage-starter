@@ -1,9 +1,9 @@
 SAGE DAILY BRIEF | 3 Jan 2026
-Status: ACTION NEEDED (5 items need action)
+Status: ACTION NEEDED (6 items need action)
 ======================================================================
 
 THE BOTTOM LINE:
-M a
+P l
 
 TODAY'S NUMBERS IN CONTEXT:
 • Orders Due     : 2 orders due, same as yesterday (7d avg: 1.4)
@@ -36,6 +36,7 @@ FOCUS TOMORROW (TOP 5 PRIORITIES):
 
 SUPPLIER WATCH:
 • PO-18 (EastCoast Components): 407 units Steel Rod 10mm - 142 days late (expected 14 Aug)
+• PO-19 (EastCoast Components): 400 units Steel Rod 10mm - 1 day late (expected 02 Jan)
 Receipts expected tomorrow: PO-20 from Global Polymers Co (250 units Plastic Granules) expected tomorrow
 
 ======================================================================
