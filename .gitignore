@@ -16,4 +16,8 @@ analytics/isolated_panels/
 logs/
 .sage.pid
 backups/
+live/
+*.pid
+analytics/insights_cache/
 demo_data/case_packs/
+analytics/snapshots/snapshot_2026-*.json

@@ -119,10 +119,16 @@ def run_a3():
         print("  ✓ Zero forbidden literals found outside tests/ and audit/!")
 
 
+def run_a4():
+    from stage10.audit.audit_reconcile_r import run_r5
+    run_r5()
+
+
 def main():
     run_a1()
     run_a2()
     run_a3()
+    run_a4()
 
 
 if __name__ == "__main__":

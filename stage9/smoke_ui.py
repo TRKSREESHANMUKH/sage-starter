@@ -17,7 +17,7 @@ Tests:
    - Navigation tabs, expanders, and CSV downloads clicked.
    - Zero occurrences of "Errno", "Traceback", "NaN", "undefined", "[object Object]".
 2. Controller on port 8001:
-   - Log in with operator token (sage_dev_token_2025).
+   - Log in with operator token from .env (SAGE_CONTROLLER_TOKEN).
    - Verify framing sentence is present.
    - Click "Preview today's report": renders in <5s, contains framing sentence, owner email, priorities, no placeholders.
    - Click "Send report now" (Dry-run mode): UI shows result banner in <10s, sent_log gains 1 entry.
@@ -235,7 +235,8 @@ class SmokeTestRunner:
 
         # Login with operator token
         t_login = time.time()
-        self.page.fill("input[name='token']", "sage_dev_token_2025")
+        ctrl_token = os.getenv("SAGE_CONTROLLER_TOKEN", "")
+        self.page.fill("input[name='token']", ctrl_token)
         self.page.click("button[type='submit']")
         self.page.wait_for_load_state("domcontentloaded")
         login_dur = time.time() - t_login

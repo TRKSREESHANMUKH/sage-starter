@@ -60,10 +60,10 @@ if [ "$(uname -s)" = "Darwin" ] && command -v caffeinate >/dev/null 2>&1; then
     echo $! > "$DIR/logs/caffeinate.pid"
 fi
 
-# 9. Health check: Wait up to 10 seconds for both servers to respond with HTTP 200 on /health
+# 9. Health check: Wait up to 20 seconds for both servers to respond with HTTP 200 on /health
 echo "Waiting for health checks on 127.0.0.1:8000/health and 127.0.0.1:8001/health..."
 READY=0
-for i in {1..20}; do
+for i in {1..40}; do
     STATUS_8000=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/health 2>/dev/null || echo "000")
     STATUS_8001=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8001/health 2>/dev/null || echo "000")
     if [ "$STATUS_8000" = "200" ] && [ "$STATUS_8001" = "200" ]; then

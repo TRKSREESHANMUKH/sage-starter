@@ -100,10 +100,18 @@ def verify_token(
 async def cookie_auth_middleware(request: Request, call_next):
     token = request.query_params.get("token")
     expected_token = os.getenv("SAGE_WEB_TOKEN")
-    response = await call_next(request)
     if token and expected_token and token == expected_token:
-        response.set_cookie(key="sage_token", value=token, httponly=True, samesite="lax")
-    return response
+        query_params = dict(request.query_params)
+        query_params.pop("token", None)
+        from urllib.parse import urlencode
+        clean_url = request.url.path
+        if query_params:
+            clean_url += "?" + urlencode(query_params)
+        from starlette.responses import RedirectResponse
+        resp = RedirectResponse(url=clean_url, status_code=303)
+        resp.set_cookie(key="sage_token", value=token, httponly=True, samesite="lax")
+        return resp
+    return await call_next(request)
 
 
 # ──────────────────────────────────────────────────────────────────────────────

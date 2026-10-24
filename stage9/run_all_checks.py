@@ -153,11 +153,13 @@ def check_http_routes() -> bool:
     print("Checking HTTP endpoints...")
     import urllib.request
     all_ok = True
+    web_token = os.getenv("SAGE_WEB_TOKEN", "")
+    token_param = f"?token={web_token}" if web_token else ""
     endpoints = [
-        ("Viewer Home", "http://127.0.0.1:8000/?token=sage_dev_token_2025"),
-        ("Viewer Insights", "http://127.0.0.1:8000/insights?token=sage_dev_token_2025"),
-        ("Viewer Method", "http://127.0.0.1:8000/method?token=sage_dev_token_2025"),
-        ("Viewer Research", "http://127.0.0.1:8000/research?token=sage_dev_token_2025"),
+        ("Viewer Home", f"http://127.0.0.1:8000/{token_param}"),
+        ("Viewer Insights", f"http://127.0.0.1:8000/insights{token_param}"),
+        ("Viewer Method", f"http://127.0.0.1:8000/method{token_param}"),
+        ("Viewer Research", f"http://127.0.0.1:8000/research{token_param}"),
         ("Controller Login", "http://127.0.0.1:8001/ctrl/login"),
     ]
     for label, url in endpoints:

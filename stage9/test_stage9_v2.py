@@ -292,7 +292,7 @@ class TestStage9v2Suite(unittest.TestCase):
         time.sleep(0.5)
 
         base = f"http://127.0.0.1:{test_port}"
-        valid_token = os.getenv("SAGE_WEB_TOKEN", "sage_dev_token_2025")
+        valid_token = os.getenv("SAGE_WEB_TOKEN", "test_token_secret_123")
 
         try:
             # 1. Unauthenticated request to / -> 401

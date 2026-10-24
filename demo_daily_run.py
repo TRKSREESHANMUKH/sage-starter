@@ -113,9 +113,9 @@ def run_daily_demo(as_of: date) -> None:
     print("\n" + "=" * 76)
     print("✅ PIPELINE EXECUTION COMPLETED SUCCESSFULLY!")
     print(f"🌐 Inspect Live on Web Dashboard:")
-    print(f"   http://127.0.0.1:8000/?as-of={as_of.isoformat()}&token=sage_dev_token_2025")
+    print(f"   http://127.0.0.1:8000/?as-of={as_of.isoformat()}")
     print(f"📊 View Historical Timeline & Trends:")
-    print(f"   http://127.0.0.1:8000/digests?token=sage_dev_token_2025")
+    print(f"   http://127.0.0.1:8000/digests")
     print("=" * 76 + "\n")
 
 

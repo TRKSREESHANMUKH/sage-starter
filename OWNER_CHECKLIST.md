@@ -26,10 +26,10 @@
   *(Starts Executive Viewer on `127.0.0.1:8000` and Operator Controller on `127.0.0.1:8001` in DRY-RUN mode).*
 
 - [ ] **Open Browser Tabs:**
-  1. **Executive Dashboard (Viewer):** [http://127.0.0.1:8000/?token=sage_dev_token_2025](http://127.0.0.1:8000/?token=sage_dev_token_2025)
-  2. **Operator Control Panel (Controller):** [http://127.0.0.1:8001/ctrl/login](http://127.0.0.1:8001/ctrl/login) (Token: `sage_operator_token_2025`)
-  3. **Insights Tab:** [http://127.0.0.1:8000/insights?token=sage_dev_token_2025](http://127.0.0.1:8000/insights?token=sage_dev_token_2025)
-  4. **Method & Governance Tab:** [http://127.0.0.1:8000/method?token=sage_dev_token_2025](http://127.0.0.1:8000/method?token=sage_dev_token_2025)
+  1. **Executive Dashboard (Viewer):** [http://127.0.0.1:8000/](http://127.0.0.1:8000/) (Sign in using `SAGE_WEB_TOKEN` from `.env`)
+  2. **Operator Control Panel (Controller):** [http://127.0.0.1:8001/ctrl/login](http://127.0.0.1:8001/ctrl/login) (Sign in using `SAGE_CONTROLLER_TOKEN` from `.env`)
+  3. **Insights Tab:** [http://127.0.0.1:8000/insights](http://127.0.0.1:8000/insights)
+  4. **Method & Governance Tab:** [http://127.0.0.1:8000/method](http://127.0.0.1:8000/method)
 
 ---
 

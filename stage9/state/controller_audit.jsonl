@@ -416,3 +416,11 @@
 {"timestamp": "2026-10-24T15:10:26.469099+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-09", "rows_loaded": null}, "result": "SUCCESS"}
 {"timestamp": "2026-10-24T15:10:33.166413+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-10", "rows_loaded": null}, "result": "SUCCESS"}
 {"timestamp": "2026-10-24T15:12:15.157383+05:30", "user": "operator", "action": "reset_demo", "parameters": {"target_date": "2025-12-31", "elapsed_seconds": 0.49}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T15:37:05.058206+05:30", "user": "run_sage", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T15:37:05.059166+05:30", "user": "run_sage", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T15:37:18.629136+05:30", "user": "system_startup", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T15:37:18.633084+05:30", "user": "system_startup", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T15:38:14.880722+05:30", "user": "run_sage", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T15:38:14.881081+05:30", "user": "run_sage", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T15:38:20.467848+05:30", "user": "system_startup", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T15:38:20.470822+05:30", "user": "system_startup", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}

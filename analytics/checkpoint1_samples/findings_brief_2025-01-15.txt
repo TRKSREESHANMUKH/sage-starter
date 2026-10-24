@@ -7,17 +7,17 @@ PRIORITY CAUSAL FINDINGS (EXCEPTION VIEW):
 [MEDIUM ATTENTION] P03: Product 201 – demand (units)
   Targets: Product 201 – demand (units), Product 201 – due-backlog (units)
   What to check: Verify customer sales orders and consider shift overtime reallocation.
-  Inspect: http://127.0.0.1:8000/causal/P03?token=sage_dev_token_2025
+  Inspect: http://127.0.0.1:8000/causal/P03
 
 [MEDIUM ATTENTION] P04: Product 201 – capacity shortfall (units)
   Targets: Product 201 – actual production (units), Product 201 – capacity shortfall (units)
   What to check: Audit machine uptime and staffing throughput on primary assembly lines.
-  Inspect: http://127.0.0.1:8000/causal/P04?token=sage_dev_token_2025
+  Inspect: http://127.0.0.1:8000/causal/P04
 
 [HIGH ATTENTION] P10: Product 202 – demand (units)
   Targets: Product 202 – demand (units), Product 202 – due-backlog (units)
   What to check: Verify customer sales orders and consider shift overtime reallocation.
-  Inspect: http://127.0.0.1:8000/causal/P10?token=sage_dev_token_2025
+  Inspect: http://127.0.0.1:8000/causal/P10
 
 MONITORED BASELINE & BUFFER HELD:
 ----------------------------------------------------------------------
@@ -36,4 +36,4 @@ an expert-defined causal model; it does not claim to prove real-world
 causality.
 
 Simulated data as of 2025-01-15.
-Dashboard: http://127.0.0.1:8000/causal?token=sage_dev_token_2025
+Dashboard: http://127.0.0.1:8000/causal

@@ -42,8 +42,30 @@ Stages 1–8 strictly frozen. Main PostgreSQL database protected read-only (`SET
   - Evaluated and documented 3 scoring runs (First run: 10 Critical; v2 rules: 8 Hits, 0 Partials, 2 Misses; v3 rules: 9 Hits, 0 Partials, 1 Miss)
   - Documented honest cause of Day 8 Miss in `DEMO.md`
   - Reset live demo environment cleanly to Day 0 (2025-12-31 baseline)
-- [ ] **Phase E — Security and Hygiene**
-- [ ] **Phase E — Security and Hygiene**
+- [x] **Phase E — Security and Hygiene**:
+  - Replaced all default tokens (`sage_dev_token_2025`, `sage_operator_token_2025`) with cryptographically random independent 16-byte hex tokens in `.env`
+  - Zero default tokens in code, tests, docs, or scripts; verified with zero-hit grep
+  - Controller token is independent and NOT derived from viewer token
+  - Added clean login and cookie authentication; `?token=` on first visit redirects to clean URL with HTTP-only cookie
+  - Deleted obsolete screenshots (`case_*`, `controller_demo_cases.png`, `*2025-02-03*`, `*2025-01-15*`)
+  - Regenerated all screenshots from 2026 demo feed into `analytics/screenshots/final/`: Day 1, Day 3, Day 7 (with analyze expander open), Day 9, Day 10, Insights 2025-12-31, Insights 2026-01-09, Controller dashboard, Sample PDF preview
+  - Moved obsolete demo code (`stage9/generate_demo_2026.py`, `stage9/test_cases.py`) to `backups/obsolete_demo/`
+  - Removed obsolete "Demo cases" API endpoints from controller
+  - Git hygiene: added `backups/`, `live/`, `*.pid`, `analytics/insights_cache/` to `.gitignore`; untracked `backups/` and `live/` from git; verified `git ls-files` shows only `.env.example`
+  - Fixed R5 audit in `audit_reconcile_r.py` and `gate_a_full.py`: parses 7 Stage 7 expert DAG edges, 3 active 2025 sourcing edges, and 10 incidents from `incidents.yaml` & `business_events` with zero "Supplier None" and zero "0 DAG edges"
+- [ ] **Phase F — Unified Verification (`verify_all.sh`)**
+- [x] **Phase E — Security and Hygiene**:
+  - Replaced all default tokens (`sage_dev_token_2025`, `sage_operator_token_2025`) with cryptographically random independent 16-byte hex tokens in `.env`
+  - Zero default tokens in code, tests, docs, or scripts; verified with zero-hit grep
+  - Controller token is independent and NOT derived from viewer token
+  - Added clean login and cookie authentication; `?token=` on first visit redirects to clean URL with HTTP-only cookie
+  - Deleted obsolete screenshots (`case_*`, `controller_demo_cases.png`, `*2025-02-03*`, `*2025-01-15*`)
+  - Regenerated all screenshots from 2026 demo feed into `analytics/screenshots/final/`: Day 1, Day 3, Day 7 (with analyze expander open), Day 9, Day 10, Insights 2025-12-31, Insights 2026-01-09, Controller dashboard, Sample PDF preview
+  - Moved obsolete demo code (`stage9/generate_demo_2026.py`, `stage9/test_cases.py`) to `backups/obsolete_demo/`
+  - Removed obsolete "Demo cases" API endpoints from controller
+  - Git hygiene: added `backups/`, `live/`, `*.pid`, `analytics/insights_cache/` to `.gitignore`; untracked `backups/` and `live/` from git; verified `git ls-files` shows only `.env.example`
+  - Fixed R5 audit in `audit_reconcile_r.py` and `gate_a_full.py`: parses 7 Stage 7 expert DAG edges, 3 active 2025 sourcing edges, and 10 incidents from `incidents.yaml` & `business_events` with zero "Supplier None" and zero "0 DAG edges"
+- [ ] **Phase F — Unified Verification (`verify_all.sh`)**
 - [ ] **Phase F — Unified Verification (`verify_all.sh`)**
 - [ ] **Phase G — Presentation Documents & Guides**
 - [ ] **Phase H — Self-Audit & Packaging**

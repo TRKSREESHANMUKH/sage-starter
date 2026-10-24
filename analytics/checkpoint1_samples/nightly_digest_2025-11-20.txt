@@ -38,4 +38,4 @@ an expert-defined causal model; it does not claim to prove real-world
 causality.
 
 Simulated data as of 2025-11-20.
-Dashboard: http://127.0.0.1:8000?token=sage_dev_token_2025
+Dashboard: http://127.0.0.1:8000

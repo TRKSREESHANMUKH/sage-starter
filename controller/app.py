@@ -53,10 +53,7 @@ from stage9.ops import (
     feed_next_queue_day,
     get_allowlist,
     get_audit_log_entries,
-    get_case_state,
-    get_demo_cases,
     get_runtime_config,
-    jump_to_case,
     load_year_review,
     pause_scheduler_v6,
     prepare_daily_run_v6,
@@ -119,7 +116,7 @@ MAX_FAILED_ATTEMPTS = 5
 def _get_controller_token() -> str:
     t = os.getenv("SAGE_CONTROLLER_TOKEN", "").strip()
     if not t:
-        return os.getenv("SAGE_WEB_TOKEN", "sage_dev_token_2025")
+        raise RuntimeError("SAGE_CONTROLLER_TOKEN is not configured in .env")
     return t
 
 
@@ -131,6 +128,29 @@ def _create_session() -> str:
         "csrf": csrf,
     }
     return sid
+
+
+@app.middleware("http")
+async def ctrl_token_query_middleware(request: Request, call_next):
+    token = request.query_params.get("token")
+    if token:
+        try:
+            expected = _get_controller_token()
+            if hmac.compare_digest(token.strip(), expected):
+                sid = _create_session()
+                clean_path = request.url.path
+                if not clean_path.startswith("/ctrl"):
+                    clean_path = "/ctrl/"
+                resp = RedirectResponse(clean_path, status_code=303)
+                resp.set_cookie(
+                    "sage_ctrl_session", sid,
+                    httponly=True, samesite="lax",
+                    max_age=SESSION_TTL_SECONDS,
+                )
+                return resp
+        except Exception:
+            pass
+    return await call_next(request)
 
 
 def _get_session(request: Request) -> Optional[Dict[str, Any]]:
@@ -183,8 +203,6 @@ def _base_ctx(request: Request, sess: Optional[Dict] = None) -> Dict[str, Any]:
             next_queue_label = f"Day {d_num} of 10 — {d_obj.strftime('%-d %b %Y')}"
         except Exception:
             next_queue_label = queue_days[0]
-    cases = get_demo_cases()
-    case_state = get_case_state()
     return {
         "request": request,
         "csrf": sess["csrf"] if sess else "",
@@ -192,8 +210,6 @@ def _base_ctx(request: Request, sess: Optional[Dict] = None) -> Dict[str, Any]:
         "queue_remaining": len(queue_days),
         "queue_days": queue_days[:3],  # show first 3
         "next_queue_label": next_queue_label,
-        "demo_cases": cases,
-        "case_state": case_state,
         "send_mode": cfg.get("send_mode", "dry_run"),
         "scheduler_paused": cfg.get("scheduler_paused", False),
         "prepare_time": cfg.get("prepare_time", "19:45"),
@@ -247,8 +263,7 @@ async def login_submit(
         }, status_code=429)
 
     expected = _get_controller_token()
-    valid_tokens = {expected, "sage_dev_token_2025", "sage_controller_token_2025"}
-    if not any(hmac.compare_digest(token.strip(), v) for v in valid_tokens if v):
+    if not hmac.compare_digest(token.strip(), expected):
         _record_failed_login(ip)
         remaining = MAX_FAILED_ATTEMPTS - len(_failed_logins.get(ip, []))
         audit_log("login_attempt", {"ip": ip}, "FAILED")
@@ -435,47 +450,7 @@ async def api_reset_demo(
 # API: Demo Cases (Stage 9 Final 2)
 # ─────────────────────────────────────────────────────────────
 
-@app.get("/ctrl/api/cases")
-async def api_cases(request: Request, sess: Dict = Depends(_require_session)):
-    return JSONResponse({
-        "cases": get_demo_cases(),
-        "case_state": get_case_state(),
-    })
-
-
-@app.post("/ctrl/api/run-case")
-async def api_run_case(
-    request: Request,
-    csrf_token: str = Form(...),
-    case_num: int = Form(...),
-    sess: Dict = Depends(_require_session),
-):
-    _check_csrf(csrf_token, sess["csrf"])
-    try:
-        res = jump_to_case(k=case_num, user="controller")
-        return JSONResponse({"status": "ok", "case": res})
-    except Exception as exc:
-        logger.exception("Failed to run case %s", case_num)
-        return JSONResponse({"status": "error", "detail": str(exc)}, status_code=400)
-
-
-@app.post("/ctrl/api/next-case")
-async def api_next_case(
-    request: Request,
-    csrf_token: str = Form(...),
-    sess: Dict = Depends(_require_session),
-):
-    _check_csrf(csrf_token, sess["csrf"])
-    try:
-        st = get_case_state()
-        cases = get_demo_cases()
-        cur_k = st.get("active_case") or 0
-        next_k = (cur_k % len(cases)) + 1 if cases else 1
-        res = jump_to_case(k=next_k, user="controller")
-        return JSONResponse({"status": "ok", "case": res})
-    except Exception as exc:
-        logger.exception("Failed next case")
-        return JSONResponse({"status": "error", "detail": str(exc)}, status_code=400)
+# (Obsolete demo case endpoints removed per Phase E specification)
 
 
 @app.post("/ctrl/api/year-review")
