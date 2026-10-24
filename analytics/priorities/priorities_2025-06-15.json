@@ -7,21 +7,51 @@
   },
   "top_priorities": [
     {
-      "action": "Monitor inventory buffer for Steel Rod 10mm (Material 101)",
-      "category": "Buffer Health",
+      "action": "Chase supplier Copper & Co (PO-13)",
+      "category": "Rule 4",
       "due_date": "2025-06-15",
       "rank": 1,
-      "reason": "Steel Rod 10mm (Material 101) has no recent use (213 kg on hand)",
+      "reason": "PO-13 for Copper Wire (Material 103) (172 units) is 1 days overdue from Copper & Co",
       "role": "Procurement"
     },
     {
-      "action": "Monitor inventory buffer for Plastic Granules (Material 102)",
+      "action": "Prepare dispatch for order SO-108 (Widget Model X (Product 201))",
+      "category": "Upcoming Order",
+      "due_date": "2025-06-16",
+      "rank": 2,
+      "reason": "Order SO-108 (10 units) requested for delivery on 2025-06-16",
+      "role": "Planner"
+    },
+    {
+      "action": "Prepare dispatch for order SO-110 (Widget Model X (Product 201))",
+      "category": "Upcoming Order",
+      "due_date": "2025-06-17",
+      "rank": 3,
+      "reason": "Order SO-110 (11 units) requested for delivery on 2025-06-17",
+      "role": "Planner"
+    },
+    {
+      "action": "Monitor inventory buffer for Steel Rod 10mm (Material 101)",
       "category": "Buffer Health",
       "due_date": "2025-06-15",
-      "rank": 2,
-      "reason": "Plastic Granules (Material 102) has no recent use (220 kg on hand)",
+      "rank": 4,
+      "reason": "Steel Rod 10mm (Material 101) has 18.1 days of cover remaining (256 kg on hand)",
+      "role": "Procurement"
+    },
+    {
+      "action": "Monitor inventory buffer for Copper Wire (Material 103)",
+      "category": "Buffer Health",
+      "due_date": "2025-06-15",
+      "rank": 5,
+      "reason": "Copper Wire (Material 103) has 19.9 days of cover remaining (54 kg on hand)",
       "role": "Procurement"
     }
   ],
-  "watchlist": []
+  "watchlist": [
+    {
+      "item": "Copper Wire (Material 103) inventory monitoring",
+      "reason": "Copper Wire (Material 103) is at 54 kg (below reorder point 100 kg), tracking 1 open replenishment POs",
+      "role": "Procurement"
+    }
+  ]
 }

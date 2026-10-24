@@ -38,8 +38,10 @@ import re
 from pathlib import Path
 from typing import List, Dict, Any
 from playwright.sync_api import sync_playwright, Page
+from dotenv import load_dotenv
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(ROOT_DIR / ".env")
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 

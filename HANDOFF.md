@@ -43,7 +43,7 @@ Stages 1–8 strictly frozen. Main PostgreSQL database protected read-only (`SET
   - Documented honest cause of Day 8 Miss in `DEMO.md`
   - Reset live demo environment cleanly to Day 0 (2025-12-31 baseline)
 - [x] **Phase E — Security and Hygiene**:
-  - Replaced all default tokens (`sage_dev_token_2025`, `sage_operator_token_2025`) with cryptographically random independent 16-byte hex tokens in `.env`
+  - Replaced all legacy default tokens (`sage_dev_token_*`, `sage_operator_token_*`) with cryptographically random independent 16-byte hex tokens in `.env`
   - Zero default tokens in code, tests, docs, or scripts; verified with zero-hit grep
   - Controller token is independent and NOT derived from viewer token
   - Added clean login and cookie authentication; `?token=` on first visit redirects to clean URL with HTTP-only cookie
@@ -55,7 +55,7 @@ Stages 1–8 strictly frozen. Main PostgreSQL database protected read-only (`SET
   - Fixed R5 audit in `audit_reconcile_r.py` and `gate_a_full.py`: parses 7 Stage 7 expert DAG edges, 3 active 2025 sourcing edges, and 10 incidents from `incidents.yaml` & `business_events` with zero "Supplier None" and zero "0 DAG edges"
 - [ ] **Phase F — Unified Verification (`verify_all.sh`)**
 - [x] **Phase E — Security and Hygiene**:
-  - Replaced all default tokens (`sage_dev_token_2025`, `sage_operator_token_2025`) with cryptographically random independent 16-byte hex tokens in `.env`
+  - Replaced all legacy default tokens (`sage_dev_token_*`, `sage_operator_token_*`) with cryptographically random independent 16-byte hex tokens in `.env`
   - Zero default tokens in code, tests, docs, or scripts; verified with zero-hit grep
   - Controller token is independent and NOT derived from viewer token
   - Added clean login and cookie authentication; `?token=` on first visit redirects to clean URL with HTTP-only cookie
@@ -65,8 +65,22 @@ Stages 1–8 strictly frozen. Main PostgreSQL database protected read-only (`SET
   - Removed obsolete "Demo cases" API endpoints from controller
   - Git hygiene: added `backups/`, `live/`, `*.pid`, `analytics/insights_cache/` to `.gitignore`; untracked `backups/` and `live/` from git; verified `git ls-files` shows only `.env.example`
   - Fixed R5 audit in `audit_reconcile_r.py` and `gate_a_full.py`: parses 7 Stage 7 expert DAG edges, 3 active 2025 sourcing edges, and 10 incidents from `incidents.yaml` & `business_events` with zero "Supplier None" and zero "0 DAG edges"
-- [ ] **Phase F — Unified Verification (`verify_all.sh`)**
-- [ ] **Phase F — Unified Verification (`verify_all.sh`)**
+- [x] **Phase F — Unified Verification (`verify_all.sh`)**:
+  - Implemented complete 13-step automated protocol in `verify_all.sh` (clean exit 0 on 100% pass)
+  - Verified frozen hashes: `stage7/FROZEN.json` sha256 (`acd199cea42b75d221f32b06736318024dbc53ec6cb4e8c06a8e25dd87f4c920`) and `stage8/FROZEN.json` sha256 (`983a4e1ffabb592d49548185750dcd01e713e9dae3f9b7baf3ae360c615dbb56`)
+  - Verified all 55 frozen stage baseline files byte-identical to `baseline_hashes.json` (pycache excluded)
+  - Truth layer dual-method cross check: 173 on-time orders (Method 1=173, Method 2=173, match=True)
+  - Page-vs-truth verification (`test_insights_truth.py`): 3/3 passed across dates and periods
+  - All forensic audits passed (`orders_audit.py`, `r5_audit.py`, `metrics_audit.py`, `gate_a_full.py`, `audit_reconcile_r.py`)
+  - Zero forbidden literals and zero legacy default tokens outside backups verified via automated scan
+  - Mail safety unit tests (`test_mail_safety.py`) & `send_check.py` dry-run passed
+  - Multi-date reconciliation suite (`test_reconcile.py`): 5/5 passed across 4 dates + 12 monthly CSVs
+  - Deterministic scoring unit tests (`test_score.py`): 5/5 passed
+  - Stage 9 comprehensive test suite (`test_stage9_final.py`): 67/67 passed
+  - Both servers verified bound strictly to 127.0.0.1 (ports 8000 & 8001; 0.0.0.0 absent)
+  - Playwright Smoke UI suite (`smoke_ui.py`): 9/9 flows passed with sub-second response times
+  - Ten-day demo feed rehearsal: All 10 days fed, scored 9 Hits, 0 Partials, 1 Miss under pre-registration v3
+  - Final reset & safety verification: Zero live emails sent during tests (3 == 3), live DB restored to Day 0 (2025-12-31) in Dry-run mode, servers stopped, ports free
 - [ ] **Phase G — Presentation Documents & Guides**
 - [ ] **Phase H — Self-Audit & Packaging**
 
