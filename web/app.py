@@ -138,7 +138,7 @@ def insights(
     request: Request,
     date: Optional[str] = Query(None),
     as_of: Optional[str] = Query(None, alias="as-of"),
-    period: str = Query("ytd")
+    period: str = Query("all")
 ):
     selected = date or as_of
     payload = get_insights_data(selected, period)
@@ -157,7 +157,7 @@ def insights(
 def download_suppliers_csv(
     date: Optional[str] = Query(None),
     as_of: Optional[str] = Query(None, alias="as-of"),
-    period: str = Query("ytd")
+    period: str = Query("all")
 ):
     selected = date or as_of
     payload = get_insights_data(selected, period)
@@ -173,7 +173,7 @@ def download_suppliers_csv(
 def download_delays_csv(
     date: Optional[str] = Query(None),
     as_of: Optional[str] = Query(None, alias="as-of"),
-    period: str = Query("ytd")
+    period: str = Query("all")
 ):
     selected = date or as_of
     payload = get_insights_data(selected, period)
@@ -190,7 +190,7 @@ def download_insights_pdf(
     request: Request,
     date: Optional[str] = Query(None),
     as_of: Optional[str] = Query(None, alias="as-of"),
-    period: str = Query("ytd")
+    period: str = Query("all")
 ):
     selected = date or as_of
     payload = get_insights_data(selected, period)

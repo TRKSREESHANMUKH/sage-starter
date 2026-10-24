@@ -123,7 +123,7 @@ def compute_rating(on_time_pct: Optional[float], fill_rate_pct: Optional[float],
 
 def get_insights_data(
     as_of_str: Optional[str] = None,
-    period_str: str = "ytd",
+    period_str: str = "all",
     force_refresh: bool = False,
     as_of: Optional[Any] = None,
     period: Optional[str] = None
@@ -148,17 +148,15 @@ def get_insights_data(
         cur_as_of = get_current_day()
         as_of_str = cur_as_of.isoformat()
 
-    valid_periods = {"30d", "quarter", "ytd", "full_year"}
+    valid_periods = {"all", "this_year", "quarter", "30d", "ytd", "full_year"}
     if period_str not in valid_periods:
-        period_str = "ytd"
+        period_str = "all"
+    if period_str in ("ytd", "full_year"):
+        period_str = "all"
 
     is_demo = os.getenv("SAGE_DEMO", "false").lower() in ("true", "1", "yes")
-    if period_str == "full_year" and not is_demo:
-        period_str = "ytd"
 
-    source = os.getenv("SAGE_SOURCE", "main")
-    if cur_as_of <= date(2025, 12, 31) or period_str == "full_year":
-        source = "main"
+    source = "unified"
     cache_file = CACHE_DIR / f"insights_{source}_{cur_as_of.isoformat()}_{period_str}.json"
 
     if cache_file.exists() and not force_refresh:
@@ -186,13 +184,16 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
     elif period_str == "quarter":
         start_d = max(date(2025, 1, 1), as_of - timedelta(days=90))
         period_label = "Last quarter"
+    elif period_str == "this_year":
+        start_d = date(as_of.year, 1, 1)
+        period_label = "This year"
     elif period_str == "full_year" and is_demo:
         start_d = date(2025, 1, 1)
         as_of = date(2025, 12, 31)
         period_label = "Full-year view (demo)"
     else:
         start_d = date(2025, 1, 1)
-        period_label = "Year so far"
+        period_label = "All history (since 1 Jan 2025)"
 
     start_str = start_d.isoformat()
     as_of_str = as_of.isoformat()
@@ -205,9 +206,11 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
     else:
         panel_window = pd.DataFrame()
 
-    db = SessionLocal(source=source)
-    if source == "main":
-        db.execute(text("SET default_transaction_read_only = on"))
+    cutoff_2025 = date(2025, 12, 31)
+    db_main = SessionLocal(source="main")
+    db_main.execute(text("SET default_transaction_read_only = on"))
+    db_live = SessionLocal(source="live")
+    db = db_live if (as_of > cutoff_2025 and source != "main") else db_main
 
     try:
         sql_guard_check("purchase_orders")
@@ -459,212 +462,277 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
         )
 
         # 5. Customer Orders Block (Finished Goods Only: 201 & 202)
+        # Truth-backed dual-source order analysis:
+        # History <= 2025-12-31 is always grounded in Main PostgreSQL (read-only).
+        # Data for 2026 is queried from SQLite live.
         finished_products = [p for p in products if p.id >= 200]
-
-        all_sos = (
-            db.query(SalesOrder, SalesOrderLine, Customer, Product)
-            .join(SalesOrderLine, SalesOrderLine.sales_order_id == SalesOrder.id)
-            .join(Customer, Customer.id == SalesOrder.customer_id)
-            .join(Product, Product.id == SalesOrderLine.product_id)
-            .filter(SalesOrder.order_date <= as_of)
-            .filter(SalesOrder.status != "Cancelled")
-            .filter(Product.id >= 200)
-            .all()
-        )
-
-        all_dels = (
-            db.query(Delivery, DeliveryLine, SalesOrderLine, SalesOrder, Customer, Product)
-            .join(DeliveryLine, DeliveryLine.delivery_id == Delivery.id)
-            .join(SalesOrderLine, SalesOrderLine.id == DeliveryLine.sales_order_line_id)
-            .join(SalesOrder, SalesOrder.id == Delivery.sales_order_id)
-            .join(Customer, Customer.id == SalesOrder.customer_id)
-            .join(Product, Product.id == DeliveryLine.product_id)
-            .filter(Delivery.ship_date <= as_of)
-            .filter(Product.id >= 200)
-            .all()
-        )
+        cutoff_2025 = date(2025, 12, 31)
+        end_main = min(as_of, cutoff_2025)
 
         del_by_so: Dict[int, Dict[str, Any]] = {}
-        for dl_obj, dll, sol, so, cust, prod in all_dels:
-            if so.id not in del_by_so:
-                delay = (dl_obj.ship_date - so.requested_delivery_date).days
-                del_by_so[so.id] = {
-                    "so_id": so.id,
-                    "customer_name": cust.name,
-                    "product_name": prod.name,
-                    "requested_date": so.requested_delivery_date.isoformat(),
-                    "ship_date": dl_obj.ship_date.isoformat(),
-                    "delay_days": delay,
-                    "quantity_ordered": sol.quantity_ordered or 0,
-                    "quantity_shipped": dll.quantity_shipped or 0
-                }
-            else:
-                del_by_so[so.id]["quantity_shipped"] += (dll.quantity_shipped or 0)
-
-        # Build distinct order list for finished goods
-        # Map: so_id -> {so, sol, cust, prod}
         distinct_sos: Dict[int, Dict[str, Any]] = {}
-        for so, sol, cust, prod in all_sos:
-            if so.id not in distinct_sos:
-                distinct_sos[so.id] = {
-                    "so": so,
-                    "sol": sol,
-                    "cust": cust,
-                    "prod": prod,
-                    "ordered": sol.quantity_ordered or 0,
-                    "fulfilled": sol.quantity_fulfilled or 0,
-                    "req_date": so.requested_delivery_date,
-                    "order_date": so.order_date
+        late_customer_records: List[Dict[str, Any]] = []
+
+        # 5a. Query Main PostgreSQL (orders requested <= cutoff_2025)
+        if start_d <= cutoff_2025:
+            sql_main = text("""
+            SELECT so.id, so.order_date, so.requested_delivery_date, sol.product_id, sol.quantity_ordered,
+                   COALESCE(SUM(dl.quantity_shipped), 0) as shipped,
+                   MIN(d.ship_date) as first_ship, MAX(d.ship_date) as last_ship,
+                   so.customer_id, c.name as customer_name, p.name as product_name
+            FROM sales_orders so
+            JOIN sales_order_lines sol ON so.id = sol.sales_order_id
+            JOIN customers c ON so.customer_id = c.id
+            JOIN products p ON sol.product_id = p.id
+            LEFT JOIN delivery_lines dl ON dl.sales_order_line_id = sol.id
+            LEFT JOIN deliveries d ON d.id = dl.delivery_id AND d.ship_date <= :as_of
+            WHERE so.requested_delivery_date >= :start_d AND so.requested_delivery_date <= :end_main
+            GROUP BY so.id, so.order_date, so.requested_delivery_date, sol.id, sol.product_id, sol.quantity_ordered, so.customer_id, c.name, p.name
+            ORDER BY so.id
+            """)
+            main_rows = db_main.execute(sql_main, {
+                "as_of": as_of.isoformat(),
+                "start_d": start_d.isoformat(),
+                "end_main": end_main.isoformat()
+            }).fetchall()
+
+            for r in main_rows:
+                so_id, o_date, r_date, p_id, q_ord, q_ship, f_ship, l_ship, c_id, c_name, p_name = r
+                q_open = max(0, q_ord - q_ship)
+                f_ship_d = f_ship if isinstance(f_ship, date) else (date.fromisoformat(str(f_ship)) if f_ship else None)
+                l_ship_d = l_ship if isinstance(l_ship, date) else (date.fromisoformat(str(l_ship)) if l_ship else None)
+                r_date_d = r_date if isinstance(r_date, date) else date.fromisoformat(str(r_date))
+                o_date_d = o_date if isinstance(o_date, date) else date.fromisoformat(str(o_date))
+
+                if q_ship >= q_ord and l_ship_d and l_ship_d <= r_date_d:
+                    cat = "on_time"
+                elif q_ship >= q_ord and l_ship_d and l_ship_d > r_date_d:
+                    cat = "shipped_late"
+                else:
+                    if as_of > cutoff_2025:
+                        cat = "cancelled_opening"
+                    else:
+                        cat = "partial" if q_ship > 0 else "unshipped"
+
+                distinct_sos[so_id] = {
+                    "so_id": so_id,
+                    "customer_id": c_id,
+                    "customer_name": c_name,
+                    "product_id": p_id,
+                    "product_name": p_name,
+                    "order_date": o_date_d,
+                    "requested_date": r_date_d,
+                    "quantity_ordered": q_ord,
+                    "quantity_shipped": q_ship,
+                    "quantity_open": q_open,
+                    "category": cat,
+                    "first_ship": f_ship_d,
+                    "last_ship": l_ship_d
                 }
-            else:
-                distinct_sos[so.id]["ordered"] += (sol.quantity_ordered or 0)
-                distinct_sos[so.id]["fulfilled"] += (sol.quantity_fulfilled or 0)
+
+                if l_ship_d and l_ship_d > r_date_d and l_ship_d >= start_d and l_ship_d <= as_of:
+                    delay_days = (l_ship_d - r_date_d).days
+                    late_customer_records.append({
+                        "record_type": "Customer Order",
+                        "ref_no": f"SO #{so_id}",
+                        "partner": c_name,
+                        "item": p_name,
+                        "quantity": q_ship,
+                        "due_date": r_date_d.isoformat(),
+                        "actual_date": l_ship_d.isoformat(),
+                        "days_late": delay_days,
+                        "status": "Delivered late"
+                    })
+                elif q_open > 0 and r_date_d < as_of and as_of <= cutoff_2025:
+                    delay_days = (as_of - r_date_d).days
+                    late_customer_records.append({
+                        "record_type": "Customer Order",
+                        "ref_no": f"SO #{so_id}",
+                        "partner": c_name,
+                        "item": p_name,
+                        "quantity": q_open,
+                        "due_date": r_date_d.isoformat(),
+                        "actual_date": "Pending",
+                        "days_late": delay_days,
+                        "status": "Currently overdue"
+                    })
+
+        # 5b. Query SQLite Live for orders requested > cutoff_2025
+        if as_of > cutoff_2025 and db_live is not None:
+            start_live = max(start_d, date(2026, 1, 1))
+            sql_live = text("""
+            SELECT so.id, so.order_date, so.requested_delivery_date, sol.product_id, sol.quantity_ordered,
+                   COALESCE(SUM(dl.quantity_shipped), 0) as shipped,
+                   MIN(d.ship_date) as first_ship, MAX(d.ship_date) as last_ship,
+                   so.customer_id, c.name as customer_name, p.name as product_name
+            FROM sales_orders so
+            JOIN sales_order_lines sol ON so.id = sol.sales_order_id
+            JOIN customers c ON so.customer_id = c.id
+            JOIN products p ON sol.product_id = p.id
+            LEFT JOIN delivery_lines dl ON dl.sales_order_line_id = sol.id
+            LEFT JOIN deliveries d ON d.id = dl.delivery_id AND d.ship_date <= :as_of
+            WHERE so.requested_delivery_date > '2025-12-31' AND so.requested_delivery_date <= :as_of AND so.requested_delivery_date >= :start_live
+            GROUP BY so.id, so.order_date, so.requested_delivery_date, sol.id, sol.product_id, sol.quantity_ordered, so.customer_id, c.name, p.name
+            ORDER BY so.id
+            """)
+            live_rows = db_live.execute(sql_live, {
+                "as_of": as_of.isoformat(),
+                "start_live": start_live.isoformat()
+            }).fetchall()
+
+            for r in live_rows:
+                so_id, o_date, r_date, p_id, q_ord, q_ship, f_ship, l_ship, c_id, c_name, p_name = r
+                q_open = max(0, q_ord - q_ship)
+                f_ship_d = f_ship if isinstance(f_ship, date) else (date.fromisoformat(str(f_ship)) if f_ship else None)
+                l_ship_d = l_ship if isinstance(l_ship, date) else (date.fromisoformat(str(l_ship)) if l_ship else None)
+                r_date_d = r_date if isinstance(r_date, date) else date.fromisoformat(str(r_date))
+                o_date_d = o_date if isinstance(o_date, date) else date.fromisoformat(str(o_date))
+
+                if q_ship >= q_ord and l_ship_d and l_ship_d <= r_date_d:
+                    cat = "on_time"
+                elif q_ship >= q_ord and l_ship_d and l_ship_d > r_date_d:
+                    cat = "shipped_late"
+                elif 0 < q_ship < q_ord:
+                    cat = "partial"
+                else:
+                    cat = "unshipped"
+
+                distinct_sos[so_id] = {
+                    "so_id": so_id,
+                    "customer_id": c_id,
+                    "customer_name": c_name,
+                    "product_id": p_id,
+                    "product_name": p_name,
+                    "order_date": o_date_d,
+                    "requested_date": r_date_d,
+                    "quantity_ordered": q_ord,
+                    "quantity_shipped": q_ship,
+                    "quantity_open": q_open,
+                    "category": cat,
+                    "first_ship": f_ship_d,
+                    "last_ship": l_ship_d
+                }
+
+                if l_ship_d and l_ship_d > r_date_d and l_ship_d >= start_d and l_ship_d <= as_of:
+                    delay_days = (l_ship_d - r_date_d).days
+                    late_customer_records.append({
+                        "record_type": "Customer Order",
+                        "ref_no": f"SO #{so_id}",
+                        "partner": c_name,
+                        "item": p_name,
+                        "quantity": q_ship,
+                        "due_date": r_date_d.isoformat(),
+                        "actual_date": l_ship_d.isoformat(),
+                        "days_late": delay_days,
+                        "status": "Delivered late"
+                    })
+                elif q_open > 0 and r_date_d < as_of:
+                    delay_days = (as_of - r_date_d).days
+                    late_customer_records.append({
+                        "record_type": "Customer Order",
+                        "ref_no": f"SO #{so_id}",
+                        "partner": c_name,
+                        "item": p_name,
+                        "quantity": q_open,
+                        "due_date": r_date_d.isoformat(),
+                        "actual_date": "Pending",
+                        "days_late": delay_days,
+                        "status": "Currently overdue"
+                    })
+
+        # Orders due later (requested_delivery_date > as_of)
+        due_later_map = {}
+        sql_later = text("""
+        SELECT so.id, sol.product_id, so.customer_id, sol.quantity_ordered,
+               COALESCE(SUM(dl.quantity_shipped), 0) as shipped
+        FROM sales_orders so
+        JOIN sales_order_lines sol ON so.id = sol.sales_order_id
+        LEFT JOIN delivery_lines dl ON dl.sales_order_line_id = sol.id
+        LEFT JOIN deliveries d ON d.id = dl.delivery_id AND d.ship_date <= :as_of
+        WHERE so.order_date <= :as_of AND so.requested_delivery_date > :as_of
+        GROUP BY so.id, sol.product_id, so.customer_id, sol.quantity_ordered
+        """)
+        active_db = db_live if (as_of > cutoff_2025 and db_live) else db_main
+        try:
+            for r in active_db.execute(sql_later, {"as_of": as_of.isoformat()}).fetchall():
+                s_id, p_id, c_id, q_ord, q_ship = r
+                due_later_map[s_id] = {
+                    "product_id": p_id,
+                    "customer_id": c_id,
+                    "open": max(0, q_ord - q_ship)
+                }
+        except Exception:
+            pass
 
         # Service by product (Finished Goods Only)
         product_service = []
         for prod in finished_products:
-            prod_sos = [v for v in distinct_sos.values() if v["prod"].id == prod.id and v["order_date"] >= start_d and v["order_date"] <= as_of]
-            
-            p_ontime = 0
-            p_shipped_late = 0
-            p_partial = 0
-            p_unshipped = 0
-            p_overdue = 0
-            p_overdue_u = 0
-            p_due_later = 0
-            p_due_later_u = 0
+            p_items = [v for v in distinct_sos.values() if v["product_id"] == prod.id]
+            p_ontime = sum(1 for v in p_items if v["category"] == "on_time")
+            p_late = sum(1 for v in p_items if v["category"] == "shipped_late")
+            p_partial = sum(1 for v in p_items if v["category"] == "partial")
+            p_unshipped = sum(1 for v in p_items if v["category"] == "unshipped")
+            p_cancelled = sum(1 for v in p_items if v["category"] == "cancelled_opening")
+            p_overdue_u = sum(v["quantity_open"] for v in p_items if v["category"] in ("partial", "unshipped"))
+            p_overdue = sum(1 for v in p_items if v["category"] in ("partial", "unshipped") and v["quantity_open"] > 0)
 
-            for entry in prod_sos:
-                so_id = entry["so"].id
-                tot_ord = entry["ordered"]
-                tot_ful = entry["fulfilled"]
-                rem = tot_ord - tot_ful
-                
-                if entry["req_date"] <= as_of:
-                    if tot_ful >= tot_ord:
-                        # Fully shipped
-                        d_info = del_by_so.get(so_id)
-                        if d_info and d_info["delay_days"] <= 0:
-                            p_ontime += 1
-                        else:
-                            p_shipped_late += 1
-                    else:
-                        if tot_ful > 0:
-                            p_partial += 1
-                        else:
-                            p_unshipped += 1
-                        p_overdue += 1
-                        p_overdue_u += max(0, rem)
-                else:
-                    p_due_later += 1
-                    p_due_later_u += max(0, rem)
+            p_due_later_items = [v for v in due_later_map.values() if v["product_id"] == prod.id]
+            p_due_later = len(p_due_later_items)
+            p_due_later_u = sum(v["open"] for v in p_due_later_items)
 
-            req_so_far = p_ontime + p_shipped_late + p_overdue
-            p_ontime_pct = f"{(p_ontime / req_so_far * 100):.1f}%" if req_so_far > 0 else "—"
+            p_tot = p_ontime + p_late + p_partial + p_unshipped + p_cancelled
+            p_pct = f"{(p_ontime / p_tot * 100):.1f}%" if p_tot > 0 else "—"
 
             product_service.append({
                 "product_name": prod.name,
-                "orders_count": req_so_far,
+                "orders_count": p_tot,
                 "on_time_count": p_ontime,
-                "shipped_late_count": p_shipped_late,
+                "shipped_late_count": p_late,
                 "partial_count": p_partial,
                 "unshipped_count": p_unshipped,
+                "cancelled_count": p_cancelled,
                 "overdue_count": p_overdue,
-                "on_time_pct": p_ontime_pct,
+                "on_time_pct": p_pct,
                 "units_overdue_now": p_overdue_u,
                 "due_later_orders": p_due_later,
                 "units_due_later": p_due_later_u,
-                "units_owed_now": p_overdue_u  # Backwards compatibility key
+                "units_owed_now": p_overdue_u
             })
 
         # Service by customer
         customer_service = []
         for cust in customers:
-            cust_sos = [v for v in distinct_sos.values() if v["cust"].id == cust.id and v["order_date"] >= start_d and v["order_date"] <= as_of]
+            c_items = [v for v in distinct_sos.values() if v["customer_id"] == cust.id]
+            c_ontime = sum(1 for v in c_items if v["category"] == "on_time")
+            c_late = sum(1 for v in c_items if v["category"] == "shipped_late")
+            c_partial = sum(1 for v in c_items if v["category"] == "partial")
+            c_unshipped = sum(1 for v in c_items if v["category"] == "unshipped")
+            c_cancelled = sum(1 for v in c_items if v["category"] == "cancelled_opening")
+            c_overdue_u = sum(v["quantity_open"] for v in c_items if v["category"] in ("partial", "unshipped"))
+            c_overdue = sum(1 for v in c_items if v["category"] in ("partial", "unshipped") and v["quantity_open"] > 0)
 
-            c_ontime = 0
-            c_shipped_late = 0
-            c_partial = 0
-            c_unshipped = 0
-            c_overdue = 0
-            c_overdue_u = 0
-            c_due_later = 0
-            c_due_later_u = 0
+            c_due_later_items = [v for v in due_later_map.values() if v["customer_id"] == cust.id]
+            c_due_later = len(c_due_later_items)
+            c_due_later_u = sum(v["open"] for v in c_due_later_items)
 
-            for entry in cust_sos:
-                so_id = entry["so"].id
-                tot_ord = entry["ordered"]
-                tot_ful = entry["fulfilled"]
-                rem = tot_ord - tot_ful
-
-                if entry["req_date"] <= as_of:
-                    if tot_ful >= tot_ord:
-                        d_info = del_by_so.get(so_id)
-                        if d_info and d_info["delay_days"] <= 0:
-                            c_ontime += 1
-                        else:
-                            c_shipped_late += 1
-                    else:
-                        if tot_ful > 0:
-                            c_partial += 1
-                        else:
-                            c_unshipped += 1
-                        c_overdue += 1
-                        c_overdue_u += max(0, rem)
-                else:
-                    c_due_later += 1
-                    c_due_later_u += max(0, rem)
-
-            req_so_far = c_ontime + c_shipped_late + c_overdue
-            c_ontime_pct = f"{(c_ontime / req_so_far * 100):.1f}%" if req_so_far > 0 else "—"
+            c_tot = c_ontime + c_late + c_partial + c_unshipped + c_cancelled
+            c_pct = f"{(c_ontime / c_tot * 100):.1f}%" if c_tot > 0 else "—"
 
             customer_service.append({
                 "customer_name": cust.name,
-                "orders_count": req_so_far,
+                "orders_count": c_tot,
                 "on_time_count": c_ontime,
-                "shipped_late_count": c_shipped_late,
+                "shipped_late_count": c_late,
                 "partial_count": c_partial,
                 "unshipped_count": c_unshipped,
+                "cancelled_count": c_cancelled,
                 "overdue_count": c_overdue,
-                "on_time_pct": c_ontime_pct,
+                "on_time_pct": c_pct,
                 "units_overdue_now": c_overdue_u,
                 "due_later_orders": c_due_later,
                 "units_due_later": c_due_later_u,
-                "units_owed_now": c_overdue_u  # Backwards compatibility key
+                "units_owed_now": c_overdue_u
             })
-
-        # Most delayed customer orders (top 5)
-        late_customer_records = []
-        delayed_customer_orders = []
-        for d in del_by_so.values():
-            if d["delay_days"] > 0 and d["ship_date"] >= start_str and d["ship_date"] <= as_of_str:
-                late_customer_records.append({
-                    "record_type": "Customer Order",
-                    "ref_no": f"SO #{d['so_id']}",
-                    "partner": d["customer_name"],
-                    "item": d["product_name"],
-                    "quantity": d["quantity_shipped"],
-                    "due_date": d["requested_date"],
-                    "actual_date": d["ship_date"],
-                    "days_late": d["delay_days"],
-                    "status": "Delivered late"
-                })
-
-        # Also check open SOs currently overdue as of as_of
-        for so, sol, cust, prod in all_sos:
-            if so.requested_delivery_date < as_of and (sol.quantity_fulfilled or 0) < (sol.quantity_ordered or 0) and so.status != "Cancelled":
-                ov_days = (as_of - so.requested_delivery_date).days
-                late_customer_records.append({
-                    "record_type": "Customer Order",
-                    "ref_no": f"SO #{so.id}",
-                    "partner": cust.name,
-                    "item": prod.name,
-                    "quantity": (sol.quantity_ordered or 0) - (sol.quantity_fulfilled or 0),
-                    "due_date": so.requested_delivery_date.isoformat(),
-                    "actual_date": "Pending",
-                    "days_late": ov_days,
-                    "status": "Currently overdue"
-                })
 
         # Sort top 5 delayed orders
         all_late_so_items = [r for r in late_customer_records]
@@ -683,7 +751,6 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
         if not panel_window.empty:
             panel_copy = panel_window.copy()
             panel_copy["date_dt"] = pd.to_datetime(panel_copy["date"])
-            # Resample weekly by Monday
             panel_copy["week"] = panel_copy["date_dt"].dt.to_period("W-SUN").apply(lambda r: r.start_time.date())
 
             for wk_start, grp in panel_copy.groupby("week"):
@@ -715,13 +782,17 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
         curr_panel = panel[(panel["date"] >= w_curr_start.isoformat()) & (panel["date"] <= t_now.isoformat())] if not panel.empty else pd.DataFrame()
         prev_panel = panel[(panel["date"] >= w_prev_start.isoformat()) & (panel["date"] <= w_prev_end.isoformat())] if not panel.empty else pd.DataFrame()
 
-        def _get_metric_diff(curr_val: int, prev_val: int, unit: str = "") -> Dict[str, Any]:
+        def _get_metric_diff(curr_val: int, prev_val: int, unit_singular: str, unit_plural: str = "") -> Dict[str, Any]:
+            if not unit_plural:
+                unit_plural = unit_singular + "s"
             diff = curr_val - prev_val
             if diff > 0:
-                change_str = f"Up {diff} {unit}".strip()
+                u_str = unit_singular if diff == 1 else unit_plural
+                change_str = f"Up {diff} {u_str}".strip()
                 color = "#dc2626"
             elif diff < 0:
-                change_str = f"Down {abs(diff)} {unit}".strip()
+                u_str = unit_singular if abs(diff) == 1 else unit_plural
+                change_str = f"Down {abs(diff)} {u_str}".strip()
                 color = "#16a34a"
             else:
                 change_str = "Unchanged"
@@ -737,35 +808,63 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
         curr_low_m = int(((curr_panel.get("material_101_stock", 300) <= 50.0) | (curr_panel.get("material_102_stock", 250) <= 40.0) | (curr_panel.get("material_103_stock", 200) <= 30.0)).sum()) if not curr_panel.empty else 0
         prev_low_m = int(((prev_panel.get("material_101_stock", 300) <= 50.0) | (prev_panel.get("material_102_stock", 250) <= 40.0) | (prev_panel.get("material_103_stock", 200) <= 30.0)).sum()) if not prev_panel.empty else 0
 
+        curr_late_u_label = f"{curr_late_u} unit" if curr_late_u == 1 else f"{curr_late_u} units"
+        curr_supp_d_label = f"{curr_supp_d} delay" if curr_supp_d == 1 else f"{curr_supp_d} delays"
+        curr_low_m_label = f"{curr_low_m} day" if curr_low_m == 1 else f"{curr_low_m} days"
+
         what_changed_strip = {
-            "late_units": _get_metric_diff(curr_late_u, prev_late_u, "units"),
-            "supplier_delays": _get_metric_diff(curr_supp_d, prev_supp_d, "delays"),
-            "low_stock_days": _get_metric_diff(curr_low_m, prev_low_m, "days")
+            "late_units": {
+                **_get_metric_diff(curr_late_u, prev_late_u, "unit", "units"),
+                "display": curr_late_u_label
+            },
+            "supplier_delays": {
+                **_get_metric_diff(curr_supp_d, prev_supp_d, "delay", "delays"),
+                "display": curr_supp_d_label
+            },
+            "low_stock_days": {
+                **_get_metric_diff(curr_low_m, prev_low_m, "day", "days"),
+                "display": curr_low_m_label
+            }
         }
 
         # 9. Summary Strip Numbers (Existing 4 KPI cards)
         total_req_all = sum(p["orders_count"] for p in product_service)
         total_ontime_all = sum(p["on_time_count"] for p in product_service)
         total_late_all = sum(p["shipped_late_count"] for p in product_service)
-        total_partial_all = sum(p.get("partial_count", 0) for p in product_service)
-        total_unshipped_all = sum(p.get("unshipped_count", 0) for p in product_service)
+        total_partial_all = sum(p["partial_count"] for p in product_service)
+        total_unshipped_all = sum(p["unshipped_count"] for p in product_service)
+        total_cancelled_all = sum(p["cancelled_count"] for p in product_service)
         total_overdue_all = sum(p["overdue_count"] for p in product_service)
         total_overdue_u_all = sum(p["units_overdue_now"] for p in product_service)
         total_due_later_all = sum(p["due_later_orders"] for p in product_service)
         total_due_later_u_all = sum(p["units_due_later"] for p in product_service)
-        cust_on_time_pct = round((total_ontime_all / total_req_all) * 100.0, 1) if total_req_all > 0 else 100.0
+
+        cust_on_time_pct = round((total_ontime_all / total_req_all * 100.0), 1) if total_req_all > 0 else 100.0
+
+        total_ontime_units = sum(v["quantity_shipped"] for v in distinct_sos.values() if v["category"] == "on_time")
+        total_partial_open_units = sum(v["quantity_open"] for v in distinct_sos.values() if v["category"] == "partial")
+        total_unshipped_units = sum(v["quantity_open"] for v in distinct_sos.values() if v["category"] == "unshipped")
+        total_cancelled_units = sum(v["quantity_open"] for v in distinct_sos.values() if v["category"] == "cancelled_opening")
 
         fulfillment_buckets = {
             "total_orders": total_req_all,
             "on_time_orders": total_ontime_all,
+            "on_time_units": total_ontime_units,
             "shipped_late_orders": total_late_all,
+            "shipped_late_units": 0,
             "partial_orders": total_partial_all,
+            "partial_open_units": total_partial_open_units,
             "unshipped_orders": total_unshipped_all,
+            "unshipped_units": total_unshipped_units,
+            "cancelled_opening_orders": total_cancelled_all,
+            "cancelled_opening_units": total_cancelled_units,
             "total_open_orders": total_overdue_all,
             "total_open_units": total_overdue_u_all,
             "due_later_orders": total_due_later_all,
             "due_later_units": total_due_later_u_all,
-            "on_time_pct": cust_on_time_pct
+            "on_time_pct": cust_on_time_pct,
+            "show_shipped_late": (total_late_all > 0),
+            "has_cancelled_opening": (total_cancelled_all > 0)
         }
 
         days_with_overdue_orders = 0
@@ -796,34 +895,35 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
             shortfall_202 = panel_window.get("product_202_production_shortfall", 0).sum()
             total_lost_production = int(shortfall_201 + shortfall_202)
 
+        cancelled_info = f", including {total_cancelled_all} orders cancelled at the demo opening position" if total_cancelled_all > 0 else ""
         summary_strip = [
             {
                 "id": "kpi_on_time",
                 "label": "Orders delivered on time",
                 "value": f"{cust_on_time_pct:.1f}%",
-                "meaning": "Shipped to customers by the promised requested date.",
-                "calc_info": f"An order is on time if it was fully shipped on or before its requested delivery date. Recomputed from shipment and sales order rows. Calculated as orders shipped on time ({total_ontime_all}) divided by all orders requested on or before the current day ({total_req_all})."
+                "meaning": f"Shipped to customers on or before the requested date ({total_ontime_all} of {total_req_all} orders).",
+                "calc_info": f"An order is on time if fully shipped on or before its requested delivery date. Recomputed from shipment and sales order rows. Calculated as orders shipped on time ({total_ontime_all}) divided by all orders requested on or before the current day ({total_req_all}){cancelled_info}. Unfulfilled and cancelled orders count as not on time."
             },
             {
                 "id": "kpi_overdue_days",
                 "label": "Days with an overdue order",
-                "value": f"{days_with_overdue_orders}",
-                "meaning": f"Days where at least one order was past due ({days_cust_overdue} customer days, {days_supp_overdue} supplier days).",
-                "calc_info": f"Count of distinct calendar dates where customer order backlog exceeded 0 ({days_cust_overdue} days) or an open PO was past expected delivery ({days_supp_overdue} days). Total distinct dates: {days_with_overdue_orders}."
+                "value": f"{days_with_overdue_orders} {'day' if days_with_overdue_orders == 1 else 'days'}",
+                "meaning": f"{days_cust_overdue} {'day' if days_cust_overdue == 1 else 'days'} with customer backorders, {days_supp_overdue} {'day' if days_supp_overdue == 1 else 'days'} with overdue POs.",
+                "calc_info": f"Count of distinct calendar dates in the period where customer order backlog exceeded 0 ({days_cust_overdue} {'day' if days_cust_overdue == 1 else 'days'}) or an open PO was past expected delivery ({days_supp_overdue} {'day' if days_supp_overdue == 1 else 'days'}). Total distinct dates: {days_with_overdue_orders} {'day' if days_with_overdue_orders == 1 else 'days'}."
             },
             {
                 "id": "kpi_safety_days",
                 "label": "Days buffer fell to safety level",
-                "value": f"{days_material_low}",
+                "value": f"{days_material_low} {'day' if days_material_low == 1 else 'days'}",
                 "meaning": "Days where raw material inventory fell to or below reserve.",
                 "calc_info": "Count of dates where Steel Rod 10mm fell to <= 50 kg, Plastic Granules <= 40 kg, or Copper Wire <= 30 kg."
             },
             {
                 "id": "kpi_production_lost",
                 "label": "Planned production lost",
-                "value": f"{total_lost_production} units",
+                "value": f"{total_lost_production} {'unit' if total_lost_production == 1 else 'units'}",
                 "meaning": "Manufacturing shortfall below daily planned output schedule.",
-                "calc_info": "Sum of daily production deficits for Widget Model X and Widget Model Y."
+                "calc_info": f"Cumulative production shortfall across Line 1 (Widget Model X) and Line 2 (Widget Model Y) in the reporting period: {total_lost_production} units."
             }
         ]
 
@@ -979,7 +1079,7 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
 
         # Reliability Summary Box
         reliability_summary = [
-            "In zero-shot evaluation on fresh synthetic worlds (Test A), SAGE detected 0 of 3 target disruptions (INC_03, INC_04, INC_06) and triggered false alarms on 60% to 90% of quiet windows because thresholds fitted to Seed 42 did not transfer across environments.",
+            "In zero-shot evaluation on fresh synthetic worlds (Test A), SAGE detected 0 of 3 target disruptions (Scenarios 3, 4, 6) and triggered false alarms on 60% to 90% of quiet windows because thresholds fitted to Seed 42 did not transfer across environments.",
             "In site-calibrated deployment (Test A2, tested on one new simulated world), recalibrating null thresholds on Seed 7's own baseline panel controlled false alarms to 5.0% on quiet windows, but still detected 0 of 3 target disruptions because incident scores remained below the site's higher baseline noise threshold.",
             "On real retail demand data (Test B), SAGE detected 1 of 4 holidays (Thanksgiving at 6.26x above null) with a 2.1% false-alarm rate, while a naive year-over-year baseline detected 0 of 4 holidays with a 4.2% false-alarm rate."
         ]
@@ -1038,7 +1138,14 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
         }
 
     finally:
-        db.close()
+        try:
+            db_main.close()
+        except Exception:
+            pass
+        try:
+            db_live.close()
+        except Exception:
+            pass
 
 
 def generate_supplier_report_csv(data: Dict[str, Any]) -> str:

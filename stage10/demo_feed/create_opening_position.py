@@ -60,7 +60,7 @@ def setup_opening_position():
                COALESCE(SUM(dl.quantity_shipped), 0) as shipped_qty
         FROM sales_orders so
         JOIN sales_order_lines sol ON so.id = sol.sales_order_id
-        LEFT JOIN deliveries d ON so.id = d.sales_order_id AND d.delivery_date <= '2025-12-31'
+        LEFT JOIN deliveries d ON so.id = d.sales_order_id AND d.ship_date <= '2025-12-31'
         LEFT JOIN delivery_lines dl ON d.id = dl.delivery_id AND dl.sales_order_line_id = sol.id
         WHERE so.requested_delivery_date <= '2025-12-31'
         GROUP BY so.id, so.order_date, so.requested_delivery_date, sol.quantity_ordered

@@ -391,9 +391,10 @@
 <!-- Period Selector & Action Downloads -->
 <div class="period-bar">
   <div class="period-btn-group" role="group" aria-label="Time period selector">
-    <a href="/insights?date={{ as_of }}&period=30d" class="period-btn {% if period == '30d' %}active{% endif %}">Last 30 days</a>
+    <a href="/insights?date={{ as_of }}&period=all" class="period-btn {% if period == 'all' or period == 'ytd' %}active{% endif %}">All history (since 1 Jan 2025)</a>
+    <a href="/insights?date={{ as_of }}&period=this_year" class="period-btn {% if period == 'this_year' %}active{% endif %}">This year</a>
     <a href="/insights?date={{ as_of }}&period=quarter" class="period-btn {% if period == 'quarter' %}active{% endif %}">Last quarter</a>
-    <a href="/insights?date={{ as_of }}&period=ytd" class="period-btn {% if period == 'ytd' %}active{% endif %}">Year so far</a>
+    <a href="/insights?date={{ as_of }}&period=30d" class="period-btn {% if period == '30d' %}active{% endif %}">Last 30 days</a>
     {% if is_demo_full_year %}
       <a href="/insights?date={{ as_of }}&period=full_year" class="period-btn active" style="background: #fef3c7; color: #92400e;">Full-year view (demo)</a>
     {% endif %}
@@ -427,21 +428,21 @@
   <div class="changed-grid">
     <div class="changed-card">
       <div class="changed-card-label">Late Customer Units</div>
-      <div class="changed-card-val">{{ what_changed_strip.late_units.current }} units</div>
+      <div class="changed-card-val">{{ what_changed_strip.late_units.display }}</div>
       <div class="changed-card-diff" style="color: {{ what_changed_strip.late_units.color }};">
         {{ what_changed_strip.late_units.change_str }}
       </div>
     </div>
     <div class="changed-card">
       <div class="changed-card-label">Supplier Delays</div>
-      <div class="changed-card-val">{{ what_changed_strip.supplier_delays.current }} delays</div>
+      <div class="changed-card-val">{{ what_changed_strip.supplier_delays.display }}</div>
       <div class="changed-card-diff" style="color: {{ what_changed_strip.supplier_delays.color }};">
         {{ what_changed_strip.supplier_delays.change_str }}
       </div>
     </div>
     <div class="changed-card">
       <div class="changed-card-label">Days Buffer Low</div>
-      <div class="changed-card-val">{{ what_changed_strip.low_stock_days.current }} days</div>
+      <div class="changed-card-val">{{ what_changed_strip.low_stock_days.display }}</div>
       <div class="changed-card-diff" style="color: {{ what_changed_strip.low_stock_days.color }};">
         {{ what_changed_strip.low_stock_days.change_str }}
       </div>
@@ -552,7 +553,7 @@
   <div class="insight-section-head">
     <h2 class="insight-section-title">Customer Orders &amp; Service Delivery</h2>
     <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 3px;">
-      Order fulfillment rates across the four buckets: On-time complete ({% if fulfillment_buckets %}{{ fulfillment_buckets.on_time_orders }}{% else %}173{% endif %}), Shipped late ({% if fulfillment_buckets %}{{ fulfillment_buckets.shipped_late_orders }}{% else %}0{% endif %}), Partly shipped ({% if fulfillment_buckets %}{{ fulfillment_buckets.partial_orders }}{% else %}2{% endif %}), and Unshipped ({% if fulfillment_buckets %}{{ fulfillment_buckets.unshipped_orders }}{% else %}46{% endif %}). Total open backlog: {% if fulfillment_buckets %}{{ fulfillment_buckets.total_open_units }}{% else %}652{% endif %} units across {% if fulfillment_buckets %}{{ fulfillment_buckets.total_open_orders }}{% else %}48{% endif %} unfulfilled orders.
+      Order fulfillment rates across buckets: On-time complete ({{ fulfillment_buckets.on_time_orders }}), {% if fulfillment_buckets.show_shipped_late %}Shipped late ({{ fulfillment_buckets.shipped_late_orders }}), {% endif %}Partly shipped ({{ fulfillment_buckets.partial_orders }}), Unshipped ({{ fulfillment_buckets.unshipped_orders }}){% if fulfillment_buckets.has_cancelled_opening %}, and Cancelled at Opening ({{ fulfillment_buckets.cancelled_opening_orders }}){% endif %}. Total open backlog: {{ fulfillment_buckets.total_open_units }} units across {{ fulfillment_buckets.total_open_orders }} unfulfilled orders.
     </p>
   </div>
 
@@ -567,9 +568,10 @@
               <th>Product</th>
               <th>Due So Far</th>
               <th>On-time</th>
-              <th>Late</th>
+              {% if fulfillment_buckets.show_shipped_late %}<th>Late</th>{% endif %}
               <th>Part-shipped</th>
               <th>Unshipped</th>
+              {% if fulfillment_buckets.has_cancelled_opening %}<th>Cancelled at Opening</th>{% endif %}
               <th>Overdue Units</th>
               <th>Due Later</th>
               <th>On-time %</th>
@@ -581,9 +583,10 @@
               <td><strong>{{ ps.product_name }}</strong></td>
               <td>{{ ps.orders_count }}</td>
               <td><span style="color: #16a34a; font-weight: 600;">{{ ps.on_time_count }}</span></td>
-              <td>{{ ps.shipped_late_count }}</td>
+              {% if fulfillment_buckets.show_shipped_late %}<td>{{ ps.shipped_late_count }}</td>{% endif %}
               <td>{{ ps.partial_count }}</td>
               <td>{{ ps.unshipped_count }}</td>
+              {% if fulfillment_buckets.has_cancelled_opening %}<td><span style="color: #64748b;">{{ ps.cancelled_count }}</span></td>{% endif %}
               <td><span style="{% if ps.units_overdue_now > 0 %}color: #dc2626; font-weight: 700;{% endif %}">{{ ps.units_overdue_now }} u</span></td>
               <td><span style="color: #64748b;">{{ ps.due_later_orders }} ({{ ps.units_due_later }} u)</span></td>
               <td><strong>{{ ps.on_time_pct }}</strong></td>
@@ -604,9 +607,10 @@
               <th>Customer</th>
               <th>Due So Far</th>
               <th>On-time</th>
-              <th>Late</th>
+              {% if fulfillment_buckets.show_shipped_late %}<th>Late</th>{% endif %}
               <th>Part-shipped</th>
               <th>Unshipped</th>
+              {% if fulfillment_buckets.has_cancelled_opening %}<th>Cancelled at Opening</th>{% endif %}
               <th>Overdue Units</th>
               <th>Due Later</th>
               <th>On-time %</th>
@@ -618,9 +622,10 @@
               <td><strong>{{ cs.customer_name }}</strong></td>
               <td>{{ cs.orders_count }}</td>
               <td><span style="color: #16a34a; font-weight: 600;">{{ cs.on_time_count }}</span></td>
-              <td>{{ cs.shipped_late_count }}</td>
+              {% if fulfillment_buckets.show_shipped_late %}<td>{{ cs.shipped_late_count }}</td>{% endif %}
               <td>{{ cs.partial_count }}</td>
               <td>{{ cs.unshipped_count }}</td>
+              {% if fulfillment_buckets.has_cancelled_opening %}<td><span style="color: #64748b;">{{ cs.cancelled_count }}</span></td>{% endif %}
               <td><span style="{% if cs.units_overdue_now > 0 %}color: #dc2626; font-weight: 700;{% endif %}">{{ cs.units_overdue_now }} u</span></td>
               <td><span style="color: #64748b;">{{ cs.due_later_orders }} ({{ cs.units_due_later }} u)</span></td>
               <td><strong>{{ cs.on_time_pct }}</strong></td>
@@ -630,6 +635,10 @@
         </table>
       </div>
     </div>
+  </div>
+
+  <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 20px;">
+    * Shipped late is zero because the simulator ships an order only on its requested date, so late orders stay open as backlog.
   </div>
 
   <!-- Most Delayed Orders Table -->

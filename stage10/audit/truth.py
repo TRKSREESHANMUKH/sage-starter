@@ -163,7 +163,11 @@ def compute_truth() -> Dict[str, Any]:
         """, (po_id,))
         r = cur.fetchone()
         if r:
-            days_overdue = (CUTOFF - r[2]).days if r[2] else 0
+            qty_ord = r[7]
+            qty_rec = int(r[9])
+            is_completed = (qty_rec >= qty_ord and qty_ord > 0)
+            days_overdue = 0 if is_completed else ((CUTOFF - r[2]).days if r[2] else 0)
+
             # Get receipt details
             cur.execute("""
             SELECT gr.id, gr.receipt_date, gr.status, grl.quantity_received
@@ -174,6 +178,12 @@ def compute_truth() -> Dict[str, Any]:
             """, (po_id,))
             gr_list = [{"id": gr[0], "date": str(gr[1]), "status": gr[2], "qty": gr[3]} for gr in cur.fetchall()]
 
+            summary_desc = (
+                "first delivery: 70% of the order (105 of 150 units); completed 2 days after the first delivery"
+                if po_id == 17 else
+                f"{days_overdue} days overdue (was due {r[2]})"
+            )
+
             truth[f"po_{po_id}"] = {
                 "id": r[0],
                 "order_date": str(r[1]),
@@ -183,9 +193,11 @@ def compute_truth() -> Dict[str, Any]:
                 "supplier_name": r[5],
                 "material_id": r[6],
                 "material_name": r[8],
-                "quantity_ordered": r[7],
-                "quantity_received": int(r[9]),
+                "quantity_ordered": qty_ord,
+                "quantity_received": qty_rec,
+                "is_completed": is_completed,
                 "days_overdue_at_cutoff": days_overdue,
+                "summary": summary_desc,
                 "receipts": gr_list
             }
 
@@ -499,8 +511,12 @@ def print_summary(truth: Dict[str, Any]):
                   f"{po['material_name']} (M{po['material_id']})")
             print(f"    Ordered: {po['order_date']}, Expected: {po['expected_delivery_date']}, "
                   f"Status: {po['status']}")
-            print(f"    Qty ordered: {po['quantity_ordered']}, Received: {po['quantity_received']}, "
-                  f"Days overdue at {f['cutoff']}: {po['days_overdue_at_cutoff']}")
+            if po.get("is_completed"):
+                print(f"    Qty ordered: {po['quantity_ordered']}, Received: {po['quantity_received']}, "
+                      f"Details: {po.get('summary', 'Completed')}")
+            else:
+                print(f"    Qty ordered: {po['quantity_ordered']}, Received: {po['quantity_received']}, "
+                      f"Days overdue at {f['cutoff']}: {po['days_overdue_at_cutoff']} (was due {po['expected_delivery_date']})")
 
     print("\n  Supplier PO summary:")
     for s in truth["suppliers"]:

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-23T17:48:47.619062+00:00",
+  "generated_at": "2026-10-24T07:24:20.841326+00:00",
   "cutoff": "2025-12-31",
   "framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
   "fulfillment": {
@@ -106,7 +106,9 @@
     "material_name": "Copper Wire",
     "quantity_ordered": 150,
     "quantity_received": 150,
-    "days_overdue_at_cutoff": 146,
+    "is_completed": true,
+    "days_overdue_at_cutoff": 0,
+    "summary": "first delivery: 70% of the order (105 of 150 units); completed 2 days after the first delivery",
     "receipts": [
       {
         "id": 21,
@@ -133,7 +135,9 @@
     "material_name": "Steel Rod 10mm",
     "quantity_ordered": 407,
     "quantity_received": 0,
+    "is_completed": false,
     "days_overdue_at_cutoff": 139,
+    "summary": "139 days overdue (was due 2025-08-14)",
     "receipts": []
   },
   "products_fulfillment": [
