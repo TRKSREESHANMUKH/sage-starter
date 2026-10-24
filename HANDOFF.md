@@ -1,8 +1,28 @@
 # SAGE Stage 9 Final — HANDOFF
 
-## Status: COMPLETE (Phases 0 through 8 Verified & Passing)
+## Status: IN PROGRESS — Executing "THE LAST PROMPT" (Phases A through H)
 
-All phases executed in strict sequence according to protocol. Stages 1–8 strictly frozen. Main PostgreSQL database protected read-only. Unified verification script `./verify_all.sh` exits 0 with 67/67 tests passing.
+Stages 1–8 strictly frozen. Main PostgreSQL database protected read-only (`SET default_transaction_read_only = on`). All figures traced to truth layer. No live email sent.
+
+---
+
+## The Last Prompt — Execution Progress
+- [x] **Pre-execution Backup**: Created `backups/stage9_pre_last/`
+- [x] **Frozen Hashes Verified**: Stage 7 (`acd199...`) and Stage 8 (`983a4e...`) SHA256 match perfectly
+- [x] **Phase A — Mail Safety**:
+  - `send_check` without `--live` forces dry-run unconditionally (`force_dry_run=True`), zero SMTP calls, returns `SUCCESS_DRY_RUN`
+  - `--live` strictly requires explicit flag, allowlist match, `SAGE_SEND_ENABLED=true`, and non-placeholder credentials
+  - Removed all occurrences of `--send-now`
+  - Scheduled send idempotency checks `sent_log.jsonl` for existing `SUCCESS_LIVE` on same date/recipient
+  - `run_sage.sh` resets send mode to dry_run on start, wraps with `caffeinate -i` on macOS, and prints next scheduled run times (19:45 prepare / 20:00 send Asia/Kolkata)
+  - Added and passed `stage9/test_mail_safety.py` (4/4 tests passed; sent_log line count preserved)
+- [ ] **Phase B — Insights Equals Truth Layer**
+- [ ] **Phase C — Opening Position, One Source**
+- [ ] **Phase D — Feed, Scoring and Honesty**
+- [ ] **Phase E — Security and Hygiene**
+- [ ] **Phase F — Unified Verification (`verify_all.sh`)**
+- [ ] **Phase G — Presentation Documents & Guides**
+- [ ] **Phase H — Self-Audit & Packaging**
 
 ---
 

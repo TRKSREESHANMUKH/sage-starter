@@ -73,6 +73,14 @@ def main():
     print(f"Credentials : {'CONFIGURED (Password is set & non-placeholder)' if not is_placeholder else 'PLACEHOLDER / MISSING'}")
     print(f"Send Enabled: {send_enabled}")
 
+    if args.live:
+        if not send_enabled:
+            print(f"\nFAILED: Live delivery requires SAGE_SEND_ENABLED=true in .env (currently: {os.getenv('SAGE_SEND_ENABLED', 'false')}).")
+            sys.exit(1)
+        if is_placeholder:
+            print("\nFAILED: Live delivery requires non-placeholder SMTP credentials in .env.")
+            sys.exit(1)
+
     # 3. Ensure report is built
     print("\nEnsuring report artifacts exist...")
     paths = ensure_report(as_of=as_of, user="send_check")
@@ -85,6 +93,7 @@ def main():
         recipient=recipient,
         as_of=as_of,
         force_live=args.live,
+        force_dry_run=(not args.live),
         user="send_check"
     )
 
@@ -109,9 +118,13 @@ def main():
             print(f"\n✗ LIVE DELIVERY FAILED: {res.get('error', 'Unknown SMTP error')}")
             sys.exit(1)
     else:
+        if status != "SUCCESS_DRY_RUN":
+            print(f"\n✗ DRY-RUN FAILED: Expected SUCCESS_DRY_RUN but got status {status}")
+            sys.exit(1)
         print("\n✓ DRY-RUN SUCCESSFUL! (No live email was dispatched to Gmail).")
         print("To deliver a real email to the owner, run:")
         print(f"    ./venv/bin/python -m stage9.send_check --live --as-of {as_of.isoformat()}")
+        sys.exit(0)
 
 
 if __name__ == "__main__":

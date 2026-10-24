@@ -240,8 +240,8 @@ def dispatch_email(
 
             server.sendmail(from_addr, recipients, msg.as_string())
             server.quit()
-            logger.info("SMTP delivery successful for %s: SUCCESS", job_name)
-            record_sent_log(job_name, as_of, recipients, status="SUCCESS", mode="live_smtp")
+            logger.info("SMTP delivery successful for %s: SUCCESS_LIVE", job_name)
+            record_sent_log(job_name, as_of, recipients, status="SUCCESS_LIVE", mode="live_smtp")
             return True
 
         except Exception as exc:
@@ -254,6 +254,31 @@ def dispatch_email(
                 record_sent_log(job_name, as_of, recipients, status=f"FAILED: {exc}", mode="live_smtp")
                 return False
 
+    return False
+
+
+def has_successful_live_send(job_name: str, as_of: date, recipients: List[str]) -> bool:
+    """Checks if a SUCCESS_LIVE record already exists in sent_log.jsonl for this date and recipient."""
+    if not SENT_LOG_PATH.exists():
+        return False
+    rec_set = set(r.strip().lower() for r in recipients)
+    with open(SENT_LOG_PATH, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                entry = json.loads(line)
+                if entry.get("as_of") == as_of.isoformat():
+                    status = entry.get("status", "")
+                    if status in ("SUCCESS_LIVE", "SUCCESS"):
+                        logged_recs = entry.get("recipients", [])
+                        if not logged_recs and "recipient" in entry:
+                            logged_recs = [entry["recipient"]]
+                        if any(r.strip().lower() in rec_set for r in logged_recs):
+                            return True
+            except Exception:
+                continue
     return False
 
 
@@ -270,12 +295,15 @@ def execute_job(
     current_as_of = as_of or get_as_of_date()
     sent_keys = get_sent_keys()
     key = f"{job_name}:{current_as_of.isoformat()}"
-
-    if key in sent_keys and not force:
-        logger.warning("Idempotency: Job '%s' for date '%s' already executed; skipping duplicate.", job_name, current_as_of.isoformat())
-        return True
-
     recipients = cfg.get("recipients", {}).get(job_name, ["plant-manager@sage-plant.local"])
+
+    if not force:
+        if has_successful_live_send(job_name, current_as_of, recipients):
+            logger.info("Idempotency: Job '%s' for date '%s' already has a SUCCESS_LIVE send; skipping duplicate.", job_name, current_as_of.isoformat())
+            return True
+        if key in sent_keys:
+            logger.warning("Idempotency: Job '%s' for date '%s' already executed; skipping duplicate.", job_name, current_as_of.isoformat())
+            return True
 
     if job_name == "nightly_digest":
         subject, html, text = render_nightly_digest(current_as_of)

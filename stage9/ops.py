@@ -337,13 +337,15 @@ def dispatch_email_v6(
     pdf_bytes: Optional[bytes] = None,
     pdf_filename: Optional[str] = None,
     mode: str = "manual",
-    force_live: bool = False
+    force_live: bool = False,
+    force_dry_run: bool = False
 ) -> Dict[str, Any]:
     """
     Sends email adhering strictly to Part A Item 2:
     - Dry-run records logged as SUCCESS_DRY_RUN (never SUCCESS).
     - Real send records SMTP response code, Message-ID header, connection time, and status: SUCCESS_LIVE.
     - Placeholder, .local, or non-allowlisted recipients refused as REFUSED_PLACEHOLDER.
+    - force_dry_run unconditionally forces simulated dry-run (zero SMTP calls).
     """
     rec_clean = recipient.strip().lower()
     allowlist = get_allowlist()
@@ -359,9 +361,14 @@ def dispatch_email_v6(
         if not rate_ok:
             return {"status": "RATE_LIMITED", "error": rate_err}
 
-    cfg = get_runtime_config()
-    send_mode_cfg = cfg.get("send_mode", "dry_run")
-    is_live = force_live or (send_mode_cfg == "live")
+    if force_dry_run:
+        is_live = False
+    elif force_live:
+        is_live = True
+    else:
+        cfg = get_runtime_config()
+        send_mode_cfg = cfg.get("send_mode", "dry_run")
+        is_live = (send_mode_cfg == "live")
 
     # Generate Message-ID
     msg_id = f"<{uuid.uuid4()}@sage-operations.local>"
@@ -970,6 +977,7 @@ def send_report_now_v6(
     recipient: Optional[str] = None,
     mode: str = "manual",
     force_live: bool = False,
+    force_dry_run: bool = False,
     user: str = "operator"
 ) -> Dict[str, Any]:
     """
@@ -1005,9 +1013,10 @@ def send_report_now_v6(
         pdf_bytes=pdf_bytes,
         pdf_filename=f"SAGE_Daily_Brief_{target_d.isoformat()}.pdf",
         mode=mode,
-        force_live=force_live
+        force_live=force_live,
+        force_dry_run=force_dry_run
     )
-    audit_log("send_report_now", {"as_of": target_d.isoformat(), "recipient": rec, "mode": mode, "force_live": force_live}, res.get("status", "UNKNOWN"), user=user)
+    audit_log("send_report_now", {"as_of": target_d.isoformat(), "recipient": rec, "mode": mode, "force_live": force_live, "force_dry_run": force_dry_run}, res.get("status", "UNKNOWN"), user=user)
     return res
 
 

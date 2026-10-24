@@ -8,7 +8,7 @@ cd "$DIR"
 echo "Stopping SAGE servers..."
 
 # Stop by PID files if present
-for pidfile in "$DIR/logs/viewer.pid" "$DIR/logs/controller.pid" "$DIR/.sage.pid"; do
+for pidfile in "$DIR/logs/viewer.pid" "$DIR/logs/controller.pid" "$DIR/logs/caffeinate.pid" "$DIR/.sage.pid"; do
     if [ -f "$pidfile" ]; then
         PIDS=$(cat "$pidfile" 2>/dev/null || true)
         for PID in $PIDS; do

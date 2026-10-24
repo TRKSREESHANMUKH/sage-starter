@@ -11,8 +11,7 @@ Part 2, 3, and 4 Requirements:
     --send                Sends the prepared report for current day only (<10s).
                           If prepare failed/missing, alerts owner and exits non-zero.
                           Respects idempotency key (job:as_of:recipient).
-    --send-now            Sends report immediately for current day (manual mode, bypasses scheduled idempotency).
-    --next-day            Ingests next pack and prepares. Can combine with --send-now.
+    --next-day            Ingests next pack and prepares.
     --date YYYY-MM-DD     Target date override for sending/reporting.
     --to <address>        Recipient override (must be on SAGE_ALLOWED_RECIPIENTS).
     --week                Runs all 7 week days in order, generates reports/<date>/ and reports/week_summary.md.
@@ -565,7 +564,6 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="SAGE Daily Pipeline & Two-Phase Delivery Engine.")
     parser.add_argument("--prepare", action="store_true", help="Ingest next pack and prepare daily report HTML/text/PDF.")
     parser.add_argument("--send", action="store_true", help="Send pre-built report for current day.")
-    parser.add_argument("--send-now", action="store_true", help="Manually dispatch current day's report immediately.")
     parser.add_argument("--next-day", action="store_true", help="Ingest next pack from queue and prepare.")
     parser.add_argument("--date", help="Override date YYYY-MM-DD.")
     parser.add_argument("--to", help="Override recipient address.")
@@ -588,15 +586,7 @@ def main() -> None:
     if args.next_day:
         new_d = load_next_day()
         print(f"Loaded next day: {new_d.isoformat()}")
-        if args.send_now:
-            res = send_report_now(as_of=new_d, recipient=args.to)
-            print(f"Dispatched report for {new_d}: {res}")
         sys.exit(0)
-
-    if args.send_now:
-        res = send_report_now(as_of=target_d, recipient=args.to)
-        print(f"Dispatched report: {res}")
-        sys.exit(0 if res["status"] == "ok" else 1)
 
     if args.prepare:
         meta = prepare_daily_run(as_of=target_d)
