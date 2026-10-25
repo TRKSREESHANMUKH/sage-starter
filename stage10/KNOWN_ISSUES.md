@@ -138,3 +138,22 @@ To avoid breaking the frozen research foundation (which would invalidate all dow
 * **Equivalence Range**: The SQLite live database (`live/sage_live.db`) strictly equals the PostgreSQL main database (`sage_postgres`) for all records dated on or before **2025-12-20**.
 * **Divergence After Dec 20**: From 2025-12-21 through 2025-12-31, the opening position seed script injected 9 new customer orders (109 units) requested in early January 2026, and cancelled the 48 unfulfilled 2025 customer orders and PO #18 to provide a clean operational baseline for the 10-day January 2026 demo feed.
 
+---
+
+### Issue 11: Next-Day Forecast Metrics on Intermittent Order Flow & Response Lag Horizon
+
+* **Severity**: Low / Methodological Characteristic (Documented in Forecast Pre-registration and Report).
+* **Location**: [`stage10/forecast/models.py`](file:///Users/asl/Desktop/sage-starter/stage10/forecast/models.py) and [`stage10/forecast/seasonality_and_lag.py`](file:///Users/asl/Desktop/sage-starter/stage10/forecast/seasonality_and_lag.py).
+* **Finding 1 — Intermittent Demand & WAPE Inflation**:
+  - Daily customer demand in this plant is intermittent and zero-inflated (68.2% of calendar days have 0 orders placed).
+  - On intermittent series, WAPE is naturally higher than continuous manufacturing streams ($1.1055$ on test period). The median absolute error is $0.0$ units, and bias is minimal.
+* **Finding 2 — Why Model (d) (Quantile GBDT) Outperforms Baseline (b)**:
+  - The same-weekday baseline (Model b) achieved WAPE of $1.3646$.
+  - Model (d) (`HistGradientBoostingRegressor`) achieved WAPE of $1.1055$, representing an **18.99% relative error reduction** while maintaining **90.76% interval coverage** on the 2025 H2 test period.
+  - Model (d) successfully leverages multi-dimensional interactions: day-of-week one-hot encoding, day-of-month calendar progression, trailing 7-day volume volatility, and open customer backlog.
+* **Finding 3 — Simulator Response Lag vs 7-Day Causal Trace Window**:
+  - Across the 10 synthetic incidents in 2025, the median physical lag from an inbound supplier delivery delay to raw material safety stock breach is **5.5 days** (individual lags: 8, 0, 172, 3 days).
+  - This median lag aligns with SAGE's 7-day rolling upstream trace window (`trailing_window_days: 7`).
+  - For components with deep buffer cushions (such as INC_09 where stock lasted for multiple months before exhausting), the initial PO delay occurred outside the 7-day window. SAGE traces these to active ongoing PO status and safety breach rather than single-day transit spikes. Stockouts, once reached, propagate to customer backorders immediately on day 0.
+
+

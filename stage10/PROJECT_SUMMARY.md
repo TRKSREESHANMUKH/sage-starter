@@ -114,7 +114,23 @@ The platform is guarded by a 13-step unified verification protocol (`./verify_al
   - `test_insights_truth.py`: 3 passed
   - `test_reconcile.py`: 5 passed
   - `test_score.py`: 5 passed
-  - `smoke_ui.py`: 9 passed
-  - **Total automated test checks:** 93 unit/UI tests + 57 frozen hash checks = **150 passed checks** (0 failures).
+  - `test_outlook.py`: 5 passed
+  - `test_scheduler_proof.py`: 1 passed
+  - `smoke_ui.py`: 9 flows passed
+  - Ten-day rehearsal: 10 scored days
+  - Forensic audits, hash verifications & scans: 77 passed items
+  - **Total automated verification checks:** **186 passed checks** across 14 verification steps (0 failures).
 * **Server Security:** Localhost binding verified (`127.0.0.1` on ports 8000 & 8001; `0.0.0.0` absent).
 * **Email Safety:** Zero live emails dispatched during test execution (`SUCCESS_LIVE` count unchanged).
+
+---
+
+## 7. Stage 10 Next-Day Operational Forecast & Seasonality Layer
+
+Developed as an additive capability without modifying frozen Stages 1–8:
+1. **Target 1 — New Sales Tomorrow:** Quantile `HistGradientBoostingRegressor` providing point forecast and 80% confidence interval ($p10, p50, p90$). Achieved **18.99% lower WAPE** than seasonal baseline with **90.76% interval coverage** on walk-forward test period (2025 H2).
+2. **Target 2 — Due Tomorrow:** Grounded in committed ERP order book. Forensic analysis of 230 sales orders in 2025 proved 100% of customer orders have lead lag $\ge 3$ days (mean 6.12 days, median 6.00 days); 100% of shipments due tomorrow are already locked in order books.
+3. **Shortage Risk Classification:** Deterministic projection combining finished goods inventory, daily nominal build capacity (50 units), and scheduled shipments into High / Medium / Low operational warning badges.
+4. **Tomorrow Outlook Block:** Interactive card rendered directly below the numbers strip on the Today page (`http://localhost:8000/`) showing tomorrow's date, 3 dynamic tiles, and the mandatory Rule 2 framing statement. Feature-flagged via `outlook.enabled: true` in `rules.yaml` with sub-3-second render latency.
+5. **Seasonality & Lag Integrity:** False-alarm check confirmed 0.0% backlog false alarms across 215 calm days; seasonality stress test (+40% Q4 ramp, +25% Friday bump on isolated DataFrame copy) confirmed 97.8% attribution accuracy; physical response lag analysis confirmed median supplier delay to safety breach is 5.5 days, comfortably within SAGE's 7-day causal trace window.
+

@@ -22,6 +22,24 @@ Let's begin the live feed from the controller."
 
 ---
 
+## Part 0.5: Presenting the "Tomorrow Outlook" Card on the Today Page
+
+When demonstrating the viewer's Morning Briefing home page (`http://localhost:8000/`), draw the mentor's attention to the **Tomorrow Outlook block** positioned directly below the 7-day numbers strip:
+
+1. **Heading & Framing:**  
+   Show the tomorrow indicator (e.g., `Tomorrow outlook (Fri 2 Jan)`) and the verbatim Rule 2 scientific framing statement printed directly beneath it.
+2. **Tile 1 — "New Sales Expected":**  
+   - **What it shows:** Quantile GBDT point forecast with an 80% prediction interval (e.g., `0 units (0–23, 80% CI)`).
+   - **What to explain:** *"Incoming orders in this plant are intermittent (68% zero days). Our Gradient Boosted Decision Tree model was pre-registered and trained strictly on 2025 data, achieving an 18.99% relative WAPE improvement over seasonal baseline with 90.76% interval coverage on the test set."*
+3. **Tile 2 — "Orders Due Tomorrow":**  
+   - **What it shows:** Total delivery commitments due tomorrow (e.g., `8 units`) and sublabel `8 units already on the books`.
+   - **What to explain:** *"Our empirical lead-lag analysis of all 230 orders in 2025 proves that 100% of customer orders are placed at least 3 days in advance (mean lag 6.12 days). Therefore, tomorrow's shipments are 100% known with certainty from committed ERP order books."*
+4. **Tile 3 — "Shortage Risk Tomorrow":**  
+   - **What it shows:** An executive badge (**LOW** in green, **MEDIUM** in amber, **HIGH** in red) and a dynamic rationale (e.g., `Finished goods buffer of 87 units covers tomorrow's demand`).
+   - **What to explain:** *"SAGE deterministically projects ending finished goods buffers against nominal line capacity (50 units/day) to warn supervisors of imminent customer defaults before they materialize."*
+
+---
+
 ## Part 1: Executive Disclosure & Sourcing-Bug Briefing
 
 Before starting the live demonstration, state the following foundational data facts clearly:

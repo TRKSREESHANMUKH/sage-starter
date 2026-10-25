@@ -1,5 +1,5 @@
 {
-  "run_at": "2026-10-24T10:45:03.597240Z",
+  "run_at": "2026-10-25T07:36:41.124596Z",
   "passed": 67,
   "failed": 0,
   "skipped": 0,
@@ -135,7 +135,7 @@
       "id": "G9",
       "name": "current_day.json readable",
       "status": "\u2705 PASS",
-      "note": "current_day=2025-12-31"
+      "note": "current_day=2026-01-01"
     },
     {
       "id": "G9",
@@ -213,19 +213,19 @@
       "id": "G11",
       "name": "Far-future pack raises error or returns rejected",
       "status": "\u2705 PASS",
-      "note": "Sequence violation: Pack date is 2099-01-01 but expected date is 2026-01-01 (cur"
+      "note": "Sequence violation: Pack date is 2099-01-01 but expected date is 2026-01-02 (cur"
     },
     {
       "id": "G12",
       "name": "Sequential feed rejection works",
       "status": "\u2705 PASS",
-      "note": "Sequence violation: Pack date is 2026-01-02 but expected date is 2026-01-01 (cur"
+      "note": "Sequence violation: Pack date is 2026-01-03 but expected date is 2026-01-02 (cur"
     },
     {
       "id": "G13",
       "name": "Reset completes in < 30 seconds",
       "status": "\u2705 PASS",
-      "note": "elapsed=0.38s"
+      "note": "elapsed=1.40s"
     },
     {
       "id": "G13",

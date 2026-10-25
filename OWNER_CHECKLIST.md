@@ -15,7 +15,10 @@ source venv/bin/activate
 # 2. Run full automated verification suite (~25 seconds)
 ./verify_all.sh
 
-# 3. Start SAGE platform (binds to 127.0.0.1 only; starts in DRY-RUN mode)
+# 3. Verify tomorrow outlook block and forecast unit tests
+./venv/bin/python -m unittest stage10/test_outlook.py
+
+# 4. Start SAGE platform (binds to 127.0.0.1 only; starts in DRY-RUN mode)
 ./run_sage.sh
 ```
 
