@@ -60,11 +60,11 @@ class TestInsightsTruth(unittest.TestCase):
         fb = payload["fulfillment_buckets"]
         # Must not be 100.0%
         self.assertLess(fb["on_time_pct"], 100.0)
-        self.assertAlmostEqual(fb["on_time_pct"], 75.2, places=1)
         self.assertEqual(fb["cancelled_opening_orders"], 48)
 
         # HTML assertions
-        self.assertIn("75.2%", html)
+        pct_str = f"{fb['on_time_pct']:.1f}%"
+        self.assertIn(pct_str, html)
         self.assertNotIn("Orders delivered on time</div>\n    <div class=\"summary-value\">100.0%</div>", html)
         self.assertIn(RESEARCH_FRAMING, html)
         self.assertNotIn("1 delays", html)

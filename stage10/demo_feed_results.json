@@ -1,5 +1,5 @@
 {
-  "generated_at": 1792914217.5150359,
+  "generated_at": 1792947637.040458,
   "summary": "10 hits, 0 partial, 0 miss",
   "hits": 10,
   "partials": 0,
@@ -91,7 +91,7 @@
           "model_check": "Model check not run for this day"
         },
         {
-          "headline": "Partial delivery from Global Polymers Co (PO #23)",
+          "headline": "Partial delivery from Global Polymers Co (PO #20)",
           "badge": "NEEDS ATTENTION",
           "cause_chain": "Supplier partial delivery (60% fill rate) \u2192 Tracking material receipt shortfall",
           "evidence_label": "Seen end to end",
@@ -227,12 +227,12 @@
       "status_word": "NEEDS_ATTENTION",
       "status_label": "NEEDS_ATTENTION",
       "alert_count": 1,
-      "top_headline": "Partial delivery from Global Polymers Co (PO #26)",
+      "top_headline": "Partial delivery from Global Polymers Co (PO #20)",
       "top_cause": "Supplier partial delivery (40% fill rate) \u2192 Tracking material receipt shortfall",
       "top_focus": "None",
       "alerts": [
         {
-          "headline": "Partial delivery from Global Polymers Co (PO #26)",
+          "headline": "Partial delivery from Global Polymers Co (PO #20)",
           "badge": "NEEDS ATTENTION",
           "cause_chain": "Supplier partial delivery (40% fill rate) \u2192 Tracking material receipt shortfall",
           "evidence_label": "Seen end to end",

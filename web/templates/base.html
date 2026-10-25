@@ -245,17 +245,6 @@
           <span class="data-known-text">Data known up to this day only</span>
         </div>
 
-        <!-- Day Selector Dropdown -->
-        <select id="day-selector" class="day-select" aria-label="Select simulated day" onchange="changeDay(this.value)">
-          {% if ingested_days %}
-            {% for d in ingested_days %}
-              <option value="{{ d }}" {% if d == selected_date %}selected{% endif %}>{{ d }}</option>
-            {% endfor %}
-          {% else %}
-            <option value="{{ selected_date }}" selected>{{ selected_date }}</option>
-          {% endif %}
-        </select>
-
         <!-- Print & View Buttons -->
         <a href="/report.pdf?date={{ selected_date }}" class="header-btn" id="btn-download-pdf" title="Download one-page A4 PDF report">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>

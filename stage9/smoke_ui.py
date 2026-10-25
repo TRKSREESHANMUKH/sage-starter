@@ -133,11 +133,10 @@ class SmokeTestRunner:
         footer_framing = self.page.locator(".footer-framing").inner_text()
         assert RULE2_FRAMING in footer_framing, f"Rule 2 framing mismatch in footer: '{footer_framing}'"
 
-        # Verify Tomorrow Outlook Block (Stage 10)
-        assert "Tomorrow outlook" in content, "Tomorrow outlook heading missing from Home page"
-        assert "New sales expected" in content, "New sales expected tile missing from Home page"
-        assert "Orders due tomorrow" in content, "Orders due tomorrow tile missing from Home page"
-        assert "Shortage risk tomorrow" in content, "Shortage risk tile missing from Home page"
+        # Verify Weekly Forecast Forward-Look Block (Stage 10)
+        assert "Next 7 days: expected new orders" in content, "Next 7 days forecast heading missing from Home page"
+        assert "shortage risk" in content.lower(), "Shortage risk badge missing from Home page"
+        assert "already on the books" in content.lower(), "Already on books missing from Home page"
 
         self.capture("01_viewer_home")
         self.log_result("Viewer Home (/)", True, dur, "Loaded, Rule 2 framing verified")

@@ -681,6 +681,26 @@ def reset_demo_v6(user: str = "operator") -> Dict[str, Any]:
             except Exception:
                 pass
 
+    # 5b. Reset day_index.json to 2025-12-31
+    day_index_path = ROOT_DIR / "stage9" / "state" / "day_index.json"
+    if day_index_path.exists():
+        try:
+            with open(day_index_path, "r", encoding="utf-8") as f:
+                d_idx = json.load(f)
+            d_idx["days"] = {k: v for k, v in d_idx.get("days", {}).items() if k <= "2025-12-31"}
+            d_idx["metadata"]["end_date"] = "2025-12-31"
+            d_idx["metadata"]["total_days"] = len(d_idx["days"])
+            with open(day_index_path, "w", encoding="utf-8") as f:
+                json.dump(d_idx, f, indent=2)
+        except Exception as idx_err:
+            logger.warning("Error resetting day index: %s", idx_err)
+    else:
+        try:
+            from stage9.build_day_index import build_day_index
+            build_day_index(end_date=date(2025, 12, 31))
+        except Exception as idx_err:
+            logger.warning("Error building day index: %s", idx_err)
+
     # 6. Reset demo case state
     set_case_state({"is_case_mode": False, "active_case": None, "case_id": None, "date": None, "label": ""})
 

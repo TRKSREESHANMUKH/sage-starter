@@ -217,12 +217,13 @@ echo ">>> STEP 7: Running Reconciliation Suite across dates (test_reconcile.py).
 $PYTHON stage9/test_reconcile.py
 echo "PASS: Multi-date reconciliation passed."
 
-# 8. DETERMINISTIC SCORING & OUTLOOK UNIT TESTS
+# 8. DETERMINISTIC SCORING, OUTLOOK & CONSISTENCY UNIT TESTS
 echo ""
-echo ">>> STEP 8: Running Scoring Determinism & Tomorrow Outlook Unit Tests (test_score.py & test_outlook.py)..."
+echo ">>> STEP 8: Running Scoring Determinism, Weekly Outlook & Consistency Unit Tests..."
 $PYTHON stage10/test_score.py
 $PYTHON -m unittest stage10/test_outlook.py
-echo "PASS: Scoring determinism & tomorrow outlook unit tests passed."
+$PYTHON -m unittest stage9/test_consistency_fixes.py
+echo "PASS: Scoring determinism, weekly outlook & consistency unit tests passed."
 
 # 9. STAGE 9 COMPREHENSIVE TEST SUITE
 echo ""
@@ -252,11 +253,12 @@ for l in lines:
 print('PASS: Both servers verified bound strictly to 127.0.0.1 (localhost only).')
 "
 
-# 11. PLAYWRIGHT SMOKE UI SUITE
+# 11. PLAYWRIGHT SMOKE UI SUITE & SCREENSHOT GENERATOR
 echo ""
-echo ">>> STEP 11: Running Playwright Smoke UI Suite (smoke_ui.py)..."
+echo ">>> STEP 11: Running Playwright Smoke UI Suite & Screenshot Generator..."
 $PYTHON stage9/smoke_ui.py
-echo "PASS: Playwright Smoke UI suite passed."
+$PYTHON stage9/capture_screenshots.py
+echo "PASS: Playwright Smoke UI suite and screenshots passed."
 
 # 12. TEN-DAY DEMO FEED REHEARSAL & SCORING
 echo ""

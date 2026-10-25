@@ -287,6 +287,13 @@ def ingest_pack(pack_dir: Path) -> Dict[str, Any]:
             except Exception:
                 pass
 
+    # Incrementally update day_index.json for the ingested day
+    try:
+        from stage9.build_day_index import build_day_index
+        build_day_index(start_date=pack_date, end_date=pack_date)
+    except Exception as exc:
+        print(f"Warning updating day index: {exc}")
+
     # Append to ingest log
     INGEST_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
     log_entry = {

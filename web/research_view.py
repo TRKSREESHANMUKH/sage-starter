@@ -25,10 +25,10 @@ RESEARCH_BANNER = (
 
 MECHANICAL_CALIBRATION_RULE = """
 Mechanical Calibration Rule:
-1. Negative / Seasonal Controls (INC_02, INC_10):
-   - IF assigned tier in (HIGH, MEDIUM) -> 'False positive on negative control' (P10)
-   - IF assigned tier in (LOW, NOISE) -> 'True negative / Correct rejection' (INC_02)
-2. Real Operational Disruptions (INC_01, INC_03..09):
+1. Negative / Seasonal Controls (Scenarios 2, 10):
+   - IF assigned tier in (HIGH, MEDIUM) -> 'False positive on negative control'
+   - IF assigned tier in (LOW, NOISE) -> 'True negative / Correct rejection'
+2. Real Operational Disruptions (Scenarios 1, 3..9):
    - IF top driver matches DB true driver AND tier in (HIGH, MEDIUM) -> 'Calibrated detection'
    - IF top driver matches DB true driver AND tier == LOW -> 'Tempered signal (Low confidence)'
    - IF top driver matches DB true driver AND tier == NOISE -> 'Signal diluted (Averaging/exogenous filter)'
@@ -40,7 +40,7 @@ DEMO_CASES_SCOREBOARD = [
     {
         "case_num": 1,
         "date": "2025-03-31",
-        "scenario_id": "INC_03",
+        "scenario_id": "Scenario 3",
         "name": "Demand Spike on Widget Model X",
         "true_driver": "sales_demand_product_201",
         "detected_driver": "sales_demand_product_201",
@@ -52,7 +52,7 @@ DEMO_CASES_SCOREBOARD = [
     {
         "case_num": 2,
         "date": "2025-10-02",
-        "scenario_id": "INC_04",
+        "scenario_id": "Scenario 4",
         "name": "Capacity Disruption on Line 1",
         "true_driver": "production_capacity_prod1",
         "detected_driver": "production_capacity_prod1",
@@ -64,7 +64,7 @@ DEMO_CASES_SCOREBOARD = [
     {
         "case_num": 3,
         "date": "2025-07-22",
-        "scenario_id": "INC_06",
+        "scenario_id": "Scenario 6",
         "name": "Compound Bottleneck",
         "true_driver": "supplier_4_po_delay + line_fault",
         "detected_driver": "supplier_4_po_delay",
@@ -76,7 +76,7 @@ DEMO_CASES_SCOREBOARD = [
     {
         "case_num": 4,
         "date": "2025-08-07",
-        "scenario_id": "INC_07",
+        "scenario_id": "Scenario 7",
         "name": "Partial Goods Receipt (PO #17)",
         "true_driver": "po_fill_rate_deviation",
         "detected_driver": "po_fill_rate_deviation",
@@ -88,7 +88,7 @@ DEMO_CASES_SCOREBOARD = [
     {
         "case_num": 5,
         "date": "2025-03-02",
-        "scenario_id": "INC_08",
+        "scenario_id": "Scenario 8",
         "name": "Buffer Absorption (PO #4)",
         "true_driver": "supplier_4_po_delay (absorbed)",
         "detected_driver": "supplier_4_po_delay",
@@ -100,7 +100,7 @@ DEMO_CASES_SCOREBOARD = [
     {
         "case_num": 6,
         "date": "2025-08-20",
-        "scenario_id": "INC_09 Onset",
+        "scenario_id": "Scenario 9 (Onset)",
         "name": "Severe Delay Onset (PO #18 6d late)",
         "true_driver": "supplier_4_po_delay",
         "detected_driver": "supplier_4_po_delay",
@@ -112,7 +112,7 @@ DEMO_CASES_SCOREBOARD = [
     {
         "case_num": 7,
         "date": "2025-10-20",
-        "scenario_id": "INC_09 Crisis",
+        "scenario_id": "Scenario 9 (Crisis)",
         "name": "Severe Delay Crisis (PO #18 67d late)",
         "true_driver": "supplier_4_po_delay",
         "detected_driver": "supplier_4_po_delay",
@@ -124,7 +124,7 @@ DEMO_CASES_SCOREBOARD = [
     {
         "case_num": 8,
         "date": "2025-12-01",
-        "scenario_id": "INC_10",
+        "scenario_id": "Scenario 10 (Control)",
         "name": "Seasonal Demand Rise (Control)",
         "true_driver": "seasonal_calendar_volume",
         "detected_driver": "sales_demand_product_202",
@@ -136,7 +136,7 @@ DEMO_CASES_SCOREBOARD = [
     {
         "case_num": 9,
         "date": "2025-01-15",
-        "scenario_id": "INC_02",
+        "scenario_id": "Scenario 2 (Control)",
         "name": "Calm Baseline Rhythm (Control)",
         "true_driver": "none (normal rhythm)",
         "detected_driver": "none (below threshold)",
@@ -172,11 +172,12 @@ def load_research_evaluation_data() -> Dict[str, Any]:
                 scen_id = r.get("scenario_id", "")
                 classification = r.get("classification", "")
 
-                if scen_id in ("INC_10", "P10"):
+                clean_scen = scen_id.replace("INC_", "Scenario ").replace("P10", "Scenario 10 (Control)").replace("INC_10", "Scenario 10 (Control)")
+                if "10" in scen_id:
                     classification = "False positive on negative control"
 
                 rows.append({
-                    "scenario_id": scen_id,
+                    "scenario_id": clean_scen,
                     "true_driver": r.get("true_driver(s)_from_DB", ""),
                     "top_driver": r.get("top_driver", ""),
                     "m1_score": r.get("M1_score_(mean+-sd)", ""),
@@ -186,7 +187,7 @@ def load_research_evaluation_data() -> Dict[str, Any]:
                     "exogenous_rank": r.get("exogenous_rank", ""),
                     "classification": classification,
                     "stable": r.get("stable_(Y/N)", "Y"),
-                    "is_control": scen_id in ("INC_02", "INC_10")
+                    "is_control": "02" in scen_id or "10" in scen_id
                 })
 
     metrics_all_10 = {
@@ -195,7 +196,7 @@ def load_research_evaluation_data() -> Dict[str, Any]:
         "mrr": 0.562,
         "fpr": 0.0,
         "stability_pass_rate": 90.0,
-        "description": "All 10 Evaluation Scenarios (Raw synthetic suite including INC_01 and INC_05 with idle suppliers)",
+        "description": "All 10 Evaluation Scenarios (Raw synthetic suite including Scenarios 1 and 5 with idle suppliers)",
     }
 
     metrics_audited_4 = {
@@ -204,7 +205,7 @@ def load_research_evaluation_data() -> Dict[str, Any]:
         "mrr": 0.7431,
         "fpr": 0.0,
         "stability_pass_rate": 100.0,
-        "description": "Active Physical-Cause Scenarios (Audited real causes: INC_03, INC_04, INC_06, INC_08)",
+        "description": "Active Physical-Cause Scenarios (Audited real causes: Scenarios 3, 4, 6, 8)",
     }
 
     return {

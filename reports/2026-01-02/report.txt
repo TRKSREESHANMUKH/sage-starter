@@ -10,6 +10,7 @@ TODAY'S NUMBERS IN CONTEXT:
 • Orders Late    : 0 late orders, same as yesterday (7d avg: 0.0)
 • Units Short    : 0 units short, same as yesterday (7d avg: 7.1)
 • Materials Low  : 0 materials low, same as yesterday (7d avg: 0.6)
+• Forward-look   : Expected new orders 37u (range 20–56); 99u already due (risk: Low).
 
 PAST ANALYSED CASES: WHAT CAUSED WHAT:
 • Chain: EastCoast delivery late → Steel Rod 10mm below safety level

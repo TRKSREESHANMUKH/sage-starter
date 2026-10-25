@@ -480,6 +480,21 @@ def render_nightly_digest(
                     projection_html = f'<div style="font-size: 9.5px; color: #b45309; margin-top: 4px; font-weight: 500;">&bull; {projection_text}</div>'
                     break
 
+        # Weekly forward-look line (Stage 10 Part B)
+        from stage10.forecast.outlook import get_weekly_forecast
+        is_past_day = as_of < get_current_day()
+        fc_data = get_weekly_forecast(as_of, is_past_day=is_past_day, db_session=db_session)
+        fc_exp = fc_data.get("expected_new_orders", 0)
+        fc_low = fc_data.get("range_low", 0)
+        fc_high = fc_data.get("range_high", 0)
+        fc_due = fc_data.get("due_known", 0)
+        fc_risk = fc_data.get("shortage_risk", "Low")
+        forecast_html = (
+            f'<div style="font-size: 9.5px; color: #1e293b; background: #f8fafc; padding: 4px 8px; border-radius: 4px; border: 1px solid #e2e8f0; margin-top: 4px; margin-bottom: 4px;">'
+            f'<strong>Next 7 days forward-look:</strong> Expected new orders {fc_exp} units (range {fc_low}–{fc_high}); {fc_due} units already due. <span style="font-size: 8.5px; color: #64748b;">(Shortage risk: {fc_risk})</span>'
+            f'</div>'
+        )
+
         # 4. What caused what (Past analysed cases)
         if cause_chains:
             chains_html = ""
@@ -640,7 +655,8 @@ def render_nightly_digest(
                 </tr>
               </table>
               {projection_html}
-              <div style="text-align: center; margin: 6px 0 4px 0;">
+              {forecast_html}
+              <div style="text-align: center; margin: 4px 0 2px 0;">
                 <img src="cid:sparkline7d" alt="7-Day Trend Sparkline" style="width: 560px; max-width: 100%; height: auto; border: 1px solid #e2e8f0; border-radius: 4px; display: block;" />
               </div>
             </td>
@@ -724,6 +740,7 @@ def render_nightly_digest(
         ]
         if projection_text:
             text_lines.append(f"• Projection     : {projection_text}")
+        text_lines.append(f"• Forward-look   : Expected new orders {fc_exp}u (range {fc_low}–{fc_high}); {fc_due}u already due (risk: {fc_risk}).")
 
         text_lines.extend([
             "",

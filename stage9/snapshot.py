@@ -99,6 +99,18 @@ def compute_daily_snapshot(
         total_due_today_units = 0
         oldest_due_dates = []
 
+        # Pre-aggregate shipped quantities to avoid N+1 query overhead
+        shipped_map = dict(
+            db_session.query(
+                DeliveryLine.sales_order_line_id,
+                func.coalesce(func.sum(DeliveryLine.quantity_shipped), 0)
+            )
+            .join(Delivery, Delivery.id == DeliveryLine.delivery_id)
+            .filter(Delivery.ship_date <= as_of)
+            .group_by(DeliveryLine.sales_order_line_id)
+            .all()
+        )
+
         for p_id in PRODUCTS:
             p_obj = db_session.query(Product).filter(Product.id == p_id).first()
             p_name = p_obj.name if p_obj else f"Product {p_id}"
@@ -172,15 +184,7 @@ def compute_daily_snapshot(
 
             for so_line, so in candidate_so_lines:
                 qty_ord = so_line.quantity_ordered or 0
-                shipped_qty = (
-                    db_session.query(func.coalesce(func.sum(DeliveryLine.quantity_shipped), 0))
-                    .join(Delivery, Delivery.id == DeliveryLine.delivery_id)
-                    .filter(
-                        DeliveryLine.sales_order_line_id == so_line.id,
-                        Delivery.ship_date <= as_of
-                    )
-                    .scalar()
-                ) or 0
+                shipped_qty = shipped_map.get(so_line.id, 0)
                 rem = max(0, qty_ord - shipped_qty)
                 if rem > 0:
                     if so.requested_delivery_date < as_of:
@@ -230,6 +234,18 @@ def compute_daily_snapshot(
         # 2. Raw Material Stock & Supply Metrics
         materials_data: Dict[str, Any] = {}
         total_material_stockouts = 0
+
+        # Pre-aggregate PO received quantities up to as_of
+        po_rec_map = dict(
+            db_session.query(
+                GoodsReceiptLine.po_line_id,
+                func.coalesce(func.sum(GoodsReceiptLine.quantity_received), 0)
+            )
+            .join(GoodsReceipt, GoodsReceipt.id == GoodsReceiptLine.receipt_id)
+            .filter(GoodsReceipt.receipt_date <= as_of)
+            .group_by(GoodsReceiptLine.po_line_id)
+            .all()
+        )
 
         for m_id in MATERIALS:
             m_obj = db_session.query(Product).filter(Product.id == m_id).first()
@@ -296,15 +312,7 @@ def compute_daily_snapshot(
 
             for po_line, po, supp in candidate_po_lines:
                 ord_qty = po_line.quantity_ordered or 0
-                rec_by_as_of = (
-                    db_session.query(func.coalesce(func.sum(GoodsReceiptLine.quantity_received), 0))
-                    .join(GoodsReceipt, GoodsReceipt.id == GoodsReceiptLine.receipt_id)
-                    .filter(
-                        GoodsReceiptLine.po_line_id == po_line.id,
-                        GoodsReceipt.receipt_date <= as_of
-                    )
-                    .scalar()
-                ) or 0
+                rec_by_as_of = po_rec_map.get(po_line.id, 0)
                 pending_qty = max(0, ord_qty - rec_by_as_of)
                 if pending_qty > 0:
                     open_pos_count += 1
@@ -361,6 +369,7 @@ def compute_daily_snapshot(
             fill_rate = round(rec_q / ord_q, 2)
             receipts_today.append({
                 "receipt_id": gr.id,
+                "po_id": po_line.po_id,
                 "supplier_id": supp.id,
                 "supplier_name": supp.name,
                 "material_id": gr_line.material_id,
@@ -388,6 +397,16 @@ def compute_daily_snapshot(
 
         # Yesterday's overdue backlog to detect actively rising customer backlog
         yest_date = as_of - timedelta(days=1)
+        yest_shipped_map = dict(
+            db_session.query(
+                DeliveryLine.sales_order_line_id,
+                func.coalesce(func.sum(DeliveryLine.quantity_shipped), 0)
+            )
+            .join(Delivery, Delivery.id == DeliveryLine.delivery_id)
+            .filter(Delivery.ship_date <= yest_date)
+            .group_by(DeliveryLine.sales_order_line_id)
+            .all()
+        )
         yest_so_lines = (
             db_session.query(SalesOrderLine, SalesOrder)
             .join(SalesOrder, SalesOrder.id == SalesOrderLine.sales_order_id)
@@ -401,15 +420,7 @@ def compute_daily_snapshot(
         yest_overdue_units = 0
         for so_line, so in yest_so_lines:
             qty_ord = so_line.quantity_ordered or 0
-            shipped_qty = (
-                db_session.query(func.coalesce(func.sum(DeliveryLine.quantity_shipped), 0))
-                .join(Delivery, Delivery.id == DeliveryLine.delivery_id)
-                .filter(
-                    DeliveryLine.sales_order_line_id == so_line.id,
-                    Delivery.ship_date <= yest_date
-                )
-                .scalar()
-            ) or 0
+            shipped_qty = yest_shipped_map.get(so_line.id, 0)
             rem = max(0, qty_ord - shipped_qty)
             if rem > 0:
                 yest_overdue_units += rem

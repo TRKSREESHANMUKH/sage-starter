@@ -1,9 +1,11 @@
 """
-stage10/forecast/data.py — Dataset builder for SAGE Next-Day Outlook.
+stage10/forecast/data.py — Dataset builder for SAGE Weekly Order Forward-Look.
 
-Zero look-ahead guarantee:
-For any day t, features contain ONLY values known on or before day t.
-Targets represent values realized on day t+1.
+Protocol (Pre-registered in stage10/prereg_forecast_v3.md):
+- Origin day D:
+  - Target 1: Total NEW order units placed in D+1..D+7 (per product 201, 202, and total)
+  - Target 2: Known order units already placed on or before D with requested_delivery_date in D+1..D+7
+- Zero look-ahead: Features at D contain ONLY data on or before D.
 """
 
 from __future__ import annotations
@@ -18,28 +20,12 @@ import numpy as np
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
+
 BASELINE_PANEL_PATH = ROOT_DIR / "analytics" / "daily_panel_baseline.parquet"
 
 
-def build_feature_dataset(
-    start_date: date = date(2025, 1, 1),
-    end_date: date = date(2025, 12, 31),
-    source: str = "main",
-    db_session=None
-) -> pd.DataFrame:
-    """
-    Constructs the feature matrix and targets for each day t in [start_date, end_date].
-    Features strictly represent knowledge at day t (end-of-day).
-    Targets:
-      - T1_target: New sales ordered on day t+1
-      - T2_target: Units due on day t+1
-    """
-    # 1. Load baseline panel for material stocks and backlog
-    df_panel = pd.read_parquet(BASELINE_PANEL_PATH)
-    df_panel["date"] = pd.to_datetime(df_panel["date"]).dt.date
-    df_panel = df_panel.set_index("date")
-
-    # 2. Load Sales Orders from database
+def load_raw_sales_orders(db_session=None, source: str = "main") -> pd.DataFrame:
+    """Loads all sales orders with order_date, requested_delivery_date, product_id, and quantity."""
     close_sess = False
     if db_session is None:
         from app.database import SessionLocal
@@ -53,149 +39,141 @@ def build_feature_dataset(
                 SalesOrder.id.label("so_id"),
                 SalesOrder.order_date,
                 SalesOrder.requested_delivery_date,
+                SalesOrder.status,
                 SalesOrderLine.product_id,
                 SalesOrderLine.quantity_ordered
             )
             .join(SalesOrderLine, SalesOrderLine.sales_order_id == SalesOrder.id)
+            .filter(SalesOrder.status != "Cancelled")
             .all()
         )
-        df_so = pd.DataFrame(so_records)
+        df_so = pd.DataFrame([
+            {
+                "so_id": r.so_id,
+                "order_date": r.order_date,
+                "requested_delivery_date": r.requested_delivery_date,
+                "status": r.status,
+                "product_id": r.product_id,
+                "quantity_ordered": r.quantity_ordered
+            }
+            for r in so_records
+        ])
     finally:
         if close_sess:
             db_session.close()
 
-    # Pre-index sales by order_date and requested_delivery_date
-    sales_by_order_date = df_so.groupby("order_date")["quantity_ordered"].sum().to_dict()
+    return df_so
 
-    # Generate complete date sequence
-    all_dates = []
-    curr = start_date
-    while curr <= end_date:
-        all_dates.append(curr)
-        curr += timedelta(days=1)
 
-    # Pre-compute daily series for T1 and T2
-    t1_series = {d: float(sales_by_order_date.get(d, 0.0)) for d in all_dates}
-    # Add buffer days before start_date if available
-    buf_dates = [start_date - timedelta(days=i) for i in range(14, 0, -1)]
-    for d in buf_dates:
-        t1_series[d] = float(sales_by_order_date.get(d, 0.0))
+def get_known_due_orders(
+    df_so: pd.DataFrame,
+    origin_d: date,
+    horizon_days: int = 7,
+    product_id: Optional[int] = None
+) -> int:
+    """
+    Computes exact units already on the books at origin_d that are due in [origin_d+1, origin_d+horizon_days].
+    Zero look-ahead: order_date <= origin_d.
+    """
+    if df_so.empty:
+        return 0
+    d_start = origin_d + timedelta(days=1)
+    d_end = origin_d + timedelta(days=horizon_days)
+
+    mask = (
+        (df_so["order_date"] <= origin_d) &
+        (df_so["requested_delivery_date"] >= d_start) &
+        (df_so["requested_delivery_date"] <= d_end)
+    )
+    if product_id is not None:
+        mask = mask & (df_so["product_id"] == product_id)
+
+    return int(df_so.loc[mask, "quantity_ordered"].sum())
+
+
+def build_daily_demand_series(
+    df_so: pd.DataFrame,
+    start_date: date = date(2024, 11, 1),
+    end_date: date = date(2026, 1, 15)
+) -> pd.DataFrame:
+    """Builds continuous daily time series of demand units for 201, 202, and Total."""
+    dates = pd.date_range(start_date, end_date)
+    daily = pd.DataFrame({"date": [d.date() for d in dates]})
+
+    for pid in [201, 202]:
+        p_so = df_so[df_so["product_id"] == pid].groupby("order_date")["quantity_ordered"].sum().to_dict()
+        daily[f"dem_{pid}"] = daily["date"].map(lambda d: p_so.get(d, 0))
+
+    daily["dem_total"] = daily["dem_201"] + daily["dem_202"]
+    return daily
+
+
+def build_weekly_forecast_dataset(
+    start_origin: date = date(2025, 1, 1),
+    end_origin: date = date(2025, 12, 24),
+    source: str = "main",
+    db_session=None
+) -> pd.DataFrame:
+    """
+    Constructs origin-level dataset where for each origin date D:
+    Features: calendar features at D, demand lags (1, 7, 14, 28), rolling sums/means (7, 14, 28).
+    Targets: Total new order units placed on [D+1..D+7] for 201, 202, and Total.
+    Known facts: Units due in [D+1..D+7] known at D.
+    """
+    df_so = load_raw_sales_orders(db_session=db_session, source=source)
+    daily = build_daily_demand_series(df_so, start_date=start_origin - timedelta(days=35), end_date=end_origin + timedelta(days=10))
+    daily_map = daily.set_index("date").to_dict(orient="index")
 
     rows = []
-    for t in all_dates:
-        t_next = t + timedelta(days=1)
+    curr = start_origin
+    while curr <= end_origin:
+        dt = pd.to_datetime(curr)
+        weekday = curr.weekday()
+        month = curr.month
+        week_of_year = dt.isocalendar()[1]
 
-        # Targets for tomorrow (t+1)
-        # T1 target: sales ordered on t_next
-        t1_target = float(sales_by_order_date.get(t_next, 0.0))
+        # Targets for next 7 days
+        tgt_201 = sum(daily_map.get(curr + timedelta(days=k), {}).get("dem_201", 0) for k in range(1, 8))
+        tgt_202 = sum(daily_map.get(curr + timedelta(days=k), {}).get("dem_202", 0) for k in range(1, 8))
+        tgt_total = tgt_201 + tgt_202
 
-        # T2 target: units due on t_next from orders placed on or before t
-        due_tomorrow_on_books = float(
-            df_so[
-                (df_so["requested_delivery_date"] == t_next) &
-                (df_so["order_date"] <= t)
-            ]["quantity_ordered"].sum()
-        )
-        t2_target = due_tomorrow_on_books
+        # Known due orders
+        due_201 = get_known_due_orders(df_so, curr, horizon_days=7, product_id=201)
+        due_202 = get_known_due_orders(df_so, curr, horizon_days=7, product_id=202)
+        due_total = due_201 + due_202
 
-        # Features at day t (zero lookahead)
-        dt = pd.to_datetime(t)
-        weekday = dt.weekday()
-        day_of_month = dt.day
-        month = dt.month
-
-        # Day-of-week one-hot
-        dow_feats = {f"dow_{i}": 1.0 if weekday == i else 0.0 for i in range(7)}
-
-        # T1 Lags & Rolling statistics ending at t
-        lag_1 = t1_series.get(t, 0.0)
-        lag_2 = t1_series.get(t - timedelta(days=1), 0.0)
-        lag_7 = t1_series.get(t - timedelta(days=6), 0.0)
-        trailing_7 = [t1_series.get(t - timedelta(days=k), 0.0) for k in range(7)]
-        rolling_7_mean = float(np.mean(trailing_7))
-        rolling_7_std = float(np.std(trailing_7))
-
-        # T2 Lags & Rolling statistics ending at t
-        # Units due on day t ordered <= t-1
-        due_t = float(
-            df_so[
-                (df_so["requested_delivery_date"] == t) &
-                (df_so["order_date"] <= t - timedelta(days=1))
-            ]["quantity_ordered"].sum()
-        )
-        due_lag_1 = due_t
-        due_lag_2 = float(
-            df_so[
-                (df_so["requested_delivery_date"] == t - timedelta(days=1)) &
-                (df_so["order_date"] <= t - timedelta(days=2))
-            ]["quantity_ordered"].sum()
-        )
-        due_lag_7 = float(
-            df_so[
-                (df_so["requested_delivery_date"] == t - timedelta(days=6)) &
-                (df_so["order_date"] <= t - timedelta(days=7))
-            ]["quantity_ordered"].sum()
-        )
-
-        # Operational state from panel at day t
-        if t in df_panel.index:
-            p_row = df_panel.loc[t]
-            mat_101 = float(p_row.get("material_101_stock", 0.0))
-            mat_102 = float(p_row.get("material_102_stock", 0.0))
-            mat_103 = float(p_row.get("material_103_stock", 0.0))
-            bklg_201 = float(p_row.get("product_201_due_backlog_units", 0.0))
-            bklg_202 = float(p_row.get("product_202_due_backlog_units", 0.0))
-            open_backlog = bklg_201 + bklg_202
-            fg_stock = float(p_row.get("product_201_fg_stock", 0.0)) + float(p_row.get("product_202_fg_stock", 0.0))
-            planned_prod_next = (
-                float(df_panel.loc[t_next].get("product_201_planned_production", 0.0)) +
-                float(df_panel.loc[t_next].get("product_202_planned_production", 0.0))
-                if t_next in df_panel.index else 50.0
-            )
-        else:
-            mat_101, mat_102, mat_103 = 100.0, 100.0, 100.0
-            open_backlog = 0.0
-            fg_stock = 30.0
-            planned_prod_next = 50.0
-
+        # Features per product and total
         row = {
-            "date": t,
-            "next_date": t_next,
-            "day_of_month": float(day_of_month),
-            "month": float(month),
+            "origin_date": curr,
             "weekday": weekday,
-            **dow_feats,
-            # T1 Features
-            "t1_lag_1": lag_1,
-            "t1_lag_2": lag_2,
-            "t1_lag_7": lag_7,
-            "t1_rolling_7_mean": rolling_7_mean,
-            "t1_rolling_7_std": rolling_7_std,
-            # T2 Features
-            "t2_lag_1": due_lag_1,
-            "t2_lag_2": due_lag_2,
-            "t2_lag_7": due_lag_7,
-            "units_due_tomorrow_on_books": due_tomorrow_on_books,
-            # Operational Context
-            "open_customer_backlog": open_backlog,
-            "material_101_stock": mat_101,
-            "material_102_stock": mat_102,
-            "material_103_stock": mat_103,
-            "fg_stock": fg_stock,
-            "planned_prod_next": planned_prod_next,
-            # Ground-truth targets on t+1
-            "T1_target": t1_target,
-            "T2_target": t2_target,
+            "month": month,
+            "week_of_year": week_of_year,
+            "target_total": tgt_total,
+            "target_201": tgt_201,
+            "target_202": tgt_202,
+            "due_total": due_total,
+            "due_201": due_201,
+            "due_202": due_202,
         }
-        rows.append(row)
 
-    df_out = pd.DataFrame(rows)
-    return df_out
+        for target_key, col in [("total", "dem_total"), ("201", "dem_201"), ("202", "dem_202")]:
+            row[f"{target_key}_trailing_7"] = sum(daily_map.get(curr - timedelta(days=k), {}).get(col, 0) for k in range(7))
+            row[f"{target_key}_trailing_14"] = sum(daily_map.get(curr - timedelta(days=k), {}).get(col, 0) for k in range(14))
+            row[f"{target_key}_trailing_28"] = sum(daily_map.get(curr - timedelta(days=k), {}).get(col, 0) for k in range(28))
+            row[f"{target_key}_lag_0"] = daily_map.get(curr, {}).get(col, 0)
+            row[f"{target_key}_lag_1"] = daily_map.get(curr - timedelta(days=1), {}).get(col, 0)
+            row[f"{target_key}_lag_7"] = daily_map.get(curr - timedelta(days=7), {}).get(col, 0)
+            row[f"{target_key}_lag_14"] = daily_map.get(curr - timedelta(days=14), {}).get(col, 0)
+            row[f"{target_key}_lag_28"] = daily_map.get(curr - timedelta(days=28), {}).get(col, 0)
+
+        rows.append(row)
+        curr += timedelta(days=1)
+
+    return pd.DataFrame(rows)
 
 
 if __name__ == "__main__":
-    df = build_feature_dataset()
-    print("Feature dataset built successfully:")
-    print("Shape:", df.shape)
-    print("Columns:", df.columns.tolist())
-    print(df.head(3))
+    df = build_weekly_forecast_dataset()
+    print(f"Weekly forecast dataset generated: {df.shape[0]} origins, {df.shape[1]} columns.")
+    print("Sample origin 2025-06-01:")
+    print(df[df['origin_date'] == date(2025, 6, 1)][['origin_date', 'target_total', 'due_total', 'total_trailing_7', 'total_trailing_28']])

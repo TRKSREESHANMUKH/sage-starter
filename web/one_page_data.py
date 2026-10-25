@@ -561,20 +561,21 @@ def build_one_page_context(selected_date_str: Optional[str] = None) -> Dict[str,
             m_data = snap.get("materials", {}).get(m_id, {})
             stock = float(m_data.get("stock", 300.0))
             safety = float(m_data.get("safety_stock", 50.0))
+            unit_label = "meters" if m_id == "103" else "kg"
             if stock <= 0.0:
                 pts = get_trailing_30_data(target_date_str, f"material_{m_id}_stock")
-                svg = generate_sparkline_svg(pts, threshold=safety, unit="kg")
+                svg = generate_sparkline_svg(pts, threshold=safety, unit=unit_label)
                 mc = get_model_check_summary("steel" if m_id == "101" else m_name, "stockout", cur_d)
-                chain = f"Supplier delivery delay → {m_name} stock depleted to 0 kg → Assembly line halted"
-                step3 = f"Confirmed directly in ERP logs: {m_name} inventory reached 0 kg. {consequence_text}".strip()
+                chain = f"Supplier delivery delay → {m_name} stock depleted to 0 {unit_label} → Assembly line halted"
+                step3 = f"Confirmed directly in ERP logs: {m_name} inventory reached 0 {unit_label}. {consequence_text}".strip()
                 issues.append({
                     "badge": "CRITICAL",
                     "badge_class": "pill-red",
-                    "headline": f"Raw material stockout on {m_name} (0 kg in stock)",
+                    "headline": f"Raw material stockout on {m_name} (0 {unit_label} in stock)",
                     "cause_chain": chain,
                     "evidence_label": "Seen end to end",
                     "what_to_do": f"Emergency sourcing review for {m_name} and expedite inbound carrier immediately.",
-                    "step1_text": f"{m_name} inventory reached 0 kg today. {consequence_text}".strip(),
+                    "step1_text": f"{m_name} inventory reached 0 {unit_label} today. {consequence_text}".strip(),
                     "step1_svg": svg,
                     "step2_chain": chain,
                     "step3_sure": step3,
@@ -594,18 +595,19 @@ def build_one_page_context(selected_date_str: Optional[str] = None) -> Dict[str,
             stock = float(m_data.get("stock", 300.0))
             safety = float(m_data.get("safety_stock", 50.0))
             overdue_pos = m_data.get("overdue_pos", [])
+            unit_label = "meters" if m_id == "103" else "kg"
             if overdue_pos and stock > 0.0 and len(issues) < 3:
                 po_top = overdue_pos[0]
                 badge_type = "CRITICAL" if stock <= safety else "NEEDS ATTENTION"
                 badge_cls = "pill-red" if badge_type == "CRITICAL" else "pill-amber"
                 pts = get_trailing_30_data(target_date_str, f"material_{m_id}_stock")
-                svg = generate_sparkline_svg(pts, threshold=safety, unit="kg")
+                svg = generate_sparkline_svg(pts, threshold=safety, unit=unit_label)
                 mc = get_model_check_summary("supplier_4" if "EastCoast" in primary_supp else "supplier_3", "backlog", cur_d)
-                chain = f"{primary_supp} delivery ({po_top['days_overdue']}d overdue) → {m_name} buffer drawing down ({stock:.0f} kg)"
+                chain = f"{primary_supp} delivery ({po_top['days_overdue']}d overdue) → {m_name} buffer drawing down ({stock:.0f} {unit_label})"
                 if consequence_text:
                     chain += f" → {consequence_text}"
                 if stock <= safety:
-                    headline = f"{m_name} at safety stock ({stock:.0f} kg remaining) — {primary_supp} PO #{po_top['po_id']} overdue"
+                    headline = f"{m_name} at safety stock ({stock:.0f} {unit_label} remaining) — {primary_supp} PO #{po_top['po_id']} overdue"
                 else:
                     headline = f"Overdue delivery from {primary_supp} (PO #{po_top['po_id']})"
                 issues.append({
@@ -618,7 +620,7 @@ def build_one_page_context(selected_date_str: Optional[str] = None) -> Dict[str,
                     "step1_text": f"PO #{po_top['po_id']} is {po_top['days_overdue']} days overdue from {primary_supp}. {consequence_text}".strip(),
                     "step1_svg": svg,
                     "step2_chain": chain,
-                    "step3_sure": f"Confirmed directly in ERP logs: {primary_supp} shipment past expected date. Inventory at {stock:.0f} kg (safety line {safety:.0f} kg).",
+                    "step3_sure": f"Confirmed directly in ERP logs: {primary_supp} shipment past expected date. Inventory at {stock:.0f} {unit_label} (safety line {safety:.0f} {unit_label}).",
                     "tech_details": {
                         "method": "Stage 7 Causal Anomaly Attribution",
                         "score": "Operational trace vs expert causal DAG",
@@ -635,10 +637,11 @@ def build_one_page_context(selected_date_str: Optional[str] = None) -> Dict[str,
             if r.get("fill_rate", 1.0) < 1.0 and len(issues) < 3:
                 mc = get_model_check_summary("partial_receipt", "stock", cur_d)
                 chain = f"Supplier partial delivery ({int(r['fill_rate']*100)}% fill rate) → Tracking material receipt shortfall"
+                po_num = r.get("po_id", r.get("receipt_id"))
                 issues.append({
                     "badge": "NEEDS ATTENTION",
                     "badge_class": "pill-amber",
-                    "headline": f"Partial delivery from {r['supplier_name']} (PO #{r['receipt_id']})",
+                    "headline": f"Partial delivery from {r['supplier_name']} (PO #{po_num})",
                     "cause_chain": chain,
                     "evidence_label": "Seen end to end",
                     "what_to_do": f"Confirm expedited dispatch date with {r['supplier_name']} for remaining balance.",
@@ -933,14 +936,18 @@ def build_one_page_context(selected_date_str: Optional[str] = None) -> Dict[str,
         is_calm = len(issues) == 0
 
         outlook_data = None
+        current_day_obj = get_current_day()
+        is_past_day = cur_d < current_day_obj
         try:
-            from stage10.forecast.outlook import get_tomorrow_outlook
-            outlook_data = get_tomorrow_outlook(cur_d, db_session=db)
-        except Exception:
+            from stage10.forecast.outlook import get_weekly_forecast
+            outlook_data = get_weekly_forecast(cur_d, is_past_day=is_past_day, db_session=db)
+        except Exception as err:
+            logger.warning("Error generating weekly forecast: %s", err)
             outlook_data = None
 
         return {
             "selected_date": target_date_str,
+            "current_day": current_day_obj.isoformat(),
             "formatted_date": cur_d.strftime("%A, %-d %B %Y"),
             "subtitle_badge": subtitle_badge,
             "case_state": case_state,
@@ -948,6 +955,7 @@ def build_one_page_context(selected_date_str: Optional[str] = None) -> Dict[str,
             "numbers_strip": numbers_strip,
             "issues": issues,
             "is_calm": is_calm,
+            "is_past_day": is_past_day,
             "outlook": outlook_data,
             "focus_items": focus_items[:5],
             "supplier_watch": supplier_watch_items,

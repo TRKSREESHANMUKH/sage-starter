@@ -382,12 +382,6 @@
   </div>
 </div>
 
-{% if as_of in ["2025-12-31", "2026-01-01"] %}
-<div class="opening-position-banner" style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:12px 16px;margin-bottom:16px;font-size:0.88rem;color:#1e40af;line-height:1.5;">
-  <strong>Demo Baseline Notice:</strong> Opening position set on 31 Dec 2025 for the demo: 48 unfulfilled 2025 customer orders (652 units) and purchase order #18 (407 units, 139 days overdue) were cancelled and raw material stock adjusted, so the ten-day feed starts from a clean position.
-</div>
-{% endif %}
-
 <!-- Period Selector & Action Downloads -->
 <div class="period-bar">
   <div class="period-btn-group" role="group" aria-label="Time period selector">
@@ -465,6 +459,262 @@
     </details>
   </div>
   {% endfor %}
+</div>
+
+<!-- History and Key Events Section (Stage 10 Part A3) -->
+<div class="insight-section" id="history-and-key-events" style="margin-top: 28px;">
+  <div class="insight-section-head">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+      <div>
+        <h2 class="insight-section-title">History and Key Events</h2>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 3px;">
+          Plant operating history, daily alert status heat grid, and chronological operational episodes.
+        </p>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 0.75rem; background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px; font-weight: 600;">
+          {{ history_and_key_events.total_days_indexed }} days indexed
+        </span>
+        <span style="font-size: 0.75rem; background: #fef3c7; color: #92400e; padding: 3px 8px; border-radius: 4px; font-weight: 600;">
+          {{ history_and_key_events.total_episodes }} key episodes
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1. Year at a Glance (Calendar Heat Grid) -->
+  <div class="card" style="margin-bottom: 20px; border-top: 3px solid var(--accent);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+      <div>
+        <h3 style="font-size: 1.0rem; font-weight: 700; margin: 0; color: var(--text-main);">Year at a Glance</h3>
+        <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">Daily banner tier from 1 Jan 2025 to {{ as_of }}. Click any cell to view that past day's briefing.</p>
+      </div>
+      <!-- Heat Grid Legend -->
+      <div style="display: flex; align-items: center; gap: 12px; font-size: 0.75rem; color: var(--text-muted);">
+        <span style="display: inline-flex; align-items: center; gap: 4px;">
+          <span style="width: 12px; height: 12px; background: #10b981; border-radius: 2px;"></span> Normal
+        </span>
+        <span style="display: inline-flex; align-items: center; gap: 4px;">
+          <span style="width: 12px; height: 12px; background: #3b82f6; border-radius: 2px;"></span> Watch
+        </span>
+        <span style="display: inline-flex; align-items: center; gap: 4px;">
+          <span style="width: 12px; height: 12px; background: #f59e0b; border-radius: 2px;"></span> Needs attention
+        </span>
+        <span style="display: inline-flex; align-items: center; gap: 4px;">
+          <span style="width: 12px; height: 12px; background: #ef4444; border-radius: 2px;"></span> Critical
+        </span>
+      </div>
+    </div>
+
+    <!-- Calendar Months Rows -->
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      {% for m in history_and_key_events.year_at_a_glance %}
+      <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <span style="width: 110px; font-size: 0.78rem; font-weight: 600; color: var(--text-muted); flex-shrink: 0;">{{ m.month_name }}</span>
+        <div style="display: flex; flex-wrap: wrap; gap: 3px; flex-grow: 1;">
+          {% for d in m.days %}
+          <a href="{{ d.link }}" class="heat-cell" style="width: 22px; height: 22px; border-radius: 3px; background: {{ d.color }}; display: inline-flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; color: #ffffff; text-decoration: none; transition: transform 0.1s;" title="{{ d.aria_label }}" aria-label="{{ d.aria_label }}">
+            {{ d.day }}
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- 2. Key Events & Episodes -->
+  <div class="card" style="margin-bottom: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+      <div>
+        <h3 style="font-size: 1.0rem; font-weight: 700; margin: 0; color: var(--text-main);">Key Events &amp; Disruption Episodes</h3>
+        <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">Chronological episodes grouped by daily operational status (snapshot &amp; priorities trace).</p>
+      </div>
+      <!-- Tier Filter Buttons -->
+      <div style="display: flex; gap: 6px;">
+        <button type="button" class="ep-filter-btn active" onclick="filterEpisodes('all', this)" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 600; border-radius: 4px; border: 1px solid #cbd5e1; background: #ffffff; cursor: pointer;">All</button>
+        <button type="button" class="ep-filter-btn" onclick="filterEpisodes('Critical', this)" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 600; border-radius: 4px; border: 1px solid #fee2e2; color: #dc2626; background: #ffffff; cursor: pointer;">Critical</button>
+        <button type="button" class="ep-filter-btn" onclick="filterEpisodes('Needs attention', this)" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 600; border-radius: 4px; border: 1px solid #fef3c7; color: #b45309; background: #ffffff; cursor: pointer;">Needs attention</button>
+        <button type="button" class="ep-filter-btn" onclick="filterEpisodes('Watch', this)" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 600; border-radius: 4px; border: 1px solid #e0f2fe; color: #0369a1; background: #ffffff; cursor: pointer;">Watch</button>
+      </div>
+    </div>
+
+    <div id="episodes-container" style="display: flex; flex-direction: column; gap: 10px; max-height: 480px; overflow-y: auto; padding-right: 4px;">
+      {% for ep in history_and_key_events.key_events %}
+      <div class="episode-row" data-tier="{{ ep.max_tier }}" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; flex-wrap: wrap; gap: 8px;">
+        <div style="flex-grow: 1; min-width: 260px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <span class="badge {{ ep.tier_class }}" style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase;">{{ ep.max_tier }}</span>
+            <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">{{ ep.range_display }}</span>
+            <span style="font-size: 0.72rem; color: var(--text-muted); background: #f1f5f9; padding: 1px 6px; border-radius: 3px;">{{ ep.evidence_label }}</span>
+          </div>
+          <div style="font-size: 0.88rem; font-weight: 600; color: var(--text-main);">{{ ep.headline }}</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">{{ ep.trigger }}</div>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <a href="{{ ep.open_link }}" class="header-btn" style="padding: 4px 10px; font-size: 0.78rem;">Open that day &rarr;</a>
+          <a href="{{ ep.pdf_link }}" target="_blank" class="header-btn" title="Download PDF report for this day" style="padding: 4px 8px; font-size: 0.78rem;">PDF</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- 3. View a Past Day Date Picker -->
+  <div class="card" style="margin-bottom: 28px; background: #f8fafc; border: 1px solid #e2e8f0;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+      <div>
+        <h3 style="font-size: 0.95rem; font-weight: 700; margin: 0; color: #1e293b;">View a Past Day Briefing</h3>
+        <p style="font-size: 0.78rem; color: #64748b; margin-top: 2px;">
+          Choose any date from 1 Jan 2025 to {{ as_of }} to open the complete read-only briefing calculated as of that day.
+        </p>
+      </div>
+      <form action="/" method="GET" style="display: flex; gap: 8px; align-items: center;">
+        <input type="date" name="date" min="2025-01-01" max="{{ as_of }}" value="{{ as_of }}" style="padding: 6px 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.85rem; font-family: inherit;">
+        <button type="submit" class="header-btn header-btn-primary" style="padding: 6px 14px; font-size: 0.85rem; cursor: pointer;">
+          Open Past Day &rarr;
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Forward-Look & Weekly Forecast Section (Stage 10 Part B) -->
+<div class="insight-section" id="forecast" style="margin-top: 32px;">
+  <div class="insight-section-head">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+      <div>
+        <h2 class="insight-section-title">Weekly Order Forward-Look &amp; Model Benchmark</h2>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 3px;">
+          Pre-registered 7-day forward-look evaluation across 7 candidate models, walk-forward out-of-sample track record, and noise floor analysis.
+        </p>
+      </div>
+      <span style="font-size: 0.75rem; background: #dcfce7; color: #166534; padding: 3px 8px; border-radius: 4px; font-weight: 700;">
+        Deployed: Baseline (2) Trailing 28d Mean &times; 7
+      </span>
+    </div>
+  </div>
+
+  <div class="card" style="border-left: 4px solid var(--accent); margin-bottom: 20px;">
+    <p style="font-size: 0.85rem; font-style: italic; color: var(--text-main); margin: 0; line-height: 1.5;">
+      "{{ forecast_section.framing }}"
+    </p>
+  </div>
+
+  <!-- Model Comparison Table -->
+  <div class="card" style="margin-bottom: 20px;">
+    <h3 style="font-size: 1.0rem; font-weight: 700; margin: 0 0 4px 0; color: var(--text-main);">7-Model Evaluation Benchmark (Pre-registered Protocol v3)</h3>
+    <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 12px;">
+      Model selection pre-registered on H1 Cross-Validation (Jan–Jun 2025, n=21 Sundays). Walk-forward out-of-sample evaluated on H2 Test (Jul–Dec 2025, n=25 Sunday weeks).
+    </p>
+
+    <div class="table-responsive">
+      <table class="data-table" style="font-size: 0.82rem;">
+        <thead>
+          <tr>
+            <th>Model Architecture</th>
+            <th>Type</th>
+            <th>CV WAPE (H1)</th>
+            <th>Test WAPE (H2)</th>
+            <th>Test MAE</th>
+            <th>Accuracy %</th>
+            <th>Bias</th>
+            <th>MASE</th>
+            <th>80% CI Cov</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in forecast_section.models_table %}
+          <tr style="{% if 'Deployed' in m.status %}background: rgba(37, 99, 235, 0.06); font-weight: 600;{% endif %}">
+            <td><strong>{{ m.name }}</strong></td>
+            <td>{{ m.type }}</td>
+            <td>{{ m.cv_wape }}</td>
+            <td><strong>{{ m.test_wape }}</strong></td>
+            <td>{{ m.test_mae }} u</td>
+            <td>{{ m.acc_pct }}</td>
+            <td>{{ m.bias }}</td>
+            <td>{{ m.mase }}</td>
+            <td>{{ m.cov_80 }}</td>
+            <td>
+              {% if 'Deployed' in m.status %}
+              <span class="badge badge-ok" style="font-weight: 700;">DEPLOYED</span>
+              {% elif 'Benchmark' in m.status %}
+              <span class="badge badge-info">BENCHMARK</span>
+              {% else %}
+              <span class="badge badge-calm">EVALUATED</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Noise Floor Analysis Card -->
+  <div class="card" style="margin-bottom: 20px; background: #f8fafc; border-left: 4px solid #6366f1;">
+    <h3 style="font-size: 0.95rem; font-weight: 700; margin: 0 0 6px 0; color: #1e293b;">Theoretical Aleatoric Noise Floor Analysis</h3>
+    <p style="font-size: 0.82rem; color: #334155; line-height: 1.6; margin-bottom: 8px;">
+      {{ forecast_section.noise_floor.explanation }}
+    </p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 0.8rem; margin-top: 8px;">
+      <div style="background: #ffffff; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+        <div style="color: #64748b; font-size: 0.72rem; text-transform: uppercase;">Oracle Theoretical Minimum WAPE</div>
+        <div style="font-size: 1.15rem; font-weight: 800; color: #0f172a;">{{ (forecast_section.noise_floor.oracle_irreducible_wape * 100) | round(1) }}%</div>
+        <div style="color: #64748b; font-size: 0.72rem;">MAE: {{ forecast_section.noise_floor.oracle_irreducible_mae }} units (Irreducible variance)</div>
+      </div>
+      <div style="background: #ffffff; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+        <div style="color: #64748b; font-size: 0.72rem; text-transform: uppercase;">Deployed Model Test WAPE</div>
+        <div style="font-size: 1.15rem; font-weight: 800; color: #2563eb;">{{ (forecast_section.noise_floor.deployed_model_wape * 100) | round(1) }}%</div>
+        <div style="color: #64748b; font-size: 0.72rem;">MAE: {{ forecast_section.noise_floor.deployed_model_mae }} units (Trailing 28d Mean)</div>
+      </div>
+      <div style="background: #ffffff; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+        <div style="color: #64748b; font-size: 0.72rem; text-transform: uppercase;">Attainable Optimization Headroom</div>
+        <div style="font-size: 1.15rem; font-weight: 800; color: #16a34a;">+{{ ((forecast_section.noise_floor.deployed_model_wape - forecast_section.noise_floor.oracle_irreducible_wape) * 100) | round(1) }}%</div>
+        <div style="color: #64748b; font-size: 0.72rem;">Captures 77.8% of theoretical oracle limit</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Out-of-Sample Track Record Table -->
+  <div class="card" style="margin-bottom: 28px;">
+    <h3 style="font-size: 1.0rem; font-weight: 700; margin: 0 0 4px 0; color: var(--text-main);">Walk-Forward Out-of-Sample Track Record (25 Test Weeks)</h3>
+    <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 12px;">
+      Realized customer orders vs deployed weekly forecasts (D+1..D+7) across H2 2025. Zero look-ahead: generated strictly at origin D.
+    </p>
+
+    <div class="table-responsive" style="max-height: 380px; overflow-y: auto;">
+      <table class="data-table" style="font-size: 0.8rem;">
+        <thead>
+          <tr>
+            <th>Origin Date</th>
+            <th>Forecast Horizon</th>
+            <th>Expected New Orders</th>
+            <th>80% CI Range</th>
+            <th>Actual Realized</th>
+            <th>Error (units)</th>
+            <th>Known Due (on books)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in forecast_section.track_record %}
+          <tr>
+            <td><strong>{{ r.origin_date }}</strong></td>
+            <td>{{ r.horizon }}</td>
+            <td><strong style="color: var(--accent);">{{ r.forecast }} units</strong></td>
+            <td>{{ r.range }}</td>
+            <td>{{ r.actual }} units</td>
+            <td style="color: {% if r.error > 0 %}#dc2626{% else %}#16a34a{% endif %}; font-weight: 600;">
+              {% if r.error > 0 %}+{{ r.error }}{% else %}{{ r.error }}{% endif %}
+            </td>
+            <td>{{ r.due_known }} units</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 <!-- Block 1: Supplier Report Card (Richer Columns, Sticky First Column) -->
@@ -1114,6 +1364,26 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 });
+
+function filterEpisodes(tier, btnEl) {
+  document.querySelectorAll('.ep-filter-btn').forEach(b => {
+    b.classList.remove('active');
+    b.style.fontWeight = '600';
+  });
+  if (btnEl) {
+    btnEl.classList.add('active');
+    btnEl.style.fontWeight = '800';
+  }
+  const rows = document.querySelectorAll('.episode-row');
+  rows.forEach(r => {
+    const rowTier = r.getAttribute('data-tier');
+    if (tier === 'all' || rowTier === tier) {
+      r.style.display = 'flex';
+    } else {
+      r.style.display = 'none';
+    }
+  });
+}
 </script>
 
 {% endblock %}

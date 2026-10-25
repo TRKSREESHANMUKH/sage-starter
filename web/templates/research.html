@@ -17,7 +17,7 @@
   <div class="card" style="margin-bottom: 0; border-top: 3px solid var(--accent);">
     <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">VIEW 1: RAW SYNTHETIC SUITE</div>
     <div style="font-size: 1.05rem; font-weight: 800; margin-bottom: 8px;">All 10 Evaluation Scenarios</div>
-    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Includes INC_01 & INC_05 targeting inactive backup vendors (zero physical effect).</p>
+    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Includes Scenarios 1 &amp; 5 targeting inactive backup vendors (zero physical effect).</p>
     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center;">
       <div style="background: #f8fafc; padding: 8px; border-radius: 6px;">
         <div style="font-size: 0.7rem; color: #64748b;">Acc @ 1</div>
@@ -41,7 +41,7 @@
   <div class="card" style="margin-bottom: 0; border-top: 3px solid #16a34a;">
     <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: #166534; margin-bottom: 4px;">VIEW 2: AUDITED PHYSICAL GROUND TRUTH</div>
     <div style="font-size: 1.05rem; font-weight: 800; margin-bottom: 8px;">4 Active Real-Cause Scenarios</div>
-    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Excludes INC_01 & INC_05. Evaluates INC_03, INC_04, INC_06, INC_08.</p>
+    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Excludes Scenarios 1 &amp; 5. Evaluates Scenarios 3, 4, 6, 8.</p>
     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center;">
       <div style="background: #f0fdf4; padding: 8px; border-radius: 6px;">
         <div style="font-size: 0.7rem; color: #166534;">Acc @ 1</div>
@@ -123,7 +123,7 @@
       </thead>
       <tbody>
         {% for s in research_data.scenarios %}
-        <tr style="{% if s.scenario_id in ('INC_10', 'P10') %}background: rgba(220, 38, 38, 0.06);{% endif %}">
+        <tr style="{% if '10' in s.scenario_id or 'Control' in s.scenario_id %}background: rgba(220, 38, 38, 0.06);{% endif %}">
           <td><strong>{{ s.scenario_id }}</strong></td>
           <td><code style="color: var(--accent);">{{ s.true_driver }}</code></td>
           <td>{{ s.top_driver }}</td>
@@ -131,7 +131,7 @@
           <td>{{ s.m2_score }}</td>
           <td>{{ s.exogenous_rank }}</td>
           <td>
-            {% if s.scenario_id in ('INC_10', 'P10') %}
+            {% if '10' in s.scenario_id or 'Control' in s.scenario_id %}
             <span class="badge badge-crit">False positive on negative control</span>
             {% elif 'DETECTED' in s.classification %}
             <span class="badge badge-ok">{{ s.classification }}</span>

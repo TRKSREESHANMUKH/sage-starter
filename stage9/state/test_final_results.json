@@ -1,5 +1,5 @@
 {
-  "run_at": "2026-10-25T07:36:41.124596Z",
+  "run_at": "2026-10-25T16:59:00.496268Z",
   "passed": 67,
   "failed": 0,
   "skipped": 0,
@@ -225,7 +225,7 @@
       "id": "G13",
       "name": "Reset completes in < 30 seconds",
       "status": "\u2705 PASS",
-      "note": "elapsed=1.40s"
+      "note": "elapsed=0.40s"
     },
     {
       "id": "G13",

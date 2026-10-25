@@ -1,0 +1,295 @@
+{
+  "metadata": {
+    "generated_at": "2026-10-25",
+    "framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+    "deployed_model_sha256": "a6b37c2e1558f1138a8e1165db602ec3ffc8de37a627fe01e6e37d1de427c6ab",
+    "deployed_model_name": "Baseline (2): Trailing 28d Mean x 7",
+    "deployed_model_key": "b2"
+  },
+  "cv_results_h1": {
+    "b1": {
+      "name": "Baseline (1): Last 7d Total",
+      "n": 21,
+      "mae": 34.67,
+      "wape": 0.6072,
+      "accuracy_pct": "39.3%",
+      "mape_zero_guarded_pct": 252.1,
+      "bias": -2.57,
+      "mase_vs_b1": 1.0,
+      "coverage_80_pct": null,
+      "avg_interval_width": null
+    },
+    "b2": {
+      "name": "Baseline (2): Trailing 28d Mean x 7",
+      "n": 21,
+      "mae": 31.14,
+      "wape": 0.5455,
+      "accuracy_pct": "45.5%",
+      "mape_zero_guarded_pct": 335.4,
+      "bias": -1.88,
+      "mase_vs_b1": 0.898,
+      "coverage_80_pct": null,
+      "avg_interval_width": null
+    },
+    "b3": {
+      "name": "Baseline (3): Weekday x Month Mean",
+      "n": 21,
+      "mae": 34.42,
+      "wape": 0.6028,
+      "accuracy_pct": "39.7%",
+      "mape_zero_guarded_pct": 128.1,
+      "bias": -9.89,
+      "mase_vs_b1": 0.993,
+      "coverage_80_pct": null,
+      "avg_interval_width": null
+    },
+    "b4": {
+      "name": "Baseline (4): Zero Forecast",
+      "n": 21,
+      "mae": 57.1,
+      "wape": 1.0,
+      "accuracy_pct": "No better than predicting zero",
+      "mape_zero_guarded_pct": 95.2,
+      "bias": -57.1,
+      "mase_vs_b1": 1.647,
+      "coverage_80_pct": null,
+      "avg_interval_width": null
+    },
+    "m5": {
+      "name": "Model (5): Negative Binomial GLM",
+      "n": 21,
+      "mae": 34.12,
+      "wape": 0.5976,
+      "accuracy_pct": "40.2%",
+      "mape_zero_guarded_pct": 49.2,
+      "bias": -31.39,
+      "mase_vs_b1": 0.984,
+      "coverage_80_pct": null,
+      "avg_interval_width": null
+    },
+    "m6": {
+      "name": "Model (6): Quantile GBDT (HistGBR)",
+      "n": 21,
+      "mae": 33.62,
+      "wape": 0.5889,
+      "accuracy_pct": "41.1%",
+      "mape_zero_guarded_pct": 215.4,
+      "bias": -18.69,
+      "mase_vs_b1": 0.97,
+      "coverage_80_pct": null,
+      "avg_interval_width": null
+    },
+    "m7": {
+      "name": "Model (7): Trailing Mean + Pipeline Adjusted",
+      "n": 21,
+      "mae": 31.26,
+      "wape": 0.5475,
+      "accuracy_pct": "45.3%",
+      "mape_zero_guarded_pct": 336.2,
+      "bias": -0.72,
+      "mase_vs_b1": 0.902,
+      "coverage_80_pct": null,
+      "avg_interval_width": null
+    }
+  },
+  "test_results_h2_sundays": {
+    "b1": {
+      "name": "Baseline (1): Last 7d Total",
+      "n": 25,
+      "mae": 40.6,
+      "wape": 0.8451,
+      "accuracy_pct": "15.5%",
+      "mape_zero_guarded_pct": 667.2,
+      "bias": -5.08,
+      "mase_vs_b1": 1.0,
+      "coverage_80_pct": null,
+      "avg_interval_width": null
+    },
+    "b2": {
+      "name": "Baseline (2): Trailing 28d Mean x 7",
+      "n": 25,
+      "mae": 31.1,
+      "wape": 0.6474,
+      "accuracy_pct": "35.3%",
+      "mape_zero_guarded_pct": 494.8,
+      "bias": -2.42,
+      "mase_vs_b1": 0.766,
+      "coverage_80_pct": null,
+      "avg_interval_width": null
+    },
+    "b3": {
+      "name": "Baseline (3): Weekday x Month Mean",
+      "n": 25,
+      "mae": 39.18,
+      "wape": 0.8156,
+      "accuracy_pct": "18.4%",
+      "mape_zero_guarded_pct": 632.3,
+      "bias": -15.16,
+      "mase_vs_b1": 0.965,
+      "coverage_80_pct": null,
+      "avg_interval_width": null
+    },
+    "b4": {
+      "name": "Baseline (4): Zero Forecast",
+      "n": 25,
+      "mae": 48.04,
+      "wape": 1.0,
+      "accuracy_pct": "No better than predicting zero",
+      "mape_zero_guarded_pct": 92.0,
+      "bias": -48.04,
+      "mase_vs_b1": 1.183,
+      "coverage_80_pct": null,
+      "avg_interval_width": null
+    },
+    "m5": {
+      "name": "Model (5): Negative Binomial GLM",
+      "n": 25,
+      "mae": 31.18,
+      "wape": 0.6491,
+      "accuracy_pct": "35.1%",
+      "mape_zero_guarded_pct": 299.9,
+      "bias": -21.6,
+      "mase_vs_b1": 0.768,
+      "coverage_80_pct": null,
+      "avg_interval_width": null
+    },
+    "m6": {
+      "name": "Model (6): Quantile GBDT (HistGBR)",
+      "n": 25,
+      "mae": 35.95,
+      "wape": 0.7483,
+      "accuracy_pct": "25.2%",
+      "mape_zero_guarded_pct": 759.0,
+      "bias": -0.44,
+      "mase_vs_b1": 0.885,
+      "coverage_80_pct": 64.0,
+      "avg_interval_width": 97.7
+    },
+    "m7": {
+      "name": "Model (7): Trailing Mean + Pipeline Adjusted",
+      "n": 25,
+      "mae": 31.48,
+      "wape": 0.6552,
+      "accuracy_pct": "34.5%",
+      "mape_zero_guarded_pct": 504.0,
+      "bias": -1.9,
+      "mase_vs_b1": 0.775,
+      "coverage_80_pct": null,
+      "avg_interval_width": null
+    }
+  },
+  "per_product_test": {
+    "product_201": {
+      "n": 25,
+      "mae": 21.61,
+      "wape": 0.7922,
+      "accuracy_pct": "20.8%",
+      "mape_zero_guarded_pct": 647.0,
+      "bias": -2.33,
+      "mase_vs_b1": null,
+      "coverage_80_pct": null,
+      "avg_interval_width": null
+    },
+    "product_202": {
+      "n": 25,
+      "mae": 14.83,
+      "wape": 0.7144,
+      "accuracy_pct": "28.6%",
+      "mape_zero_guarded_pct": 548.0,
+      "bias": -0.09,
+      "mase_vs_b1": null,
+      "coverage_80_pct": null,
+      "avg_interval_width": null
+    },
+    "total": {
+      "n": 25,
+      "mae": 31.1,
+      "wape": 0.6474,
+      "accuracy_pct": "35.3%",
+      "mape_zero_guarded_pct": 494.8,
+      "bias": -2.42,
+      "mase_vs_b1": null,
+      "coverage_80_pct": null,
+      "avg_interval_width": null
+    }
+  },
+  "rolling_daily_test": {
+    "n": 177,
+    "mae": 30.62,
+    "wape": 0.6312,
+    "accuracy_pct": "36.9%",
+    "mape_zero_guarded_pct": 434.5,
+    "bias": -2.67,
+    "mase_vs_b1": null,
+    "coverage_80_pct": null,
+    "avg_interval_width": null
+  },
+  "month_slices": {
+    "7": {
+      "n": 4,
+      "mae": 19.62,
+      "wape": 0.6181,
+      "accuracy_pct": "38.2%",
+      "mape_zero_guarded_pct": 111.8,
+      "bias": 18.25,
+      "mase_vs_b1": null,
+      "coverage_80_pct": null,
+      "avg_interval_width": null
+    },
+    "8": {
+      "n": 5,
+      "mae": 16.8,
+      "wape": 0.4138,
+      "accuracy_pct": "58.6%",
+      "mape_zero_guarded_pct": 42.6,
+      "bias": -8.8,
+      "mase_vs_b1": null,
+      "coverage_80_pct": null,
+      "avg_interval_width": null
+    },
+    "9": {
+      "n": 4,
+      "mae": 37.69,
+      "wape": 0.7614,
+      "accuracy_pct": "23.9%",
+      "mape_zero_guarded_pct": 1048.6,
+      "bias": -9.56,
+      "mase_vs_b1": null,
+      "coverage_80_pct": null,
+      "avg_interval_width": null
+    },
+    "10": {
+      "n": 4,
+      "mae": 41.0,
+      "wape": 0.8913,
+      "accuracy_pct": "10.9%",
+      "mape_zero_guarded_pct": 1671.0,
+      "bias": 12.75,
+      "mase_vs_b1": null,
+      "coverage_80_pct": null,
+      "avg_interval_width": null
+    },
+    "11": {
+      "n": 5,
+      "mae": 32.9,
+      "wape": 0.6376,
+      "accuracy_pct": "36.2%",
+      "mape_zero_guarded_pct": 130.6,
+      "bias": -7.7,
+      "mase_vs_b1": null,
+      "coverage_80_pct": null,
+      "avg_interval_width": null
+    },
+    "12": {
+      "n": 3,
+      "mae": 45.25,
+      "wape": 0.5877,
+      "accuracy_pct": "41.2%",
+      "mape_zero_guarded_pct": 59.9,
+      "bias": -21.25,
+      "mase_vs_b1": null,
+      "coverage_80_pct": null,
+      "avg_interval_width": null
+    }
+  }
+}

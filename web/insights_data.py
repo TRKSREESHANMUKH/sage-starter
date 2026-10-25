@@ -121,6 +121,256 @@ def compute_rating(on_time_pct: Optional[float], fill_rate_pct: Optional[float],
     return "Grade C", "badge-weak", False
 
 
+def build_history_and_key_events(as_of: date) -> Dict[str, Any]:
+    day_index_path = ROOT_DIR / "stage9" / "state" / "day_index.json"
+    if not day_index_path.exists():
+        try:
+            from stage9.build_day_index import build_day_index
+            build_day_index(end_date=as_of)
+        except Exception:
+            pass
+
+    d_idx = {}
+    if day_index_path.exists():
+        try:
+            with open(day_index_path, "r", encoding="utf-8") as f:
+                d_idx = json.load(f).get("days", {})
+        except Exception:
+            d_idx = {}
+
+    as_of_str = as_of.isoformat()
+    days_dict = {k: v for k, v in d_idx.items() if k <= as_of_str}
+
+    months_data = []
+    for y in [2025, 2026]:
+        for m in range(1, 13):
+            days_in_m = []
+            d = date(y, m, 1)
+            while d.month == m:
+                d_str = d.isoformat()
+                if d_str <= as_of_str and d_str in days_dict:
+                    entry = days_dict[d_str]
+                    tier = entry.get("banner_tier", "Normal")
+                    if tier == "Critical":
+                        tier_cls = "cell-crit"
+                        color = "#ef4444"
+                    elif tier == "Needs attention":
+                        tier_cls = "cell-attn"
+                        color = "#f59e0b"
+                    elif tier == "Watch":
+                        tier_cls = "cell-watch"
+                        color = "#3b82f6"
+                    else:
+                        tier_cls = "cell-norm"
+                        color = "#10b981"
+
+                    days_in_m.append({
+                        "day": d.day,
+                        "date": d_str,
+                        "tier": tier,
+                        "tier_class": tier_cls,
+                        "color": color,
+                        "issue_count": entry.get("issue_count", 0),
+                        "top_headline": entry.get("top_alert_headline", ""),
+                        "aria_label": f"{d.strftime('%-d %b %Y')}: {tier} tier, {entry.get('issue_count', 0)} issues",
+                        "link": f"/?date={d_str}"
+                    })
+                try:
+                    d = d.replace(day=d.day + 1)
+                except ValueError:
+                    break
+            if days_in_m:
+                months_data.append({
+                    "month_name": date(y, m, 1).strftime("%B %Y"),
+                    "days": days_in_m
+                })
+
+    from stage9.build_day_index import get_episodes
+    episodes = get_episodes(days_dict)
+    episodes_display = []
+    for ep in sorted(episodes, key=lambda e: e["start_date"], reverse=True):
+        tier = ep.get("max_tier", "Normal")
+        if tier == "Critical":
+            t_class = "pill-red"
+        elif tier == "Needs attention":
+            t_class = "pill-amber"
+        elif tier == "Watch":
+            t_class = "pill-blue"
+        else:
+            t_class = "pill-green"
+
+        s_d = date.fromisoformat(ep["start_date"])
+        e_d = date.fromisoformat(ep["end_date"])
+        if s_d == e_d:
+            range_display = s_d.strftime("%-d %b %Y")
+        else:
+            range_display = f"{s_d.strftime('%-d %b')} – {e_d.strftime('%-d %b %Y')} ({ep.get('days_count', 1)} days)"
+
+        episodes_display.append({
+            "start_date": ep["start_date"],
+            "end_date": ep["end_date"],
+            "range_display": range_display,
+            "max_tier": tier,
+            "tier_class": t_class,
+            "headline": ep.get("headline", ""),
+            "evidence_label": ep.get("evidence_label", "Seen end to end"),
+            "trigger": ep.get("trigger", ""),
+            "days_count": ep.get("days_count", 1),
+            "open_link": f"/?date={ep['start_date']}",
+            "pdf_link": f"/report.pdf?date={ep['start_date']}"
+        })
+
+    past_dates = sorted(days_dict.keys(), reverse=True)
+
+    return {
+        "year_at_a_glance": months_data,
+        "key_events": episodes_display,
+        "past_day_dates": past_dates,
+        "total_days_indexed": len(days_dict),
+        "total_episodes": len(episodes_display)
+    }
+
+
+def build_forecast_insights_section() -> Dict[str, Any]:
+    metrics_path = ROOT_DIR / "stage10" / "forecast" / "outputs" / "metrics.json"
+    noise_path = ROOT_DIR / "stage10" / "forecast" / "outputs" / "noise_floor.json"
+    forecasts_path = ROOT_DIR / "stage10" / "forecast" / "outputs" / "test_weekly_forecasts.json"
+
+    metrics_data = {}
+    if metrics_path.exists():
+        try:
+            with open(metrics_path, "r", encoding="utf-8") as f:
+                metrics_data = json.load(f)
+        except Exception:
+            pass
+
+    noise_data = {}
+    if noise_path.exists():
+        try:
+            with open(noise_path, "r", encoding="utf-8") as f:
+                noise_data = json.load(f)
+        except Exception:
+            pass
+
+    stored_fc = {}
+    if forecasts_path.exists():
+        try:
+            with open(forecasts_path, "r", encoding="utf-8") as f:
+                stored_fc = json.load(f)
+        except Exception:
+            pass
+
+    models_table = [
+        {
+            "name": "Baseline (1): Last 7d Total",
+            "type": "Naive lag",
+            "cv_wape": "0.6072",
+            "test_wape": "0.8451",
+            "test_mae": "40.6",
+            "acc_pct": "15.5%",
+            "bias": "-5.1",
+            "mase": "1.00",
+            "cov_80": "—",
+            "status": "Evaluated"
+        },
+        {
+            "name": "Baseline (2): Trailing 28d Mean x 7",
+            "type": "Moving Average (Selected)",
+            "cv_wape": "0.5455",
+            "test_wape": "0.6474",
+            "test_mae": "31.1",
+            "acc_pct": "35.3%",
+            "bias": "-2.4",
+            "mase": "0.77",
+            "cov_80": "—",
+            "status": "Deployed (Won H1 CV)"
+        },
+        {
+            "name": "Baseline (3): Weekday x Month Mean",
+            "type": "Calendar Seasonal",
+            "cv_wape": "0.6028",
+            "test_wape": "0.8156",
+            "test_mae": "39.2",
+            "acc_pct": "18.4%",
+            "bias": "-15.2",
+            "mase": "0.96",
+            "cov_80": "—",
+            "status": "Evaluated"
+        },
+        {
+            "name": "Baseline (4): Zero Forecast",
+            "type": "Zero Reference",
+            "cv_wape": "1.0000",
+            "test_wape": "1.0000",
+            "test_mae": "48.0",
+            "acc_pct": "No better than zero",
+            "bias": "-48.0",
+            "mase": "1.18",
+            "cov_80": "—",
+            "status": "Benchmark"
+        },
+        {
+            "name": "Model (5): Negative Binomial GLM",
+            "type": "Count Regression",
+            "cv_wape": "0.5976",
+            "test_wape": "0.6491",
+            "test_mae": "31.2",
+            "acc_pct": "35.1%",
+            "bias": "-21.6",
+            "mase": "0.77",
+            "cov_80": "—",
+            "status": "Evaluated"
+        },
+        {
+            "name": "Model (6): Quantile GBDT (HistGBR)",
+            "type": "Gradient Boosted Trees",
+            "cv_wape": "0.5889",
+            "test_wape": "0.7483",
+            "test_mae": "36.0",
+            "acc_pct": "25.2%",
+            "bias": "-0.4",
+            "mase": "0.89",
+            "cov_80": "64.0%",
+            "status": "Evaluated"
+        },
+        {
+            "name": "Model (7): Trailing Mean + Pipeline Adjusted",
+            "type": "Hybrid Pipeline",
+            "cv_wape": "0.5475",
+            "test_wape": "0.6552",
+            "test_mae": "31.5",
+            "acc_pct": "34.5%",
+            "bias": "-1.9",
+            "mase": "0.78",
+            "cov_80": "—",
+            "status": "Evaluated"
+        }
+    ]
+
+    track_record = []
+    for d_str in sorted(stored_fc.keys()):
+        item = stored_fc[d_str]
+        track_record.append({
+            "origin_date": d_str,
+            "horizon": item.get("horizon", ""),
+            "actual": item.get("actual_realized", 0),
+            "forecast": item.get("expected_new_orders", 0),
+            "range": f"{item.get('range_low', 0)}–{item.get('range_high', 0)}",
+            "error": item.get("error_units", 0),
+            "due_known": item.get("due_known", 0)
+        })
+
+    month_slices = metrics_data.get("month_slices", {})
+
+    return {
+        "models_table": models_table,
+        "track_record": track_record,
+        "month_slices": month_slices,
+        "noise_floor": noise_data.get("comparison", {}),
+        "framing": RESEARCH_FRAMING
+    }
+
+
 def get_insights_data(
     as_of_str: Optional[str] = None,
     period_str: str = "all",
@@ -1097,6 +1347,9 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
         else:
             takeaway_delays = "All deliveries arrived on or ahead of scheduled dates."
 
+        history_events = build_history_and_key_events(as_of)
+        forecast_sec = build_forecast_insights_section()
+
         return {
             "as_of": as_of_str,
             "period": period_str,
@@ -1106,6 +1359,8 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
             "empty_period_notice": "Nothing happened in this period. Consider selecting a longer period such as 'Year so far'." if not has_data else "",
             "is_demo_full_year": (period_str == "full_year" and is_demo),
             "summary_strip": summary_strip,
+            "history_and_key_events": history_events,
+            "forecast_section": forecast_sec,
             "fulfillment_buckets": fulfillment_buckets,
             "what_changed_strip": what_changed_strip,
             "supplier_cards": supplier_cards,

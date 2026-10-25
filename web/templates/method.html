@@ -15,6 +15,21 @@
   </p>
 </div>
 
+<div class="card" style="border-left: 4px solid #3b82f6;">
+  <div class="card-title">How the Demo Starts (Opening Position Setup)</div>
+  <p style="font-size: 0.88rem; color: var(--text-main); line-height: 1.6; margin-bottom: 10px;">
+    To evaluate SAGE's operational detection on a live multi-day feed, the ten-day simulated sequence (1–10 Jan 2026) begins from an audited opening operating baseline established on <strong>31 Dec 2025</strong>. As pre-registered in <code>stage10/demo_seed_manifest.json</code>:
+  </p>
+  <ul style="padding-left: 20px; font-size: 0.85rem; color: var(--text-main); line-height: 1.6;">
+    <li><strong>48 Stale Customer Backorders (652 units total):</strong> Accumulated unfulfilled 2025 sales orders with requested delivery dates &le; 2025-12-31 were formally cancelled at year-end closing, preventing historical standing backlog from drowning out new operational anomalies.</li>
+    <li><strong>Purchase Order #18 Cancelled (407 units):</strong> A stuck historical PO (139 days overdue, expected 2025-08-14) was cancelled to establish clean supplier open-order tracking.</li>
+    <li><strong>Opening Raw Material Inventory:</strong> Stock balances were calibrated to clean working levels: <strong>215 kg</strong> Steel Rod 10mm (Item 101), <strong>204 kg</strong> Plastic Granules (Item 102), and <strong>184 meters</strong> Copper Wire (Item 103).</li>
+  </ul>
+  <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 8px;">
+    These year-end adjustments are fully audited and accounted for in the Insights reconciliation table under the dedicated <em>"Cancelled at demo opening position"</em> category so that 100% of the 2025 transaction ledger reconciles without hidden drops.
+  </p>
+</div>
+
 <div class="card" style="border-left: 4px solid #6366f1;">
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
     <div class="card-title" style="margin-bottom: 0;">How Today's Report is Built</div>
@@ -117,7 +132,7 @@
         <td>50.0% (4/8)</td>
         <td>75.0% (6/8)</td>
         <td>0.6528</td>
-        <td>Excludes INC_01 &amp; INC_05 where routine PO generation locked to default seed.</td>
+        <td>Excludes Scenarios 1 &amp; 5 where routine PO generation locked to default seed.</td>
       </tr>
       <tr>
         <td><strong>Original Stage 7 Benchmark (6 scenarios)</strong></td>
@@ -237,10 +252,10 @@
       <strong>Target Averaging Dilution:</strong> In scenarios like P01 and P06, averaging Shapley scores across multiple target nodes dilutes signal mass, resulting in a NOISE tier despite Stage 7 detecting single-target spikes.
     </li>
     <li>
-      <strong>Zero Baseline Variance (INC_07):</strong> In synthetic training data, Supplier 5 never exhibited partial receipts (fill_rate = 1.0 constant). Linear SCM fits &beta; = 0.0, rendering upstream attribution mathematically impossible.
+      <strong>Zero Baseline Variance (Scenario 7):</strong> In synthetic training data, Supplier 5 never exhibited partial receipts (fill_rate = 1.0 constant). Linear SCM fits &beta; = 0.0, rendering upstream attribution mathematically impossible.
     </li>
     <li>
-      <strong>Sourcing Bug &amp; Transparent Multi-Cohort Reporting:</strong> Two of the ten designed scenarios (INC_01 and INC_05) did not produce an operational effect because of a sourcing bug found in our own audit (routine PO generation locked to default seed 2025-01-01). The causal benchmark is reported across all cohorts (sample size <i>n</i> is small): All 10 scenarios: Hit@1 = 40.0% (4/10), Hit@3 = 60.0% (6/10), MRR = 0.5622; Excluding sourcing bug (8 scenarios): Hit@1 = 50.0% (4/8), Hit@3 = 75.0% (6/8), MRR = 0.6528; Stage 7 evaluated real-cause cohort (6 scenarios): Hit@1 = 33.3% (2/6), Hit@3 = 66.7% (4/6), MRR = 0.5620; Valid non-bugged real-cause cohort (4 scenarios): Hit@1 = 50.0% (2/4), Hit@3 = 100.0% (4/4), MRR = 0.7431.
+      <strong>Sourcing Bug &amp; Transparent Multi-Cohort Reporting:</strong> Two of the ten designed scenarios (Scenarios 1 and 5) did not produce an operational effect because of a sourcing bug found in our own audit (routine PO generation locked to default seed 2025-01-01). The causal benchmark is reported across all cohorts (sample size <i>n</i> is small): All 10 scenarios: Hit@1 = 40.0% (4/10), Hit@3 = 60.0% (6/10), MRR = 0.5622; Excluding sourcing bug (8 scenarios): Hit@1 = 50.0% (4/8), Hit@3 = 75.0% (6/8), MRR = 0.6528; Stage 7 evaluated real-cause cohort (6 scenarios): Hit@1 = 33.3% (2/6), Hit@3 = 66.7% (4/6), MRR = 0.5620; Valid non-bugged real-cause cohort (4 scenarios): Hit@1 = 50.0% (2/4), Hit@3 = 100.0% (4/4), MRR = 0.7431.
     </li>
     <li>
       <strong>Simulator Settlement Limitation (Late-But-Delivered is Zero by Construction):</strong> The synthetic enterprise simulator fulfills customer orders strictly on their requested delivery date. It contains no retroactive fulfillment sweep. Orders encountering stockouts remain permanently backordered rather than being fulfilled late; thus, the 'Shipped Complete AFTER Requested Date' count is zero by construction.
@@ -249,7 +264,7 @@
       <strong>Expert Graph Sourcing vs Actual Routing:</strong> The expert graph allows supplier links that the simulated sourcing never used (e.g., theoretical links to backup vendors Sri Materials Pvt Ltd and Bharat Steel Works). Stage 9 cause-chain tracing dynamically restricts traversal to active supplier links verified in historical purchase orders.
     </li>
     <li>
-      <strong>Lag-State Dominance (INC_09):</strong> Autoregressive inventory continuity (lag1) captures 60–80% of Shapley variance during prolonged stockouts, suppressing the exogenous supplier delay rank.
+      <strong>Lag-State Dominance (Scenario 9):</strong> Autoregressive inventory continuity (lag1) captures 60–80% of Shapley variance during prolonged stockouts, suppressing the exogenous supplier delay rank.
     </li>
     <li>
       <strong>Cryptographic Immutability:</strong> Stages 1–8 are sealed under frozen JSON digests (<code>stage7/FROZEN.json</code> and <code>stage8/FROZEN.json</code>).

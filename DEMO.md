@@ -22,21 +22,26 @@ Let's begin the live feed from the controller."
 
 ---
 
-## Part 0.5: Presenting the "Tomorrow Outlook" Card on the Today Page
+## Part 0.5: Presenting the "Weekly Forward-Look" Card on the Today Page
 
-When demonstrating the viewer's Morning Briefing home page (`http://localhost:8000/`), draw the mentor's attention to the **Tomorrow Outlook block** positioned directly below the 7-day numbers strip:
+When demonstrating the viewer's Morning Briefing home page (`http://localhost:8000/`), draw the mentor's attention to the **Weekly Forward-Look block** ("Next 7 days: expected new orders") positioned directly below the 7-day numbers strip:
 
-1. **Heading & Framing:**  
-   Show the tomorrow indicator (e.g., `Tomorrow outlook (Fri 2 Jan)`) and the verbatim Rule 2 scientific framing statement printed directly beneath it.
-2. **Tile 1 — "New Sales Expected":**  
-   - **What it shows:** Quantile GBDT point forecast with an 80% prediction interval (e.g., `0 units (0–23, 80% CI)`).
-   - **What to explain:** *"Incoming orders in this plant are intermittent (68% zero days). Our Gradient Boosted Decision Tree model was pre-registered and trained strictly on 2025 data, achieving an 18.99% relative WAPE improvement over seasonal baseline with 90.76% interval coverage on the test set."*
-3. **Tile 2 — "Orders Due Tomorrow":**  
-   - **What it shows:** Total delivery commitments due tomorrow (e.g., `8 units`) and sublabel `8 units already on the books`.
-   - **What to explain:** *"Our empirical lead-lag analysis of all 230 orders in 2025 proves that 100% of customer orders are placed at least 3 days in advance (mean lag 6.12 days). Therefore, tomorrow's shipments are 100% known with certainty from committed ERP order books."*
-4. **Tile 3 — "Shortage Risk Tomorrow":**  
-   - **What it shows:** An executive badge (**LOW** in green, **MEDIUM** in amber, **HIGH** in red) and a dynamic rationale (e.g., `Finished goods buffer of 87 units covers tomorrow's demand`).
-   - **What to explain:** *"SAGE deterministically projects ending finished goods buffers against nominal line capacity (50 units/day) to warn supervisors of imminent customer defaults before they materialize."*
+1. **Heading & Horizon:**  
+   Show the forward-look card header: `Next 7 days: expected new orders` with horizon dates (e.g. `2 Jan – 8 Jan`) and shortage risk badge (**Low**, **Medium**, or **High**).
+2. **Key Forward-Looking Metrics:**  
+   - **Expected New Orders ($D+1 \dots D+7$):** Point estimate and 80% CI interval (e.g., `48 units (0–98, 80% CI)`).
+   - **Known Due Orders ($D+1 \dots D+7$):** Actual scheduled commitments on the books (e.g., `10 units already on the books`).
+   - **12-Week Historical Trend Sparkline:** Visual representation of weekly order volume trajectory leading up to today.
+3. **What to Explain to Mentor:**  
+   - *"Our order forecast predicts incoming order flow over the next 7 calendar days to help operations plan material buffers and production capacity."*
+   - *"We pre-registered 7 candidate architectures in `stage10/prereg_forecast_v3.md`. Baseline (2) (Trailing 28d Mean x 7) was selected via lowest Cross-Validation WAPE (0.5455 / 45.5% accuracy) on H1 2025. On the strictly out-of-sample H2 2025 walk-forward test (25 Sundays), it achieved 0.6474 WAPE (35.3% accuracy, MAE 31.1 units, Bias -2.4 units, MASE 0.77)."*
+   - *"Crucially, our Monte Carlo simulation audit of 100,000 weeks proves that due to discrete Poisson/Bernoulli order arrivals ($p=0.42$) and random customer selection, the theoretical Oracle irreducible error floor is 0.5034 WAPE (49.7% accuracy). SAGE's deployed model operates within 0.1440 WAPE of the theoretical noise limit, capturing 77.8% of the theoretical oracle limit."*
+   - *"Full model benchmark, noise floor methodology, and 25-week walk-forward audit log are linked directly in the Insights page (`#forecast`)."*
+
+4. **UI Navigation Updates:**
+   - **Removed Baseline Notice:** The old opening notice was removed from Today/Insights to avoid clutter, and is fully disclosed in the Method page under "How the demo starts".
+   - **Removed Top-Bar Day Dropdown:** Replaced with clear read-only simulation status and PDF/web report links.
+   - **Insights History & Key Events:** Insights now features "Year at a glance" (calendar heat grid of all 365 days colored by banner tier), "Key events" (chronological disruption episodes), and "View a past day" date picker (`/?date=YYYY-MM-DD`). Past days render in read-only mode with cached sub-3s loading. Dates beyond today return an honest message: *"That day has not happened yet in this demo"*.
 
 ---
 
@@ -51,7 +56,7 @@ Before starting the live demonstration, state the following foundational data fa
    - **4 physical-cause scenarios** (INC_03, INC_04, INC_06, INC_08, excluding no-effect scenarios): AC@1 = 50.0%, AC@3 = 100.0%, MRR = 0.7431, FPR = 0.0%, Stability = 100.0%.
    - Idle suppliers are honestly collapsed in the UI with the label: *"No orders placed in this period: Sri Materials Pvt Ltd, Bharat Steel Works (backup vendors)"*.
 5. **Expert Graph Allowance:** *"The expert graph allows supplier links that the simulated sourcing never used."* Cause-chain tracing dynamically restricts traversal to active supplier links verified in historical purchase orders.
-6. **Opening Position:** The 2025 run ended in an unreceived steel PO and standing backorders. On 2025-12-31, stale backorders and PO #18 were cancelled, stock counts adjusted to normal operating levels, and 3 seed POs placed in December. The live database strictly equals main Postgres up to 2025-12-20.
+6. **Opening Position & Reconciled Baseline:** The 2025 run ended in an unreceived steel PO and standing backorders. On 2025-12-31, exactly 48 stale sales orders (652 units) and PO #18 (407 units) were cancelled, opening physical inventory reconciled to 215 kg steel, 204 kg plastic, and 184 meters copper wire, and 3 seed POs placed in December. The live database strictly equals main Postgres up to 2025-12-20. Full reconciliation details are published in Method under "How the demo starts".
 
 ---
 

@@ -103,6 +103,14 @@ def capture_all():
         page.screenshot(path=str(pi_26), full_page=True)
         print(f"  Saved {pi_26}")
 
+        # 7b. Past Day View (Read-Only)
+        print("Capturing Viewer Past Day View...")
+        page.goto("http://127.0.0.1:8000/?date=2025-06-15", wait_until="domcontentloaded")
+        page.wait_for_timeout(1000)
+        p_past = FINAL_DIR / "viewer_past_day.png"
+        page.screenshot(path=str(p_past), full_page=True)
+        print(f"  Saved {p_past}")
+
         # 8. Controller Dashboard
         print("Capturing Controller Dashboard...")
         ctrl_page = context.new_page()

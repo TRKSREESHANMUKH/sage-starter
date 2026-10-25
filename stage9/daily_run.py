@@ -86,7 +86,7 @@ def validate_recipient_allowed(recipient: str) -> bool:
     return rec_clean in get_allowed_recipients()
 
 
-def get_sent_keys() -> Set[str]:
+def get_sent_keys(include_scheduled_dry: bool = False) -> Set[str]:
     """Returns set of idempotency keys already executed."""
     keys: Set[str] = set()
     if SENT_LOG_PATH.exists():
@@ -97,10 +97,14 @@ def get_sent_keys() -> Set[str]:
                     continue
                 try:
                     entry = json.loads(line)
-                    k = f"{entry.get('job')}:{entry.get('as_of')}:{entry.get('recipient')}"
-                    keys.add(k)
-                    # Also record without recipient for legacy compatibility
-                    keys.add(f"{entry.get('job')}:{entry.get('as_of')}")
+                    status = entry.get("status")
+                    mode = entry.get("mode")
+                    is_match = (status == "SUCCESS_LIVE") or (include_scheduled_dry and mode == "scheduled" and status == "SUCCESS_DRY_RUN")
+                    if is_match:
+                        k = f"{entry.get('job')}:{entry.get('as_of')}:{entry.get('recipient')}"
+                        keys.add(k)
+                        # Also record without recipient for legacy compatibility
+                        keys.add(f"{entry.get('job')}:{entry.get('as_of')}")
                 except Exception:
                     continue
     return keys
@@ -320,11 +324,21 @@ def send_prepared_report(
         log_sent_event("nightly_digest", target_as_of, recipient, "REFUSED_NOT_IN_ALLOWLIST", mode, meta.get("subject", ""), error="Not allowed")
         return False
 
+    # Determine live mode: requires both SAGE_SEND_ENABLED=true AND runtime send_mode == "live"
+    try:
+        from stage9.ops import get_runtime_config
+        cfg_mode = get_runtime_config().get("send_mode", "dry_run")
+    except Exception:
+        cfg_mode = "dry_run"
+    is_live = (os.getenv("SAGE_SEND_ENABLED", "false").lower() in ("true", "1", "yes")) and (cfg_mode == "live")
+
     # Check idempotency for scheduled sends
     key = f"nightly_digest:{target_as_of.isoformat()}:{recipient}"
-    if mode == "scheduled" and key in get_sent_keys() and not force:
-        logger.info("Idempotency: Report for %s already sent to %s. Skipping.", target_as_of.isoformat(), recipient)
-        return True
+    if mode == "scheduled" and not force:
+        sent_keys = get_sent_keys(include_scheduled_dry=(not is_live))
+        if key in sent_keys:
+            logger.info("Idempotency: Report for %s already sent to %s. Skipping.", target_as_of.isoformat(), recipient)
+            return True
 
     # Read prepared report files
     with open(html_file, "r", encoding="utf-8") as f:

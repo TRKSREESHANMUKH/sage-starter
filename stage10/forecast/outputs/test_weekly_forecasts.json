@@ -1,0 +1,252 @@
+{
+  "2025-07-06": {
+    "origin_date": "2025-07-06",
+    "horizon": "2025-07-07 to 2025-07-13",
+    "expected_new_orders": 56.0,
+    "range_low": 30.8,
+    "range_high": 84.0,
+    "due_known": 32,
+    "actual_realized": 34,
+    "error_units": 22.0
+  },
+  "2025-07-13": {
+    "origin_date": "2025-07-13",
+    "horizon": "2025-07-14 to 2025-07-20",
+    "expected_new_orders": 57.2,
+    "range_low": 31.5,
+    "range_high": 85.9,
+    "due_known": 22,
+    "actual_realized": 60,
+    "error_units": -2.8
+  },
+  "2025-07-20": {
+    "origin_date": "2025-07-20",
+    "horizon": "2025-07-21 to 2025-07-27",
+    "expected_new_orders": 53.5,
+    "range_low": 29.4,
+    "range_high": 80.2,
+    "due_known": 42,
+    "actual_realized": 13,
+    "error_units": 40.5
+  },
+  "2025-07-27": {
+    "origin_date": "2025-07-27",
+    "horizon": "2025-07-28 to 2025-08-03",
+    "expected_new_orders": 33.2,
+    "range_low": 18.3,
+    "range_high": 49.9,
+    "due_known": 7,
+    "actual_realized": 20,
+    "error_units": 13.2
+  },
+  "2025-08-03": {
+    "origin_date": "2025-08-03",
+    "horizon": "2025-08-04 to 2025-08-10",
+    "expected_new_orders": 31.8,
+    "range_low": 17.5,
+    "range_high": 47.6,
+    "due_known": 0,
+    "actual_realized": 20,
+    "error_units": 11.8
+  },
+  "2025-08-10": {
+    "origin_date": "2025-08-10",
+    "horizon": "2025-08-11 to 2025-08-17",
+    "expected_new_orders": 28.2,
+    "range_low": 15.5,
+    "range_high": 42.4,
+    "due_known": 9,
+    "actual_realized": 54,
+    "error_units": -25.8
+  },
+  "2025-08-17": {
+    "origin_date": "2025-08-17",
+    "horizon": "2025-08-18 to 2025-08-24",
+    "expected_new_orders": 26.8,
+    "range_low": 14.7,
+    "range_high": 40.1,
+    "due_known": 37,
+    "actual_realized": 47,
+    "error_units": -20.2
+  },
+  "2025-08-24": {
+    "origin_date": "2025-08-24",
+    "horizon": "2025-08-25 to 2025-08-31",
+    "expected_new_orders": 35.2,
+    "range_low": 19.4,
+    "range_high": 52.9,
+    "due_known": 36,
+    "actual_realized": 27,
+    "error_units": 8.2
+  },
+  "2025-08-31": {
+    "origin_date": "2025-08-31",
+    "horizon": "2025-09-01 to 2025-09-07",
+    "expected_new_orders": 37.0,
+    "range_low": 20.4,
+    "range_high": 55.5,
+    "due_known": 0,
+    "actual_realized": 55,
+    "error_units": -18.0
+  },
+  "2025-09-07": {
+    "origin_date": "2025-09-07",
+    "horizon": "2025-09-08 to 2025-09-14",
+    "expected_new_orders": 45.8,
+    "range_low": 25.2,
+    "range_high": 68.6,
+    "due_known": 50,
+    "actual_realized": 30,
+    "error_units": 15.8
+  },
+  "2025-09-14": {
+    "origin_date": "2025-09-14",
+    "horizon": "2025-09-15 to 2025-09-21",
+    "expected_new_orders": 39.8,
+    "range_low": 21.9,
+    "range_high": 59.6,
+    "due_known": 16,
+    "actual_realized": 50,
+    "error_units": -10.2
+  },
+  "2025-09-21": {
+    "origin_date": "2025-09-21",
+    "horizon": "2025-09-22 to 2025-09-28",
+    "expected_new_orders": 40.5,
+    "range_low": 22.3,
+    "range_high": 60.8,
+    "due_known": 30,
+    "actual_realized": 0,
+    "error_units": 40.5
+  },
+  "2025-09-28": {
+    "origin_date": "2025-09-28",
+    "horizon": "2025-09-29 to 2025-10-05",
+    "expected_new_orders": 33.8,
+    "range_low": 18.6,
+    "range_high": 50.6,
+    "due_known": 0,
+    "actual_realized": 118,
+    "error_units": -84.2
+  },
+  "2025-10-05": {
+    "origin_date": "2025-10-05",
+    "horizon": "2025-10-06 to 2025-10-12",
+    "expected_new_orders": 49.5,
+    "range_low": 27.2,
+    "range_high": 74.2,
+    "due_known": 53,
+    "actual_realized": 90,
+    "error_units": -40.5
+  },
+  "2025-10-12": {
+    "origin_date": "2025-10-12",
+    "horizon": "2025-10-13 to 2025-10-19",
+    "expected_new_orders": 64.5,
+    "range_low": 35.5,
+    "range_high": 96.8,
+    "due_known": 60,
+    "actual_realized": 0,
+    "error_units": 64.5
+  },
+  "2025-10-19": {
+    "origin_date": "2025-10-19",
+    "horizon": "2025-10-20 to 2025-10-26",
+    "expected_new_orders": 52.0,
+    "range_low": 28.6,
+    "range_high": 78.0,
+    "due_known": 0,
+    "actual_realized": 68,
+    "error_units": -16.0
+  },
+  "2025-10-26": {
+    "origin_date": "2025-10-26",
+    "horizon": "2025-10-27 to 2025-11-02",
+    "expected_new_orders": 69.0,
+    "range_low": 38.0,
+    "range_high": 103.5,
+    "due_known": 68,
+    "actual_realized": 26,
+    "error_units": 43.0
+  },
+  "2025-11-02": {
+    "origin_date": "2025-11-02",
+    "horizon": "2025-11-03 to 2025-11-09",
+    "expected_new_orders": 46.0,
+    "range_low": 25.3,
+    "range_high": 69.0,
+    "due_known": 18,
+    "actual_realized": 35,
+    "error_units": 11.0
+  },
+  "2025-11-09": {
+    "origin_date": "2025-11-09",
+    "horizon": "2025-11-10 to 2025-11-16",
+    "expected_new_orders": 32.2,
+    "range_low": 17.7,
+    "range_high": 48.4,
+    "due_known": 43,
+    "actual_realized": 39,
+    "error_units": -6.8
+  },
+  "2025-11-16": {
+    "origin_date": "2025-11-16",
+    "horizon": "2025-11-17 to 2025-11-23",
+    "expected_new_orders": 42.0,
+    "range_low": 23.1,
+    "range_high": 63.0,
+    "due_known": 13,
+    "actual_realized": 49,
+    "error_units": -7.0
+  },
+  "2025-11-23": {
+    "origin_date": "2025-11-23",
+    "horizon": "2025-11-24 to 2025-11-30",
+    "expected_new_orders": 37.2,
+    "range_low": 20.5,
+    "range_high": 55.9,
+    "due_known": 59,
+    "actual_realized": 125,
+    "error_units": -87.8
+  },
+  "2025-11-30": {
+    "origin_date": "2025-11-30",
+    "horizon": "2025-12-01 to 2025-12-07",
+    "expected_new_orders": 62.0,
+    "range_low": 34.1,
+    "range_high": 93.0,
+    "due_known": 97,
+    "actual_realized": 10,
+    "error_units": 52.0
+  },
+  "2025-12-07": {
+    "origin_date": "2025-12-07",
+    "horizon": "2025-12-08 to 2025-12-14",
+    "expected_new_orders": 55.8,
+    "range_low": 30.7,
+    "range_high": 83.6,
+    "due_known": 10,
+    "actual_realized": 49,
+    "error_units": 6.8
+  },
+  "2025-12-14": {
+    "origin_date": "2025-12-14",
+    "horizon": "2025-12-15 to 2025-12-21",
+    "expected_new_orders": 58.2,
+    "range_low": 32.0,
+    "range_high": 87.4,
+    "due_known": 36,
+    "actual_realized": 29,
+    "error_units": 29.2
+  },
+  "2025-12-21": {
+    "origin_date": "2025-12-21",
+    "horizon": "2025-12-22 to 2025-12-28",
+    "expected_new_orders": 53.2,
+    "range_low": 29.3,
+    "range_high": 79.9,
+    "due_known": 29,
+    "actual_realized": 153,
+    "error_units": -99.8
+  }
+}

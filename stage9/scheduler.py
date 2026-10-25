@@ -83,10 +83,11 @@ def get_sent_keys() -> Set[str]:
                     continue
                 try:
                     entry = json.loads(line)
-                    k = f"{entry.get('job')}:{entry.get('as_of')}"
-                    keys.add(k)
-                    if "extra_key" in entry:
-                        keys.add(entry["extra_key"])
+                    if entry.get("status") == "SUCCESS_LIVE":
+                        k = f"{entry.get('job')}:{entry.get('as_of')}"
+                        keys.add(k)
+                        if "extra_key" in entry:
+                            keys.add(entry["extra_key"])
                 except Exception:
                     continue
     return keys
