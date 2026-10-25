@@ -39,9 +39,13 @@ source venv/bin/activate
    * On the Controller Dashboard under **Demo Feed**, click **"Feed next day"** once per day.
    * Advances current day sequentially (`2026-01-01` $\rightarrow$ `2026-01-10`).
    * The Executive Viewer reflects each day's new briefing within 5 seconds.
-2. **Switching to LIVE Email Mode:**
+2. **Switching to LIVE Email Mode & Nightly Dispatch (19:45 / 20:00 IST):**
    * In the Controller modal, switching to LIVE mode requires typing the exact word `LIVE`.
    * On restart, SAGE **always resets to DRY-RUN mode** automatically.
+   * **Automatic Daily Email Requirement:** Automatic email delivery requires:
+     1. `./run_sage.sh` running in terminal.
+     2. Laptop awake and plugged into power between **19:45 IST (prepare)** and **20:00 IST (send)**. (`run_sage.sh` automatically engages `caffeinate -i` on macOS to prevent idle sleep).
+     3. Mode explicitly switched to **LIVE** in the controller by typing `LIVE` (otherwise report dispatches in Dry-run mode without reaching Gmail).
 3. **Dispatching a Real Email (CLI Command):**
    * Automated tests and `verify_all.sh` **never send live email**.
    * To dispatch a real live email to the verified recipient:

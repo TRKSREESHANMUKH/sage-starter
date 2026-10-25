@@ -218,3 +218,12 @@
 {"timestamp": "2026-10-24T10:47:45.734639+00:00", "pack_name": "2026-01-08", "pack_date": "2026-01-08", "rows_ingested": 32, "status": "SUCCESS"}
 {"timestamp": "2026-10-24T10:47:59.920574+00:00", "pack_name": "2026-01-09", "pack_date": "2026-01-09", "rows_ingested": 24, "status": "SUCCESS"}
 {"timestamp": "2026-10-24T10:48:08.984670+00:00", "pack_name": "2026-01-10", "pack_date": "2026-01-10", "rows_ingested": 24, "status": "SUCCESS"}
+{"timestamp": "2026-10-24T16:51:53.420005+00:00", "pack_name": "2026-01-01", "pack_date": "2026-01-01", "rows_ingested": 18, "status": "SUCCESS"}
+{"timestamp": "2026-10-24T16:51:55.847958+00:00", "pack_name": "2026-01-02", "pack_date": "2026-01-02", "rows_ingested": 26, "status": "SUCCESS"}
+{"timestamp": "2026-10-24T16:52:00.046694+00:00", "pack_name": "2026-01-03", "pack_date": "2026-01-03", "rows_ingested": 27, "status": "SUCCESS"}
+{"timestamp": "2026-10-24T16:52:03.601268+00:00", "pack_name": "2026-01-04", "pack_date": "2026-01-04", "rows_ingested": 27, "status": "SUCCESS"}
+{"timestamp": "2026-10-25T06:56:30.286211+00:00", "pack_name": "2026-01-05", "pack_date": "2026-01-05", "rows_ingested": 24, "status": "SUCCESS"}
+{"timestamp": "2026-10-25T06:58:01.825242+00:00", "pack_name": "2026-01-06", "pack_date": "2026-01-06", "rows_ingested": 29, "status": "SUCCESS"}
+{"timestamp": "2026-10-25T06:59:36.770240+00:00", "pack_name": "2026-01-07", "pack_date": "2026-01-07", "rows_ingested": 17, "status": "SUCCESS"}
+{"timestamp": "2026-10-25T07:01:27.777853+00:00", "pack_name": "2026-01-08", "pack_date": "2026-01-08", "rows_ingested": 32, "status": "SUCCESS"}
+{"timestamp": "2026-10-25T07:05:48.923021+00:00", "pack_name": "2026-01-09", "pack_date": "2026-01-09", "rows_ingested": 24, "status": "SUCCESS"}

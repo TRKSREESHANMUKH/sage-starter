@@ -205,10 +205,11 @@ print('PASS: Default tokens check (0 occurrences outside backups).')
 
 # 6. MAIL SAFETY & MOCKED SMTP
 echo ""
-echo ">>> STEP 6: Verifying Mail Safety (test_mail_safety.py & send_check dry-run)..."
+echo ">>> STEP 6: Verifying Mail Safety (test_mail_safety.py & send_check dry-run & scheduler proof)..."
 $PYTHON stage9/test_mail_safety.py
 $PYTHON -m stage9.send_check
-echo "PASS: Mail safety verified."
+$PYTHON stage10/audit/test_scheduler_proof.py
+echo "PASS: Mail safety & scheduler proof verified."
 
 # 7. RECONCILIATION TESTS
 echo ""

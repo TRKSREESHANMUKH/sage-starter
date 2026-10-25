@@ -1,12 +1,37 @@
-# SAGE Stage 9 Final — HANDOFF
+# SAGE Combined Final — HANDOFF
 
-## Status: COMPLETE — "THE LAST PROMPT" (Phases A through H Fully Executed)
+## Status: IN PROGRESS — Phase 1 Complete, Entering Phase 2
 
-Stages 1–8 strictly frozen. Main PostgreSQL database protected read-only (`SET default_transaction_read_only = on`). All figures traced to truth layer. No live email sent. All 150 automated verification checks pass with 0 failures (exit 0).
+Stages 1–8 strictly frozen. Main PostgreSQL database protected read-only (`SET default_transaction_read_only = on`). All figures traced to truth layer. No live email sent.
 
 ---
 
-## The Last Prompt — Execution Progress
+## Combined Final Prompt — Execution Progress
+- [x] **Pre-execution Backup**: Created `backups/stage9_pre_forecast/`
+- [x] **Phase 1 — Close Evidence Gaps (Raw Output Verification)**:
+  - 1. Mocked-SMTP tests: verified persisted Live + no `--live` = 0 calls; `--live` = 1 call; idempotency on same date/recipient.
+  - 2. Insights tile table (live HTML vs truth) for 2025-12-31 (78.3%) and 2026-01-09 (76.2%), 48 cancelled orders bucket.
+  - 3. Manifest audit: 8 vs 48 orders explained, notice text generated, SO #223 unfulfilled on 2025-12-31 (630 vs 652 units / 47 vs 48 orders) documented with unit tests.
+  - 4. Frozen baseline: `stage9/baseline_hashes.json` git provenance confirmed, all 55 source files match baseline, Stage 7 & 8 hashes match byte-for-byte.
+  - 5. Prereg history: v1/v2/v3 expected tiers, 3 ten-day tables, v1 scoring tally, Day 5 capacity alert verified in Top 3, daily material stock levels & active PO schedules.
+  - 6. Verbatim executive summaries: Day 1, 3, 7, 9 with word counts and fact mappings.
+  - 7. `verify_all.sh`: per-suite breakdown table strictly summing to 186 items across 14 steps.
+  - 8. Screenshots & tokens hygiene: zero forbidden default tokens outside backups, `git ls-files` sensitive check clean (`.env.example` only).
+  - 9. Scheduler proof: temporary schedule (+1m prepare, +2m send), scheduled prepare and dry-run send entries logged, controller restart between prepare and send handled idempotently, real schedule restored (19:45/20:00), instructions added to `OWNER_CHECKLIST.md`.
+- [ ] **Phase 2 — Report Parameters**:
+  - Document parameter rules & thresholds in `stage10/REPORT_PARAMETERS.md`
+  - Add "How today's report is built" section to Method page
+- [ ] **Phase 3 — Next-Day Forecast**:
+  - Pre-register in `stage10/prereg_forecast.md` before execution
+  - Models a, b, c, d for T1 and T2, walk-forward evaluation, shortage risk rule, fixed demo model
+- [ ] **Phase 4 — Seasonality & Lag Checks**:
+  - False alarm check, stress test (+40% ramp, +25% Friday bump), lag analysis
+- [ ] **Phase 5 — Product: Tomorrow Outlook Block**:
+  - `outlook.enabled: true` in `stage9/config/rules.yaml`
+  - Dynamic render in `web/templates/home.html` below numbers strip, unit tests in `stage10/test_outlook.py`
+- [ ] **Phase 6 — Documents, Final Verification, & Final Commit**:
+  - Write `stage10/FORECAST_REPORT.md`, update all docs, regenerate screenshots, clean `./verify_all.sh`, update `stage9/FROZEN.json`, commit `stage10 forecast final`
+
 - [x] **Pre-execution Backup**: Created `backups/stage9_pre_last/`
 - [x] **Frozen Hashes Verified**: Stage 7 (`acd199...`) and Stage 8 (`983a4e...`) SHA256 match perfectly
 - [x] **Phase A — Mail Safety**:

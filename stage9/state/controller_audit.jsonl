@@ -593,3 +593,76 @@
 {"timestamp": "2026-10-24T16:17:59.933839+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-09", "rows_loaded": null}, "result": "SUCCESS"}
 {"timestamp": "2026-10-24T16:18:08.993711+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-10", "rows_loaded": null}, "result": "SUCCESS"}
 {"timestamp": "2026-10-24T16:18:29.681059+05:30", "user": "verify_all", "action": "reset_demo", "parameters": {"target_date": "2025-12-31", "elapsed_seconds": 1.54}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T22:06:00.819809+05:30", "user": "run_sage", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T22:06:00.834802+05:30", "user": "run_sage", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T22:06:07.754608+05:30", "user": "system_startup", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T22:06:07.755776+05:30", "user": "system_startup", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T22:19:45.281294+05:30", "user": "operator", "action": "login_attempt", "parameters": {"ip": "127.0.0.1"}, "result": "FAILED"}
+{"timestamp": "2026-10-24T22:20:19.835700+05:30", "user": "operator", "action": "login", "parameters": {"ip": "127.0.0.1"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T22:21:53.450057+05:30", "user": "controller", "action": "feed_pack", "parameters": {"pack_date": "2026-01-01", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T22:21:55.861129+05:30", "user": "controller", "action": "feed_pack", "parameters": {"pack_date": "2026-01-02", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T22:22:00.067319+05:30", "user": "controller", "action": "feed_pack", "parameters": {"pack_date": "2026-01-03", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T22:22:03.612107+05:30", "user": "controller", "action": "feed_pack", "parameters": {"pack_date": "2026-01-04", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T22:22:23.594278+05:30", "user": "controller", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T22:22:23.594975+05:30", "user": "controller", "action": "set_send_mode", "parameters": {"send_mode": "live"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T22:22:35.843252+05:30", "user": "controller", "action": "send_report_now", "parameters": {"as_of": "2026-01-04", "recipient": "sreeshanmukhtrk@gmail.com", "mode": "manual", "force_live": true, "force_dry_run": false}, "result": "SUCCESS_LIVE"}
+{"timestamp": "2026-10-24T23:02:26.962589+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T23:02:26.965676+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T23:03:03.599294+05:30", "user": "test", "action": "ensure_report", "parameters": {"as_of": "2025-12-31", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T23:03:04.823961+05:30", "user": "test", "action": "send_report_now", "parameters": {"as_of": "2025-12-31", "recipient": "sreeshanmukhtrk@gmail.com", "mode": "manual", "force_live": true, "force_dry_run": false}, "result": "SUCCESS_LIVE"}
+{"timestamp": "2026-10-24T23:03:04.830895+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T23:03:04.850710+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T23:03:04.856123+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T23:03:05.073242+05:30", "user": "test", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T23:03:05.073726+05:30", "user": "test", "action": "set_send_mode", "parameters": {"send_mode": "live"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T23:03:08.817320+05:30", "user": "test", "action": "send_report_now", "parameters": {"as_of": "2025-12-31", "recipient": "sreeshanmukhtrk@gmail.com", "mode": "manual", "force_live": false, "force_dry_run": true}, "result": "SUCCESS_DRY_RUN"}
+{"timestamp": "2026-10-24T23:03:08.820961+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T23:03:08.853489+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T23:03:08.854078+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T23:03:08.865594+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T23:03:08.877440+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T23:03:08.877924+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-24T23:03:20.718346+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:28:39.831383+05:30", "user": "simulated_restart", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:28:39.833033+05:30", "user": "simulated_restart", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:29:56.111115+05:30", "user": "simulated_restart", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:29:56.112579+05:30", "user": "simulated_restart", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:31:52.946081+05:30", "user": "simulated_restart", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:31:52.955385+05:30", "user": "simulated_restart", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:34:09.742236+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:34:09.743072+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:34:25.777642+05:30", "user": "test", "action": "ensure_report", "parameters": {"as_of": "2025-12-31", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:34:26.808986+05:30", "user": "test", "action": "send_report_now", "parameters": {"as_of": "2025-12-31", "recipient": "sreeshanmukhtrk@gmail.com", "mode": "manual", "force_live": true, "force_dry_run": false}, "result": "SUCCESS_LIVE"}
+{"timestamp": "2026-10-25T12:34:26.813883+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:34:26.830070+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:34:26.830526+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:34:26.833976+05:30", "user": "test", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:34:26.834243+05:30", "user": "test", "action": "set_send_mode", "parameters": {"send_mode": "live"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:34:27.940758+05:30", "user": "test", "action": "send_report_now", "parameters": {"as_of": "2025-12-31", "recipient": "sreeshanmukhtrk@gmail.com", "mode": "manual", "force_live": false, "force_dry_run": true}, "result": "SUCCESS_DRY_RUN"}
+{"timestamp": "2026-10-25T12:34:27.943926+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:34:27.953545+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:34:27.954015+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:34:27.972597+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:34:27.985393+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:34:27.985832+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:34:38.116700+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:35:21.632623+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:35:21.636940+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:35:22.693745+05:30", "user": "test", "action": "send_report_now", "parameters": {"as_of": "2025-12-31", "recipient": "sreeshanmukhtrk@gmail.com", "mode": "manual", "force_live": true, "force_dry_run": false}, "result": "SUCCESS_LIVE"}
+{"timestamp": "2026-10-25T12:35:22.697615+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:35:22.721527+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:35:22.722220+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:35:22.726992+05:30", "user": "test", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:35:22.727815+05:30", "user": "test", "action": "set_send_mode", "parameters": {"send_mode": "live"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:35:23.891854+05:30", "user": "test", "action": "send_report_now", "parameters": {"as_of": "2025-12-31", "recipient": "sreeshanmukhtrk@gmail.com", "mode": "manual", "force_live": false, "force_dry_run": true}, "result": "SUCCESS_DRY_RUN"}
+{"timestamp": "2026-10-25T12:35:23.893981+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:35:23.903994+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:35:23.904523+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:35:23.912406+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:35:23.922717+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:35:23.923246+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:35:34.681669+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:36:18.056499+05:30", "user": "simulated_restart", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:36:18.058040+05:30", "user": "simulated_restart", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:37:24.484297+05:30", "user": "operator", "action": "ensure_report", "parameters": {"as_of": "2025-12-31", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-10-25T12:37:24.488337+05:30", "user": "operator", "action": "reset_demo", "parameters": {"target_date": "2025-12-31", "elapsed_seconds": 32.949}, "result": "SUCCESS"}

@@ -349,6 +349,14 @@ def send_prepared_report(
         late_note = f"\nSent late: {sent_time_str}\n"
         text_body = late_note + text_body
 
+    # Determine live mode: requires both SAGE_SEND_ENABLED=true AND runtime send_mode == "live"
+    try:
+        from stage9.ops import get_runtime_config
+        cfg_mode = get_runtime_config().get("send_mode", "dry_run")
+    except Exception:
+        cfg_mode = "dry_run"
+    is_live = (os.getenv("SAGE_SEND_ENABLED", "false").lower() in ("true", "1", "yes")) and (cfg_mode == "live")
+
     # Fast dispatch (<10s)
     send_start = time.time()
     success = _dispatch_mime_email(
@@ -357,11 +365,12 @@ def send_prepared_report(
         text_body=text_body,
         recipient=recipient,
         pdf_bytes=pdf_bytes,
-        pdf_filename=f"SAGE_Daily_Brief_{target_as_of.isoformat()}.pdf"
+        pdf_filename=f"SAGE_Daily_Brief_{target_as_of.isoformat()}.pdf",
+        force_live=is_live
     )
     send_duration = time.time() - send_start
 
-    status_str = "SUCCESS" if success else "FAILED_SMTP"
+    status_str = ("SUCCESS_LIVE" if is_live else "SUCCESS_DRY_RUN") if success else "FAILED_SMTP"
     log_sent_event("nightly_digest", target_as_of, recipient, status_str, mode, subject)
 
     logger.info("Send step completed in %.3fs for %s (status: %s)", send_duration, recipient, status_str)
@@ -383,13 +392,22 @@ def _dispatch_mime_email(
     text_body: str,
     recipient: str,
     pdf_bytes: Optional[bytes],
-    pdf_filename: str
+    pdf_filename: str,
+    force_live: Optional[bool] = None
 ) -> bool:
     """
     Assembles MIME structure with CID sparkline and PDF attachment, then sends via SMTP.
     Returns True on success.
     """
-    is_live = os.getenv("SAGE_SEND_ENABLED", "false").lower() in ("true", "1", "yes")
+    if force_live is not None:
+        is_live = force_live
+    else:
+        try:
+            from stage9.ops import get_runtime_config
+            cfg_mode = get_runtime_config().get("send_mode", "dry_run")
+        except Exception:
+            cfg_mode = "dry_run"
+        is_live = (os.getenv("SAGE_SEND_ENABLED", "false").lower() in ("true", "1", "yes")) and (cfg_mode == "live")
 
     host = os.getenv("SMTP_HOST", "smtp.gmail.com")
     port = int(os.getenv("SMTP_PORT", "587"))
@@ -590,6 +608,15 @@ def main() -> None:
 
     if args.prepare:
         meta = prepare_daily_run(as_of=target_d)
+        target_as_of = date.fromisoformat(meta["as_of"])
+        log_sent_event(
+            job="daily_prepare",
+            as_of=target_as_of,
+            recipient="system@sage-operations.local",
+            status="SUCCESS_PREPARED",
+            mode="scheduled",
+            subject=meta.get("subject", f"Prepared report for {target_as_of.isoformat()}")
+        )
         print(f"Prepared report for {meta['as_of']}: status={meta['status']}, pdf_pages={meta.get('pdf_pages')}")
         sys.exit(0)
 
