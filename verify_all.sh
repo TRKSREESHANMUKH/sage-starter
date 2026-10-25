@@ -217,11 +217,12 @@ echo ">>> STEP 7: Running Reconciliation Suite across dates (test_reconcile.py).
 $PYTHON stage9/test_reconcile.py
 echo "PASS: Multi-date reconciliation passed."
 
-# 8. DETERMINISTIC SCORING UNIT TESTS
+# 8. DETERMINISTIC SCORING & OUTLOOK UNIT TESTS
 echo ""
-echo ">>> STEP 8: Running Scoring Determinism Unit Tests (test_score.py)..."
+echo ">>> STEP 8: Running Scoring Determinism & Tomorrow Outlook Unit Tests (test_score.py & test_outlook.py)..."
 $PYTHON stage10/test_score.py
-echo "PASS: Scoring determinism passed."
+$PYTHON -m unittest stage10/test_outlook.py
+echo "PASS: Scoring determinism & tomorrow outlook unit tests passed."
 
 # 9. STAGE 9 COMPREHENSIVE TEST SUITE
 echo ""

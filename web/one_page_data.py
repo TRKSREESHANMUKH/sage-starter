@@ -932,6 +932,13 @@ def build_one_page_context(selected_date_str: Optional[str] = None) -> Dict[str,
 
         is_calm = len(issues) == 0
 
+        outlook_data = None
+        try:
+            from stage10.forecast.outlook import get_tomorrow_outlook
+            outlook_data = get_tomorrow_outlook(cur_d, db_session=db)
+        except Exception:
+            outlook_data = None
+
         return {
             "selected_date": target_date_str,
             "formatted_date": cur_d.strftime("%A, %-d %B %Y"),
@@ -941,6 +948,7 @@ def build_one_page_context(selected_date_str: Optional[str] = None) -> Dict[str,
             "numbers_strip": numbers_strip,
             "issues": issues,
             "is_calm": is_calm,
+            "outlook": outlook_data,
             "focus_items": focus_items[:5],
             "supplier_watch": supplier_watch_items,
             "idle_suppliers_text": idle_suppliers_text,

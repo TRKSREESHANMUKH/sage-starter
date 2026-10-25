@@ -1,6 +1,10 @@
 # stage9/config/rules.yaml
 # SAGE Fixed Business & Severity Rules (Pre-registered, No post-hoc tuning)
 
+# 0. Feature Flags
+outlook:
+  enabled: true
+
 # 1. Material Inventory Rules
 materials:
   safety_stock:

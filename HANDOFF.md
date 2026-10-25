@@ -33,9 +33,12 @@ Stages 1–8 strictly frozen. Main PostgreSQL database protected read-only (`SET
   - False-alarm check: 215 calm days in 2025 evaluated; 0.0% customer backlog false alarms, 1.86% stockout false alarms. Demo Day 4 and Day 9 control behaviors analyzed.
   - Seasonality stress test (+40% Q4 ramp, +25% Friday bump on isolated DataFrame copy): confirmed 90/92 Q4 days (97.8%) preserved causal integrity without phantom attributions.
   - Physical response lag analysis: supplier delay to safety breach median is 5.5 days (within 7-day window); stockout to customer backlog is 0 days (immediate same-day propagation).
-- [ ] **Phase 5 — Product: Tomorrow Outlook Block**:
-  - `outlook.enabled: true` in `stage9/config/rules.yaml`
-  - Dynamic render in `web/templates/home.html` below numbers strip, unit tests in `stage10/test_outlook.py`
+- [x] **Phase 5 — Product: Tomorrow Outlook Block**:
+  - Added feature flag `outlook.enabled: true` in `stage9/config/rules.yaml`.
+  - Implemented dynamic forecast engine in `stage10/forecast/outlook.py` (zero look-ahead, memory-cached per as_of date).
+  - Integrated into `web/one_page_data.py` and rendered directly below numbers strip in `web/templates/home.html` (3 columns: New sales expected, Orders due tomorrow, Shortage risk badge, verbatim Rule 2 framing).
+  - Implemented unit test suite in `stage10/test_outlook.py` (5/5 tests passed: flag toggle, no look-ahead, cache integrity, Rule 2 framing, sub-3s render).
+  - Updated `stage9/smoke_ui.py` and `verify_all.sh` (Step 8) to assert Tomorrow Outlook card rendering.
 - [ ] **Phase 6 — Documents, Final Verification, & Final Commit**:
   - Write `stage10/FORECAST_REPORT.md`, update all docs, regenerate screenshots, clean `./verify_all.sh`, update `stage9/FROZEN.json`, commit `stage10 forecast final`
 
