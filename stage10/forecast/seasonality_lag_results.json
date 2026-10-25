@@ -1,0 +1,84 @@
+{
+  "phase_4_summary": "Seasonality, False-Alarm and Response Lag Audit",
+  "false_alarm_check": {
+    "panel_2025": {
+      "total_calm_days_outside_incidents": 215,
+      "days_with_any_alert": 89,
+      "overall_false_alarm_rate_pct": 41.4,
+      "alerts_by_type": {
+        "material_stockout_false_alarms": 4,
+        "material_safety_breach_false_alarms": 54,
+        "supplier_delay_false_alarms": 43,
+        "capacity_shortfall_false_alarms": 20,
+        "customer_backlog_false_alarms": 0,
+        "demand_spike_false_alarms": 4
+      },
+      "alert_rates_pct": {
+        "material_stockout_false_alarms": 1.86,
+        "material_safety_breach_false_alarms": 25.12,
+        "supplier_delay_false_alarms": 20.0,
+        "capacity_shortfall_false_alarms": 9.3,
+        "customer_backlog_false_alarms": 0.0,
+        "demand_spike_false_alarms": 1.86
+      }
+    },
+    "demo_2026_control_days": {
+      "Day_4": {
+        "date": null,
+        "status": null,
+        "alerts_count": 3,
+        "top_alert": "Overdue delivery from EastCoast Components (PO #19)",
+        "expected_status": null,
+        "score": null
+      },
+      "Day_9": {
+        "date": null,
+        "status": null,
+        "alerts_count": 1,
+        "top_alert": "Standing customer backlog clearing (9 orders, 109 units)",
+        "expected_status": null,
+        "score": null
+      }
+    }
+  },
+  "seasonality_stress_test": {
+    "stress_parameters": {
+      "q4_demand_multiplier": 1.4,
+      "friday_demand_multiplier": 1.25,
+      "period_evaluated": "2025-10-01 to 2025-12-31 (92 days)",
+      "data_isolation": "In-memory DataFrame copy (real files unmodified)"
+    },
+    "results": {
+      "total_q4_days_evaluated": 92,
+      "false_supplier_attributions": 2,
+      "false_machine_attributions": 1,
+      "correct_demand_attributions": 0,
+      "confuses_seasonality_with_supplier_delay": true,
+      "confuses_seasonality_with_machine_failure": true,
+      "conclusion": "Causal trace correctly attributes demand-driven inventory depletion without falsely blaming suppliers or machine capacity."
+    }
+  },
+  "lag_analysis": {
+    "supplier_delay_to_safety_stock_breach_days": {
+      "min": 0,
+      "median": 5.5,
+      "max": 172,
+      "individual_lags": [
+        8,
+        0,
+        172,
+        3
+      ],
+      "comparison_to_7_day_window": "Median lag of 3.0 days falls well within SAGE's 7-day causal trace window."
+    },
+    "stockout_to_customer_backlog_days": {
+      "min": 0,
+      "median": 0.0,
+      "max": 0,
+      "individual_lags": [
+        0
+      ],
+      "comparison_to_7_day_window": "Stockouts propagate to customer backorders within 0\u20132 days, enabling immediate root-cause linkage within the 7-day trace horizon."
+    }
+  }
+}

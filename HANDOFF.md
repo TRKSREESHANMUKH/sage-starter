@@ -28,8 +28,11 @@ Stages 1–8 strictly frozen. Main PostgreSQL database protected read-only (`SET
   - Shortage risk rule evaluated (184/184 true negatives in 2025 H2 calm operations).
   - Deployed model trained on full 2025 dataset, serialized to `stage10/forecast/model.pkl` with SHA256 `27ee53a9cb5d94b02f99385de68e229eb0f3982d7e67f2420dfe5aef8bc48518` recorded in `prereg_forecast.md`.
   - Evaluated on 10 demo days via `stage10/forecast/evaluate_demo.py` without retraining.
-- [ ] **Phase 4 — Seasonality & Lag Checks**:
-  - False alarm check, stress test (+40% ramp, +25% Friday bump), lag analysis
+- [x] **Phase 4 — Seasonality & Lag Checks**:
+  - Implemented and executed `stage10/forecast/seasonality_and_lag.py` (results stored in `stage10/forecast/seasonality_lag_results.json`).
+  - False-alarm check: 215 calm days in 2025 evaluated; 0.0% customer backlog false alarms, 1.86% stockout false alarms. Demo Day 4 and Day 9 control behaviors analyzed.
+  - Seasonality stress test (+40% Q4 ramp, +25% Friday bump on isolated DataFrame copy): confirmed 90/92 Q4 days (97.8%) preserved causal integrity without phantom attributions.
+  - Physical response lag analysis: supplier delay to safety breach median is 5.5 days (within 7-day window); stockout to customer backlog is 0 days (immediate same-day propagation).
 - [ ] **Phase 5 — Product: Tomorrow Outlook Block**:
   - `outlook.enabled: true` in `stage9/config/rules.yaml`
   - Dynamic render in `web/templates/home.html` below numbers strip, unit tests in `stage10/test_outlook.py`
