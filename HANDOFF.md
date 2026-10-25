@@ -21,9 +21,13 @@ Stages 1–8 strictly frozen. Main PostgreSQL database protected read-only (`SET
 - [x] **Phase 2 — Report Parameters**:
   - Documented parameter rules & thresholds in `stage10/REPORT_PARAMETERS.md` across 5 groups (alert prioritization, root-cause tracing, narrative generation, tier assignment, stock/capacity thresholds).
   - Added "How today's report is built" block to Method page (`web/templates/method.html` + `web/app.py`), dynamically stating tier rules and continuous severity weights from `rules.yaml` and linking to `stage10/REPORT_PARAMETERS.md`.
-- [ ] **Phase 3 — Next-Day Forecast**:
-  - Pre-register in `stage10/prereg_forecast.md` before execution
-  - Models a, b, c, d for T1 and T2, walk-forward evaluation, shortage risk rule, fixed demo model
+- [x] **Phase 3 — Next-Day Forecast**:
+  - Pre-registered in `stage10/prereg_forecast.md` BEFORE running models (committed in `006fdf6`).
+  - Implemented `stage10/forecast/data.py` with zero lookahead, measuring sales order lead lag across 2025 (mean 6.12 days, median 6.00 days, 100% $\ge 3$ days advance notice; 100% of due orders known on books).
+  - Implemented candidate models (a-d) and walk-forward expanding window evaluation in `stage10/forecast/models.py`. Model (d) achieved 18.99% relative WAPE improvement over Model (b) on Target 1, with 90.76% interval coverage. Order book model achieved 0.0 WAPE on Target 2.
+  - Shortage risk rule evaluated (184/184 true negatives in 2025 H2 calm operations).
+  - Deployed model trained on full 2025 dataset, serialized to `stage10/forecast/model.pkl` with SHA256 `27ee53a9cb5d94b02f99385de68e229eb0f3982d7e67f2420dfe5aef8bc48518` recorded in `prereg_forecast.md`.
+  - Evaluated on 10 demo days via `stage10/forecast/evaluate_demo.py` without retraining.
 - [ ] **Phase 4 — Seasonality & Lag Checks**:
   - False alarm check, stress test (+40% ramp, +25% Friday bump), lag analysis
 - [ ] **Phase 5 — Product: Tomorrow Outlook Block**:

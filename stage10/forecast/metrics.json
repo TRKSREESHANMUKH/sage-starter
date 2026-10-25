@@ -1,0 +1,83 @@
+{
+  "evaluation_period": {
+    "train": "2025-01-01 to 2025-06-30 (181 days)",
+    "test": "2025-07-01 to 2025-12-31 (184 days)"
+  },
+  "target_1_new_sales": {
+    "model_a_naive": {
+      "wape": 1.4197,
+      "mape_pct": 92.41,
+      "medae": 0.0,
+      "bias": 0.14
+    },
+    "model_b_weekday": {
+      "wape": 1.3646,
+      "mape_pct": 82.89,
+      "medae": 0.0,
+      "bias": -0.01,
+      "coverage_pct": 80.98
+    },
+    "model_c_rolling7": {
+      "wape": 1.3799,
+      "mape_pct": 68.12,
+      "medae": 7.0,
+      "bias": -0.06
+    },
+    "model_d_gbdt": {
+      "wape": 1.1055,
+      "mape_pct": 91.34,
+      "medae": 0.0,
+      "bias": -4.74,
+      "coverage_pct": 90.76,
+      "rel_improvement_vs_b_pct": 18.99
+    },
+    "pre_registered_pass": false
+  },
+  "target_2_due_tomorrow": {
+    "model_a_naive": {
+      "wape": 1.3761,
+      "mape_pct": 81.64,
+      "medae": 8.0,
+      "bias": 0.0
+    },
+    "model_b_weekday": {
+      "wape": 1.3785,
+      "mape_pct": 85.71,
+      "medae": 8.0,
+      "bias": -0.52
+    },
+    "model_c_rolling7": {
+      "wape": 0.9952,
+      "mape_pct": 46.38,
+      "medae": 5.43,
+      "bias": -0.1
+    },
+    "model_d_gbdt": {
+      "wape": 1.0808,
+      "mape_pct": 93.33,
+      "medae": 0.0,
+      "bias": -5.73,
+      "coverage_pct": 86.41
+    },
+    "model_order_book": {
+      "wape": 0.0,
+      "mape_pct": 0.0,
+      "medae": 0.0,
+      "bias": 0.0,
+      "coverage_pct": 100.0
+    }
+  },
+  "shortage_risk_evaluation": {
+    "rule_definition": "High if fg_stock + planned_prod - T2_forecast < 0; Medium if < safety_stock (25); Low otherwise",
+    "sample_size_days": 184,
+    "true_positives": 0,
+    "false_positives": 0,
+    "false_negatives": 0,
+    "true_negatives": 184,
+    "precision": 0.0,
+    "recall": 0.0,
+    "high_risk_count": 0,
+    "medium_risk_count": 0,
+    "low_risk_count": 184
+  }
+}

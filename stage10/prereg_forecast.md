@@ -129,7 +129,10 @@ Precision and Recall of HIGH / MEDIUM alerts will be measured against whether ac
 - The frozen model is then evaluated on the 10 demo days (2026-01-01 to 2026-01-10) with **zero retraining and zero weight adjustment**.
 
 ```
-[MODEL_DIGEST_PLACEHOLDER]
+**Frozen Model File:** `stage10/forecast/model.pkl`  
+**SHA256 Checksum:** `27ee53a9cb5d94b02f99385de68e229eb0f3982d7e67f2420dfe5aef8bc48518`  
+**Training Period:** 2025-01-01 to 2025-12-31 (365 days)  
+**Parameters:** 100 trees, max depth default, quantile loss (p10, p50, p90)
 ```
 
 ---
