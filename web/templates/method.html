@@ -15,6 +15,76 @@
   </p>
 </div>
 
+<div class="card" style="border-left: 4px solid #6366f1;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+    <div class="card-title" style="margin-bottom: 0;">How Today's Report is Built</div>
+    <span style="font-size: 0.75rem; background: rgba(99, 102, 241, 0.15); color: #818cf8; padding: 2px 8px; border-radius: 4px; font-weight: 600;">Automated Operational Pipeline</span>
+  </div>
+  <p style="font-size: 0.85rem; color: var(--text-main); line-height: 1.6; margin-bottom: 12px;">
+    Every daily briefing is synthesized strictly through an automated four-stage pipeline without manual intervention. All operational thresholds, prioritization weights, and causal scoring parameters are versioned and pre-registered in <a href="file:///Users/asl/Desktop/sage-starter/stage10/REPORT_PARAMETERS.md" style="color: var(--accent); text-decoration: underline;" target="_blank"><code>stage10/REPORT_PARAMETERS.md</code></a>.
+  </p>
+  
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 14px; font-size: 0.8rem;">
+    <div style="background: var(--bg); padding: 10px; border-radius: 6px; border-top: 2px solid #3b82f6;">
+      <strong style="color: #60a5fa;">1. Snapshot Engine</strong>
+      <p style="color: var(--text-muted); margin-top: 4px;">Evaluates transactional ERP state &le; <code>as_of</code> (zero lookahead). Computes inventory, backlogs, and receipts.</p>
+    </div>
+    <div style="background: var(--bg); padding: 10px; border-radius: 6px; border-top: 2px solid #10b981;">
+      <strong style="color: #34d399;">2. Deterministic Priorities</strong>
+      <p style="color: var(--text-muted); margin-top: 4px;">Applies Rules 1–5 to rank top 5 operational actions by urgency and role assignment (Planner, Procurement, Plant Manager).</p>
+    </div>
+    <div style="background: var(--bg); padding: 10px; border-radius: 6px; border-top: 2px solid #f59e0b;">
+      <strong style="color: #fbbf24;">3. Causal Trace &amp; Check</strong>
+      <p style="color: var(--text-muted); margin-top: 4px;">Walks upstream DAG in trailing 7-day window. Tags confidence (Seen end to end / Partly seen) and evaluates model agreement.</p>
+    </div>
+    <div style="background: var(--bg); padding: 10px; border-radius: 6px; border-top: 2px solid #a855f7;">
+      <strong style="color: #c084fc;">4. Executive Phrasing</strong>
+      <p style="color: var(--text-muted); margin-top: 4px;">Generates concise briefing text with fact-grounding validator. Priority actions are never drafted by the LLM.</p>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; font-size: 0.82rem;">
+    <div style="background: var(--bg); padding: 12px; border-radius: 6px;">
+      <strong style="color: var(--text-main); font-size: 0.88rem;">Current Tier Assignment Rules</strong>
+      <p style="color: var(--text-muted); margin-top: 2px; margin-bottom: 8px;">Evaluated in strict precedence order:</p>
+      <ul style="padding-left: 18px; line-height: 1.5; color: var(--text-muted); margin: 0;">
+        <li><strong style="color: #ef4444;">CRITICAL:</strong> Raw material stock &le; 0, OR stock &le; safety stock with overdue PO, OR customer backlog rising with traced cause.</li>
+        <li><strong style="color: #f59e0b;">NEEDS ATTENTION:</strong> Standing overdue backlog steady, OR overdue PO exists, OR daily production shortfall &gt; 0.</li>
+        <li><strong style="color: #3b82f6;">WATCH:</strong> Elevated customer demand intake (&ge; 10 units), OR partial goods receipt today (fill rate &lt; 100%).</li>
+        <li><strong style="color: #10b981;">NORMAL:</strong> All operational signals within standard parameters.</li>
+      </ul>
+    </div>
+    <div style="background: var(--bg); padding: 12px; border-radius: 6px;">
+      <strong style="color: var(--text-main); font-size: 0.88rem;">Current Severity Weights</strong>
+      <p style="color: var(--text-muted); margin-top: 2px; margin-bottom: 8px;">Composite severity score formula parameters:</p>
+      <table style="width: 100%; font-size: 0.8rem; margin: 0;">
+        <tbody>
+          <tr>
+            <td style="padding: 3px 0; color: var(--text-muted);">Due customer backlog</td>
+            <td style="padding: 3px 0; text-align: right; font-weight: 600; color: var(--accent);">{{ weights.due_backlog_per_unit | default(10.0) }} pts / unit</td>
+          </tr>
+          <tr>
+            <td style="padding: 3px 0; color: var(--text-muted);">Overdue customer orders</td>
+            <td style="padding: 3px 0; text-align: right; font-weight: 600; color: var(--accent);">{{ weights.order_overdue_per_day | default(5.0) }} pts / order</td>
+          </tr>
+          <tr>
+            <td style="padding: 3px 0; color: var(--text-muted);">Raw material stockout</td>
+            <td style="padding: 3px 0; text-align: right; font-weight: 600; color: var(--accent);">{{ weights.material_stockout | default(25.0) }} pts / item</td>
+          </tr>
+          <tr>
+            <td style="padding: 3px 0; color: var(--text-muted);">Production shortfall</td>
+            <td style="padding: 3px 0; text-align: right; font-weight: 600; color: var(--accent);">{{ weights.production_shortfall_per_unit | default(2.0) }} pts / unit</td>
+          </tr>
+          <tr>
+            <td style="padding: 3px 0; color: var(--text-muted);">Supplier PO overdue</td>
+            <td style="padding: 3px 0; text-align: right; font-weight: 600; color: var(--accent);">{{ weights.po_overdue_per_day | default(4.0) }} pts / day</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 <div class="card" style="border-left: 4px solid #10b981;">
   <div class="card-title">Trust &amp; Empirical Evaluation</div>
   <p style="font-size: 0.9rem; color: var(--text-main); line-height: 1.6; margin-bottom: 12px;">

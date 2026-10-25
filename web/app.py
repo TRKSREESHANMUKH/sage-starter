@@ -28,7 +28,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 
 from stage9.clock import get_as_of_date
-from stage9.snapshot import compute_daily_snapshot, SNAPSHOTS_DIR
+from stage9.snapshot import compute_daily_snapshot, SNAPSHOTS_DIR, load_rules
 from stage9.priorities import compute_priorities
 from stage9.narrate import generate_executive_narrative
 from stage9.status import RESEARCH_FRAMING, get_packet_display_status
@@ -482,13 +482,19 @@ def research_evaluation(request: Request, auth_token: str = Depends(verify_token
 @app.get("/method", response_class=HTMLResponse)
 def method_page(request: Request, auth_token: str = Depends(verify_token)):
     as_of = get_as_of_date()
+    rules = load_rules()
     return templates.TemplateResponse(
         "method.html",
         {
             "request": request,
             "token": auth_token,
             "as_of": as_of.isoformat(),
-            "framing": RESEARCH_FRAMING
+            "framing": RESEARCH_FRAMING,
+            "rules": rules,
+            "weights": rules.get("severity_weights", {}),
+            "tier_rules": rules.get("severity_rules_v2", {}),
+            "materials_rules": rules.get("materials", {}),
+            "products_rules": rules.get("products", {})
         }
     )
 

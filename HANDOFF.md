@@ -18,9 +18,9 @@ Stages 1–8 strictly frozen. Main PostgreSQL database protected read-only (`SET
   - 7. `verify_all.sh`: per-suite breakdown table strictly summing to 186 items across 14 steps.
   - 8. Screenshots & tokens hygiene: zero forbidden default tokens outside backups, `git ls-files` sensitive check clean (`.env.example` only).
   - 9. Scheduler proof: temporary schedule (+1m prepare, +2m send), scheduled prepare and dry-run send entries logged, controller restart between prepare and send handled idempotently, real schedule restored (19:45/20:00), instructions added to `OWNER_CHECKLIST.md`.
-- [ ] **Phase 2 — Report Parameters**:
-  - Document parameter rules & thresholds in `stage10/REPORT_PARAMETERS.md`
-  - Add "How today's report is built" section to Method page
+- [x] **Phase 2 — Report Parameters**:
+  - Documented parameter rules & thresholds in `stage10/REPORT_PARAMETERS.md` across 5 groups (alert prioritization, root-cause tracing, narrative generation, tier assignment, stock/capacity thresholds).
+  - Added "How today's report is built" block to Method page (`web/templates/method.html` + `web/app.py`), dynamically stating tier rules and continuous severity weights from `rules.yaml` and linking to `stage10/REPORT_PARAMETERS.md`.
 - [ ] **Phase 3 — Next-Day Forecast**:
   - Pre-register in `stage10/prereg_forecast.md` before execution
   - Models a, b, c, d for T1 and T2, walk-forward evaluation, shortage risk rule, fixed demo model
