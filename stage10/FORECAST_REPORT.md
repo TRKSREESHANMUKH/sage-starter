@@ -108,19 +108,18 @@ To answer this, we conducted an independent Monte Carlo audit (`stage10/audit/no
 - **Oracle Theoretical Minimum WAPE:** **0.5034** (Oracle Accuracy: **49.7%**)
 
 ### Scientific Conclusion on Model Performance:
-Because daily order arrivals are governed by discrete probabilistic draws, **an omniscient Oracle possessing the exact simulation code and true parameters cannot achieve a WAPE lower than 0.5034 (or accuracy above 49.7%)**. 
-
-The deployed SAGE Model (B2) achieves:
-- **Test WAPE:** 0.6474
-- **Excess Error over Oracle:** Only **0.1440 WAPE** (5.99 units MAE).
-- **Aleatoric Limit Efficiency:** The model captures **77.8% of the theoretical oracle limit**, operating remarkably close to the mathematical noise floor of this manufacturing system.
+Because daily order arrivals are governed by discrete probabilistic draws, **an omniscient Oracle possessing the exact simulation code and true parameters cannot achieve a WAPE lower than 0.5034 (or accuracy above 49.7%)**. In plain English:
+- **Deployed Model Selection:** The deployed model is a trailing 28-day mean because it achieved the lowest cross-validation WAPE (0.55 / 45.5% accuracy) during walk-forward validation inside the H1 2025 training window.
+- **Machine Learning Benchmark:** Negative binomial count regression and gradient boosting did not beat the trailing 28-day mean on this one-year simulated dataset due to high demand intermittency (68.2% zero-order days).
+- **Oracle Ceiling vs Deployed Model:** The theoretical oracle irreducible aleatoric error ceiling is WAPE 0.50 (accuracy 50%) vs the deployed model WAPE 0.65 (excess error over Oracle is only 0.14 WAPE).
+- **Prediction Interval:** The prediction range is wide because discrete order arrivals are inherently stochastic.
 
 ---
 
 ## 6. System Integration & Guardrails
 
 The weekly forecast is fully integrated across the SAGE operational surfaces:
-1. **Today Executive Dashboard:** A dedicated "Next 7 days: expected new orders" forward-look card displaying projected demand, committed scheduled orders, shortage risk classification ("Low", "Medium", "High"), 12-week historical trend sparkline, and direct links to the deep-dive benchmark.
+1. **Today Executive Dashboard:** A dedicated "Next 7 days: expected new orders" forward-look card directly below the summary paragraph and above the operational alerts, displaying projected demand, committed scheduled orders, 12-week historical trend sparkline, and direct links to the deep-dive benchmark.
 2. **Insights & Retrospective View:** Comprehensive "Weekly Order Forward-Look & Model Benchmark" (`#forecast`) containing interactive model comparisons, noise floor explanation, and the 25-week walk-forward audit log.
 3. **Daily Executive Email & 1-Page PDF:** Standardized 1-line operational forward-look summary ensuring dispatch briefs remain strictly within the 1-page A4 print budget.
 4. **Zero Look-Ahead & Idempotency:**

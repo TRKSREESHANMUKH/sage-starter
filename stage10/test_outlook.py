@@ -98,8 +98,10 @@ class TestWeeklyForecast(unittest.TestCase):
 
     def test_06_sub_3_second_full_render(self):
         """Asserts complete one-page context build and HTML render runs in under 3.0 seconds."""
+        from stage9.current_day import get_current_day
         t0 = time.perf_counter()
-        ctx = build_one_page_context(selected_date_str="2026-01-01")
+        cur_day = get_current_day().isoformat()
+        ctx = build_one_page_context(selected_date_str=cur_day)
         self.assertIn("outlook", ctx)
         self.assertIsNotNone(ctx["outlook"])
 
@@ -112,7 +114,7 @@ class TestWeeklyForecast(unittest.TestCase):
         elapsed = time.perf_counter() - t0
 
         self.assertIn("Next 7 days: expected new orders", html)
-        self.assertIn("Shortage risk", html)
+        self.assertIn("Trailing 28-day mean", html)
         self.assertIn(RESEARCH_FRAMING, html)
         self.assertLess(elapsed, 3.0, f"Render took {elapsed:.2f}s (must be <3.0s)")
         print(f"Full Today page context build and render completed in {elapsed:.3f}s")

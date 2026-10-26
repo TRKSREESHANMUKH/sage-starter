@@ -156,6 +156,46 @@ class TestConsistencyFixes(unittest.TestCase):
         fc = get_weekly_forecast(date(2026, 1, 1), use_cache=False)
         self.assertIn(fc["shortage_risk"], ["Low", "Medium", "High"])
 
+    def test_history_index_structure(self):
+        """Asserts day_index.json exists, contains 365+ days, and covers all four banner tiers."""
+        index_file = ROOT_DIR / "stage9" / "state" / "day_index.json"
+        self.assertTrue(index_file.exists())
+        with open(index_file, "r", encoding="utf-8") as f:
+            idx = json.load(f)
+        days = idx.get("days", {})
+        self.assertGreaterEqual(len(days), 365)
+        tiers = {d.get("banner_tier") for d in days.values()}
+        self.assertTrue({"Normal", "Watch", "Needs attention", "Critical"}.issubset(tiers))
+
+    def test_past_day_no_look_ahead(self):
+        """Asserts past day rendering uses only data on or before selected date."""
+        snap = compute_daily_snapshot(date(2025, 6, 15), source="main")
+        self.assertEqual(snap["as_of"], "2025-06-15")
+        # Ensure no future sales orders are counted
+        for p_data in snap["products"].values():
+            if p_data.get("oldest_due_date"):
+                self.assertLessEqual(p_data["oldest_due_date"], "2025-06-15")
+
+    def test_baseline_notice_removed_from_today(self):
+        """Asserts 'Opening position set on 31 Dec 2025' notice is removed from Today page."""
+        template_text = (ROOT_DIR / "web" / "templates" / "home.html").read_text(encoding="utf-8")
+        self.assertNotIn("Opening position set on 31 Dec 2025", template_text)
+        self.assertNotIn("Demo Baseline Notice", template_text)
+
+    def test_dropdown_selector_removed_from_today(self):
+        """Asserts the day-selector dropdown is removed from Today page top bar."""
+        template_text = (ROOT_DIR / "web" / "templates" / "home.html").read_text(encoding="utf-8")
+        self.assertNotIn('<select id="day-selector"', template_text)
+        self.assertNotIn('<select name="date"', template_text)
+
+    def test_forecast_card_wording_and_card_layout(self):
+        """Asserts forecast card contains deployed model explanation and no shortage risk badge."""
+        template_text = (ROOT_DIR / "web" / "templates" / "home.html").read_text(encoding="utf-8")
+        self.assertIn("forecast-card", template_text)
+        self.assertIn("Trailing 28-day mean", template_text)
+        self.assertNotIn("Shortage risk: {{ outlook.shortage_risk }}", template_text)
+        self.assertNotIn("77.8% of the theoretical limit", template_text)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -439,122 +439,118 @@
     </div>
     {% endif %}
 
+    <!-- Numbers Strip (Trailing 7-Day Context) -->
+    <div class="numbers-strip" style="margin-top: 16px; margin-bottom: 16px;">
+      <div class="num-card">
+        <div class="num-title">Orders Due Today</div>
+        <div class="num-val-row">
+          <span class="num-val">{{ numbers_strip.orders_due.val }}</span>
+          {% if numbers_strip.orders_due.change != "0" %}
+          <span class="num-diff diff-neutral">{{ numbers_strip.orders_due.change }}</span>
+          {% endif %}
+        </div>
+        <div class="num-sub">7-day average: {{ numbers_strip.orders_due.avg7 }}</div>
+      </div>
+
+      <div class="num-card">
+        <div class="num-title">Overdue Orders Now</div>
+        <div class="num-val-row">
+          <span class="num-val">{{ numbers_strip.overdue_orders.val }}</span>
+          {% if numbers_strip.overdue_orders.change.startswith("+") %}
+          <span class="num-diff diff-up">{{ numbers_strip.overdue_orders.change }}</span>
+          {% elif numbers_strip.overdue_orders.change.startswith("-") %}
+          <span class="num-diff diff-down">{{ numbers_strip.overdue_orders.change }}</span>
+          {% else %}
+          <span class="num-diff diff-neutral">0</span>
+          {% endif %}
+        </div>
+        <div class="num-sub">{{ numbers_strip.overdue_orders.units }} units short (7d avg: {{ numbers_strip.overdue_orders.avg7 }})</div>
+      </div>
+
+      <div class="num-card">
+        <div class="num-title">Total Units Short</div>
+        <div class="num-val-row">
+          <span class="num-val">{{ numbers_strip.units_short.val }}</span>
+          {% if numbers_strip.units_short.change.startswith("+") %}
+          <span class="num-diff diff-up">{{ numbers_strip.units_short.change }}</span>
+          {% elif numbers_strip.units_short.change.startswith("-") %}
+          <span class="num-diff diff-down">{{ numbers_strip.units_short.change }}</span>
+          {% else %}
+          <span class="num-diff diff-neutral">0</span>
+          {% endif %}
+        </div>
+        <div class="num-sub">Backlog + shortfall (7d avg: {{ numbers_strip.units_short.avg7 }})</div>
+      </div>
+
+      <div class="num-card">
+        <div class="num-title">Materials Below Safety</div>
+        <div class="num-val-row">
+          <span class="num-val">{{ numbers_strip.materials_low.val }}</span>
+          {% if numbers_strip.materials_low.change.startswith("+") %}
+          <span class="num-diff diff-up">{{ numbers_strip.materials_low.change }}</span>
+          {% elif numbers_strip.materials_low.change.startswith("-") %}
+          <span class="num-diff diff-down">{{ numbers_strip.materials_low.change }}</span>
+          {% else %}
+          <span class="num-diff diff-neutral">0</span>
+          {% endif %}
+        </div>
+        <div class="num-sub">Buffer breach status (7d avg: {{ numbers_strip.materials_low.avg7 }})</div>
+      </div>
+    </div>
+
     <!-- Editorial Lead Paragraph (<= 60 words, fact validated) -->
-    <div class="editorial-lead">
+    <div class="editorial-lead" style="margin-top: 0;">
       {{ editorial_lead }}
-    </div>
-  </section>
-
-  <!-- Numbers Strip (Trailing 7-Day Context) -->
-  <section class="numbers-strip">
-    <div class="num-card">
-      <div class="num-title">Orders Due Today</div>
-      <div class="num-val-row">
-        <span class="num-val">{{ numbers_strip.orders_due.val }}</span>
-        {% if numbers_strip.orders_due.change != "0" %}
-        <span class="num-diff diff-neutral">{{ numbers_strip.orders_due.change }}</span>
-        {% endif %}
-      </div>
-      <div class="num-sub">7-day average: {{ numbers_strip.orders_due.avg7 }}</div>
-    </div>
-
-    <div class="num-card">
-      <div class="num-title">Overdue Orders Now</div>
-      <div class="num-val-row">
-        <span class="num-val">{{ numbers_strip.overdue_orders.val }}</span>
-        {% if numbers_strip.overdue_orders.change.startswith("+") %}
-        <span class="num-diff diff-up">{{ numbers_strip.overdue_orders.change }}</span>
-        {% elif numbers_strip.overdue_orders.change.startswith("-") %}
-        <span class="num-diff diff-down">{{ numbers_strip.overdue_orders.change }}</span>
-        {% else %}
-        <span class="num-diff diff-neutral">0</span>
-        {% endif %}
-      </div>
-      <div class="num-sub">{{ numbers_strip.overdue_orders.units }} units short (7d avg: {{ numbers_strip.overdue_orders.avg7 }})</div>
-    </div>
-
-    <div class="num-card">
-      <div class="num-title">Total Units Short</div>
-      <div class="num-val-row">
-        <span class="num-val">{{ numbers_strip.units_short.val }}</span>
-        {% if numbers_strip.units_short.change.startswith("+") %}
-        <span class="num-diff diff-up">{{ numbers_strip.units_short.change }}</span>
-        {% elif numbers_strip.units_short.change.startswith("-") %}
-        <span class="num-diff diff-down">{{ numbers_strip.units_short.change }}</span>
-        {% else %}
-        <span class="num-diff diff-neutral">0</span>
-        {% endif %}
-      </div>
-      <div class="num-sub">Backlog + shortfall (7d avg: {{ numbers_strip.units_short.avg7 }})</div>
-    </div>
-
-    <div class="num-card">
-      <div class="num-title">Materials Below Safety</div>
-      <div class="num-val-row">
-        <span class="num-val">{{ numbers_strip.materials_low.val }}</span>
-        {% if numbers_strip.materials_low.change.startswith("+") %}
-        <span class="num-diff diff-up">{{ numbers_strip.materials_low.change }}</span>
-        {% elif numbers_strip.materials_low.change.startswith("-") %}
-        <span class="num-diff diff-down">{{ numbers_strip.materials_low.change }}</span>
-        {% else %}
-        <span class="num-diff diff-neutral">0</span>
-        {% endif %}
-      </div>
-      <div class="num-sub">Buffer breach status (7d avg: {{ numbers_strip.materials_low.avg7 }})</div>
     </div>
   </section>
 
   {% if outlook and outlook.available %}
   <!-- Next 7 Days Forward-Look Block (Pre-registered Weekly Order Forecast) -->
-  <section class="card" style="margin-bottom: 24px; border-left: 4px solid var(--accent); background: var(--card-bg, #ffffff);">
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-      <div>
-        <h2 style="font-size: 1.05rem; font-weight: 700; margin: 0; color: var(--text-main);">
-          Next 7 days: expected new orders ({{ outlook.horizon }})
-        </h2>
-        <div style="font-size: 0.90rem; font-weight: 600; color: var(--text-main); margin-top: 4px;">
-          {{ outlook.headline }}
-        </div>
-      </div>
-      <div style="text-align: right;">
-        <span style="font-size: 0.75rem; font-weight: 700; padding: 3px 8px; border-radius: 4px; background: {% if outlook.shortage_risk == 'High' %}#fee2e2; color: #dc2626;{% elif outlook.shortage_risk == 'Medium' %}#fef3c7; color: #d97706;{% else %}#dcfce7; color: #16a34a;{% endif %}">
-          Shortage risk: {{ outlook.shortage_risk }}
-        </span>
-        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">{{ outlook.shortage_desc }}</div>
-      </div>
+  <section class="card forecast-card" style="margin-bottom: 24px; border-left: 4px solid var(--accent); background: var(--card-bg, #ffffff); padding: 14px 18px; border-radius: var(--radius); box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 6px;">
+      <h2 style="font-size: 1.0rem; font-weight: 700; margin: 0; color: #0f172a;">
+        Next 7 days: expected new orders <span style="font-weight: 400; font-size: 0.85rem; color: var(--text-muted);">({{ outlook.horizon }})</span>
+      </h2>
+      <a href="/insights?date={{ selected_date }}#forecast" style="color: var(--accent); font-size: 0.78rem; font-weight: 600; text-decoration: underline;">
+        Forecast details &amp; track record in Insights &rarr;
+      </a>
     </div>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-color, #f1f5f9); flex-wrap: wrap; gap: 8px;">
-      <div style="font-size: 0.75rem; color: var(--text-muted);">
+    <div style="font-size: 0.95rem; font-weight: 600; color: #1e293b; margin-bottom: 6px;">
+      {{ outlook.headline }}
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; padding-top: 6px; border-top: 1px solid #f1f5f9;">
+      <div style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.4;">
         {{ outlook.sublabel }}
       </div>
-      <div style="display: flex; align-items: center; gap: 12px;">
-        {% if outlook.sparkline_svg %}
-        <div title="12-week actual vs forecast volume" style="display: flex; align-items: center;">
-          {{ outlook.sparkline_svg | safe }}
-        </div>
-        {% endif %}
-        <a href="/insights?date={{ selected_date }}#forecast" style="color: var(--accent); font-size: 0.78rem; font-weight: 600; text-decoration: underline;">
-          Forecast details &amp; track record in Insights &rarr;
-        </a>
+      {% if outlook.sparkline_svg %}
+      <div title="12-week actual vs forecast volume" style="display: flex; align-items: center;">
+        {{ outlook.sparkline_svg | safe }}
       </div>
+      {% endif %}
     </div>
-    <div style="font-size: 0.72rem; font-style: italic; color: var(--text-muted); margin-top: 6px;">
+
+    <div style="font-size: 0.74rem; color: #64748b; margin-top: 6px; line-height: 1.4;">
+      Deployed model: Trailing 28-day mean (lowest CV WAPE; count regression and gradient boosting did not beat it on this one-year simulated dataset; oracle ceiling WAPE 0.50 vs deployed 0.65; prediction range is wide).
+    </div>
+
+    <div style="font-size: 0.70rem; font-style: italic; color: #94a3b8; margin-top: 4px;">
       "{{ outlook.framing }}"
     </div>
   </section>
   {% elif is_past_day %}
-  <section class="card" style="margin-bottom: 24px; border-left: 4px solid #94a3b8; background: #f8fafc;">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
+  <section class="card forecast-card" style="margin-bottom: 24px; border-left: 4px solid #94a3b8; background: #f8fafc; padding: 12px 16px; border-radius: var(--radius);">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
       <div>
-        <strong style="color: #475569; font-size: 0.9rem;">Next 7 days forecast:</strong>
-        <span style="color: #64748b; font-size: 0.85rem; margin-left: 6px;">No forecast stored for this day</span>
+        <strong style="color: #475569; font-size: 0.88rem;">Next 7 days forecast:</strong>
+        <span style="color: #64748b; font-size: 0.82rem; margin-left: 6px;">No forecast stored for this day</span>
       </div>
       <a href="/insights?date={{ selected_date }}#forecast" style="color: var(--accent); font-size: 0.78rem; font-weight: 600; text-decoration: underline;">
         Forecast track record &rarr;
       </a>
     </div>
-    <div style="font-size: 0.72rem; font-style: italic; color: var(--text-muted); margin-top: 4px;">
+    <div style="font-size: 0.70rem; font-style: italic; color: #94a3b8; margin-top: 4px;">
       "{{ framing }}"
     </div>
   </section>

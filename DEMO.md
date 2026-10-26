@@ -35,7 +35,7 @@ When demonstrating the viewer's Morning Briefing home page (`http://localhost:80
 3. **What to Explain to Mentor:**  
    - *"Our order forecast predicts incoming order flow over the next 7 calendar days to help operations plan material buffers and production capacity."*
    - *"We pre-registered 7 candidate architectures in `stage10/prereg_forecast_v3.md`. Baseline (2) (Trailing 28d Mean x 7) was selected via lowest Cross-Validation WAPE (0.5455 / 45.5% accuracy) on H1 2025. On the strictly out-of-sample H2 2025 walk-forward test (25 Sundays), it achieved 0.6474 WAPE (35.3% accuracy, MAE 31.1 units, Bias -2.4 units, MASE 0.77)."*
-   - *"Crucially, our Monte Carlo simulation audit of 100,000 weeks proves that due to discrete Poisson/Bernoulli order arrivals ($p=0.42$) and random customer selection, the theoretical Oracle irreducible error floor is 0.5034 WAPE (49.7% accuracy). SAGE's deployed model operates within 0.1440 WAPE of the theoretical noise limit, capturing 77.8% of the theoretical oracle limit."*
+   - *"Crucially, our Monte Carlo simulation audit of 100,000 weeks proves that due to discrete Poisson/Bernoulli order arrivals ($p=0.42$) and random customer selection, the theoretical Oracle irreducible error floor is 0.5034 WAPE (49.7% accuracy). SAGE's deployed model operates within 0.1440 WAPE of the theoretical noise limit (deployed WAPE 0.6474 vs Oracle 0.5034)."*
    - *"Full model benchmark, noise floor methodology, and 25-week walk-forward audit log are linked directly in the Insights page (`#forecast`)."*
 
 4. **UI Navigation Updates:**

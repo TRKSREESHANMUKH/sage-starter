@@ -23,7 +23,7 @@
   <ul style="padding-left: 20px; font-size: 0.85rem; color: var(--text-main); line-height: 1.6;">
     <li><strong>48 Stale Customer Backorders (652 units total):</strong> Accumulated unfulfilled 2025 sales orders with requested delivery dates &le; 2025-12-31 were formally cancelled at year-end closing, preventing historical standing backlog from drowning out new operational anomalies.</li>
     <li><strong>Purchase Order #18 Cancelled (407 units):</strong> A stuck historical PO (139 days overdue, expected 2025-08-14) was cancelled to establish clean supplier open-order tracking.</li>
-    <li><strong>Opening Raw Material Inventory:</strong> Stock balances were calibrated to clean working levels: <strong>215 kg</strong> Steel Rod 10mm (Item 101), <strong>204 kg</strong> Plastic Granules (Item 102), and <strong>184 meters</strong> Copper Wire (Item 103).</li>
+    <li><strong>Opening Raw Material Inventory:</strong> Stock balances were calibrated to clean working levels as recorded in the transactional ledger: <strong>215 kg</strong> Steel Rod 10mm (Item 101, reset from 9 kg via stock adjustment #484), while Plastic Granules (Item 102, <strong>204 kg</strong>) and Copper Wire (Item 103, <strong>184 meters</strong>) naturally carried forward their actual positive year-end balances above safety thresholds without requiring synthetic adjustments.</li>
   </ul>
   <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 8px;">
     These year-end adjustments are fully audited and accounted for in the Insights reconciliation table under the dedicated <em>"Cancelled at demo opening position"</em> category so that 100% of the 2025 transaction ledger reconciles without hidden drops.
@@ -240,6 +240,30 @@
       <p style="color: var(--text-muted); margin-top: 4px;">Active vendors: Global Polymers Co, EastCoast Components, Copper &amp; Co. Backup idle vendors: Sri Materials Pvt Ltd, Bharat Steel Works.</p>
     </div>
   </div>
+</div>
+
+<div class="card" style="border-left: 4px solid #0ea5e9;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+    <div class="card-title" style="margin-bottom: 0;">Weekly Order Forecasting Protocol &amp; Deployed Model</div>
+    <span style="font-size: 0.75rem; background: rgba(14, 165, 233, 0.15); color: #0284c7; padding: 2px 8px; border-radius: 4px; font-weight: 600;">Pre-Registered Protocol v3</span>
+  </div>
+  <p style="font-size: 0.85rem; color: var(--text-main); line-height: 1.6; margin-bottom: 10px;">
+    The forward-look card on the Today page projects incoming customer demand across a rolling 7-day planning horizon. As pre-registered in <code>stage10/prereg_forecast_v3.md</code>:
+  </p>
+  <ul style="padding-left: 20px; font-size: 0.85rem; color: var(--text-main); line-height: 1.7;">
+    <li>
+      <strong>Deployed Model (Trailing 28-Day Mean):</strong> The deployed production model is a trailing 28-day daily mean multiplied across the 7-day horizon. It was selected strictly because it achieved the lowest cross-validation WAPE (0.55 / 45.5% accuracy) during walk-forward validation inside the H1 2025 training window.
+    </li>
+    <li>
+      <strong>Machine Learning Benchmark:</strong> Advanced statistical models, including Negative Binomial count regression and Quantile Gradient Boosted Decision Trees (GBDT), did not beat the trailing 28-day mean on this one-year simulated dataset due to high intermittency (68.2% zero-order days).
+    </li>
+    <li>
+      <strong>Theoretical Oracle Limit vs. Deployed Performance:</strong> Independent Monte Carlo simulation over 100,000 weeks proves that discrete Bernoulli order arrivals and random order sizing impose an irreducible theoretical aleatoric error floor of <strong>0.50 WAPE</strong> (an irreducible 50% accuracy ceiling). The deployed model achieves <strong>0.65 WAPE</strong> on out-of-sample weekly tests, operating within 0.14 WAPE of the theoretical noise limit.
+    </li>
+    <li>
+      <strong>Wide Prediction Range:</strong> Because discrete customer demand arrivals are stochastic, the empirical 80% prediction interval is wide. Forecasts provide macro weekly capacity sizing rather than daily precision.
+    </li>
+  </ul>
 </div>
 
 <div class="card">

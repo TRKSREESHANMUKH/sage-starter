@@ -135,7 +135,7 @@ class SmokeTestRunner:
 
         # Verify Weekly Forecast Forward-Look Block (Stage 10)
         assert "Next 7 days: expected new orders" in content, "Next 7 days forecast heading missing from Home page"
-        assert "shortage risk" in content.lower(), "Shortage risk badge missing from Home page"
+        assert "trailing 28-day mean" in content.lower(), "Deployed model description missing from Home page"
         assert "already on the books" in content.lower(), "Already on books missing from Home page"
 
         self.capture("01_viewer_home")

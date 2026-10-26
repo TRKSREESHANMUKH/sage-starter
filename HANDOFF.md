@@ -40,7 +40,7 @@ Stages 1–8 strictly frozen. Main PostgreSQL database protected read-only (`SET
 - [x] **B3. Theoretical Irreducible Noise Floor Audit**:
   - `stage10/audit/noise_floor.py` simulated 100,000 weeks directly from true simulation parameters ($p=0.42$ Bernoulli order arrival, $\mathcal{U}[1,3]$ customers).
   - Proved theoretical Oracle minimum WAPE is **0.5034** (49.7% accuracy ceiling, 25.11 units MAE).
-  - Deployed model operates within **0.1440 WAPE** of the theoretical noise limit (capturing 77.8% of the theoretical oracle limit).
+  - Deployed model operates within **0.1440 WAPE** of the theoretical noise limit (deployed WAPE 0.6474 vs Oracle 0.5034).
 - [x] **B4. Forecast Report**: Complete report published in `stage10/FORECAST_REPORT.md`.
 
 ### Part C: Data & Narrative Consistency Fixes (C1–C11)
@@ -57,7 +57,30 @@ Stages 1–8 strictly frozen. Main PostgreSQL database protected read-only (`SET
 - [x] **C11**: Forecast shortage risk strictly bounded to "Low", "Medium", "High".
 - [x] All verified via `stage9/test_consistency_fixes.py` (8/8 passed).
 
-### Part D: Verification, Screenshots & Delivery
+### Part D: Final Verification & Small Fixes Pass
+- [x] **Forecast Card Layout & Positioning**:
+  - Moved forecast card directly below the editorial summary paragraph and above the operational alert cards (`section-h`).
+  - Numbers strip repositioned above the editorial summary paragraph as the top metric bar.
+  - Shortage risk badge audited: formula `projected_weekly_buffer = fg_stock + 250 - due_k` was pre-registered in `stage10/prereg_forecast.md` for 1-day horizon, but NOT in `stage10/prereg_forecast_v3.md` (weekly protocol). Badge removed from `home.html` card.
+  - Compact, mobile-safe layout verified; screenshots captured for Day 1 and Day 7 in `stage9/screenshots/today_day_1_*.png` and `today_day_7_*.png`.
+- [x] **Raw Verification Outputs Printed**:
+  - `stage10/audit/print_raw_verification.py` computes and prints full raw tables for C1–C11.
+  - 2026 PO table (POs #19, #20, #22, GRs #23, #24, #25, #26; PO #26 confirmed as GR #26 misnomer; PO #19 expected date 2026-01-02 logged as post-hoc test calibration; deterministic generator re-run verified with 100% identical SHA256 hashes).
+  - 2026 sales orders table (20/20 on-time shipments, 100% on-time delivery rate; backlogged orders on Day 7 and Day 9 reconciled in unfulfilled backlog bucket).
+  - Manifest reconciliation: 48 orders / 652 units, stock balances 215 kg Steel / 204 kg Plastic / 184 m Copper; snapshot.py 630 overdue + 22 due today = 652 units.
+  - Seasonality stress test attribution integrity: 96.7% (89/92 days); lag analysis sample sizes: $n=4$ (supplier delay to safety stock) and $n=1$ (stockout to backlog).
+  - Three 10-day evaluation tables and honest scoring tally (v3 rules: 10/10 HIT; v1 original: 6/10 HIT).
+  - History Explorer: Tier counts (Critical 154, Watch 49, Needs attention 38, Normal 124), first 20 key-event episodes, explanation of 75 episodes vs 10 incidents vs 215 calm days.
+- [x] **Forecast Plain English Wording**:
+  - Plain English wording implemented in `stage10/FORECAST_REPORT.md`, `web/templates/method.html`, and `web/templates/home.html`.
+  - Stated: deployed model is Trailing 28-day Mean because it achieved lowest CV WAPE; count regression and gradient boosting did not beat it on this one-year simulated dataset; theoretical oracle ceiling WAPE 0.50 vs deployed 0.65; prediction range is wide.
+  - "77.8% of the theoretical limit" phrasing completely removed across all files.
+- [x] **Verification & Freezing**:
+  - `verify_all.sh` executed cleanly (Exit code 0, all 13 suites passed).
+  - `stage9/test_consistency_fixes.py` expanded with 5 new unit tests (history index, past-day no-look-ahead, notice removed, dropdown removed, forecast card wording) -> 13/13 tests passed.
+  - `stage9/FROZEN.json` updated with latest SHA256 hashes for all 100 Stage 9 & Stage 10 files.
+  - Stages 1–8 strictly frozen (`git diff --stat 6ecff79 HEAD -- stage1..stage8` is 0 diffs).
+  - System left stopped, dry-run mode, current day `2025-12-31`.
 - [x] Documentation updated: `DEMO.md`, `OWNER_CHECKLIST.md`, `stage10/KNOWN_ISSUES.md`, `stage10/PROJECT_SUMMARY.md`, `REQUIREMENTS_TRACE.md`.
 - [x] Final screenshots regenerated in `analytics/screenshots/final/`.
 - [x] Clean run of `./verify_all.sh` (100% pass, exit 0, zero live emails dispatched).
