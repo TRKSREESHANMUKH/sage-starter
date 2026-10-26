@@ -275,3 +275,16 @@
 {"timestamp": "2026-10-26T08:41:51.180494+00:00", "pack_name": "2026-01-08", "pack_date": "2026-01-08", "rows_ingested": 32, "status": "SUCCESS"}
 {"timestamp": "2026-10-26T08:41:52.643140+00:00", "pack_name": "2026-01-09", "pack_date": "2026-01-09", "rows_ingested": 24, "status": "SUCCESS"}
 {"timestamp": "2026-10-26T08:41:54.672425+00:00", "pack_name": "2026-01-10", "pack_date": "2026-01-10", "rows_ingested": 24, "status": "SUCCESS"}
+{"timestamp": "2026-10-26T17:37:38.778566+00:00", "pack_name": "2026-01-01", "pack_date": "2026-01-01", "rows_ingested": 18, "status": "SUCCESS"}
+{"timestamp": "2026-10-26T17:44:50.940415+00:00", "pack_name": "2026-01-01", "pack_date": "2026-01-01", "rows_ingested": 18, "status": "SUCCESS"}
+{"timestamp": "2026-10-26T18:13:41.776213+00:00", "pack_name": "2026-01-02", "pack_date": "2026-01-02", "rows_ingested": 26, "status": "SUCCESS"}
+{"timestamp": "2026-10-26T18:18:51.339713+00:00", "pack_name": "2026-01-01", "pack_date": "2026-01-01", "rows_ingested": 18, "status": "SUCCESS"}
+{"timestamp": "2026-10-26T18:19:07.678330+00:00", "pack_name": "2026-01-02", "pack_date": "2026-01-02", "rows_ingested": 26, "status": "SUCCESS"}
+{"timestamp": "2026-10-26T18:19:22.591184+00:00", "pack_name": "2026-01-03", "pack_date": "2026-01-03", "rows_ingested": 27, "status": "SUCCESS"}
+{"timestamp": "2026-10-26T18:19:24.984455+00:00", "pack_name": "2026-01-04", "pack_date": "2026-01-04", "rows_ingested": 27, "status": "SUCCESS"}
+{"timestamp": "2026-10-26T18:19:27.202762+00:00", "pack_name": "2026-01-05", "pack_date": "2026-01-05", "rows_ingested": 24, "status": "SUCCESS"}
+{"timestamp": "2026-10-26T18:19:29.693055+00:00", "pack_name": "2026-01-06", "pack_date": "2026-01-06", "rows_ingested": 29, "status": "SUCCESS"}
+{"timestamp": "2026-10-26T18:19:33.525455+00:00", "pack_name": "2026-01-07", "pack_date": "2026-01-07", "rows_ingested": 17, "status": "SUCCESS"}
+{"timestamp": "2026-10-26T18:19:35.665961+00:00", "pack_name": "2026-01-08", "pack_date": "2026-01-08", "rows_ingested": 32, "status": "SUCCESS"}
+{"timestamp": "2026-10-26T18:19:37.840462+00:00", "pack_name": "2026-01-09", "pack_date": "2026-01-09", "rows_ingested": 24, "status": "SUCCESS"}
+{"timestamp": "2026-10-26T18:19:40.696817+00:00", "pack_name": "2026-01-10", "pack_date": "2026-01-10", "rows_ingested": 24, "status": "SUCCESS"}

@@ -62,22 +62,21 @@ Before starting the live demonstration, state the following foundational data fa
 
 ## Ten-Day Demonstration Overview (1–10 January 2026)
 
-```
-┌──────┬────────────┬─────────────────────────────┬────────────────────────────────────────────────────────┐
-│ Day  │ Date       │ Scenario                    │ Operational Nature                                     │
-├──────┼────────────┼─────────────────────────────┼────────────────────────────────────────────────────────┤
-│ D-01 │ 2026-01-01 │ Normal Operations           │ Routine orders, production, and shipping; calm baseline│
-│ D-02 │ 2026-01-02 │ Demand Spike (Widget X)     │ Surge in Widget X orders (2.5x); stock buffer absorbs  │
-│ D-03 │ 2026-01-03 │ Supplier 4 Steel Delayed    │ PO #19 due today does not arrive; buffer holds above SS│
-│ D-04 │ 2026-01-04 │ Partial Receipt & Delay     │ Plastic PO #20 arrives 60% partial; steel 1d overdue   │
-│ D-05 │ 2026-01-05 │ Line Capacity Bottleneck    │ Line 2 downtime; Widget Model Y output 50% below plan  │
-│ D-06 │ 2026-01-06 │ Compound Disruption Onset   │ Steel 3d late, steel at safety, 1st customer orders late│
-│ D-07 │ 2026-01-07 │ Crisis: Steel Stockout      │ Steel at 0 kg, Widget X halted, mounting backlog       │
-│ D-08 │ 2026-01-08 │ Inbound Recovery            │ Steel arrives 5d late, production restarts, backlog clears│
-│ D-09 │ 2026-01-09 │ Seasonal Peak (Control)     │ Normal Friday volume bump; backlog continues clearing  │
-│ D-10 │ 2026-01-10 │ Dual Unrelated Issues       │ Widget Y -20% and late plastic reorder; unmerged alerts│
-└──────┴────────────┴─────────────────────────────┴────────────────────────────────────────────────────────┘
-```
+> **Evaluation Honesty & Rehearsal Disclosure:**  
+> Version 3 expectations were written after seeing results (rehearsal, not validation). Scored against original v1 expectations, SAGE achieves **7/10 HITS (70.0%)**, 3 PARTIALS (30.0%), and 0 MISSES. Against rehearsal v3 expectations, SAGE scores **10/10 HITS (100.0%)**.
+
+| Day | Date | Operational Scenario | v1 Expected | v2 Expected | v3 Expected (Rehearsal) | Actual Tier | v1 Score | v3 Score |
+| :---: | :---: | :--- | :--- | :--- | :--- | :--- | :---: | :---: |
+| **D-01** | 2026-01-01 | Normal operations baseline | NORMAL | NORMAL | NORMAL | NORMAL | HIT | HIT |
+| **D-02** | 2026-01-02 | Demand spike (Widget Model X surge) | WATCH | WATCH | WATCH | WATCH | HIT | HIT |
+| **D-03** | 2026-01-03 | Steel PO #19 delayed (buffer holds) | WATCH | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | PARTIAL | HIT |
+| **D-04** | 2026-01-04 | Partial plastic receipt & steel late | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | HIT | HIT |
+| **D-05** | 2026-01-05 | Capacity disruption (Line 2 bottleneck) | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | HIT | HIT |
+| **D-06** | 2026-01-06 | Steel at safety stock, backlog onset | CRITICAL | CRITICAL | CRITICAL | CRITICAL | HIT | HIT |
+| **D-07** | 2026-01-07 | Crisis: Steel stockout, assembly halt | CRITICAL | CRITICAL | CRITICAL | CRITICAL | HIT | HIT |
+| **D-08** | 2026-01-08 | Inbound arrival, recovery in progress | IMPROVING | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | PARTIAL | HIT |
+| **D-09** | 2026-01-09 | Friday seasonal demand peak (control) | NORMAL / CALM | NORMAL / CALM | NEEDS_ATTENTION | NEEDS_ATTENTION | PARTIAL | HIT |
+| **D-10** | 2026-01-10 | Dual unrelated operational alerts | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | HIT | HIT |
 
 ---
 

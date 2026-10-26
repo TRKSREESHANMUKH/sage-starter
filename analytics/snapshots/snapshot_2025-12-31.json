@@ -93,6 +93,7 @@
     {
       "fill_rate": 1.0,
       "material_id": 101,
+      "po_id": 170,
       "quantity_ordered": 206,
       "quantity_received": 206,
       "receipt_id": 991,

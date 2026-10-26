@@ -196,6 +196,47 @@ class TestConsistencyFixes(unittest.TestCase):
         self.assertNotIn("Shortage risk: {{ outlook.shortage_risk }}", template_text)
         self.assertNotIn("77.8% of the theoretical limit", template_text)
 
+    def test_slim_strip_has_no_uncomputed_metrics(self):
+        """Asserts numbers strip on Today page and past days has no None, NaN, or undefined values."""
+        for d_str in ["2025-12-31", "2026-01-01"]:
+            ctx = build_one_page_context(selected_date_str=d_str)
+            ns = ctx.get("numbers_strip", {})
+            for key, item in ns.items():
+                self.assertNotIn("None", str(item.get("val")), f"Found None in numbers_strip[{key}] for {d_str}")
+                self.assertNotIn("NaN", str(item.get("val")), f"Found NaN in numbers_strip[{key}] for {d_str}")
+                self.assertNotIn("undefined", str(item.get("val")), f"Found undefined in numbers_strip[{key}] for {d_str}")
+
+    def test_forecast_v4_prereg_exists_and_verified(self):
+        """Asserts stage10/prereg_forecast_v4.md exists and contains framing and 68.2% query."""
+        p4 = ROOT_DIR / "stage10" / "prereg_forecast_v4.md"
+        self.assertTrue(p4.exists())
+        txt = p4.read_text(encoding="utf-8")
+        self.assertIn("SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.", txt)
+        self.assertIn("68.2%", txt)
+        self.assertIn("Trailing 28-day Mean", txt)
+
+    def test_method_page_rehearsal_disclosure_and_on_time_def(self):
+        """Asserts method.html contains rehearsal disclosure, on-time definition, and stress counts."""
+        m_txt = (ROOT_DIR / "web" / "templates" / "method.html").read_text(encoding="utf-8")
+        self.assertIn("Version 3 expectations were written after seeing results (rehearsal, not validation)", m_txt)
+        self.assertIn("An order is on time if and only if it is shipped complete on or before its customer-requested delivery date", m_txt)
+        self.assertIn("3 false attributions out of 92 days", m_txt)
+
+    def test_supplier_names_source_of_truth(self):
+        """Asserts zero occurrences of legacy placeholder names in code/templates."""
+        for check_path in [
+            ROOT_DIR / "web" / "templates" / "method.html",
+            ROOT_DIR / "web" / "templates" / "home.html",
+            ROOT_DIR / "web" / "templates" / "insights.html",
+            ROOT_DIR / "stage9" / "narrate.py",
+            ROOT_DIR / "stage9" / "priorities.py",
+            ROOT_DIR / "stage10" / "FORECAST_REPORT.md",
+        ]:
+            if check_path.exists():
+                c_txt = check_path.read_text(encoding="utf-8")
+                self.assertNotIn("Apex Polymers", c_txt)
+                self.assertNotIn("Metro Wiring", c_txt)
+
 
 if __name__ == "__main__":
     unittest.main()

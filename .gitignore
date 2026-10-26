@@ -21,3 +21,4 @@ live/
 analytics/insights_cache/
 demo_data/case_packs/
 analytics/snapshots/snapshot_2026-*.json
+CN-Anomaly-Detection/

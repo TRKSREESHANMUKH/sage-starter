@@ -23,10 +23,23 @@
   <ul style="padding-left: 20px; font-size: 0.85rem; color: var(--text-main); line-height: 1.6;">
     <li><strong>48 Stale Customer Backorders (652 units total):</strong> Accumulated unfulfilled 2025 sales orders with requested delivery dates &le; 2025-12-31 were formally cancelled at year-end closing, preventing historical standing backlog from drowning out new operational anomalies.</li>
     <li><strong>Purchase Order #18 Cancelled (407 units):</strong> A stuck historical PO (139 days overdue, expected 2025-08-14) was cancelled to establish clean supplier open-order tracking.</li>
-    <li><strong>Opening Raw Material Inventory:</strong> Stock balances were calibrated to clean working levels as recorded in the transactional ledger: <strong>215 kg</strong> Steel Rod 10mm (Item 101, reset from 9 kg via stock adjustment #484), while Plastic Granules (Item 102, <strong>204 kg</strong>) and Copper Wire (Item 103, <strong>184 meters</strong>) naturally carried forward their actual positive year-end balances above safety thresholds without requiring synthetic adjustments.</li>
+    <li><strong>Stock Adjustment #484 (+206 kg Steel):</strong> Closing steel balance was 9 kg; seed stock adjustment #484 added +206 kg to establish clean working inventory at <strong>215 kg</strong> Steel Rod 10mm (Item 101, safely above 200 kg reorder point). Plastic Granules (Item 102, <strong>204 kg</strong>) and Copper Wire (Item 103, <strong>184 meters</strong>) naturally carried forward their actual positive year-end balances above safety thresholds without requiring synthetic adjustments.</li>
   </ul>
   <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 8px;">
+    <strong>Day 1 Stock Reconciliation:</strong> Early planning drafts cited target inventory levels of 420/310/250 (and 215/140/110 in draft notes); the verified transactional ERP closing inventory on 2025-12-31 and opening Day 1 balance is Steel: 215 kg / Plastic: 204 kg / Copper: 184 meters.
+  </p>
+  <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 4px;">
     These year-end adjustments are fully audited and accounted for in the Insights reconciliation table under the dedicated <em>"Cancelled at demo opening position"</em> category so that 100% of the 2025 transaction ledger reconciles without hidden drops.
+  </p>
+</div>
+
+<div class="card" style="border-left: 4px solid #14b8a6;">
+  <div class="card-title">Fulfillment &amp; On-Time Delivery Definition</div>
+  <p style="font-size: 0.9rem; font-weight: 600; color: var(--text-main); line-height: 1.6; margin-bottom: 8px;">
+    An order is on time if and only if it is shipped complete on or before its customer-requested delivery date; unfulfilled orders and orders encountering stockout remain in open backlog and are classified as not on time.
+  </p>
+  <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; margin: 0;">
+    Across the 2026 operational sequence (1–10 Jan 2026), 20 customer sales orders were placed for 2026 delivery; all 20 were delivered on their requested delivery date (20/20 on time, 100.0%). The 9 orders placed in late 2025 with delivery dates in early 2026 (109 units) remained unfulfilled in customer backlog, rising to 9 orders (109 units) by Day 7.
   </p>
 </div>
 
@@ -103,8 +116,139 @@
 <div class="card" style="border-left: 4px solid #10b981;">
   <div class="card-title">Trust &amp; Empirical Evaluation</div>
   <p style="font-size: 0.9rem; color: var(--text-main); line-height: 1.6; margin-bottom: 12px;">
-    <strong>10-day scripted demo feed (1–10 Jan 2026):</strong> Evaluated strictly against pre-registered operational rules in <code>stage10/prereg_demo_feed.md</code>.
+    <strong>10-day scripted demo feed (1–10 Jan 2026):</strong> Evaluated across progressive pre-registration protocols (v1, v2, v3).
   </p>
+
+  <div class="card-title" style="font-size: 0.95rem; margin-top: 10px;">Ten-Day Feed Multi-Version Evaluation &amp; Rehearsal Disclosure</div>
+  <p style="font-size: 0.82rem; color: #b45309; background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 8px 12px; margin-bottom: 10px;">
+    <strong>Important Disclosure:</strong> Version 3 expectations were written after seeing results (rehearsal, not validation). Scored against original v1 expectations, SAGE achieves <strong>7/10 HITS (70.0%)</strong>, 3 PARTIALS (30.0%), and 0 MISSES. Against rehearsal v3 expectations, SAGE scores <strong>10/10 HITS (100.0%)</strong>.
+  </p>
+  <table style="margin-top: 8px; font-size: 0.8rem;">
+    <thead>
+      <tr>
+        <th style="padding: 6px;">Day</th>
+        <th style="padding: 6px;">Date</th>
+        <th style="padding: 6px;">v1 Expected</th>
+        <th style="padding: 6px;">v2 Expected</th>
+        <th style="padding: 6px;">v3 Expected (Rehearsal)</th>
+        <th style="padding: 6px;">Actual Tier</th>
+        <th style="padding: 6px;">v1 Score</th>
+        <th style="padding: 6px;">v3 Score</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="padding: 5px 6px;">1</td>
+        <td style="padding: 5px 6px;">2026-01-01</td>
+        <td style="padding: 5px 6px;">NORMAL</td>
+        <td style="padding: 5px 6px;">NORMAL</td>
+        <td style="padding: 5px 6px;">NORMAL</td>
+        <td style="padding: 5px 6px;"><strong style="color: #10b981;">NORMAL</strong></td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
+      </tr>
+      <tr>
+        <td style="padding: 5px 6px;">2</td>
+        <td style="padding: 5px 6px;">2026-01-02</td>
+        <td style="padding: 5px 6px;">WATCH</td>
+        <td style="padding: 5px 6px;">WATCH</td>
+        <td style="padding: 5px 6px;">WATCH</td>
+        <td style="padding: 5px 6px;"><strong style="color: #3b82f6;">WATCH</strong></td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
+      </tr>
+      <tr>
+        <td style="padding: 5px 6px;">3</td>
+        <td style="padding: 5px 6px;">2026-01-03</td>
+        <td style="padding: 5px 6px;">WATCH</td>
+        <td style="padding: 5px 6px;">NEEDS_ATTENTION</td>
+        <td style="padding: 5px 6px;">NEEDS_ATTENTION</td>
+        <td style="padding: 5px 6px;"><strong style="color: #f59e0b;">NEEDS_ATTENTION</strong></td>
+        <td style="padding: 5px 6px; color: #b45309; font-weight: 700;">PARTIAL</td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
+      </tr>
+      <tr>
+        <td style="padding: 5px 6px;">4</td>
+        <td style="padding: 5px 6px;">2026-01-04</td>
+        <td style="padding: 5px 6px;">NEEDS_ATTENTION</td>
+        <td style="padding: 5px 6px;">NEEDS_ATTENTION</td>
+        <td style="padding: 5px 6px;">NEEDS_ATTENTION</td>
+        <td style="padding: 5px 6px;"><strong style="color: #f59e0b;">NEEDS_ATTENTION</strong></td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
+      </tr>
+      <tr>
+        <td style="padding: 5px 6px;">5</td>
+        <td style="padding: 5px 6px;">2026-01-05</td>
+        <td style="padding: 5px 6px;">NEEDS_ATTENTION</td>
+        <td style="padding: 5px 6px;">NEEDS_ATTENTION</td>
+        <td style="padding: 5px 6px;">NEEDS_ATTENTION</td>
+        <td style="padding: 5px 6px;"><strong style="color: #f59e0b;">NEEDS_ATTENTION</strong></td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
+      </tr>
+      <tr>
+        <td style="padding: 5px 6px;">6</td>
+        <td style="padding: 5px 6px;">2026-01-06</td>
+        <td style="padding: 5px 6px;">CRITICAL</td>
+        <td style="padding: 5px 6px;">CRITICAL</td>
+        <td style="padding: 5px 6px;">CRITICAL</td>
+        <td style="padding: 5px 6px;"><strong style="color: #ef4444;">CRITICAL</strong></td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
+      </tr>
+      <tr>
+        <td style="padding: 5px 6px;">7</td>
+        <td style="padding: 5px 6px;">2026-01-07</td>
+        <td style="padding: 5px 6px;">CRITICAL</td>
+        <td style="padding: 5px 6px;">CRITICAL</td>
+        <td style="padding: 5px 6px;">CRITICAL</td>
+        <td style="padding: 5px 6px;"><strong style="color: #ef4444;">CRITICAL</strong></td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
+      </tr>
+      <tr>
+        <td style="padding: 5px 6px;">8</td>
+        <td style="padding: 5px 6px;">2026-01-08</td>
+        <td style="padding: 5px 6px;">IMPROVING</td>
+        <td style="padding: 5px 6px;">NEEDS_ATTENTION</td>
+        <td style="padding: 5px 6px;">NEEDS_ATTENTION</td>
+        <td style="padding: 5px 6px;"><strong style="color: #f59e0b;">NEEDS_ATTENTION</strong></td>
+        <td style="padding: 5px 6px; color: #b45309; font-weight: 700;">PARTIAL</td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
+      </tr>
+      <tr>
+        <td style="padding: 5px 6px;">9</td>
+        <td style="padding: 5px 6px;">2026-01-09</td>
+        <td style="padding: 5px 6px;">NORMAL / CALM</td>
+        <td style="padding: 5px 6px;">NORMAL / CALM</td>
+        <td style="padding: 5px 6px;">NEEDS_ATTENTION</td>
+        <td style="padding: 5px 6px;"><strong style="color: #f59e0b;">NEEDS_ATTENTION</strong></td>
+        <td style="padding: 5px 6px; color: #b45309; font-weight: 700;">PARTIAL</td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
+      </tr>
+      <tr>
+        <td style="padding: 5px 6px;">10</td>
+        <td style="padding: 5px 6px;">2026-01-10</td>
+        <td style="padding: 5px 6px;">NEEDS_ATTENTION</td>
+        <td style="padding: 5px 6px;">NEEDS_ATTENTION</td>
+        <td style="padding: 5px 6px;">NEEDS_ATTENTION</td>
+        <td style="padding: 5px 6px;"><strong style="color: #f59e0b;">NEEDS_ATTENTION</strong></td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="card-title" style="font-size: 0.95rem; margin-top: 14px;">Seasonality Stress Test &amp; Response Lag Audit</div>
+  <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 8px;">
+    Tested across <strong>92 Q4 calendar days</strong> (2025-10-01 to 2025-12-31) under synthetic demand amplification (1.40&times; Q4 demand, 1.25&times; Friday peak). SAGE produced exactly <strong>3 false attributions out of 92 days</strong> (2 false supplier attributions, 1 false machine capacity attribution). 89 of 92 days (96.7%) preserved causal trace integrity.
+  </p>
+  <ul style="padding-left: 20px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 12px;">
+    <li><strong>Supplier delay to safety stock breach:</strong> Sample size <i>n</i> = 4 disruption events (individual lags: 0, 3, 8, 172 days; min: 0, median: 5.5, max: 172 days).</li>
+    <li><strong>Material stockout to customer backlog:</strong> Sample size <i>n</i> = 1 disruption event (lag: 0 days; min: 0, median: 0.0, max: 0 days).</li>
+  </ul>
+
   <div class="card-title" style="font-size: 0.95rem; margin-top: 10px;">Synthetic Causal Attribution Cohorts (Stage 7 Multi-Cohort Benchmark)</div>
   <table style="margin-top: 8px;">
     <thead>

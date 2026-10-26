@@ -527,21 +527,27 @@
   <div class="card" style="margin-bottom: 20px;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
       <div>
-        <h3 style="font-size: 1.0rem; font-weight: 700; margin: 0; color: var(--text-main);">Key Events &amp; Disruption Episodes</h3>
+        <h3 style="font-size: 1.0rem; font-weight: 700; margin: 0; color: var(--text-main);">Key Events &amp; Disruption Episodes <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">(Newest First)</span></h3>
         <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">Chronological episodes grouped by daily operational status (snapshot &amp; priorities trace).</p>
       </div>
-      <!-- Tier Filter Buttons -->
-      <div style="display: flex; gap: 6px;">
-        <button type="button" class="ep-filter-btn active" onclick="filterEpisodes('all', this)" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 600; border-radius: 4px; border: 1px solid #cbd5e1; background: #ffffff; cursor: pointer;">All</button>
-        <button type="button" class="ep-filter-btn" onclick="filterEpisodes('Critical', this)" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 600; border-radius: 4px; border: 1px solid #fee2e2; color: #dc2626; background: #ffffff; cursor: pointer;">Critical</button>
-        <button type="button" class="ep-filter-btn" onclick="filterEpisodes('Needs attention', this)" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 600; border-radius: 4px; border: 1px solid #fef3c7; color: #b45309; background: #ffffff; cursor: pointer;">Needs attention</button>
-        <button type="button" class="ep-filter-btn" onclick="filterEpisodes('Watch', this)" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 600; border-radius: 4px; border: 1px solid #e0f2fe; color: #0369a1; background: #ffffff; cursor: pointer;">Watch</button>
+      <!-- Tier Filter Buttons & New Events Toggle -->
+      <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <div style="display: flex; gap: 6px;">
+          <button type="button" class="ep-filter-btn active" onclick="filterEpisodes('all', this)" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 600; border-radius: 4px; border: 1px solid #cbd5e1; background: #ffffff; cursor: pointer;">All</button>
+          <button type="button" class="ep-filter-btn" onclick="filterEpisodes('Critical', this)" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 600; border-radius: 4px; border: 1px solid #fee2e2; color: #dc2626; background: #ffffff; cursor: pointer;">Critical</button>
+          <button type="button" class="ep-filter-btn" onclick="filterEpisodes('Needs attention', this)" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 600; border-radius: 4px; border: 1px solid #fef3c7; color: #b45309; background: #ffffff; cursor: pointer;">Needs attention</button>
+          <button type="button" class="ep-filter-btn" onclick="filterEpisodes('Watch', this)" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 600; border-radius: 4px; border: 1px solid #e0f2fe; color: #0369a1; background: #ffffff; cursor: pointer;">Watch</button>
+        </div>
+        <label style="display: inline-flex; align-items: center; gap: 5px; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); cursor: pointer; margin-left: 4px; background: #f8fafc; padding: 4px 8px; border-radius: 4px; border: 1px solid #e2e8f0;">
+          <input type="checkbox" id="toggle-new-events" onchange="toggleNewEvents(this)" style="cursor: pointer;">
+          Show only new events
+        </label>
       </div>
     </div>
 
     <div id="episodes-container" style="display: flex; flex-direction: column; gap: 10px; max-height: 480px; overflow-y: auto; padding-right: 4px;">
       {% for ep in history_and_key_events.key_events %}
-      <div class="episode-row" data-tier="{{ ep.max_tier }}" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; flex-wrap: wrap; gap: 8px;">
+      <div class="episode-row" data-tier="{{ ep.max_tier }}" data-is-new="{{ 'true' if ep.days_count > 1 or ep.max_tier in ['Critical', 'Needs attention'] else 'false' }}" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; flex-wrap: wrap; gap: 8px;">
         <div style="flex-grow: 1; min-width: 260px;">
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
             <span class="badge {{ ep.tier_class }}" style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase;">{{ ep.max_tier }}</span>
@@ -1365,6 +1371,10 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 });
 
+function toggleNewEvents(cb) {
+  applyEpisodeFilters();
+}
+
 function filterEpisodes(tier, btnEl) {
   document.querySelectorAll('.ep-filter-btn').forEach(b => {
     b.classList.remove('active');
@@ -1374,10 +1384,25 @@ function filterEpisodes(tier, btnEl) {
     btnEl.classList.add('active');
     btnEl.style.fontWeight = '800';
   }
+  applyEpisodeFilters();
+}
+
+function applyEpisodeFilters() {
+  const activeBtn = document.querySelector('.ep-filter-btn.active');
+  let activeTier = 'all';
+  if (activeBtn) {
+    const text = activeBtn.textContent.trim().toLowerCase();
+    if (text === 'critical') activeTier = 'Critical';
+    else if (text === 'needs attention') activeTier = 'Needs attention';
+    else if (text === 'watch') activeTier = 'Watch';
+  }
+  const onlyNew = document.getElementById('toggle-new-events')?.checked;
   const rows = document.querySelectorAll('.episode-row');
   rows.forEach(r => {
     const rowTier = r.getAttribute('data-tier');
-    if (tier === 'all' || rowTier === tier) {
+    const tierMatch = (activeTier === 'all' || rowTier === activeTier);
+    const isNew = r.getAttribute('data-is-new') === 'true';
+    if (tierMatch && (!onlyNew || isNew)) {
       r.style.display = 'flex';
     } else {
       r.style.display = 'none';
