@@ -721,14 +721,22 @@ def build_one_page_context(selected_date_str: Optional[str] = None) -> Dict[str,
         if backlog_units > 0 and len(issues) == 0:
             mc = get_model_check_summary("backlog_recovery", "fifo", cur_d)
             chain = f"Inbound replenishment arrived → Assembly resumed → Oldest customer backorders shipping (FIFO)"
+            yest_b = snap.get("kpis", {}).get("yest_backlog_units", 0)
+            if yest_b > 0 and backlog_units < yest_b:
+                hl = f"Standing customer backlog clearing ({late_orders} orders, {backlog_units} units)"
+                st1 = f"Backlog is burning down: {backlog_units} units remaining across {late_orders} orders."
+            else:
+                hl = f"Standing customer backlog ({late_orders} orders, {backlog_units} units)"
+                st1 = f"Standing backlog: {backlog_units} units remaining across {late_orders} orders."
+
             issues.append({
                 "badge": "NEEDS ATTENTION",
                 "badge_class": "pill-amber",
-                "headline": f"Standing customer backlog clearing ({late_orders} orders, {backlog_units} units)",
+                "headline": hl,
                 "cause_chain": chain,
                 "evidence_label": "Seen end to end",
                 "what_to_do": "Maintain maximized shift throughput to clear remaining backorder queue.",
-                "step1_text": f"Backlog is burning down: {backlog_units} units remaining across {late_orders} orders.",
+                "step1_text": st1,
                 "step1_svg": "",
                 "step2_chain": chain,
                 "step3_sure": "Inbound stock verified; warehouse shipping FIFO priority queues.",
@@ -811,14 +819,20 @@ def build_one_page_context(selected_date_str: Optional[str] = None) -> Dict[str,
                     "Procurement will follow up with EastCoast at 09:00 to expedite transit."
                 )
             elif "backlog" in top_hl.lower() or (backlog_units > 0 and not overdue_supps):
-                # Standing backlog clearing (e.g. Days 8, 9)
+                yest_b = snap.get("kpis", {}).get("yest_backlog_units", 0)
+                if yest_b > 0 and backlog_units < yest_b:
+                    focus_phrase = f"clearing standing customer backorders ({backlog_units} units across {late_orders} orders) following material replenishment."
+                    disp_phrase = "continue burning down remaining backorders."
+                else:
+                    focus_phrase = f"fulfilling standing customer backorders ({backlog_units} units across {late_orders} orders) following material replenishment."
+                    disp_phrase = "continue fulfillment of standing backorders."
                 body = (
                     f"Operations are operating under an active advisory as of {cur_d.strftime('%A, %-d %B %Y')}. "
-                    f"The primary operational focus is clearing standing customer backorders ({backlog_units} units across {late_orders} orders) following material replenishment. "
+                    f"The primary operational focus is {focus_phrase} "
                     f"Raw material inventory is healthy, with Steel Rod 10mm replenished to {steel_stock} kg, safely above the 50 kg safety threshold. "
                     "All inbound supplier shipments are on schedule today with zero overdue purchase orders across vendors. "
                     "Daily manufacturing throughput achieved scheduled volume across all product lines. "
-                    "The Production Manager will maintain planned dispatch sequencing at 09:00 to continue burning down remaining backorders."
+                    f"The Production Manager will maintain planned dispatch sequencing at 09:00 to {disp_phrase}"
                 )
             elif "demand" in top_hl.lower():
                 # Elevated demand intake (e.g. Day 2)

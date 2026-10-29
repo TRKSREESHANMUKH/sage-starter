@@ -144,7 +144,34 @@ The weekly forecast is fully integrated across the SAGE operational surfaces:
 
 ---
 
-## 7. Model Artifact Details
+## 7. Protocol Version 4 Addendum: Units Due ($D+1..D+7$) vs Units Placed ($D+1..D+7$)
+
+As pre-registered in `stage10/prereg_forecast_v4.md` (committed at `4f003ca` prior to model evaluation), this addendum evaluates candidate models on the operational target:
+$$y_{\text{due}}(D) = K(D) + S(D)$$
+where $K(D)$ is **known booked units** already ordered in the ERP ledger on or before Day $D$ requested for delivery in $[D+1, D+7]$, and $S(D)$ is **short-notice units** ordered and requested within that same window.
+
+### Benchmark Comparison Table: NEW Target ($y_{\text{due}}$) vs OLD Target ($y_{\text{placed}}$)
+
+| Split & Horizon | Candidate Architecture | Target Definition | MAE (units) | WAPE | Accuracy ($1-\text{WAPE}$) | Bias (units) | 80% Coverage |
+| :--- | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| **CV ($n=21$ Sundays)** | Baseline 2: Trailing 28d Mean | OLD Target ($y_{\text{placed}}$) | 31.14 [CV] | 0.5455 [CV] | 45.5% [CV] | -1.88 [CV] | — |
+| **CV ($n=21$ Sundays)** | Known Booked Only (No Model) | NEW Target ($y_{\text{due}}$) | 12.43 [CV] | 0.2258 [CV] | 77.4% [CV] | -12.43 [CV] | — |
+| **CV ($n=21$ Sundays)** | **Booked + Trailing Short-Notice [DEPLOYED v4]** | **NEW Target ($y_{\text{due}}$)** | **10.99 [CV]** | **0.1996 [CV]** | **80.0% [CV]** | **-0.27 [CV]** | — |
+| **TEST ($n=25$ Sundays)** | Baseline 2: Trailing 28d Mean | OLD Target ($y_{\text{placed}}$) | 31.10 [TEST] | 0.6474 [TEST] | 35.3% [TEST] | -2.42 [TEST] | — |
+| **TEST ($n=25$ Sundays)** | Known Booked Only (No Model) | NEW Target ($y_{\text{due}}$) | 14.44 [TEST] | 0.3200 [TEST] | 68.0% [TEST] | -14.44 [TEST] | — |
+| **TEST ($n=25$ Sundays)** | **Booked + Trailing Short-Notice [DEPLOYED v4]** | **NEW Target ($y_{\text{due}}$)** | **14.22 [TEST]** | **0.3152 [TEST]** | **68.5% [TEST]** | **-0.18 [TEST]** | **84.0% [TEST]** |
+| **TEST ($n=177$ Daily)** | Baseline 2: Trailing 28d Mean | OLD Target ($y_{\text{placed}}$) | 30.62 [TEST] | 0.6312 [TEST] | 36.9% [TEST] | -2.67 [TEST] | — |
+| **TEST ($n=177$ Daily)** | Known Booked Only (No Model) | NEW Target ($y_{\text{due}}$) | 10.93 [TEST] | 0.2381 [TEST] | 76.2% [TEST] | -10.93 [TEST] | — |
+| **TEST ($n=177$ Daily)** | **Booked + Trailing Short-Notice [DEPLOYED v4]** | **NEW Target ($y_{\text{due}}$)** | **11.66 [TEST]** | **0.2540 [TEST]** | **74.6% [TEST]** | **-0.32 [TEST]** | **82.5% [TEST]** |
+
+### Plain-English Attribution of Accuracy Gains:
+Does accuracy rise from 35.3% / 36.9% to 68.5% / 74.6% because of a superior machine learning model?
+**No. The accuracy gain stems directly from the known booked ledger commitments ($K(D)$).**
+Because 68.0% to 76.2% of customer orders due in the next 7 days are already placed in advance (median lead time 6.0 days), they are known with 100% certainty on Day $D$. The predictive model is only responsible for estimating the residual 23.8% to 32.0% short-notice volume. Incorporating verified ERP commitments into the operational target eliminates aleatoric variance without claiming algorithmic superiority.
+
+---
+
+## 8. Model Artifact Details
 - **Serialized Artifact:** `stage10/forecast/model.pkl` (and `stage10/forecast/outputs/model_v3.pkl`)
 - **Artifact SHA256:** `a6b37c2e1558f1138a8e1165db602ec3ffc8de37a627fe01e6e37d1de427c6ab`
 - **Output Audit Files:**

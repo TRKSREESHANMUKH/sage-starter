@@ -86,8 +86,13 @@ def derive_day_entry(as_of: date, snap: Dict[str, Any]) -> Dict[str, Any]:
     elif backlog_units > 0:
         issue_count += 1
         late_orders = int(kpis.get("total_overdue_orders", 0))
-        headline = f"Standing customer backlog clearing ({late_orders} orders, {backlog_units} units)"
-        trigger = f"{backlog_units} units in customer backlog awaiting fulfillment"
+        yest_backlog = int(kpis.get("yest_backlog_units", 0))
+        if yest_backlog > 0 and backlog_units < yest_backlog:
+            headline = f"Standing customer backlog clearing ({late_orders} orders, {backlog_units} units)"
+            trigger = f"{backlog_units} units in customer backlog awaiting fulfillment (burning down)"
+        else:
+            headline = f"Standing customer backlog ({late_orders} orders, {backlog_units} units)"
+            trigger = f"{backlog_units} units in customer backlog awaiting fulfillment"
         evidence = "Seen end to end"
     elif has_shortfall:
         issue_count += 1

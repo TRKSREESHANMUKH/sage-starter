@@ -10,7 +10,8 @@
     "total_material_stockouts": 1,
     "total_overdue_orders": 10,
     "total_po_overdue_days": 67,
-    "total_production_shortfall": 0
+    "total_production_shortfall": 0,
+    "yest_backlog_units": 108
   },
   "materials": {
     "101": {

@@ -10,6 +10,7 @@ TODAY'S NUMBERS IN CONTEXT:
 • Orders Late    : 9 late orders, same as yesterday (7d avg: 7.3)
 • Units Short    : 109 units short, same as yesterday (7d avg: 88.0)
 • Materials Low  : 0 materials low, same as yesterday (7d avg: 0.3)
+• Forward-look   : Expected new orders 61u (range 34–92); 10u already due (risk: Low).
 
 PAST ANALYSED CASES: WHAT CAUSED WHAT:
 • Chain: Widget Model X orders late

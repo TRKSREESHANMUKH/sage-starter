@@ -396,13 +396,16 @@
   </p>
   <ul style="padding-left: 20px; font-size: 0.85rem; color: var(--text-main); line-height: 1.7;">
     <li>
-      <strong>Deployed Model (Trailing 28-Day Mean):</strong> The deployed production model is a trailing 28-day daily mean multiplied across the 7-day horizon. It was selected strictly because it achieved the lowest cross-validation WAPE (0.55 / 45.5% accuracy) during walk-forward validation inside the H1 2025 training window.
+      <strong>Deployed Model (Trailing 28-day mean):</strong> The deployed production model is a trailing 28-day mean multiplied across the 7-day horizon. It was selected strictly because it achieved the lowest cross-validation WAPE (0.55 / 45.5% accuracy) during walk-forward validation inside the H1 2025 training window.
     </li>
     <li>
       <strong>Machine Learning Benchmark:</strong> Advanced statistical models, including Negative Binomial count regression and Quantile Gradient Boosted Decision Trees (GBDT), did not beat the trailing 28-day mean on this one-year simulated dataset due to high intermittency (68.2% zero-order days).
     </li>
     <li>
       <strong>Theoretical Oracle Limit vs. Deployed Performance:</strong> Independent Monte Carlo simulation over 100,000 weeks proves that discrete Bernoulli order arrivals and random order sizing impose an irreducible theoretical aleatoric error floor of <strong>0.50 WAPE</strong> (an irreducible 50% accuracy ceiling). The deployed model achieves <strong>0.65 WAPE</strong> on out-of-sample weekly tests, operating within 0.14 WAPE of the theoretical noise limit.
+    </li>
+    <li>
+      <strong>Protocol v4 Target Comparison (Units Due vs Units Placed):</strong> As pre-registered in <code>stage10/prereg_forecast_v4.md</code>, forecasting units due in the rolling 7-day window (<em>y</em><sub>due</sub> = known booked + short-notice) achieves <strong>68.5% accuracy</strong> (0.3152 WAPE [TEST]) vs <strong>35.3% accuracy</strong> (0.6474 WAPE [TEST]) when predicting net new arrivals (<em>y</em><sub>placed</sub>). This accuracy gain stems directly from known booked ledger commitments removing 68–76% of aleatoric uncertainty on origin day <em>D</em>, rather than an algorithmic change.
     </li>
     <li>
       <strong>Wide Prediction Range:</strong> Because discrete customer demand arrivals are stochastic, the empirical 80% prediction interval is wide. Forecasts provide macro weekly capacity sizing rather than daily precision.
@@ -427,6 +430,9 @@
     </li>
     <li>
       <strong>Simulator Settlement Limitation (Late-But-Delivered is Zero by Construction):</strong> The synthetic enterprise simulator fulfills customer orders strictly on their requested delivery date. It contains no retroactive fulfillment sweep. Orders encountering stockouts remain permanently backordered rather than being fulfilled late; thus, the 'Shipped Complete AFTER Requested Date' count is zero by construction.
+    </li>
+    <li>
+      <strong>Operational Lead-Time Design in 10-Day Demonstration Feed:</strong> In the 2025 historical dataset, customer sales orders exhibit a lead time of 3 to 10 days (median 6.0 days). In the 10-day demonstration feed (January 1–10, 2026), incoming sales orders were scripted with short-cycle 1-day lead times (<code>lead_d = 1</code>) to allow full order-to-delivery cycles, stockout impacts, and customer backlog resolution to be observed within the compressed 10-day demonstration window without altering frozen 2025 database records.
     </li>
     <li>
       <strong>Expert Graph Sourcing vs Actual Routing:</strong> The expert graph allows supplier links that the simulated sourcing never used (e.g., theoretical links to backup vendors Sri Materials Pvt Ltd and Bharat Steel Works). Stage 9 cause-chain tracing dynamically restricts traversal to active supplier links verified in historical purchase orders.

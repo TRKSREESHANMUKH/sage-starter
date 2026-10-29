@@ -114,7 +114,7 @@ class TestWeeklyForecast(unittest.TestCase):
         elapsed = time.perf_counter() - t0
 
         self.assertIn("Next 7 days: expected new orders", html)
-        self.assertIn("Trailing 28-day mean", html)
+        self.assertNotIn("Shortage risk", html)
         self.assertIn(RESEARCH_FRAMING, html)
         self.assertLess(elapsed, 3.0, f"Render took {elapsed:.2f}s (must be <3.0s)")
         print(f"Full Today page context build and render completed in {elapsed:.3f}s")

@@ -189,12 +189,20 @@ class TestConsistencyFixes(unittest.TestCase):
         self.assertNotIn('<select name="date"', template_text)
 
     def test_forecast_card_wording_and_card_layout(self):
-        """Asserts forecast card contains deployed model explanation and no shortage risk badge."""
+        """Asserts slim strip on Today page has no WAPE/accuracy/MAE/model name and no shortage badge."""
         template_text = (ROOT_DIR / "web" / "templates" / "home.html").read_text(encoding="utf-8")
+        method_text = (ROOT_DIR / "web" / "templates" / "method.html").read_text(encoding="utf-8")
+        report_text = (ROOT_DIR / "stage10" / "FORECAST_REPORT.md").read_text(encoding="utf-8")
+
         self.assertIn("forecast-card", template_text)
-        self.assertIn("Trailing 28-day mean", template_text)
-        self.assertNotIn("Shortage risk: {{ outlook.shortage_risk }}", template_text)
+        # Slim strip on Today has NO model name, NO WAPE, NO MAE, NO accuracy, NO shortage badge
+        self.assertNotIn("Trailing 28-day mean", template_text)
+        self.assertNotIn("Shortage risk", template_text)
         self.assertNotIn("77.8% of the theoretical limit", template_text)
+
+        # Deployed model plain-English disclosures belong on Method page and FORECAST_REPORT.md
+        self.assertIn("trailing 28-day mean", method_text.lower())
+        self.assertIn("trailing 28-day mean", report_text.lower())
 
     def test_slim_strip_has_no_uncomputed_metrics(self):
         """Asserts numbers strip on Today page and past days has no None, NaN, or undefined values."""

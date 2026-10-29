@@ -1,5 +1,5 @@
 {
-  "generated_at": 1793038782.693012,
+  "generated_at": 1793296993.074014,
   "summary": "10 hits, 0 partial, 0 miss",
   "hits": 10,
   "partials": 0,
@@ -240,7 +240,7 @@
         }
       ],
       "summary_words": 110,
-      "summary_text": "Operations are operating under an active advisory as of Thursday, 8 January 2026. The primary operational focus is clearing standing customer backorders (109 units across 9 orders) following material replenishment. Raw material inventory is healthy, with Steel Rod 10mm replenished to 353 kg, safely above the 50 kg safety threshold. All inbound supplier shipments are on schedule today with zero overdue purchase orders across vendors. Daily manufacturing throughput achieved scheduled volume across all product lines. The Production Manager will maintain planned dispatch sequencing at 09:00 to continue burning down remaining backorders. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+      "summary_text": "Operations are operating under an active advisory as of Thursday, 8 January 2026. The primary operational focus is fulfilling standing customer backorders (109 units across 9 orders) following material replenishment. Raw material inventory is healthy, with Steel Rod 10mm replenished to 353 kg, safely above the 50 kg safety threshold. All inbound supplier shipments are on schedule today with zero overdue purchase orders across vendors. Daily manufacturing throughput achieved scheduled volume across all product lines. The Production Manager will maintain planned dispatch sequencing at 09:00 to continue fulfillment of standing backorders. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
       "outcome": "HIT",
       "reason": "Detected inbound material arrival, production restart, and backlog recovery."
     },
@@ -250,12 +250,12 @@
       "status_word": "NEEDS_ATTENTION",
       "status_label": "NEEDS_ATTENTION",
       "alert_count": 1,
-      "top_headline": "Standing customer backlog clearing (9 orders, 109 units)",
+      "top_headline": "Standing customer backlog (9 orders, 109 units)",
       "top_cause": "Inbound replenishment arrived \u2192 Assembly resumed \u2192 Oldest customer backorders shipping (FIFO)",
       "top_focus": "None",
       "alerts": [
         {
-          "headline": "Standing customer backlog clearing (9 orders, 109 units)",
+          "headline": "Standing customer backlog (9 orders, 109 units)",
           "badge": "NEEDS ATTENTION",
           "cause_chain": "Inbound replenishment arrived \u2192 Assembly resumed \u2192 Oldest customer backorders shipping (FIFO)",
           "evidence_label": "Seen end to end",
@@ -263,7 +263,7 @@
         }
       ],
       "summary_words": 110,
-      "summary_text": "Operations are operating under an active advisory as of Friday, 9 January 2026. The primary operational focus is clearing standing customer backorders (109 units across 9 orders) following material replenishment. Raw material inventory is healthy, with Steel Rod 10mm replenished to 313 kg, safely above the 50 kg safety threshold. All inbound supplier shipments are on schedule today with zero overdue purchase orders across vendors. Daily manufacturing throughput achieved scheduled volume across all product lines. The Production Manager will maintain planned dispatch sequencing at 09:00 to continue burning down remaining backorders. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+      "summary_text": "Operations are operating under an active advisory as of Friday, 9 January 2026. The primary operational focus is fulfilling standing customer backorders (109 units across 9 orders) following material replenishment. Raw material inventory is healthy, with Steel Rod 10mm replenished to 313 kg, safely above the 50 kg safety threshold. All inbound supplier shipments are on schedule today with zero overdue purchase orders across vendors. Daily manufacturing throughput achieved scheduled volume across all product lines. The Production Manager will maintain planned dispatch sequencing at 09:00 to continue fulfillment of standing backorders. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
       "outcome": "HIT",
       "reason": "Handled Friday demand peak within normal baseline; no false supply alarm."
     },
@@ -286,7 +286,7 @@
         }
       ],
       "summary_words": 110,
-      "summary_text": "Operations are operating under an active advisory as of Saturday, 10 January 2026. The primary operational focus is clearing standing customer backorders (109 units across 9 orders) following material replenishment. Raw material inventory is healthy, with Steel Rod 10mm replenished to 288 kg, safely above the 50 kg safety threshold. All inbound supplier shipments are on schedule today with zero overdue purchase orders across vendors. Daily manufacturing throughput achieved scheduled volume across all product lines. The Production Manager will maintain planned dispatch sequencing at 09:00 to continue burning down remaining backorders. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+      "summary_text": "Operations are operating under an active advisory as of Saturday, 10 January 2026. The primary operational focus is fulfilling standing customer backorders (109 units across 9 orders) following material replenishment. Raw material inventory is healthy, with Steel Rod 10mm replenished to 288 kg, safely above the 50 kg safety threshold. All inbound supplier shipments are on schedule today with zero overdue purchase orders across vendors. Daily manufacturing throughput achieved scheduled volume across all product lines. The Production Manager will maintain planned dispatch sequencing at 09:00 to continue fulfillment of standing backorders. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
       "outcome": "HIT",
       "reason": "Reported operational shortfalls across parallel workstreams without conflation."
     }

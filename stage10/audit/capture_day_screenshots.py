@@ -39,14 +39,18 @@ def capture():
         page.goto("http://localhost:8000/?date=2026-01-01", wait_until="networkidle")
         time.sleep(1)
         p1 = ROOT_DIR / "stage9" / "screenshots" / "today_day_1_desktop.png"
+        p1_final = ROOT_DIR / "analytics" / "screenshots" / "final" / "viewer_today_day1.png"
         page.screenshot(path=str(p1), full_page=True)
+        page.screenshot(path=str(p1_final), full_page=True)
         print("Captured Day 1 desktop:", p1)
 
         # Day 1 Mobile Viewport (iPhone width 390px)
         page.set_viewport_size({"width": 390, "height": 844})
         time.sleep(0.5)
         p1_m = ROOT_DIR / "stage9" / "screenshots" / "today_day_1_mobile.png"
+        p1_m_final = ROOT_DIR / "analytics" / "screenshots" / "final" / "viewer_today_day1_mobile.png"
         page.screenshot(path=str(p1_m), full_page=True)
+        page.screenshot(path=str(p1_m_final), full_page=True)
         print("Captured Day 1 mobile:", p1_m)
 
         # Feed up to Day 7
@@ -60,14 +64,18 @@ def capture():
         page.goto("http://localhost:8000/?date=2026-01-07", wait_until="networkidle")
         time.sleep(1)
         p7 = ROOT_DIR / "stage9" / "screenshots" / "today_day_7_desktop.png"
+        p7_final = ROOT_DIR / "analytics" / "screenshots" / "final" / "viewer_today_day7.png"
         page.screenshot(path=str(p7), full_page=True)
+        page.screenshot(path=str(p7_final), full_page=True)
         print("Captured Day 7 desktop:", p7)
 
         # Day 7 Mobile
         page.set_viewport_size({"width": 390, "height": 844})
         time.sleep(0.5)
         p7_m = ROOT_DIR / "stage9" / "screenshots" / "today_day_7_mobile.png"
+        p7_m_final = ROOT_DIR / "analytics" / "screenshots" / "final" / "viewer_today_day7_mobile.png"
         page.screenshot(path=str(p7_m), full_page=True)
+        page.screenshot(path=str(p7_m_final), full_page=True)
         print("Captured Day 7 mobile:", p7_m)
 
         browser.close()

@@ -454,6 +454,7 @@ def compute_daily_snapshot(
             "kpis": {
                 "total_backlog_units": int(total_backlog_units),
                 "total_overdue_orders": int(total_overdue_orders),
+                "yest_backlog_units": int(yest_overdue_units),
                 "total_due_today_units": int(total_due_today_units),
                 "total_due_today_orders": int(total_due_today_orders),
                 "backlog_rising": bool(backlog_rising),
