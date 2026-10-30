@@ -362,8 +362,122 @@ def build_forecast_insights_section() -> Dict[str, Any]:
 
     month_slices = metrics_data.get("month_slices", {})
 
+    v4_comparison_table = [
+        {
+            "split": "CV (n=21 Sundays)",
+            "target": "OLD: Units Placed",
+            "model": "Baseline 2: Trailing 28d Mean [DEPLOYED v3]",
+            "mae": "31.14 u",
+            "wape": "0.5455",
+            "accuracy": "45.5% [CV]",
+            "bias": "-1.88 u",
+            "role": "v3 Deployed"
+        },
+        {
+            "split": "CV (n=21 Sundays)",
+            "target": "NEW: Units Due",
+            "model": "Known Booked Orders Only (No Model)",
+            "mae": "12.43 u",
+            "wape": "0.2258",
+            "accuracy": "77.4% [CV]",
+            "bias": "-12.43 u",
+            "role": "Booked Baseline"
+        },
+        {
+            "split": "CV (n=21 Sundays)",
+            "target": "NEW: Units Due",
+            "model": "Booked + Trailing Short-Notice [DEPLOYED v4]",
+            "mae": "10.99 u",
+            "wape": "0.1996",
+            "accuracy": "80.0% [CV]",
+            "bias": "-0.27 u",
+            "role": "v4 Deployed"
+        },
+        {
+            "split": "TEST (n=25 Sundays)",
+            "target": "OLD: Units Placed",
+            "model": "Baseline 2: Trailing 28d Mean [DEPLOYED v3]",
+            "mae": "31.10 u",
+            "wape": "0.6474",
+            "accuracy": "35.3% [TEST]",
+            "bias": "-2.42 u",
+            "role": "v3 Deployed"
+        },
+        {
+            "split": "TEST (n=25 Sundays)",
+            "target": "NEW: Units Due",
+            "model": "Known Booked Orders Only (No Model)",
+            "mae": "14.44 u",
+            "wape": "0.3200",
+            "accuracy": "68.0% [TEST]",
+            "bias": "-14.44 u",
+            "role": "Booked Baseline"
+        },
+        {
+            "split": "TEST (n=25 Sundays)",
+            "target": "NEW: Units Due",
+            "model": "Booked + Trailing Short-Notice [DEPLOYED v4]",
+            "mae": "14.22 u",
+            "wape": "0.3152",
+            "accuracy": "68.5% [TEST]",
+            "bias": "-0.18 u",
+            "role": "v4 Deployed"
+        },
+        {
+            "split": "TEST (n=25 Sundays)",
+            "target": "Unknown Part S(D) Alone",
+            "model": "Trailing Mean of Short-Notice Orders",
+            "mae": "14.22 u",
+            "wape": "0.9848",
+            "accuracy": "1.5% [TEST]",
+            "bias": "-0.18 u",
+            "role": "Unknown S(D)"
+        },
+        {
+            "split": "TEST (n=177 Daily)",
+            "target": "OLD: Units Placed",
+            "model": "Baseline 2: Trailing 28d Mean [DEPLOYED v3]",
+            "mae": "30.62 u",
+            "wape": "0.6312",
+            "accuracy": "36.9% [TEST]",
+            "bias": "-2.67 u",
+            "role": "v3 Deployed"
+        },
+        {
+            "split": "TEST (n=177 Daily)",
+            "target": "NEW: Units Due",
+            "model": "Known Booked Orders Only (No Model)",
+            "mae": "10.93 u",
+            "wape": "0.2381",
+            "accuracy": "76.2% [TEST]",
+            "bias": "-10.93 u",
+            "role": "Booked Baseline"
+        },
+        {
+            "split": "TEST (n=177 Daily)",
+            "target": "NEW: Units Due",
+            "model": "Booked + Trailing Short-Notice [DEPLOYED v4]",
+            "mae": "11.66 u",
+            "wape": "0.2540",
+            "accuracy": "74.6% [TEST]",
+            "bias": "-0.32 u",
+            "role": "v4 Deployed"
+        },
+        {
+            "split": "TEST (n=177 Daily)",
+            "target": "Unknown Part S(D) Alone",
+            "model": "Trailing Mean of Short-Notice Orders",
+            "mae": "11.66 u",
+            "wape": "1.0668",
+            "accuracy": "No better than zero [TEST]",
+            "bias": "-0.32 u",
+            "role": "Unknown S(D)"
+        }
+    ]
+
     return {
         "models_table": models_table,
+        "v4_comparison_table": v4_comparison_table,
         "track_record": track_record,
         "month_slices": month_slices,
         "noise_floor": noise_data.get("comparison", {}),

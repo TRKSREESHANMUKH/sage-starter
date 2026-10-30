@@ -10,7 +10,7 @@ SAGE is a causal decision-intelligence and operations evaluation platform design
 ## Ten-Day Demonstration Feed Evaluation (1–10 January 2026)
 
 > **Evaluation Honesty & Rehearsal Disclosure:**  
-> Version 3 expectations were written after seeing results (rehearsal, not validation). Scored against original v1 expectations, SAGE achieves **7/10 HITS (70.0%)**, 3 PARTIALS (30.0%), and 0 MISSES. Against rehearsal v3 expectations, SAGE scores **10/10 HITS (100.0%)**.
+> The ten evaluation days are scripted; tiers matching the script show that the product responds faithfully to operational inputs, not that it predicts the future. Customer orders placed in the 2026 demo feed operate with a 1-day lead time by design to create immediate pressure, contrasting with the 2025 historical data where lead times had a median of 6 days (range 3–8 days). Version 3 expectations were written after seeing results (rehearsal, not validation). Scored against original v1 expectations, SAGE achieves **7/10 HITS (70.0%)**, 3 PARTIALS (30.0%), and 0 MISSES. Against rehearsal v3 expectations, SAGE scores **10/10 HITS (100.0%)** (or 9/10 if Day 9 is strictly evaluated against WATCH).
 
 | Day | Date | Operational Scenario | v1 Expected | v2 Expected | v3 Expected (Rehearsal) | Actual Tier | v1 Score | v3 Score |
 | :---: | :---: | :--- | :--- | :--- | :--- | :--- | :---: | :---: |

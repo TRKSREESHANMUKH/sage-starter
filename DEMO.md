@@ -22,21 +22,45 @@ Let's begin the live feed from the controller."
 
 ---
 
-## Part 0.5: Presenting the "Weekly Forward-Look" Card on the Today Page
+## Part 0.2: Five-Minute Live Demo Click Path
 
-When demonstrating the viewer's Morning Briefing home page (`http://localhost:8000/`), draw the mentor's attention to the **Weekly Forward-Look block** ("Next 7 days: expected new orders") positioned directly below the 7-day numbers strip:
+For a concise 5-minute mentor walkthrough:
+1. **Minute 1: Baseline Morning Briefing (Day 1, 2026-01-01)**
+   - Open Viewer (`http://localhost:8000/`).
+   - Point out calm Normal tier, editorial serif narrative, and the **slim forward-look strip** directly below the summary paragraph ("Next 7 days: expected demand ~75 units due (likely range 62–88)"). Note that it breaks down into already booked commitments + expected new orders.
+   - Point out zero alert cards and clean numbers strip.
+2. **Minute 2: Onset of Delay & Demand Surge (Days 2 & 3)**
+   - Switch to Day 2 (`/?date=2026-01-02`): Watch tier flags order surge on Widget Model X.
+   - Switch to Day 3 (`/?date=2026-01-03`): Needs Attention tier flags overdue steel PO #19 from EastCoast Components while buffers hold.
+3. **Minute 3: Crisis Peak (Day 7, 2026-01-07)**
+   - Switch to Day 7 (`/?date=2026-01-07`): Critical tier. Raw steel completely stocked out (0 kg). Assembly halted, 9 orders (109 units) overdue backlog.
+   - Highlight top alert: EastCoast Components PO #19 overdue.
+   - Click "Print / Download Briefing (PDF)": opens single-page A4 executive briefing.
+4. **Minute 4: Controller Operations & Safety (Port 8001)**
+   - Navigate to Controller (`http://localhost:8001/ctrl/login`).
+   - Log in with operator token from `.env`.
+   - Click "👁 Preview today's report": renders complete briefing with mandatory scientific framing and owner recipient.
+   - Click "Send report now": dry-run confirmation banner displays, sent log records `SUCCESS_DRY_RUN` with 0 real SMTP calls.
+5. **Minute 5: Insights & Method Honesty**
+   - Click Insights tab: show Protocol v4 forecast comparison table ([CV]/[TEST] tagged), historical tier breakdown (124/49/38/154), and key events table with the "#toggle-new-events" filter.
+   - Open Method page: show full disclosure of scripted 1-day lead time, seed edits, and rehearsal status.
 
-1. **Heading & Horizon:**  
-   Show the forward-look card header: `Next 7 days: expected new orders` with horizon dates (e.g. `2 Jan – 8 Jan`) and shortage risk badge (**Low**, **Medium**, or **High**).
-2. **Key Forward-Looking Metrics:**  
-   - **Expected New Orders ($D+1 \dots D+7$):** Point estimate and 80% CI interval (e.g., `48 units (0–98, 80% CI)`).
-   - **Known Due Orders ($D+1 \dots D+7$):** Actual scheduled commitments on the books (e.g., `10 units already on the books`).
-   - **12-Week Historical Trend Sparkline:** Visual representation of weekly order volume trajectory leading up to today.
+---
+
+## Part 0.5: Presenting the Slim Forward-Look Strip on the Today Page
+
+When demonstrating the viewer's Morning Briefing home page (`http://localhost:8000/`), draw the mentor's attention to the **slim forward-look strip** positioned directly below the summary paragraph:
+
+1. **Headline & Expected Demand:**  
+   Show the compact strip headline: `Next 7 days: expected demand ~N units due (likely range LO–HI)`.
+2. **Booked vs New Orders Breakdown:**  
+   - Shows: `X already booked + ~Y expected new orders`.
+   - Detailed product breakdown line: Widget Model X and Widget Model Y due demand.
+   - Clean mini-sparkline showing historical 12-week order flow.
 3. **What to Explain to Mentor:**  
-   - *"Our order forecast predicts incoming order flow over the next 7 calendar days to help operations plan material buffers and production capacity."*
-   - *"We pre-registered 7 candidate architectures in `stage10/prereg_forecast_v3.md`. Baseline (2) (Trailing 28d Mean x 7) was selected via lowest Cross-Validation WAPE (0.5455 / 45.5% accuracy) on H1 2025. On the strictly out-of-sample H2 2025 walk-forward test (25 Sundays), it achieved 0.6474 WAPE (35.3% accuracy, MAE 31.1 units, Bias -2.4 units, MASE 0.77)."*
-   - *"Crucially, our Monte Carlo simulation audit of 100,000 weeks proves that due to discrete Poisson/Bernoulli order arrivals ($p=0.42$) and random customer selection, the theoretical Oracle irreducible error floor is 0.5034 WAPE (49.7% accuracy). SAGE's deployed model operates within 0.1440 WAPE of the theoretical noise limit (deployed WAPE 0.6474 vs Oracle 0.5034)."*
-   - *"Full model benchmark, noise floor methodology, and 25-week walk-forward audit log are linked directly in the Insights page (`#forecast`)."*
+   - *"Our deployed order forecast uses a trailing 28-day mean, chosen because it yielded the lowest cross-validation error (CV WAPE 0.55). On this single-year synthetic dataset with 68.2% zero-order days, tree-based models and count regression did not outperform the trailing mean."*
+   - *"The apparent increase in forecast accuracy (from 35.3% to 68.5%) is almost entirely driven by ledger visibility: known booked orders account for ~68.0% of the accuracy, while predicting new unbooked orders alone remains noisy (WAPE ~0.98 on Sundays, ~1.07 daily) against a theoretical irreducible noise ceiling of WAPE 0.50."*
+   - *"To prevent misleading operators, all ungrounded model badges (such as shortage risk badges or model name tags) have been removed from the morning executive briefing and placed in the technical Insights and Method documentation."*
 
 4. **UI Navigation Updates:**
    - **Removed Baseline Notice:** The old opening notice was removed from Today/Insights to avoid clutter, and is fully disclosed in the Method page under "How the demo starts".

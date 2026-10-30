@@ -1,0 +1,1259 @@
+{
+  "metadata": {
+    "title": "SAGE Stage 10 Deterministic Demo Facts",
+    "framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+    "generated_at": "2026-10-30",
+    "scope": "Ten-Day Operational Demo Feed (2026-01-01 to 2026-01-10)",
+    "total_sales_orders": 31,
+    "total_days": 10
+  },
+  "sales_orders": [
+    {
+      "order_id": 220,
+      "order_date": "2025-12-25",
+      "requested_delivery_date": "2026-01-02",
+      "product_id": 202,
+      "product_name": "Widget Model Y",
+      "quantity_ordered": 13,
+      "shipped_date": null,
+      "status": "Backorder",
+      "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
+      "sha256": "0d7ff9019bb1d2fa9bb9c7776cfd588b8c5ab0c477b9397179cbe299eeb8f80b"
+    },
+    {
+      "order_id": 221,
+      "order_date": "2025-12-25",
+      "requested_delivery_date": "2026-01-02",
+      "product_id": 202,
+      "product_name": "Widget Model Y",
+      "quantity_ordered": 8,
+      "shipped_date": null,
+      "status": "Backorder",
+      "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
+      "sha256": "0d7ff9019bb1d2fa9bb9c7776cfd588b8c5ab0c477b9397179cbe299eeb8f80b"
+    },
+    {
+      "order_id": 224,
+      "order_date": "2025-12-29",
+      "requested_delivery_date": "2026-01-04",
+      "product_id": 202,
+      "product_name": "Widget Model Y",
+      "quantity_ordered": 14,
+      "shipped_date": null,
+      "status": "Backorder",
+      "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
+      "sha256": "0d7ff9019bb1d2fa9bb9c7776cfd588b8c5ab0c477b9397179cbe299eeb8f80b"
+    },
+    {
+      "order_id": 225,
+      "order_date": "2025-12-29",
+      "requested_delivery_date": "2026-01-02",
+      "product_id": 202,
+      "product_name": "Widget Model Y",
+      "quantity_ordered": 12,
+      "shipped_date": null,
+      "status": "Backorder",
+      "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
+      "sha256": "0d7ff9019bb1d2fa9bb9c7776cfd588b8c5ab0c477b9397179cbe299eeb8f80b"
+    },
+    {
+      "order_id": 226,
+      "order_date": "2025-12-29",
+      "requested_delivery_date": "2026-01-02",
+      "product_id": 202,
+      "product_name": "Widget Model Y",
+      "quantity_ordered": 9,
+      "shipped_date": null,
+      "status": "Backorder",
+      "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
+      "sha256": "0d7ff9019bb1d2fa9bb9c7776cfd588b8c5ab0c477b9397179cbe299eeb8f80b"
+    },
+    {
+      "order_id": 227,
+      "order_date": "2025-12-30",
+      "requested_delivery_date": "2026-01-03",
+      "product_id": 201,
+      "product_name": "Widget Model X",
+      "quantity_ordered": 12,
+      "shipped_date": null,
+      "status": "Backorder",
+      "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
+      "sha256": "0d7ff9019bb1d2fa9bb9c7776cfd588b8c5ab0c477b9397179cbe299eeb8f80b"
+    },
+    {
+      "order_id": 228,
+      "order_date": "2025-12-30",
+      "requested_delivery_date": "2026-01-06",
+      "product_id": 202,
+      "product_name": "Widget Model Y",
+      "quantity_ordered": 18,
+      "shipped_date": null,
+      "status": "Backorder",
+      "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
+      "sha256": "0d7ff9019bb1d2fa9bb9c7776cfd588b8c5ab0c477b9397179cbe299eeb8f80b"
+    },
+    {
+      "order_id": 229,
+      "order_date": "2025-12-30",
+      "requested_delivery_date": "2026-01-05",
+      "product_id": 201,
+      "product_name": "Widget Model X",
+      "quantity_ordered": 14,
+      "shipped_date": null,
+      "status": "Backorder",
+      "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
+      "sha256": "0d7ff9019bb1d2fa9bb9c7776cfd588b8c5ab0c477b9397179cbe299eeb8f80b"
+    },
+    {
+      "order_id": 230,
+      "order_date": "2025-12-31",
+      "requested_delivery_date": "2026-01-04",
+      "product_id": 202,
+      "product_name": "Widget Model Y",
+      "quantity_ordered": 9,
+      "shipped_date": null,
+      "status": "Backorder",
+      "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
+      "sha256": "0d7ff9019bb1d2fa9bb9c7776cfd588b8c5ab0c477b9397179cbe299eeb8f80b"
+    },
+    {
+      "order_id": 231,
+      "order_date": "2026-01-01",
+      "requested_delivery_date": "2026-01-02",
+      "product_id": 201,
+      "product_name": "Widget Model X",
+      "quantity_ordered": 5,
+      "shipped_date": "2026-01-02",
+      "status": "Delivered",
+      "source_provenance": "demo_data/packs/2026-01-01/sales_orders.csv",
+      "sha256": "9db69b75ff32db9a95026c4ca1bb1eea1c3ebbf5272d74854fa4707f65a69911"
+    },
+    {
+      "order_id": 232,
+      "order_date": "2026-01-01",
+      "requested_delivery_date": "2026-01-02",
+      "product_id": 202,
+      "product_name": "Widget Model Y",
+      "quantity_ordered": 3,
+      "shipped_date": "2026-01-02",
+      "status": "Delivered",
+      "source_provenance": "demo_data/packs/2026-01-01/sales_orders.csv",
+      "sha256": "9db69b75ff32db9a95026c4ca1bb1eea1c3ebbf5272d74854fa4707f65a69911"
+    },
+    {
+      "order_id": 233,
+      "order_date": "2026-01-02",
+      "requested_delivery_date": "2026-01-03",
+      "product_id": 201,
+      "product_name": "Widget Model X",
+      "quantity_ordered": 16,
+      "shipped_date": "2026-01-03",
+      "status": "Delivered",
+      "source_provenance": "demo_data/packs/2026-01-02/sales_orders.csv",
+      "sha256": "41f297e6c32295ce81f965dcd8f5485e01e2c4496608f3bf82dad52505bfc72e"
+    },
+    {
+      "order_id": 234,
+      "order_date": "2026-01-02",
+      "requested_delivery_date": "2026-01-03",
+      "product_id": 201,
+      "product_name": "Widget Model X",
+      "quantity_ordered": 12,
+      "shipped_date": "2026-01-03",
+      "status": "Delivered",
+      "source_provenance": "demo_data/packs/2026-01-02/sales_orders.csv",
+      "sha256": "41f297e6c32295ce81f965dcd8f5485e01e2c4496608f3bf82dad52505bfc72e"
+    },
+    {
+      "order_id": 235,
+      "order_date": "2026-01-02",
+      "requested_delivery_date": "2026-01-03",
+      "product_id": 202,
+      "product_name": "Widget Model Y",
+      "quantity_ordered": 4,
+      "shipped_date": "2026-01-03",
+      "status": "Delivered",
+      "source_provenance": "demo_data/packs/2026-01-02/sales_orders.csv",
+      "sha256": "41f297e6c32295ce81f965dcd8f5485e01e2c4496608f3bf82dad52505bfc72e"
+    },
+    {
+      "order_id": 236,
+      "order_date": "2026-01-03",
+      "requested_delivery_date": "2026-01-04",
+      "product_id": 201,
+      "product_name": "Widget Model X",
+      "quantity_ordered": 10,
+      "shipped_date": "2026-01-04",
+      "status": "Delivered",
+      "source_provenance": "demo_data/packs/2026-01-03/sales_orders.csv",
+      "sha256": "f6b7a2f184068d0d527a329b39a09140038972db62c2381fbad9f30d7f5bb2e0"
+    },
+    {
+      "order_id": 237,
+      "order_date": "2026-01-03",
+      "requested_delivery_date": "2026-01-04",
+      "product_id": 202,
+      "product_name": "Widget Model Y",
+      "quantity_ordered": 4,
+      "shipped_date": "2026-01-04",
+      "status": "Delivered",
+      "source_provenance": "demo_data/packs/2026-01-03/sales_orders.csv",
+      "sha256": "f6b7a2f184068d0d527a329b39a09140038972db62c2381fbad9f30d7f5bb2e0"
+    },
+    {
+      "order_id": 238,
+      "order_date": "2026-01-04",
+      "requested_delivery_date": "2026-01-05",
+      "product_id": 201,
+      "product_name": "Widget Model X",
+      "quantity_ordered": 10,
+      "shipped_date": "2026-01-05",
+      "status": "Delivered",
+      "source_provenance": "demo_data/packs/2026-01-04/sales_orders.csv",
+      "sha256": "9e6cd735a31d15930bf43c71cbdc59f29afddaab0348117adc7711ba1e93cb31"
+    },
+    {
+      "order_id": 239,
+      "order_date": "2026-01-04",
+      "requested_delivery_date": "2026-01-05",
+      "product_id": 202,
+      "product_name": "Widget Model Y",
+      "quantity_ordered": 4,
+      "shipped_date": "2026-01-05",
+      "status": "Delivered",
+      "source_provenance": "demo_data/packs/2026-01-04/sales_orders.csv",
+      "sha256": "9e6cd735a31d15930bf43c71cbdc59f29afddaab0348117adc7711ba1e93cb31"
+    },
+    {
+      "order_id": 240,
+      "order_date": "2026-01-05",
+      "requested_delivery_date": "2026-01-06",
+      "product_id": 201,
+      "product_name": "Widget Model X",
+      "quantity_ordered": 10,
+      "shipped_date": "2026-01-06",
+      "status": "Delivered",
+      "source_provenance": "demo_data/packs/2026-01-05/sales_orders.csv",
+      "sha256": "46a9cad9a827ab43335f0fa8d3fb93df97afa0c09b61632f09728557cdc18bd4"
+    },
+    {
+      "order_id": 241,
+      "order_date": "2026-01-05",
+      "requested_delivery_date": "2026-01-06",
+      "product_id": 202,
+      "product_name": "Widget Model Y",
+      "quantity_ordered": 4,
+      "shipped_date": "2026-01-06",
+      "status": "Delivered",
+      "source_provenance": "demo_data/packs/2026-01-05/sales_orders.csv",
+      "sha256": "46a9cad9a827ab43335f0fa8d3fb93df97afa0c09b61632f09728557cdc18bd4"
+    },
+    {
+      "order_id": 242,
+      "order_date": "2026-01-06",
+      "requested_delivery_date": "2026-01-07",
+      "product_id": 201,
+      "product_name": "Widget Model X",
+      "quantity_ordered": 8,
+      "shipped_date": "2026-01-07",
+      "status": "Delivered",
+      "source_provenance": "demo_data/packs/2026-01-06/sales_orders.csv",
+      "sha256": "d3ad5d6ccd7f404aa09b7b17322ab7bce0a8dc678e205b0e87b57d5fe5ba1f7b"
+    },
+    {
+      "order_id": 243,
+      "order_date": "2026-01-06",
+      "requested_delivery_date": "2026-01-07",
+      "product_id": 201,
+      "product_name": "Widget Model X",
+      "quantity_ordered": 6,
+      "shipped_date": "2026-01-07",
+      "status": "Delivered",
+      "source_provenance": "demo_data/packs/2026-01-06/sales_orders.csv",
+      "sha256": "d3ad5d6ccd7f404aa09b7b17322ab7bce0a8dc678e205b0e87b57d5fe5ba1f7b"
+    },
+    {
+      "order_id": 244,
+      "order_date": "2026-01-06",
+      "requested_delivery_date": "2026-01-07",
+      "product_id": 202,
+      "product_name": "Widget Model Y",
+      "quantity_ordered": 4,
+      "shipped_date": "2026-01-07",
+      "status": "Delivered",
+      "source_provenance": "demo_data/packs/2026-01-06/sales_orders.csv",
+      "sha256": "d3ad5d6ccd7f404aa09b7b17322ab7bce0a8dc678e205b0e87b57d5fe5ba1f7b"
+    },
+    {
+      "order_id": 245,
+      "order_date": "2026-01-07",
+      "requested_delivery_date": "2026-01-08",
+      "product_id": 201,
+      "product_name": "Widget Model X",
+      "quantity_ordered": 10,
+      "shipped_date": "2026-01-08",
+      "status": "Delivered",
+      "source_provenance": "demo_data/packs/2026-01-07/sales_orders.csv",
+      "sha256": "e22ebc800b4b123d45e9b6ed4b40324fd87bf9d34c01d1bfc5d6548bb018e808"
+    },
+    {
+      "order_id": 246,
+      "order_date": "2026-01-07",
+      "requested_delivery_date": "2026-01-08",
+      "product_id": 202,
+      "product_name": "Widget Model Y",
+      "quantity_ordered": 4,
+      "shipped_date": "2026-01-08",
+      "status": "Delivered",
+      "source_provenance": "demo_data/packs/2026-01-07/sales_orders.csv",
+      "sha256": "e22ebc800b4b123d45e9b6ed4b40324fd87bf9d34c01d1bfc5d6548bb018e808"
+    },
+    {
+      "order_id": 247,
+      "order_date": "2026-01-08",
+      "requested_delivery_date": "2026-01-09",
+      "product_id": 201,
+      "product_name": "Widget Model X",
+      "quantity_ordered": 8,
+      "shipped_date": "2026-01-09",
+      "status": "Delivered",
+      "source_provenance": "demo_data/packs/2026-01-08/sales_orders.csv",
+      "sha256": "8a10194911afd19a880ba1adf95dd52d009c270aab95f9e88f0e49b0dfefa020"
+    },
+    {
+      "order_id": 248,
+      "order_date": "2026-01-08",
+      "requested_delivery_date": "2026-01-09",
+      "product_id": 202,
+      "product_name": "Widget Model Y",
+      "quantity_ordered": 4,
+      "shipped_date": "2026-01-09",
+      "status": "Delivered",
+      "source_provenance": "demo_data/packs/2026-01-08/sales_orders.csv",
+      "sha256": "8a10194911afd19a880ba1adf95dd52d009c270aab95f9e88f0e49b0dfefa020"
+    },
+    {
+      "order_id": 249,
+      "order_date": "2026-01-09",
+      "requested_delivery_date": "2026-01-10",
+      "product_id": 201,
+      "product_name": "Widget Model X",
+      "quantity_ordered": 6,
+      "shipped_date": "2026-01-10",
+      "status": "Delivered",
+      "source_provenance": "demo_data/packs/2026-01-09/sales_orders.csv",
+      "sha256": "93717928b7871f25f1e1739f6d3fb125fa2a7d62c265da3f754e20fe199785af"
+    },
+    {
+      "order_id": 250,
+      "order_date": "2026-01-09",
+      "requested_delivery_date": "2026-01-10",
+      "product_id": 202,
+      "product_name": "Widget Model Y",
+      "quantity_ordered": 4,
+      "shipped_date": "2026-01-10",
+      "status": "Delivered",
+      "source_provenance": "demo_data/packs/2026-01-09/sales_orders.csv",
+      "sha256": "93717928b7871f25f1e1739f6d3fb125fa2a7d62c265da3f754e20fe199785af"
+    },
+    {
+      "order_id": 251,
+      "order_date": "2026-01-10",
+      "requested_delivery_date": "2026-01-11",
+      "product_id": 201,
+      "product_name": "Widget Model X",
+      "quantity_ordered": 6,
+      "shipped_date": null,
+      "status": "Pending",
+      "source_provenance": "demo_data/packs/2026-01-10/sales_orders.csv",
+      "sha256": "494d6ad7289be955588cd92a04c660b394715c8df36f8198fefd586f568fee60"
+    },
+    {
+      "order_id": 252,
+      "order_date": "2026-01-10",
+      "requested_delivery_date": "2026-01-11",
+      "product_id": 202,
+      "product_name": "Widget Model Y",
+      "quantity_ordered": 4,
+      "shipped_date": null,
+      "status": "Pending",
+      "source_provenance": "demo_data/packs/2026-01-10/sales_orders.csv",
+      "sha256": "494d6ad7289be955588cd92a04c660b394715c8df36f8198fefd586f568fee60"
+    }
+  ],
+  "daily_ledger": [
+    {
+      "day": 1,
+      "date": "2026-01-01",
+      "tier": "NORMAL",
+      "overdue_orders_count": 0,
+      "overdue_orders_units": 0,
+      "due_today_orders_count": 0,
+      "due_today_orders_units": 0,
+      "standing_backlog_orders": 0,
+      "standing_backlog_units": 0,
+      "total_open_orders": 0,
+      "total_open_units": 0,
+      "opening_stock": {
+        "steel_rod_kg": 215.0,
+        "plastic_granules_kg": 204.0,
+        "copper_wire_m": 184.0,
+        "widget_x_units": 25,
+        "widget_y_units": 20
+      },
+      "top_3_alerts": [],
+      "forecast_strip": {
+        "headline": "Next 7 days: expected demand ~136 units due (likely range 124\u2013150)",
+        "breakdown_text": "109 already booked + ~27 expected new orders",
+        "product_breakdown": "Widget Model X: ~41u due (26 booked + ~15 new) | Widget Model Y: ~95u due (83 booked + ~12 new)",
+        "total_expected_due_units": 136,
+        "likely_range_low": 124,
+        "likely_range_high": 150,
+        "booked_units": 109,
+        "expected_new_orders": 27
+      },
+      "active_pos": [
+        {
+          "po_id": 18,
+          "supplier_id": 4,
+          "supplier_name": "EastCoast Components",
+          "material_id": 101,
+          "material_name": "Steel Rod 10mm",
+          "quantity_ordered": 407,
+          "expected_delivery_date": "2025-08-14",
+          "quantity_received": 0,
+          "days_overdue": 140,
+          "status": "Cancelled"
+        },
+        {
+          "po_id": 19,
+          "supplier_id": 4,
+          "supplier_name": "EastCoast Components",
+          "material_id": 101,
+          "material_name": "Steel Rod 10mm",
+          "quantity_ordered": 400,
+          "expected_delivery_date": "2026-01-02",
+          "quantity_received": 0,
+          "days_overdue": 0,
+          "status": "Pending"
+        },
+        {
+          "po_id": 20,
+          "supplier_id": 3,
+          "supplier_name": "Global Polymers Co",
+          "material_id": 102,
+          "material_name": "Plastic Granules",
+          "quantity_ordered": 250,
+          "expected_delivery_date": "2026-01-04",
+          "quantity_received": 0,
+          "days_overdue": 0,
+          "status": "Pending"
+        },
+        {
+          "po_id": 21,
+          "supplier_id": 5,
+          "supplier_name": "Copper & Co",
+          "material_id": 103,
+          "material_name": "Copper Wire",
+          "quantity_ordered": 200,
+          "expected_delivery_date": "2026-01-06",
+          "quantity_received": 0,
+          "days_overdue": 0,
+          "status": "Pending"
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "date": "2026-01-02",
+      "tier": "WATCH",
+      "overdue_orders_count": 0,
+      "overdue_orders_units": 0,
+      "due_today_orders_count": 6,
+      "due_today_orders_units": 50,
+      "standing_backlog_orders": 0,
+      "standing_backlog_units": 0,
+      "total_open_orders": 6,
+      "total_open_units": 50,
+      "opening_stock": {
+        "steel_rod_kg": 185.0,
+        "plastic_granules_kg": 130.0,
+        "copper_wire_m": 105.0,
+        "widget_x_units": 35,
+        "widget_y_units": 24
+      },
+      "top_3_alerts": [
+        "Elevated demand intake (Widget Model X surge of 28 units)"
+      ],
+      "forecast_strip": {
+        "headline": "Next 7 days: expected demand ~94 units due (likely range 82\u2013108)",
+        "breakdown_text": "67 already booked + ~27 expected new orders",
+        "product_breakdown": "Widget Model X: ~41u due (26 booked + ~15 new) | Widget Model Y: ~53u due (41 booked + ~12 new)",
+        "total_expected_due_units": 94,
+        "likely_range_low": 82,
+        "likely_range_high": 108,
+        "booked_units": 67,
+        "expected_new_orders": 27
+      },
+      "active_pos": [
+        {
+          "po_id": 18,
+          "supplier_id": 4,
+          "supplier_name": "EastCoast Components",
+          "material_id": 101,
+          "material_name": "Steel Rod 10mm",
+          "quantity_ordered": 407,
+          "expected_delivery_date": "2025-08-14",
+          "quantity_received": 0,
+          "days_overdue": 141,
+          "status": "Cancelled"
+        },
+        {
+          "po_id": 19,
+          "supplier_id": 4,
+          "supplier_name": "EastCoast Components",
+          "material_id": 101,
+          "material_name": "Steel Rod 10mm",
+          "quantity_ordered": 400,
+          "expected_delivery_date": "2026-01-02",
+          "quantity_received": 0,
+          "days_overdue": 0,
+          "status": "Pending"
+        },
+        {
+          "po_id": 20,
+          "supplier_id": 3,
+          "supplier_name": "Global Polymers Co",
+          "material_id": 102,
+          "material_name": "Plastic Granules",
+          "quantity_ordered": 250,
+          "expected_delivery_date": "2026-01-04",
+          "quantity_received": 0,
+          "days_overdue": 0,
+          "status": "Pending"
+        },
+        {
+          "po_id": 21,
+          "supplier_id": 5,
+          "supplier_name": "Copper & Co",
+          "material_id": 103,
+          "material_name": "Copper Wire",
+          "quantity_ordered": 200,
+          "expected_delivery_date": "2026-01-06",
+          "quantity_received": 0,
+          "days_overdue": 0,
+          "status": "Pending"
+        }
+      ]
+    },
+    {
+      "day": 3,
+      "date": "2026-01-03",
+      "tier": "NEEDS_ATTENTION",
+      "overdue_orders_count": 4,
+      "overdue_orders_units": 42,
+      "due_today_orders_count": 4,
+      "due_today_orders_units": 44,
+      "standing_backlog_orders": 4,
+      "standing_backlog_units": 42,
+      "total_open_orders": 8,
+      "total_open_units": 86,
+      "opening_stock": {
+        "steel_rod_kg": 150.0,
+        "plastic_granules_kg": 118.0,
+        "copper_wire_m": 99.0,
+        "widget_x_units": 42,
+        "widget_y_units": 25
+      },
+      "top_3_alerts": [
+        "Overdue delivery from EastCoast Components (PO #19)",
+        "Elevated demand intake (Widget Model X surge of 10 units)"
+      ],
+      "forecast_strip": {
+        "headline": "Next 7 days: expected demand ~82 units due (likely range 70\u201396)",
+        "breakdown_text": "55 already booked + ~27 expected new orders",
+        "product_breakdown": "Widget Model X: ~29u due (14 booked + ~15 new) | Widget Model Y: ~53u due (41 booked + ~12 new)",
+        "total_expected_due_units": 82,
+        "likely_range_low": 70,
+        "likely_range_high": 96,
+        "booked_units": 55,
+        "expected_new_orders": 27
+      },
+      "active_pos": [
+        {
+          "po_id": 18,
+          "supplier_id": 4,
+          "supplier_name": "EastCoast Components",
+          "material_id": 101,
+          "material_name": "Steel Rod 10mm",
+          "quantity_ordered": 407,
+          "expected_delivery_date": "2025-08-14",
+          "quantity_received": 0,
+          "days_overdue": 142,
+          "status": "Cancelled"
+        },
+        {
+          "po_id": 19,
+          "supplier_id": 4,
+          "supplier_name": "EastCoast Components",
+          "material_id": 101,
+          "material_name": "Steel Rod 10mm",
+          "quantity_ordered": 400,
+          "expected_delivery_date": "2026-01-02",
+          "quantity_received": 0,
+          "days_overdue": 1,
+          "status": "Overdue"
+        },
+        {
+          "po_id": 20,
+          "supplier_id": 3,
+          "supplier_name": "Global Polymers Co",
+          "material_id": 102,
+          "material_name": "Plastic Granules",
+          "quantity_ordered": 250,
+          "expected_delivery_date": "2026-01-04",
+          "quantity_received": 0,
+          "days_overdue": 0,
+          "status": "Pending"
+        },
+        {
+          "po_id": 21,
+          "supplier_id": 5,
+          "supplier_name": "Copper & Co",
+          "material_id": 103,
+          "material_name": "Copper Wire",
+          "quantity_ordered": 200,
+          "expected_delivery_date": "2026-01-06",
+          "quantity_received": 0,
+          "days_overdue": 0,
+          "status": "Pending"
+        }
+      ]
+    },
+    {
+      "day": 4,
+      "date": "2026-01-04",
+      "tier": "NEEDS_ATTENTION",
+      "overdue_orders_count": 5,
+      "overdue_orders_units": 54,
+      "due_today_orders_count": 4,
+      "due_today_orders_units": 37,
+      "standing_backlog_orders": 5,
+      "standing_backlog_units": 54,
+      "total_open_orders": 9,
+      "total_open_units": 91,
+      "opening_stock": {
+        "steel_rod_kg": 120.0,
+        "plastic_granules_kg": 108.0,
+        "copper_wire_m": 94.0,
+        "widget_x_units": 24,
+        "widget_y_units": 25
+      },
+      "top_3_alerts": [
+        "Overdue delivery from EastCoast Components (PO #19)",
+        "Partial delivery from Global Polymers Co (PO #20)",
+        "Elevated demand intake (Widget Model X surge of 10 units)"
+      ],
+      "forecast_strip": {
+        "headline": "Next 7 days: expected demand ~59 units due (likely range 47\u201373)",
+        "breakdown_text": "32 already booked + ~27 expected new orders",
+        "product_breakdown": "Widget Model X: ~29u due (14 booked + ~15 new) | Widget Model Y: ~30u due (18 booked + ~12 new)",
+        "total_expected_due_units": 59,
+        "likely_range_low": 47,
+        "likely_range_high": 73,
+        "booked_units": 32,
+        "expected_new_orders": 27
+      },
+      "active_pos": [
+        {
+          "po_id": 18,
+          "supplier_id": 4,
+          "supplier_name": "EastCoast Components",
+          "material_id": 101,
+          "material_name": "Steel Rod 10mm",
+          "quantity_ordered": 407,
+          "expected_delivery_date": "2025-08-14",
+          "quantity_received": 0,
+          "days_overdue": 143,
+          "status": "Cancelled"
+        },
+        {
+          "po_id": 19,
+          "supplier_id": 4,
+          "supplier_name": "EastCoast Components",
+          "material_id": 101,
+          "material_name": "Steel Rod 10mm",
+          "quantity_ordered": 400,
+          "expected_delivery_date": "2026-01-02",
+          "quantity_received": 0,
+          "days_overdue": 2,
+          "status": "Overdue"
+        },
+        {
+          "po_id": 20,
+          "supplier_id": 3,
+          "supplier_name": "Global Polymers Co",
+          "material_id": 102,
+          "material_name": "Plastic Granules",
+          "quantity_ordered": 250,
+          "expected_delivery_date": "2026-01-04",
+          "quantity_received": 150,
+          "days_overdue": 0,
+          "status": "Pending"
+        },
+        {
+          "po_id": 21,
+          "supplier_id": 5,
+          "supplier_name": "Copper & Co",
+          "material_id": 103,
+          "material_name": "Copper Wire",
+          "quantity_ordered": 200,
+          "expected_delivery_date": "2026-01-06",
+          "quantity_received": 0,
+          "days_overdue": 0,
+          "status": "Pending"
+        }
+      ]
+    },
+    {
+      "day": 5,
+      "date": "2026-01-05",
+      "tier": "NEEDS_ATTENTION",
+      "overdue_orders_count": 7,
+      "overdue_orders_units": 77,
+      "due_today_orders_count": 3,
+      "due_today_orders_units": 28,
+      "standing_backlog_orders": 7,
+      "standing_backlog_units": 77,
+      "total_open_orders": 10,
+      "total_open_units": 105,
+      "opening_stock": {
+        "steel_rod_kg": 90.0,
+        "plastic_granules_kg": 248.0,
+        "copper_wire_m": 89.0,
+        "widget_x_units": 24,
+        "widget_y_units": 25
+      },
+      "top_3_alerts": [
+        "Overdue delivery from EastCoast Components (PO #19)",
+        "Overdue delivery from Global Polymers Co (PO #20)",
+        "Production below plan (Widget Model Y shortfall of 2 units)"
+      ],
+      "forecast_strip": {
+        "headline": "Next 7 days: expected demand ~45 units due (likely range 33\u201359)",
+        "breakdown_text": "18 already booked + ~27 expected new orders",
+        "product_breakdown": "Widget Model X: ~15u due (0 booked + ~15 new) | Widget Model Y: ~30u due (18 booked + ~12 new)",
+        "total_expected_due_units": 45,
+        "likely_range_low": 33,
+        "likely_range_high": 59,
+        "booked_units": 18,
+        "expected_new_orders": 27
+      },
+      "active_pos": [
+        {
+          "po_id": 18,
+          "supplier_id": 4,
+          "supplier_name": "EastCoast Components",
+          "material_id": 101,
+          "material_name": "Steel Rod 10mm",
+          "quantity_ordered": 407,
+          "expected_delivery_date": "2025-08-14",
+          "quantity_received": 0,
+          "days_overdue": 144,
+          "status": "Cancelled"
+        },
+        {
+          "po_id": 19,
+          "supplier_id": 4,
+          "supplier_name": "EastCoast Components",
+          "material_id": 101,
+          "material_name": "Steel Rod 10mm",
+          "quantity_ordered": 400,
+          "expected_delivery_date": "2026-01-02",
+          "quantity_received": 0,
+          "days_overdue": 3,
+          "status": "Overdue"
+        },
+        {
+          "po_id": 20,
+          "supplier_id": 3,
+          "supplier_name": "Global Polymers Co",
+          "material_id": 102,
+          "material_name": "Plastic Granules",
+          "quantity_ordered": 250,
+          "expected_delivery_date": "2026-01-04",
+          "quantity_received": 150,
+          "days_overdue": 1,
+          "status": "Overdue"
+        },
+        {
+          "po_id": 21,
+          "supplier_id": 5,
+          "supplier_name": "Copper & Co",
+          "material_id": 103,
+          "material_name": "Copper Wire",
+          "quantity_ordered": 200,
+          "expected_delivery_date": "2026-01-06",
+          "quantity_received": 0,
+          "days_overdue": 0,
+          "status": "Pending"
+        }
+      ]
+    },
+    {
+      "day": 6,
+      "date": "2026-01-06",
+      "tier": "CRITICAL",
+      "overdue_orders_count": 8,
+      "overdue_orders_units": 91,
+      "due_today_orders_count": 3,
+      "due_today_orders_units": 32,
+      "standing_backlog_orders": 8,
+      "standing_backlog_units": 91,
+      "total_open_orders": 11,
+      "total_open_units": 123,
+      "opening_stock": {
+        "steel_rod_kg": 63.0,
+        "plastic_granules_kg": 238.0,
+        "copper_wire_m": 85.0,
+        "widget_x_units": 24,
+        "widget_y_units": 23
+      },
+      "top_3_alerts": [
+        "Steel Rod 10mm at safety stock (47 kg remaining) \u2014 EastCoast Components PO #19 overdue",
+        "Overdue delivery from Global Polymers Co (PO #20)",
+        "Production below plan (Widget Model X shortfall of 6 units)"
+      ],
+      "forecast_strip": {
+        "headline": "Next 7 days: expected demand ~27 units due (likely range 15\u201341)",
+        "breakdown_text": "0 already booked + ~27 expected new orders",
+        "product_breakdown": "Widget Model X: ~15u due (0 booked + ~15 new) | Widget Model Y: ~12u due (0 booked + ~12 new)",
+        "total_expected_due_units": 27,
+        "likely_range_low": 15,
+        "likely_range_high": 41,
+        "booked_units": 0,
+        "expected_new_orders": 27
+      },
+      "active_pos": [
+        {
+          "po_id": 18,
+          "supplier_id": 4,
+          "supplier_name": "EastCoast Components",
+          "material_id": 101,
+          "material_name": "Steel Rod 10mm",
+          "quantity_ordered": 407,
+          "expected_delivery_date": "2025-08-14",
+          "quantity_received": 0,
+          "days_overdue": 145,
+          "status": "Cancelled"
+        },
+        {
+          "po_id": 19,
+          "supplier_id": 4,
+          "supplier_name": "EastCoast Components",
+          "material_id": 101,
+          "material_name": "Steel Rod 10mm",
+          "quantity_ordered": 400,
+          "expected_delivery_date": "2026-01-02",
+          "quantity_received": 0,
+          "days_overdue": 4,
+          "status": "Overdue"
+        },
+        {
+          "po_id": 20,
+          "supplier_id": 3,
+          "supplier_name": "Global Polymers Co",
+          "material_id": 102,
+          "material_name": "Plastic Granules",
+          "quantity_ordered": 250,
+          "expected_delivery_date": "2026-01-04",
+          "quantity_received": 150,
+          "days_overdue": 2,
+          "status": "Overdue"
+        },
+        {
+          "po_id": 21,
+          "supplier_id": 5,
+          "supplier_name": "Copper & Co",
+          "material_id": 103,
+          "material_name": "Copper Wire",
+          "quantity_ordered": 200,
+          "expected_delivery_date": "2026-01-06",
+          "quantity_received": 200,
+          "days_overdue": 0,
+          "status": "Completed"
+        }
+      ]
+    },
+    {
+      "day": 7,
+      "date": "2026-01-07",
+      "tier": "CRITICAL",
+      "overdue_orders_count": 9,
+      "overdue_orders_units": 109,
+      "due_today_orders_count": 3,
+      "due_today_orders_units": 18,
+      "standing_backlog_orders": 9,
+      "standing_backlog_units": 109,
+      "total_open_orders": 12,
+      "total_open_units": 127,
+      "opening_stock": {
+        "steel_rod_kg": 47.0,
+        "plastic_granules_kg": 232.0,
+        "copper_wire_m": 283.0,
+        "widget_x_units": 20,
+        "widget_y_units": 20
+      },
+      "top_3_alerts": [
+        "Raw material stockout on Steel Rod 10mm (0 kg in stock)",
+        "Overdue delivery from Global Polymers Co (PO #20)",
+        "Production below plan (Widget Model X shortfall of 10 units)"
+      ],
+      "forecast_strip": {
+        "headline": "Next 7 days: expected demand ~27 units due (likely range 15\u201341)",
+        "breakdown_text": "0 already booked + ~27 expected new orders",
+        "product_breakdown": "Widget Model X: ~15u due (0 booked + ~15 new) | Widget Model Y: ~12u due (0 booked + ~12 new)",
+        "total_expected_due_units": 27,
+        "likely_range_low": 15,
+        "likely_range_high": 41,
+        "booked_units": 0,
+        "expected_new_orders": 27
+      },
+      "active_pos": [
+        {
+          "po_id": 18,
+          "supplier_id": 4,
+          "supplier_name": "EastCoast Components",
+          "material_id": 101,
+          "material_name": "Steel Rod 10mm",
+          "quantity_ordered": 407,
+          "expected_delivery_date": "2025-08-14",
+          "quantity_received": 0,
+          "days_overdue": 146,
+          "status": "Cancelled"
+        },
+        {
+          "po_id": 19,
+          "supplier_id": 4,
+          "supplier_name": "EastCoast Components",
+          "material_id": 101,
+          "material_name": "Steel Rod 10mm",
+          "quantity_ordered": 400,
+          "expected_delivery_date": "2026-01-02",
+          "quantity_received": 0,
+          "days_overdue": 5,
+          "status": "Overdue"
+        },
+        {
+          "po_id": 20,
+          "supplier_id": 3,
+          "supplier_name": "Global Polymers Co",
+          "material_id": 102,
+          "material_name": "Plastic Granules",
+          "quantity_ordered": 250,
+          "expected_delivery_date": "2026-01-04",
+          "quantity_received": 150,
+          "days_overdue": 3,
+          "status": "Overdue"
+        },
+        {
+          "po_id": 21,
+          "supplier_id": 5,
+          "supplier_name": "Copper & Co",
+          "material_id": 103,
+          "material_name": "Copper Wire",
+          "quantity_ordered": 200,
+          "expected_delivery_date": "2026-01-06",
+          "quantity_received": 200,
+          "days_overdue": 0,
+          "status": "Completed"
+        }
+      ]
+    },
+    {
+      "day": 8,
+      "date": "2026-01-08",
+      "tier": "NEEDS_ATTENTION",
+      "overdue_orders_count": 9,
+      "overdue_orders_units": 109,
+      "due_today_orders_count": 2,
+      "due_today_orders_units": 14,
+      "standing_backlog_orders": 9,
+      "standing_backlog_units": 109,
+      "total_open_orders": 11,
+      "total_open_units": 123,
+      "opening_stock": {
+        "steel_rod_kg": 0.0,
+        "plastic_granules_kg": 232.0,
+        "copper_wire_m": 283.0,
+        "widget_x_units": 6,
+        "widget_y_units": 16
+      },
+      "top_3_alerts": [
+        "Partial delivery from Global Polymers Co (PO #20)"
+      ],
+      "forecast_strip": {
+        "headline": "Next 7 days: expected demand ~27 units due (likely range 15\u201341)",
+        "breakdown_text": "0 already booked + ~27 expected new orders",
+        "product_breakdown": "Widget Model X: ~15u due (0 booked + ~15 new) | Widget Model Y: ~12u due (0 booked + ~12 new)",
+        "total_expected_due_units": 27,
+        "likely_range_low": 15,
+        "likely_range_high": 41,
+        "booked_units": 0,
+        "expected_new_orders": 27
+      },
+      "active_pos": [
+        {
+          "po_id": 18,
+          "supplier_id": 4,
+          "supplier_name": "EastCoast Components",
+          "material_id": 101,
+          "material_name": "Steel Rod 10mm",
+          "quantity_ordered": 407,
+          "expected_delivery_date": "2025-08-14",
+          "quantity_received": 0,
+          "days_overdue": 147,
+          "status": "Cancelled"
+        },
+        {
+          "po_id": 19,
+          "supplier_id": 4,
+          "supplier_name": "EastCoast Components",
+          "material_id": 101,
+          "material_name": "Steel Rod 10mm",
+          "quantity_ordered": 400,
+          "expected_delivery_date": "2026-01-02",
+          "quantity_received": 400,
+          "days_overdue": 0,
+          "status": "Completed"
+        },
+        {
+          "po_id": 20,
+          "supplier_id": 3,
+          "supplier_name": "Global Polymers Co",
+          "material_id": 102,
+          "material_name": "Plastic Granules",
+          "quantity_ordered": 250,
+          "expected_delivery_date": "2026-01-04",
+          "quantity_received": 250,
+          "days_overdue": 0,
+          "status": "Completed"
+        },
+        {
+          "po_id": 21,
+          "supplier_id": 5,
+          "supplier_name": "Copper & Co",
+          "material_id": 103,
+          "material_name": "Copper Wire",
+          "quantity_ordered": 200,
+          "expected_delivery_date": "2026-01-06",
+          "quantity_received": 200,
+          "days_overdue": 0,
+          "status": "Completed"
+        },
+        {
+          "po_id": 22,
+          "supplier_id": 3,
+          "supplier_name": "Global Polymers Co",
+          "material_id": 102,
+          "material_name": "Plastic Granules",
+          "quantity_ordered": 150,
+          "expected_delivery_date": "2026-01-10",
+          "quantity_received": 0,
+          "days_overdue": 0,
+          "status": "Pending"
+        }
+      ]
+    },
+    {
+      "day": 9,
+      "date": "2026-01-09",
+      "tier": "NEEDS_ATTENTION",
+      "overdue_orders_count": 9,
+      "overdue_orders_units": 109,
+      "due_today_orders_count": 2,
+      "due_today_orders_units": 12,
+      "standing_backlog_orders": 9,
+      "standing_backlog_units": 109,
+      "total_open_orders": 11,
+      "total_open_units": 121,
+      "opening_stock": {
+        "steel_rod_kg": 353.0,
+        "plastic_granules_kg": 316.0,
+        "copper_wire_m": 275.0,
+        "widget_x_units": 12,
+        "widget_y_units": 18
+      },
+      "top_3_alerts": [
+        "Standing customer backlog (9 orders, 109 units)"
+      ],
+      "forecast_strip": {
+        "headline": "Next 7 days: expected demand ~27 units due (likely range 15\u201341)",
+        "breakdown_text": "0 already booked + ~27 expected new orders",
+        "product_breakdown": "Widget Model X: ~15u due (0 booked + ~15 new) | Widget Model Y: ~12u due (0 booked + ~12 new)",
+        "total_expected_due_units": 27,
+        "likely_range_low": 15,
+        "likely_range_high": 41,
+        "booked_units": 0,
+        "expected_new_orders": 27
+      },
+      "active_pos": [
+        {
+          "po_id": 18,
+          "supplier_id": 4,
+          "supplier_name": "EastCoast Components",
+          "material_id": 101,
+          "material_name": "Steel Rod 10mm",
+          "quantity_ordered": 407,
+          "expected_delivery_date": "2025-08-14",
+          "quantity_received": 0,
+          "days_overdue": 148,
+          "status": "Cancelled"
+        },
+        {
+          "po_id": 19,
+          "supplier_id": 4,
+          "supplier_name": "EastCoast Components",
+          "material_id": 101,
+          "material_name": "Steel Rod 10mm",
+          "quantity_ordered": 400,
+          "expected_delivery_date": "2026-01-02",
+          "quantity_received": 400,
+          "days_overdue": 0,
+          "status": "Completed"
+        },
+        {
+          "po_id": 20,
+          "supplier_id": 3,
+          "supplier_name": "Global Polymers Co",
+          "material_id": 102,
+          "material_name": "Plastic Granules",
+          "quantity_ordered": 250,
+          "expected_delivery_date": "2026-01-04",
+          "quantity_received": 250,
+          "days_overdue": 0,
+          "status": "Completed"
+        },
+        {
+          "po_id": 21,
+          "supplier_id": 5,
+          "supplier_name": "Copper & Co",
+          "material_id": 103,
+          "material_name": "Copper Wire",
+          "quantity_ordered": 200,
+          "expected_delivery_date": "2026-01-06",
+          "quantity_received": 200,
+          "days_overdue": 0,
+          "status": "Completed"
+        },
+        {
+          "po_id": 22,
+          "supplier_id": 3,
+          "supplier_name": "Global Polymers Co",
+          "material_id": 102,
+          "material_name": "Plastic Granules",
+          "quantity_ordered": 150,
+          "expected_delivery_date": "2026-01-10",
+          "quantity_received": 0,
+          "days_overdue": 0,
+          "status": "Pending"
+        }
+      ]
+    },
+    {
+      "day": 10,
+      "date": "2026-01-10",
+      "tier": "NEEDS_ATTENTION",
+      "overdue_orders_count": 9,
+      "overdue_orders_units": 109,
+      "due_today_orders_count": 2,
+      "due_today_orders_units": 10,
+      "standing_backlog_orders": 9,
+      "standing_backlog_units": 109,
+      "total_open_orders": 11,
+      "total_open_units": 119,
+      "opening_stock": {
+        "steel_rod_kg": 313.0,
+        "plastic_granules_kg": 302.0,
+        "copper_wire_m": 269.0,
+        "widget_x_units": 18,
+        "widget_y_units": 18
+      },
+      "top_3_alerts": [
+        "Production below plan (Widget Model Y shortfall of 1 units)"
+      ],
+      "forecast_strip": {
+        "headline": "Next 7 days: expected demand ~27 units due (likely range 15\u201341)",
+        "breakdown_text": "0 already booked + ~27 expected new orders",
+        "product_breakdown": "Widget Model X: ~15u due (0 booked + ~15 new) | Widget Model Y: ~12u due (0 booked + ~12 new)",
+        "total_expected_due_units": 27,
+        "likely_range_low": 15,
+        "likely_range_high": 41,
+        "booked_units": 0,
+        "expected_new_orders": 27
+      },
+      "active_pos": [
+        {
+          "po_id": 18,
+          "supplier_id": 4,
+          "supplier_name": "EastCoast Components",
+          "material_id": 101,
+          "material_name": "Steel Rod 10mm",
+          "quantity_ordered": 407,
+          "expected_delivery_date": "2025-08-14",
+          "quantity_received": 0,
+          "days_overdue": 149,
+          "status": "Cancelled"
+        },
+        {
+          "po_id": 19,
+          "supplier_id": 4,
+          "supplier_name": "EastCoast Components",
+          "material_id": 101,
+          "material_name": "Steel Rod 10mm",
+          "quantity_ordered": 400,
+          "expected_delivery_date": "2026-01-02",
+          "quantity_received": 400,
+          "days_overdue": 0,
+          "status": "Completed"
+        },
+        {
+          "po_id": 20,
+          "supplier_id": 3,
+          "supplier_name": "Global Polymers Co",
+          "material_id": 102,
+          "material_name": "Plastic Granules",
+          "quantity_ordered": 250,
+          "expected_delivery_date": "2026-01-04",
+          "quantity_received": 250,
+          "days_overdue": 0,
+          "status": "Completed"
+        },
+        {
+          "po_id": 21,
+          "supplier_id": 5,
+          "supplier_name": "Copper & Co",
+          "material_id": 103,
+          "material_name": "Copper Wire",
+          "quantity_ordered": 200,
+          "expected_delivery_date": "2026-01-06",
+          "quantity_received": 200,
+          "days_overdue": 0,
+          "status": "Completed"
+        },
+        {
+          "po_id": 22,
+          "supplier_id": 3,
+          "supplier_name": "Global Polymers Co",
+          "material_id": 102,
+          "material_name": "Plastic Granules",
+          "quantity_ordered": 150,
+          "expected_delivery_date": "2026-01-10",
+          "quantity_received": 0,
+          "days_overdue": 0,
+          "status": "Pending"
+        }
+      ]
+    }
+  ]
+}

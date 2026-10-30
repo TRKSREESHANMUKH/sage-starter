@@ -607,6 +607,55 @@
     </p>
   </div>
 
+  <!-- Protocol v4 Benchmark Table: Known Booked vs Forward-Look -->
+  <div class="card" style="margin-bottom: 20px; border-left: 4px solid var(--accent);">
+    <h3 style="font-size: 1.0rem; font-weight: 700; margin: 0 0 4px 0; color: var(--text-main);">Weekly Demand Target Benchmark: Known Booked vs Model Forecast (Protocol v4)</h3>
+    <p style="font-size: 0.82rem; color: #334155; line-height: 1.6; margin-bottom: 12px;">
+      <strong>Plain-English Attribution:</strong> The headline accuracy of the deployed weekly demand forecast is driven primarily by the ERP order book: between 68.0% and 76.2% of customer demand due in rolling 7-day windows is <strong>already booked</strong> on origin day D (historical median customer lead time is 6.0 days). The predictive model adds only the marginal difference printed. The new-order part S(D) alone is hard to predict (WAPE near 1.0; theoretical irreducible oracle aleatoric noise ceiling is WAPE 0.5034 [ORACLE]). In the 10-day demo feed, orders use a 1-day lead time, meaning demo-day forward looks are mostly model-based. Prediction intervals are wide (average width 39.4 units).
+    </p>
+
+    <div class="table-responsive">
+      <table class="data-table" style="font-size: 0.82rem;">
+        <thead>
+          <tr>
+            <th>Evaluation Split</th>
+            <th>Target Definition</th>
+            <th>Model Architecture</th>
+            <th>MAE</th>
+            <th>WAPE</th>
+            <th>Accuracy %</th>
+            <th>Bias</th>
+            <th>Role</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in forecast_section.v4_comparison_table %}
+          <tr style="{% if 'DEPLOYED' in r.model %}background: rgba(37, 99, 235, 0.06); font-weight: 600;{% elif 'Booked' in r.role %}background: #f8fafc;{% endif %}">
+            <td><strong>{{ r.split }}</strong></td>
+            <td>{{ r.target }}</td>
+            <td>{{ r.model }}</td>
+            <td>{{ r.mae }}</td>
+            <td><strong>{{ r.wape }}</strong></td>
+            <td>{{ r.accuracy }}</td>
+            <td>{{ r.bias }}</td>
+            <td>
+              {% if 'v4 Deployed' in r.role %}
+              <span class="badge badge-ok" style="font-weight: 700;">DEPLOYED v4</span>
+              {% elif 'v3 Deployed' in r.role %}
+              <span class="badge badge-info">DEPLOYED v3</span>
+              {% elif 'Booked' in r.role %}
+              <span class="badge badge-calm">BOOKED BASELINE</span>
+              {% else %}
+              <span class="badge" style="background: #f1f5f9; color: #64748b;">UNKNOWN S(D)</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <!-- Model Comparison Table -->
   <div class="card" style="margin-bottom: 20px;">
     <h3 style="font-size: 1.0rem; font-weight: 700; margin: 0 0 4px 0; color: var(--text-main);">7-Model Evaluation Benchmark (Pre-registered Protocol v3)</h3>

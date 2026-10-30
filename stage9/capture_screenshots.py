@@ -1,16 +1,15 @@
 """
 stage9/capture_screenshots.py — SAGE Stage 9 Final Screenshot Generator.
 
-Regenerates clean, verified screenshots from the authentic 2026 demo feed:
-1. Viewer Today Day 1 (Normal baseline)
-2. Viewer Today Day 3 (Supplier delay, buffer holding)
-3. Viewer Today Day 7 (Crisis peak with 'Click to analyze' expander open)
-4. Viewer Today Day 9 (Seasonal peak / control day)
-5. Viewer Today Day 10 (Dual minor issues)
-6. Insights Tab on 2025-12-31 (78.3% on-time truth)
-7. Insights Tab on 2026-01-09 (75.2% on-time truth)
-8. Controller Dashboard on port 8001
-9. Sample 1-Page Daily Brief PDF Render
+Regenerates clean, verified screenshots:
+1. viewer_today_day1.png (desktop) & viewer_today_day1_mobile.png (mobile)
+2. viewer_today_day7.png (desktop) & viewer_today_day7_mobile.png (mobile)
+3. viewer_today_day10.png (desktop)
+4. viewer_insights_forecast.png (showing Protocol v4 table and plain-English disclosures)
+5. viewer_insights_history.png (showing calendar heat grid and key events list)
+6. viewer_method.png (showing disclosures)
+7. controller_dashboard.png
+8. sample_daily_brief_pdf.png
 """
 
 import os
@@ -30,90 +29,100 @@ def capture_all():
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        context = browser.new_context(viewport={"width": 1280, "height": 1100})
+        desktop_ctx = browser.new_context(viewport={"width": 1280, "height": 1100})
+        mobile_ctx = browser.new_context(viewport={"width": 375, "height": 812}, is_mobile=True)
 
-        # Set auth cookie for viewer
-        if web_token:
-            context.add_cookies([{
-                "name": "sage_token",
-                "value": web_token,
-                "domain": "127.0.0.1",
-                "path": "/"
-            }])
+        for ctx in [desktop_ctx, mobile_ctx]:
+            if web_token:
+                ctx.add_cookies([{
+                    "name": "sage_token",
+                    "value": web_token,
+                    "domain": "127.0.0.1",
+                    "path": "/"
+                }])
 
-        page = context.new_page()
+        dpage = desktop_ctx.new_page()
+        mpage = mobile_ctx.new_page()
 
-        # 1. Day 1 (Normal baseline)
-        print("Capturing Viewer Day 1...")
-        page.goto("http://127.0.0.1:8000/?date=2026-01-01", wait_until="domcontentloaded")
-        page.wait_for_timeout(1000)
-        p1 = FINAL_DIR / "viewer_today_day1.png"
-        page.screenshot(path=str(p1), full_page=True)
-        print(f"  Saved {p1}")
+        # 1. Day 1 (Desktop + Mobile)
+        print("Capturing Viewer Day 1 (desktop & mobile)...")
+        dpage.goto("http://127.0.0.1:8000/?date=2026-01-01", wait_until="domcontentloaded")
+        dpage.wait_for_timeout(1000)
+        p1_d = FINAL_DIR / "viewer_today_day1.png"
+        dpage.screenshot(path=str(p1_d), full_page=True)
+        print(f"  Saved {p1_d}")
+
+        mpage.goto("http://127.0.0.1:8000/?date=2026-01-01", wait_until="domcontentloaded")
+        mpage.wait_for_timeout(1000)
+        p1_m = FINAL_DIR / "viewer_today_day1_mobile.png"
+        mpage.screenshot(path=str(p1_m), full_page=True)
+        print(f"  Saved {p1_m}")
 
         # 2. Day 3 (Supplier delay)
-        print("Capturing Viewer Day 3...")
-        page.goto("http://127.0.0.1:8000/?date=2026-01-03", wait_until="domcontentloaded")
-        page.wait_for_timeout(1000)
-        p3 = FINAL_DIR / "viewer_today_day3.png"
-        page.screenshot(path=str(p3), full_page=True)
-        print(f"  Saved {p3}")
+        dpage.goto("http://127.0.0.1:8000/?date=2026-01-03", wait_until="domcontentloaded")
+        dpage.wait_for_timeout(1000)
+        p3_d = FINAL_DIR / "viewer_today_day3.png"
+        dpage.screenshot(path=str(p3_d), full_page=True)
 
-        # 3. Day 7 (Crisis peak with Click to analyze open)
-        print("Capturing Viewer Day 7 (Click to analyze open)...")
-        page.goto("http://127.0.0.1:8000/?date=2026-01-07", wait_until="domcontentloaded")
-        page.wait_for_timeout(1000)
-        details = page.locator("details.analyze-expander").first
+        # 3. Day 7 (Desktop + Mobile)
+        print("Capturing Viewer Day 7 (desktop & mobile)...")
+        dpage.goto("http://127.0.0.1:8000/?date=2026-01-07", wait_until="domcontentloaded")
+        dpage.wait_for_timeout(1000)
+        details = dpage.locator("details.analyze-expander").first
         if details.count() > 0:
             details.evaluate("el => el.open = true")
-        page.wait_for_timeout(1000)
-        p7 = FINAL_DIR / "viewer_today_day7.png"
-        page.screenshot(path=str(p7), full_page=True)
-        print(f"  Saved {p7}")
+        dpage.wait_for_timeout(1000)
+        p7_d = FINAL_DIR / "viewer_today_day7.png"
+        dpage.screenshot(path=str(p7_d), full_page=True)
+        print(f"  Saved {p7_d}")
 
-        # 4. Day 9 (Control day)
-        print("Capturing Viewer Day 9...")
-        page.goto("http://127.0.0.1:8000/?date=2026-01-09", wait_until="domcontentloaded")
-        page.wait_for_timeout(1000)
-        p9 = FINAL_DIR / "viewer_today_day9.png"
-        page.screenshot(path=str(p9), full_page=True)
-        print(f"  Saved {p9}")
+        mpage.goto("http://127.0.0.1:8000/?date=2026-01-07", wait_until="domcontentloaded")
+        mpage.wait_for_timeout(1000)
+        p7_m = FINAL_DIR / "viewer_today_day7_mobile.png"
+        mpage.screenshot(path=str(p7_m), full_page=True)
+        print(f"  Saved {p7_m}")
 
-        # 5. Day 10 (Dual minor issues)
+        # 4. Day 9
+        dpage.goto("http://127.0.0.1:8000/?date=2026-01-09", wait_until="domcontentloaded")
+        dpage.wait_for_timeout(1000)
+        p9_d = FINAL_DIR / "viewer_today_day9.png"
+        dpage.screenshot(path=str(p9_d), full_page=True)
+
+        # 5. Day 10 (Desktop)
         print("Capturing Viewer Day 10...")
-        page.goto("http://127.0.0.1:8000/?date=2026-01-10", wait_until="domcontentloaded")
-        page.wait_for_timeout(1000)
-        p10 = FINAL_DIR / "viewer_today_day10.png"
-        page.screenshot(path=str(p10), full_page=True)
-        print(f"  Saved {p10}")
+        dpage.goto("http://127.0.0.1:8000/?date=2026-01-10", wait_until="domcontentloaded")
+        dpage.wait_for_timeout(1000)
+        p10_d = FINAL_DIR / "viewer_today_day10.png"
+        dpage.screenshot(path=str(p10_d), full_page=True)
+        print(f"  Saved {p10_d}")
 
-        # 6. Insights 2025-12-31
-        print("Capturing Insights 2025-12-31...")
-        page.goto("http://127.0.0.1:8000/insights?date=2025-12-31&period=all", wait_until="domcontentloaded")
-        page.wait_for_timeout(1000)
-        pi_25 = FINAL_DIR / "viewer_insights_2025-12-31.png"
-        page.screenshot(path=str(pi_25), full_page=True)
-        print(f"  Saved {pi_25}")
+        # 6. Insights Forecast Section
+        print("Capturing Insights Forecast Section...")
+        dpage.goto("http://127.0.0.1:8000/insights?date=2026-01-10#forecast", wait_until="domcontentloaded")
+        dpage.wait_for_timeout(1000)
+        p_fc = FINAL_DIR / "viewer_insights_forecast.png"
+        dpage.screenshot(path=str(p_fc), full_page=True)
+        print(f"  Saved {p_fc}")
 
-        # 7. Insights 2026-01-09
-        print("Capturing Insights 2026-01-09...")
-        page.goto("http://127.0.0.1:8000/insights?date=2026-01-09&period=all", wait_until="domcontentloaded")
-        page.wait_for_timeout(1000)
-        pi_26 = FINAL_DIR / "viewer_insights_2026-01-09.png"
-        page.screenshot(path=str(pi_26), full_page=True)
-        print(f"  Saved {pi_26}")
+        # 7. Insights History Section
+        print("Capturing Insights History Section...")
+        dpage.goto("http://127.0.0.1:8000/insights?date=2026-01-10#history", wait_until="domcontentloaded")
+        dpage.wait_for_timeout(1000)
+        p_hist = FINAL_DIR / "viewer_insights_history.png"
+        dpage.screenshot(path=str(p_hist), full_page=True)
+        print(f"  Saved {p_hist}")
 
-        # 7b. Past Day View (Read-Only)
-        print("Capturing Viewer Past Day View...")
-        page.goto("http://127.0.0.1:8000/?date=2025-06-15", wait_until="domcontentloaded")
-        page.wait_for_timeout(1000)
-        p_past = FINAL_DIR / "viewer_past_day.png"
-        page.screenshot(path=str(p_past), full_page=True)
-        print(f"  Saved {p_past}")
+        # 8. Method Page
+        print("Capturing Method Page...")
+        dpage.goto("http://127.0.0.1:8000/method", wait_until="domcontentloaded")
+        dpage.wait_for_timeout(1000)
+        p_meth = FINAL_DIR / "viewer_method.png"
+        dpage.screenshot(path=str(p_meth), full_page=True)
+        print(f"  Saved {p_meth}")
 
-        # 8. Controller Dashboard
+        # 9. Controller Dashboard
         print("Capturing Controller Dashboard...")
-        ctrl_page = context.new_page()
+        ctrl_page = desktop_ctx.new_page()
         ctrl_page.goto("http://127.0.0.1:8001/ctrl/login", wait_until="domcontentloaded")
         ctrl_page.fill("input[name='token']", ctrl_token)
         ctrl_page.click("button[type='submit']")
@@ -123,11 +132,11 @@ def capture_all():
         ctrl_page.screenshot(path=str(p_ctrl), full_page=True)
         print(f"  Saved {p_ctrl}")
 
-        # 9. Sample 1-Page PDF preview
+        # 10. Sample 1-Page PDF preview
         report_html = ROOT_DIR / "reports" / "2026-01-07" / "report.html"
         if report_html.exists():
             print("Capturing Sample 1-Page PDF preview...")
-            pdf_page = context.new_page()
+            pdf_page = desktop_ctx.new_page()
             pdf_page.set_viewport_size({"width": 800, "height": 1130})
             pdf_page.goto(f"file://{report_html.resolve()}", wait_until="load")
             pdf_page.wait_for_timeout(500)

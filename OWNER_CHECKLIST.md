@@ -15,6 +15,9 @@ source venv/bin/activate
 # 2. Run full automated verification suite (~25 seconds)
 ./verify_all.sh
 
+# 2b. Print complete test inventory by suite (217 unified checks)
+./verify_all.sh --list
+
 # 3. Verify weekly order forecast and consistency test suites
 ./venv/bin/python -m unittest stage10/test_outlook.py stage9/test_consistency_fixes.py
 

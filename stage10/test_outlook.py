@@ -42,7 +42,7 @@ class TestWeeklyForecast(unittest.TestCase):
         rules_enabled = {"outlook": {"enabled": True}}
         res_enabled = get_weekly_forecast(self.as_of, use_cache=False, rules=rules_enabled)
         self.assertTrue(res_enabled["available"])
-        self.assertIn("Next 7 days: expected new orders", res_enabled["headline"])
+        self.assertIn("Next 7 days:", res_enabled["headline"])
 
         # Disabled
         rules_disabled = {"outlook": {"enabled": False}}
@@ -56,7 +56,7 @@ class TestWeeklyForecast(unittest.TestCase):
         self.assertTrue(fc["available"])
         self.assertEqual(fc["as_of"], "2026-01-01")
         self.assertGreaterEqual(fc["due_known"], 0)
-        self.assertIn("already on the books", fc["headline"])
+        self.assertIn("already booked", fc["breakdown_line"])
         self.assertIn(fc["shortage_risk"], ["Low", "Medium", "High"])
 
     def test_03_past_day_rule(self):
@@ -113,7 +113,7 @@ class TestWeeklyForecast(unittest.TestCase):
         })
         elapsed = time.perf_counter() - t0
 
-        self.assertIn("Next 7 days: expected new orders", html)
+        self.assertIn("Next 7 days: expected demand", html)
         self.assertNotIn("Shortage risk", html)
         self.assertIn(RESEARCH_FRAMING, html)
         self.assertLess(elapsed, 3.0, f"Render took {elapsed:.2f}s (must be <3.0s)")

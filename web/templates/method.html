@@ -121,7 +121,7 @@
 
   <div class="card-title" style="font-size: 0.95rem; margin-top: 10px;">Ten-Day Feed Multi-Version Evaluation &amp; Rehearsal Disclosure</div>
   <p style="font-size: 0.82rem; color: #b45309; background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 8px 12px; margin-bottom: 10px;">
-    <strong>Important Disclosure:</strong> Version 3 expectations were written after seeing results (rehearsal, not validation). Scored against original v1 expectations, SAGE achieves <strong>7/10 HITS (70.0%)</strong>, 3 PARTIALS (30.0%), and 0 MISSES. Against rehearsal v3 expectations, SAGE scores <strong>10/10 HITS (100.0%)</strong>.
+    <strong>Scripted Feed &amp; Rehearsal Disclosure:</strong> The 10 demonstration days (1–10 Jan 2026) are scripted; tiers matching the script demonstrate that the product responds deterministically to operational inputs, not predictive accuracy. Demo feed orders follow a 1-day lead time design, whereas 2025 customer orders had a median lead time of 6.0 days. Version 3 expectations were written after seeing results (rehearsal, not validation). Scored against original v1 expectations, SAGE achieves <strong>7/10 HITS (70.0%)</strong>, 3 PARTIALS (30.0%), and 0 MISSES. Against rehearsal v3 expectations, SAGE scores <strong>10/10 HITS (100.0%)</strong>.
   </p>
   <table style="margin-top: 8px; font-size: 0.8rem;">
     <thead>
@@ -239,6 +239,11 @@
       </tr>
     </tbody>
   </table>
+
+  <div class="card-title" style="font-size: 0.95rem; margin-top: 14px;">Historical Tier Distribution &amp; August–December 2025 Status</div>
+  <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 8px;">
+    The complete 365-day 2025 historical day index contains <strong>124 Normal</strong> (34.0%), <strong>49 Watch</strong> (13.4%), <strong>38 Needs attention</strong> (10.4%), and <strong>154 Critical</strong> (42.2%) days. August through December 2025 is mostly Critical because PO #18 (407 units of Steel Rod 10mm from EastCoast Components) remained permanently overdue (due 2025-08-14) with standing customer delivery backorders. Detection thresholds were strictly NOT modified post-hoc to mask this historical operational distress.
+  </p>
 
   <div class="card-title" style="font-size: 0.95rem; margin-top: 14px;">Seasonality Stress Test &amp; Response Lag Audit</div>
   <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 8px;">
@@ -405,7 +410,7 @@
       <strong>Theoretical Oracle Limit vs. Deployed Performance:</strong> Independent Monte Carlo simulation over 100,000 weeks proves that discrete Bernoulli order arrivals and random order sizing impose an irreducible theoretical aleatoric error floor of <strong>0.50 WAPE</strong> (an irreducible 50% accuracy ceiling). The deployed model achieves <strong>0.65 WAPE</strong> on out-of-sample weekly tests, operating within 0.14 WAPE of the theoretical noise limit.
     </li>
     <li>
-      <strong>Protocol v4 Target Comparison (Units Due vs Units Placed):</strong> As pre-registered in <code>stage10/prereg_forecast_v4.md</code>, forecasting units due in the rolling 7-day window (<em>y</em><sub>due</sub> = known booked + short-notice) achieves <strong>68.5% accuracy</strong> (0.3152 WAPE [TEST]) vs <strong>35.3% accuracy</strong> (0.6474 WAPE [TEST]) when predicting net new arrivals (<em>y</em><sub>placed</sub>). This accuracy gain stems directly from known booked ledger commitments removing 68–76% of aleatoric uncertainty on origin day <em>D</em>, rather than an algorithmic change.
+      <strong>Protocol v4 Target Comparison (Units Due vs Units Placed):</strong> As pre-registered in <code>stage10/prereg_forecast_v4.md</code>, forecasting units due in the rolling 7-day window (<em>y</em><sub>due</sub> = known booked + short-notice) achieves <strong>68.5% accuracy</strong> (0.3152 WAPE [TEST]) vs <strong>35.3% accuracy</strong> (0.6474 WAPE [TEST]) when predicting net new arrivals (<em>y</em><sub>placed</sub>). Headline accuracy is driven primarily by the ERP order book (68.0% to 76.2% of due volume is already booked on origin day <em>D</em>); the model adds only the marginal difference printed. The new-order part <em>S(D)</em> alone is hard to predict (WAPE 0.98; oracle aleatoric error floor is 0.50 WAPE). In the 10-day demo feed, orders use a compressed 1-day lead time, meaning demo-day forecasts are mostly model-based. The prediction interval is wide (average width 39.4 units).
     </li>
     <li>
       <strong>Wide Prediction Range:</strong> Because discrete customer demand arrivals are stochastic, the empirical 80% prediction interval is wide. Forecasts provide macro weekly capacity sizing rather than daily precision.

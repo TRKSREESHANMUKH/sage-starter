@@ -160,14 +160,18 @@ where $K(D)$ is **known booked units** already ordered in the ERP ledger on or b
 | **TEST ($n=25$ Sundays)** | Baseline 2: Trailing 28d Mean | OLD Target ($y_{\text{placed}}$) | 31.10 [TEST] | 0.6474 [TEST] | 35.3% [TEST] | -2.42 [TEST] | — |
 | **TEST ($n=25$ Sundays)** | Known Booked Only (No Model) | NEW Target ($y_{\text{due}}$) | 14.44 [TEST] | 0.3200 [TEST] | 68.0% [TEST] | -14.44 [TEST] | — |
 | **TEST ($n=25$ Sundays)** | **Booked + Trailing Short-Notice [DEPLOYED v4]** | **NEW Target ($y_{\text{due}}$)** | **14.22 [TEST]** | **0.3152 [TEST]** | **68.5% [TEST]** | **-0.18 [TEST]** | **84.0% [TEST]** |
+| **TEST ($n=25$ Sundays)** | Unknown Part S(D) Alone | Residual Short-Notice ($S(D)$) | 14.22 [TEST] | 0.9848 [TEST] | 1.5% [TEST] | -0.18 [TEST] | — |
 | **TEST ($n=177$ Daily)** | Baseline 2: Trailing 28d Mean | OLD Target ($y_{\text{placed}}$) | 30.62 [TEST] | 0.6312 [TEST] | 36.9% [TEST] | -2.67 [TEST] | — |
 | **TEST ($n=177$ Daily)** | Known Booked Only (No Model) | NEW Target ($y_{\text{due}}$) | 10.93 [TEST] | 0.2381 [TEST] | 76.2% [TEST] | -10.93 [TEST] | — |
 | **TEST ($n=177$ Daily)** | **Booked + Trailing Short-Notice [DEPLOYED v4]** | **NEW Target ($y_{\text{due}}$)** | **11.66 [TEST]** | **0.2540 [TEST]** | **74.6% [TEST]** | **-0.32 [TEST]** | **82.5% [TEST]** |
+| **TEST ($n=177$ Daily)** | Unknown Part S(D) Alone | Residual Short-Notice ($S(D)$) | 11.66 [TEST] | 1.0668 [TEST] | No better than 0 | -0.32 [TEST] | — |
 
-### Plain-English Attribution of Accuracy Gains:
-Does accuracy rise from 35.3% / 36.9% to 68.5% / 74.6% because of a superior machine learning model?
-**No. The accuracy gain stems directly from the known booked ledger commitments ($K(D)$).**
-Because 68.0% to 76.2% of customer orders due in the next 7 days are already placed in advance (median lead time 6.0 days), they are known with 100% certainty on Day $D$. The predictive model is only responsible for estimating the residual 23.8% to 32.0% short-notice volume. Incorporating verified ERP commitments into the operational target eliminates aleatoric variance without claiming algorithmic superiority.
+### Plain-English Attribution & Limitations:
+1. **Headline Accuracy Driven by Order Book:** Accuracy rises from 35.3% / 36.9% to 68.5% / 74.6% because between 68.0% and 76.2% of demand due in rolling 7-day windows is **already booked in the ERP sales order ledger** on origin day $D$ (historical median lead time is 6.0 days).
+2. **Model Marginal Contribution:** The predictive statistical model adds only the marginal difference printed between the booked-only baseline and the deployed model (e.g. +0.5% accuracy on Sundays, -1.6% on daily horizons due to noise).
+3. **New-Order Part Alone is Hard to Predict:** The unbooked, short-notice order stream $S(D)$ alone is highly intermittent (68.2% zero days) and achieves a WAPE near 1.0 (0.98 on Sundays, 1.07 on daily horizons). Monte Carlo simulation demonstrates that discrete arrival noise imposes a theoretical irreducible oracle aleatoric noise ceiling of **WAPE 0.5034 [ORACLE]**.
+4. **Demo Feed Lead Time Impact:** In the 10-day demonstration feed (1–10 Jan 2026), incoming orders use a compressed 1-day lead time (versus 6.0 days historical median), meaning that 2026 demo-day forward looks are mostly model-based rather than ledger-based.
+5. **Wide Prediction Range:** Due to discrete order arrival variance, empirical 80% prediction intervals are wide (average width 39.4 units on test weeks). Forecasts serve macro weekly capacity sizing rather than daily micro-scheduling.
 
 ---
 

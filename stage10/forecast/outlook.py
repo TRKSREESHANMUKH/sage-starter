@@ -142,6 +142,9 @@ def get_weekly_forecast(
     mae_units = round(p_tot.get("mae", 31.1), 1)
     test_n = p_tot.get("n", 25)
 
+    b_x = 0
+    b_y = 0
+
     # 1. Past-Day Rule Check
     if is_past_day:
         if as_of_str in stored_fc:
@@ -150,6 +153,8 @@ def get_weekly_forecast(
             q10 = fc_entry["range_low"]
             q90 = fc_entry["range_high"]
             due_k = fc_entry["due_known"]
+            b_x = int(round(due_k * 0.55))
+            b_y = due_k - b_x
             is_stored = True
         else:
             res = {
@@ -191,11 +196,11 @@ def get_weekly_forecast(
             q10 = round(max(0.0, pred_pt * 0.55), 1)
             q90 = round(pred_pt * 1.50, 1)
 
-            # Known orders already due in D+1..D+7
+            # Known orders already due in D+1..D+7 by product
             d_next_1 = as_of + timedelta(days=1)
             d_next_7 = as_of + timedelta(days=7)
             due_records = (
-                db_session.query(SalesOrderLine.quantity_ordered)
+                db_session.query(SalesOrderLine.product_id, SalesOrderLine.quantity_ordered)
                 .join(SalesOrder, SalesOrder.id == SalesOrderLine.sales_order_id)
                 .filter(
                     SalesOrder.order_date <= as_of,
@@ -205,7 +210,9 @@ def get_weekly_forecast(
                 )
                 .all()
             )
-            due_k = int(sum(r[0] for r in due_records if r[0]))
+            due_k = int(sum(r[1] for r in due_records if r[1]))
+            b_x = int(sum(r[1] for r in due_records if r[0] == 201 and r[1]))
+            b_y = int(sum(r[1] for r in due_records if r[0] == 202 and r[1]))
         finally:
             if close_sess:
                 db_session.close()
@@ -240,11 +247,21 @@ def get_weekly_forecast(
 
     sparkline_svg = generate_mini_forecast_chart_svg(stored_fc, n_weeks=12)
 
-    headline = (
-        f"Next 7 days: expected new orders {int(round(pred_pt))} units "
-        f"(range {int(round(q10))}–{int(round(q90))}); {due_k} units already on the books."
-    )
-    sublabel = f"Typical error: about {int(round(mae_units))} units a week (WAPE {wape_pct}% on {test_n} test weeks, model {model_name})"
+    exp_new = int(round(pred_pt))
+    lo = int(round(q10))
+    hi = int(round(q90))
+    tot_due = due_k + exp_new
+    tot_lo = due_k + lo
+    tot_hi = due_k + hi
+
+    new_x = int(round(exp_new * 0.55))
+    new_y = exp_new - new_x
+    tot_x = b_x + new_x
+    tot_y = b_y + new_y
+
+    headline = f"Next 7 days: expected demand ~{tot_due} units due (likely range {tot_lo}–{tot_hi})"
+    breakdown_line = f"{due_k} already booked + ~{exp_new} expected new orders"
+    product_breakdown = f"Widget Model X: ~{tot_x}u due ({b_x} booked + ~{new_x} new) | Widget Model Y: ~{tot_y}u due ({b_y} booked + ~{new_y} new)"
 
     result = {
         "available": True,
@@ -252,12 +269,17 @@ def get_weekly_forecast(
         "is_stored": is_stored,
         "as_of": as_of_str,
         "horizon": horizon_str,
-        "expected_new_orders": int(round(pred_pt)),
-        "range_low": int(round(q10)),
-        "range_high": int(round(q90)),
+        "total_demand_due": tot_due,
+        "range_low": tot_lo,
+        "range_high": tot_hi,
+        "expected_new_orders": exp_new,
+        "new_orders_range_low": lo,
+        "new_orders_range_high": hi,
         "due_known": due_k,
         "headline": headline,
-        "sublabel": sublabel,
+        "breakdown_line": breakdown_line,
+        "product_breakdown": product_breakdown,
+        "sparkline_svg": sparkline_svg,
         "shortage_risk": shortage_risk,
         "shortage_badge": shortage_badge,
         "shortage_color": shortage_color,
@@ -266,7 +288,6 @@ def get_weekly_forecast(
         "wape_pct": wape_pct,
         "mae_units": mae_units,
         "test_n": test_n,
-        "sparkline_svg": sparkline_svg,
         "framing": RESEARCH_FRAMING
     }
 

@@ -10,6 +10,7 @@ TODAY'S NUMBERS IN CONTEXT:
 • Orders Late    : 9 late orders, up from 8 yesterday (7d avg: 4.7)
 • Units Short    : 123 units short, up from 100 yesterday (7d avg: 56.9)
 • Materials Low  : 1 material low, same as yesterday (7d avg: 0.3)
+• Forward-look   : Next 7 days demand: ~70 units due (likely range 45–98); 14 already booked + ~56 expected new orders.
 
 PAST ANALYSED CASES: WHAT CAUSED WHAT:
 • Chain: EastCoast delivery late → Steel Rod 10mm below safety level → Widget Model X production shortfall

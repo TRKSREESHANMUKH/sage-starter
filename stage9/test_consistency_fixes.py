@@ -245,6 +245,70 @@ class TestConsistencyFixes(unittest.TestCase):
                 self.assertNotIn("Apex Polymers", c_txt)
                 self.assertNotIn("Metro Wiring", c_txt)
 
+    def test_facts_vs_pages_match(self):
+        """Asserts DEMO_FACTS.json exists and critical numbers align with pages."""
+        facts_p = ROOT_DIR / "stage10" / "DEMO_FACTS.json"
+        self.assertTrue(facts_p.exists(), "stage10/DEMO_FACTS.json must exist")
+        with open(facts_p, "r", encoding="utf-8") as f:
+            facts = json.load(f)
+
+        # 31 total sales orders (9 standing + 22 pack orders)
+        sos = facts.get("sales_orders", [])
+        self.assertEqual(len(sos), 31)
+
+        # Day 1 opening stock
+        d1 = facts.get("daily_ledger", [])[0]
+        stk1 = d1.get("opening_stock", {})
+        self.assertEqual(stk1.get("steel_rod_kg"), 215.0)
+        self.assertEqual(stk1.get("plastic_granules_kg"), 204.0)
+        self.assertEqual(stk1.get("copper_wire_m"), 184.0)
+
+        # Day 7 backlog: 9 orders, 109 units
+        d7 = facts.get("daily_ledger", [])[6]
+        self.assertEqual(d7.get("overdue_orders_count"), 9)
+        self.assertEqual(d7.get("overdue_orders_units"), 109)
+
+    def test_one_overdue_rule_strict(self):
+        """Asserts overdue definition is strictly requested_delivery_date < as_of."""
+        snap_code = (ROOT_DIR / "stage9" / "snapshot.py").read_text(encoding="utf-8")
+        self.assertIn("requested_delivery_date < as_of", snap_code)
+        self.assertIn("requested_delivery_date == as_of", snap_code)
+
+    def test_forecast_prereg_ordering_proof(self):
+        """Asserts prereg_forecast_v4.md was committed before evaluate_v4.py."""
+        import subprocess
+        p_prereg = ROOT_DIR / "stage10" / "prereg_forecast_v4.md"
+        p_eval = ROOT_DIR / "stage10" / "forecast" / "evaluate_v4.py"
+        self.assertTrue(p_prereg.exists())
+        self.assertTrue(p_eval.exists())
+
+        res_prereg = subprocess.run(
+            ["git", "log", "-1", "--format=%ct", "--", "stage10/prereg_forecast_v4.md"],
+            cwd=str(ROOT_DIR), capture_output=True, text=True
+        )
+        res_eval = subprocess.run(
+            ["git", "log", "-1", "--format=%ct", "--", "stage10/forecast/evaluate_v4.py"],
+            cwd=str(ROOT_DIR), capture_output=True, text=True
+        )
+        if res_prereg.stdout.strip() and res_eval.stdout.strip():
+            ts_prereg = int(res_prereg.stdout.strip())
+            ts_eval = int(res_eval.stdout.strip())
+            self.assertLessEqual(ts_prereg, ts_eval, "Pre-registration commit must precede evaluation code commit")
+
+    def test_episode_toggle_functionality_in_html(self):
+        """Asserts #toggle-new-events checkbox and filtering logic exist in insights.html."""
+        ins_html = (ROOT_DIR / "web" / "templates" / "insights.html").read_text(encoding="utf-8")
+        self.assertIn('id="toggle-new-events"', ins_html)
+        self.assertIn('onchange="toggleNewEvents(this)"', ins_html)
+        self.assertIn('applyEpisodeFilters()', ins_html)
+        self.assertIn('data-is-new=', ins_html)
+
+    def test_mail_safety_zero_real_smtp_in_tests(self):
+        """Asserts test harness enforces mock SMTP and dry-run safety."""
+        test_mail_src = (ROOT_DIR / "stage9" / "test_mail_safety.py").read_text(encoding="utf-8")
+        self.assertIn('patch("smtplib.SMTP")', test_mail_src)
+        self.assertIn("force_dry_run", test_mail_src)
+
 
 if __name__ == "__main__":
     unittest.main()

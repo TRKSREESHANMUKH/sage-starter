@@ -424,5 +424,35 @@
     ],
     "status": "SUCCESS_LIVE",
     "delivery_mode": "live_smtp"
+  },
+  {
+    "timestamp": "2026-10-30T04:19:56.533012+00:00",
+    "job": "nightly_digest",
+    "as_of": "2025-06-15",
+    "recipients": [
+      "sreeshanmukhtrk@gmail.com"
+    ],
+    "status": "SUCCESS_LIVE",
+    "delivery_mode": "live_smtp"
+  },
+  {
+    "timestamp": "2026-10-30T04:23:55.008330+00:00",
+    "job": "nightly_digest",
+    "as_of": "2025-06-15",
+    "recipients": [
+      "sreeshanmukhtrk@gmail.com"
+    ],
+    "status": "SUCCESS_LIVE",
+    "delivery_mode": "live_smtp"
+  },
+  {
+    "timestamp": "2026-10-30T04:28:11.415350+00:00",
+    "job": "nightly_digest",
+    "as_of": "2025-06-15",
+    "recipients": [
+      "sreeshanmukhtrk@gmail.com"
+    ],
+    "status": "SUCCESS_LIVE",
+    "delivery_mode": "live_smtp"
   }
 ]

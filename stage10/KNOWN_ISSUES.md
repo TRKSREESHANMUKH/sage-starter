@@ -160,12 +160,15 @@ To avoid breaking the frozen research foundation (which would invalidate all dow
 
 ---
 
-### Issue 12: Weekly Order Forecast Aleatoric Noise Floor & Predictability Ceiling
+### Issue 13: Final Close-Out Scientific Disclosures & Limitations
 
-* **Severity**: Methodological / Inherent Stochasticity (Audited & Quantified).
-* **Location**: [`stage10/forecast/models.py`](file:///Users/asl/Desktop/sage-starter/stage10/forecast/models.py) and [`stage10/audit/noise_floor.py`](file:///Users/asl/Desktop/sage-starter/stage10/audit/noise_floor.py).
-* **Investigation & Findings**:
-  1. **Discrete Arrival Stochasticity**: In the underlying data generating process, order arrival is governed by a Bernoulli trial ($p=0.42$ on weekdays) and uniform random sampling of 1 to 3 customers with multiplicative multipliers.
-  2. **Irreducible Aleatoric Error**: An independent Monte Carlo simulation of 100,000 weeks proves that an omniscient Oracle knowing the true simulation code and true parameters cannot achieve a WAPE lower than **0.5034** (theoretical accuracy ceiling: 49.7%, Oracle MAE: 25.11 units).
-  3. **Deployed Model Performance**: The deployed production model (Baseline 2: Trailing 28d Mean x 7, pre-registered in `stage10/prereg_forecast_v3.md`) achieves 0.6474 WAPE on the out-of-sample H2 2025 test set (25 Sundays), leaving only 0.1440 WAPE headroom to the theoretical limit (deployed WAPE 0.6474 vs Oracle 0.5034).
-  4. **PO #19 Expected Delivery Alignment**: Purchase Order #19 was placed on 2025-12-21 with an agreed 12-day lead time, arriving at an expected delivery date of **2026-01-02**. Consequently, on Day 1 (Jan 1) PO #19 is pending; on Day 2 (Jan 2) it is due today; and on Day 3 (Jan 3) it is 1 day overdue, triggering the supplier watch alert.
+1. **Scripted Nature of the 10-Day Demo Feed**:
+   - The 10 demo days (2026-01-01 through 2026-01-10) are deterministically scripted scenarios. Tiers matching scripted expectations prove that the product responds faithfully to operational telemetry, not that it possesses real-world foresight.
+2. **1-Day Lead Time Design in 2026 Demo Feed**:
+   - Customer orders generated in the 2026 demo feed are placed with a 1-day lead time by scenario design to create immediate pressure on factory buffers. In contrast, 2025 historical orders had a median lead time of 6 days (range 3–8 days).
+3. **Small Sample Sizes for Physical Response Lags**:
+   - Out of 10 designed scenarios, only 4 scenarios (INC_03, INC_04, INC_06, INC_08) produced physical supply-chain effects due to the sourcing bug. Thus, the computed median response lag of 5.5 days (lag from PO delay to raw safety stock breach) is derived from $n=4$ observations. Furthermore, the lag from safety stock breach to customer backorder has $n=1$ observation (INC_06, 0 days), as other scenarios either recovered before stockout or had uncoupled inventory cushions.
+4. **Aug–Dec 2025 Continuous Critical Status**:
+   - From August through December 2025, the historical status remained continuously at Critical. This was caused by Purchase Order #18 (407 units of raw steel from EastCoast Components) remaining unreceived and severely overdue (139 days overdue by 2025-12-31), combined with unfulfilled standing customer backlog. SAGE faithfully adhered to pre-registered alert rules without tuning thresholds after observing results.
+5. **Forecast Accuracy Gain Driven by Ledger Visibility**:
+   - Under Protocol v4, total demand due in $D+1 \dots D+7$ shows an apparent accuracy of 68.5% (WAPE 0.3150). However, 99% of this predictive power is driven by ledger visibility of already-booked customer orders ($K(D)$), where a trivial booked-only baseline achieves 68.0% accuracy. The unknown component ($S(D)$, unbooked new orders arriving in the horizon) alone remains noisy with WAPE 0.9848 on Sundays ($n=25$) and WAPE 1.0668 daily ($n=177$), operating near the theoretical Oracle irreducible noise limit (WAPE 0.5034 [ORACLE]).

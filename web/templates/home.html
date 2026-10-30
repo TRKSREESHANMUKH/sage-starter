@@ -505,24 +505,20 @@
   </section>
 
   {% if outlook and outlook.available %}
-  <!-- Next 7 Days Forward-Look Block (Pre-registered Weekly Order Forecast) -->
-  <section class="card forecast-card" style="margin-bottom: 24px; border-left: 4px solid var(--accent); background: var(--card-bg, #ffffff); padding: 14px 18px; border-radius: var(--radius); box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
-    <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 6px;">
-      <h2 style="font-size: 1.0rem; font-weight: 700; margin: 0; color: #0f172a;">
-        Next 7 days: expected new orders <span style="font-weight: 400; font-size: 0.85rem; color: var(--text-muted);">({{ outlook.horizon }})</span>
+  <!-- Next 7 Days Slim Forward-Look Strip (Pre-registered Weekly Demand Forecast) -->
+  <section class="card forecast-card" style="margin-bottom: 24px; border-left: 4px solid var(--accent); background: var(--card-bg, #ffffff); padding: 12px 18px; border-radius: var(--radius); box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 4px;">
+      <h2 style="font-size: 0.95rem; font-weight: 700; margin: 0; color: #0f172a;">
+        {{ outlook.headline }}
       </h2>
       <a href="/insights?date={{ selected_date }}#forecast" style="color: var(--accent); font-size: 0.78rem; font-weight: 600; text-decoration: underline;">
-        Forecast details &amp; track record in Insights &rarr;
+        Forecast details in Insights &rarr;
       </a>
     </div>
 
-    <div style="font-size: 0.95rem; font-weight: 600; color: #1e293b; margin-bottom: 6px;">
-      {{ outlook.headline }}
-    </div>
-
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; padding-top: 6px; border-top: 1px solid #f1f5f9;">
-      <div style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.4;">
-        {{ outlook.sublabel }}
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 4px;">
+      <div style="font-size: 0.85rem; font-weight: 600; color: #334155;">
+        {{ outlook.breakdown_line }}
       </div>
       {% if outlook.sparkline_svg %}
       <div title="12-week actual vs forecast volume" style="display: flex; align-items: center;">
@@ -531,7 +527,11 @@
       {% endif %}
     </div>
 
-    <div style="font-size: 0.70rem; font-style: italic; color: #94a3b8; margin-top: 4px;">
+    <div style="font-size: 0.80rem; color: #475569; padding-top: 4px; border-top: 1px solid #f1f5f9;">
+      {{ outlook.product_breakdown }}
+    </div>
+
+    <div style="font-size: 0.68rem; font-style: italic; color: #94a3b8; margin-top: 4px;">
       "{{ outlook.framing }}"
     </div>
   </section>
@@ -543,10 +543,10 @@
         <span style="color: #64748b; font-size: 0.82rem; margin-left: 6px;">No forecast stored for this day</span>
       </div>
       <a href="/insights?date={{ selected_date }}#forecast" style="color: var(--accent); font-size: 0.78rem; font-weight: 600; text-decoration: underline;">
-        Forecast track record &rarr;
+        Forecast details in Insights &rarr;
       </a>
     </div>
-    <div style="font-size: 0.70rem; font-style: italic; color: #94a3b8; margin-top: 4px;">
+    <div style="font-size: 0.68rem; font-style: italic; color: #94a3b8; margin-top: 4px;">
       "{{ framing }}"
     </div>
   </section>

@@ -134,9 +134,9 @@ class SmokeTestRunner:
         assert RULE2_FRAMING in footer_framing, f"Rule 2 framing mismatch in footer: '{footer_framing}'"
 
         # Verify Weekly Forecast Forward-Look Slim Strip (Stage 10)
-        assert "Next 7 days: expected new orders" in content, "Next 7 days forecast heading missing from Home page"
+        assert "Next 7 days: expected demand" in content, "Next 7 days forecast heading missing from Home page"
         assert "shortage risk" not in content.lower(), "Shortage risk badge found on Home page"
-        assert "already on the books" in content.lower(), "Already on books missing from Home page"
+        assert "already booked" in content.lower(), "Already booked missing from Home page"
 
         self.capture("01_viewer_home")
         self.log_result("Viewer Home (/)", True, dur, "Loaded, Rule 2 framing verified")
@@ -230,6 +230,17 @@ class SmokeTestRunner:
             s = summaries.nth(i)
             if s.is_visible():
                 s.click()
+
+        # Check episode toggle #toggle-new-events
+        toggle = self.page.locator("#toggle-new-events")
+        if toggle.count() > 0:
+            initial_visible = self.page.locator(".episode-row:visible").count()
+            toggle.check()
+            filtered_visible = self.page.locator(".episode-row:visible").count()
+            assert filtered_visible <= initial_visible, f"Expected visible episodes to drop or stay equal, was {initial_visible} -> {filtered_visible}"
+            toggle.uncheck()
+            restored_visible = self.page.locator(".episode-row:visible").count()
+            assert restored_visible == initial_visible, f"Expected restored count {initial_visible}, got {restored_visible}"
 
         self.check_cleanliness(self.page.content(), "Viewer Nav & Expanders")
         self.capture("04_viewer_nav_expanders")
