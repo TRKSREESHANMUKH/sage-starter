@@ -88,13 +88,19 @@ def capture_all():
         p9_d = FINAL_DIR / "viewer_today_day9.png"
         dpage.screenshot(path=str(p9_d), full_page=True)
 
-        # 5. Day 10 (Desktop)
-        print("Capturing Viewer Day 10...")
+        # 5. Day 10 (Desktop + Mobile)
+        print("Capturing Viewer Day 10 (desktop & mobile)...")
         dpage.goto("http://127.0.0.1:8000/?date=2026-01-10", wait_until="domcontentloaded")
         dpage.wait_for_timeout(1000)
         p10_d = FINAL_DIR / "viewer_today_day10.png"
         dpage.screenshot(path=str(p10_d), full_page=True)
         print(f"  Saved {p10_d}")
+
+        mpage.goto("http://127.0.0.1:8000/?date=2026-01-10", wait_until="domcontentloaded")
+        mpage.wait_for_timeout(1000)
+        p10_m = FINAL_DIR / "viewer_today_day10_mobile.png"
+        mpage.screenshot(path=str(p10_m), full_page=True)
+        print(f"  Saved {p10_m}")
 
         # 6. Insights Forecast Section
         print("Capturing Insights Forecast Section...")

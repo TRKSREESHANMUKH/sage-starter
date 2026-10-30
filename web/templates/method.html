@@ -121,7 +121,7 @@
 
   <div class="card-title" style="font-size: 0.95rem; margin-top: 10px;">Ten-Day Feed Multi-Version Evaluation &amp; Rehearsal Disclosure</div>
   <p style="font-size: 0.82rem; color: #b45309; background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 8px 12px; margin-bottom: 10px;">
-    <strong>Scripted Feed &amp; Rehearsal Disclosure:</strong> The 10 demonstration days (1–10 Jan 2026) are scripted; tiers matching the script demonstrate that the product responds deterministically to operational inputs, not predictive accuracy. Demo feed orders follow a 1-day lead time design, whereas 2025 customer orders had a median lead time of 6.0 days. Version 3 expectations were written after seeing results (rehearsal, not validation). Scored against original v1 expectations, SAGE achieves <strong>7/10 HITS (70.0%)</strong>, 3 PARTIALS (30.0%), and 0 MISSES. Against rehearsal v3 expectations, SAGE scores <strong>10/10 HITS (100.0%)</strong>.
+    <strong>Scripted Feed &amp; Rehearsal Disclosure:</strong> The 10 demonstration days (1–10 Jan 2026) are scripted; tiers matching the script demonstrate that the product responds deterministically to operational inputs, not predictive accuracy. Demo feed orders follow a 1-day lead time design, whereas 2025 customer orders had a median lead time of 6.0 days. Version 3 expectations were written after seeing results (rehearsal, not validation). Scored against original v1 expectations, SAGE achieves <strong>7/10 HITS (70.0%)</strong>, 3 PARTIALS, and 0 MISSES. Scored against v2 expectations, SAGE achieves <strong>9/10 HITS (90.0%)</strong>, 1 PARTIAL, and 0 MISSES. Against rehearsal v3 expectations, SAGE scores <strong>10/10 HITS (100.0%)</strong>.
   </p>
   <table style="margin-top: 8px; font-size: 0.8rem;">
     <thead>
@@ -133,6 +133,7 @@
         <th style="padding: 6px;">v3 Expected (Rehearsal)</th>
         <th style="padding: 6px;">Actual Tier</th>
         <th style="padding: 6px;">v1 Score</th>
+        <th style="padding: 6px;">v2 Score</th>
         <th style="padding: 6px;">v3 Score</th>
       </tr>
     </thead>
@@ -146,6 +147,7 @@
         <td style="padding: 5px 6px;"><strong style="color: #10b981;">NORMAL</strong></td>
         <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
         <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
       </tr>
       <tr>
         <td style="padding: 5px 6px;">2</td>
@@ -154,6 +156,7 @@
         <td style="padding: 5px 6px;">WATCH</td>
         <td style="padding: 5px 6px;">WATCH</td>
         <td style="padding: 5px 6px;"><strong style="color: #3b82f6;">WATCH</strong></td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
         <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
         <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
       </tr>
@@ -166,6 +169,7 @@
         <td style="padding: 5px 6px;"><strong style="color: #f59e0b;">NEEDS_ATTENTION</strong></td>
         <td style="padding: 5px 6px; color: #b45309; font-weight: 700;">PARTIAL</td>
         <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
       </tr>
       <tr>
         <td style="padding: 5px 6px;">4</td>
@@ -174,6 +178,7 @@
         <td style="padding: 5px 6px;">NEEDS_ATTENTION</td>
         <td style="padding: 5px 6px;">NEEDS_ATTENTION</td>
         <td style="padding: 5px 6px;"><strong style="color: #f59e0b;">NEEDS_ATTENTION</strong></td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
         <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
         <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
       </tr>
@@ -186,6 +191,7 @@
         <td style="padding: 5px 6px;"><strong style="color: #f59e0b;">NEEDS_ATTENTION</strong></td>
         <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
         <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
       </tr>
       <tr>
         <td style="padding: 5px 6px;">6</td>
@@ -194,6 +200,7 @@
         <td style="padding: 5px 6px;">CRITICAL</td>
         <td style="padding: 5px 6px;">CRITICAL</td>
         <td style="padding: 5px 6px;"><strong style="color: #ef4444;">CRITICAL</strong></td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
         <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
         <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
       </tr>
@@ -206,6 +213,7 @@
         <td style="padding: 5px 6px;"><strong style="color: #ef4444;">CRITICAL</strong></td>
         <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
         <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
       </tr>
       <tr>
         <td style="padding: 5px 6px;">8</td>
@@ -216,14 +224,16 @@
         <td style="padding: 5px 6px;"><strong style="color: #f59e0b;">NEEDS_ATTENTION</strong></td>
         <td style="padding: 5px 6px; color: #b45309; font-weight: 700;">PARTIAL</td>
         <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
       </tr>
       <tr>
         <td style="padding: 5px 6px;">9</td>
         <td style="padding: 5px 6px;">2026-01-09</td>
         <td style="padding: 5px 6px;">NORMAL / CALM</td>
-        <td style="padding: 5px 6px;">NORMAL / CALM</td>
+        <td style="padding: 5px 6px;">NORMAL / WATCH</td>
         <td style="padding: 5px 6px;">NEEDS_ATTENTION</td>
         <td style="padding: 5px 6px;"><strong style="color: #f59e0b;">NEEDS_ATTENTION</strong></td>
+        <td style="padding: 5px 6px; color: #b45309; font-weight: 700;">PARTIAL</td>
         <td style="padding: 5px 6px; color: #b45309; font-weight: 700;">PARTIAL</td>
         <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
       </tr>
@@ -234,6 +244,7 @@
         <td style="padding: 5px 6px;">NEEDS_ATTENTION</td>
         <td style="padding: 5px 6px;">NEEDS_ATTENTION</td>
         <td style="padding: 5px 6px;"><strong style="color: #f59e0b;">NEEDS_ATTENTION</strong></td>
+        <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
         <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
         <td style="padding: 5px 6px; color: #166534; font-weight: 700;">HIT</td>
       </tr>

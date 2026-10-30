@@ -55,15 +55,15 @@
 
 | Order ID | Placed Date | Requested Date | Product | Qty | Shipped Date | Final Status | Source Provenance | Pack CSV SHA256 |
 | :---: | :---: | :---: | :--- | :---: | :---: | :---: | :--- | :--- |
-| SO #220 | 2025-12-25 | 2026-01-02 | Widget Model Y (202) | 13u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `0d7ff9019bb1…` |
-| SO #221 | 2025-12-25 | 2026-01-02 | Widget Model Y (202) | 8u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `0d7ff9019bb1…` |
-| SO #224 | 2025-12-29 | 2026-01-04 | Widget Model Y (202) | 14u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `0d7ff9019bb1…` |
-| SO #225 | 2025-12-29 | 2026-01-02 | Widget Model Y (202) | 12u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `0d7ff9019bb1…` |
-| SO #226 | 2025-12-29 | 2026-01-02 | Widget Model Y (202) | 9u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `0d7ff9019bb1…` |
-| SO #227 | 2025-12-30 | 2026-01-03 | Widget Model X (201) | 12u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `0d7ff9019bb1…` |
-| SO #228 | 2025-12-30 | 2026-01-06 | Widget Model Y (202) | 18u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `0d7ff9019bb1…` |
-| SO #229 | 2025-12-30 | 2026-01-05 | Widget Model X (201) | 14u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `0d7ff9019bb1…` |
-| SO #230 | 2025-12-31 | 2026-01-04 | Widget Model Y (202) | 9u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `0d7ff9019bb1…` |
+| SO #220 | 2025-12-25 | 2026-01-02 | Widget Model Y (202) | 13u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `51df664d71ef…` |
+| SO #221 | 2025-12-25 | 2026-01-02 | Widget Model Y (202) | 8u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `51df664d71ef…` |
+| SO #224 | 2025-12-29 | 2026-01-04 | Widget Model Y (202) | 14u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `51df664d71ef…` |
+| SO #225 | 2025-12-29 | 2026-01-02 | Widget Model Y (202) | 12u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `51df664d71ef…` |
+| SO #226 | 2025-12-29 | 2026-01-02 | Widget Model Y (202) | 9u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `51df664d71ef…` |
+| SO #227 | 2025-12-30 | 2026-01-03 | Widget Model X (201) | 12u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `51df664d71ef…` |
+| SO #228 | 2025-12-30 | 2026-01-06 | Widget Model Y (202) | 18u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `51df664d71ef…` |
+| SO #229 | 2025-12-30 | 2026-01-05 | Widget Model X (201) | 14u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `51df664d71ef…` |
+| SO #230 | 2025-12-31 | 2026-01-04 | Widget Model Y (202) | 9u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `51df664d71ef…` |
 | SO #231 | 2026-01-01 | 2026-01-02 | Widget Model X (201) | 5u | 2026-01-02 | Delivered | demo_data/packs/2026-01-01/sales_orders.csv | `9db69b75ff32…` |
 | SO #232 | 2026-01-01 | 2026-01-02 | Widget Model Y (202) | 3u | 2026-01-02 | Delivered | demo_data/packs/2026-01-01/sales_orders.csv | `9db69b75ff32…` |
 | SO #233 | 2026-01-02 | 2026-01-03 | Widget Model X (201) | 16u | 2026-01-03 | Delivered | demo_data/packs/2026-01-02/sales_orders.csv | `41f297e6c322…` |

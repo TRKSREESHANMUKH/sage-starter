@@ -4,7 +4,7 @@
     "start_date": "2026-01-10",
     "end_date": "2025-12-31",
     "total_days": 365,
-    "build_elapsed_seconds": 0.22,
+    "build_elapsed_seconds": 0.38,
     "framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality."
   },
   "days": {

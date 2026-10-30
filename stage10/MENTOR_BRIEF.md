@@ -30,10 +30,10 @@
 ---
 
 ### 4. Weekly Forecast Honesty (Protocol v4)
-- **Deployed Architecture:** Trailing 28-day Mean $\times$ 7 (selected via lowest Cross-Validation WAPE of **0.55 [CV]**; $n=25$ folds).
+- **Deployed Architecture:** Trailing 28-day Mean $\times$ 7 (selected via lowest Cross-Validation WAPE of **0.5455 [CV]** / **45.5% [CV]** accuracy on H1 2025; $n=21$ Sunday test points).
 - **Model Comparison:** Gradient boosting and count regression did not outperform the trailing mean on this single-year simulated dataset due to high intermittency (68.2% zero-order days).
 - **Attribution of Accuracy Gain:**
-  - While apparent accuracy for total weekly demand due is **68.5%** (WAPE **0.3150 [TEST]** on 25 Sundays, MAE 15.13u, Bias -2.40u; WAPE **0.2989 [TEST]** on 177 daily windows), **99% of this predictive power is driven by ledger visibility**: a trivial booked-only baseline achieves **68.0% accuracy** (WAPE 0.3197 [TEST]).
+  - While apparent accuracy for total weekly demand due is **68.5%** (WAPE **0.3152 [TEST]** on 25 Sundays, MAE 14.22u, Bias -0.18u; WAPE **0.2540 [TEST]** on 177 daily windows, MAE 11.66u, Bias -0.32u), **headline accuracy is driven almost entirely by the ERP order book**: a trivial booked-only baseline achieves **68.0% accuracy** (WAPE 0.3200 [TEST] on Sundays; WAPE 0.2381 [TEST] daily).
   - Forecasting unbooked new orders alone ($S(D)$) remains noisy with WAPE **0.9848 [TEST]** on Sundays and WAPE **1.0668 [TEST]** daily, compared to the theoretical Oracle irreducible noise floor of WAPE **0.5034 [ORACLE]**.
 
 ---

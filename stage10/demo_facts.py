@@ -302,11 +302,9 @@ def generate_demo_facts() -> Dict[str, Any]:
         fc = get_weekly_forecast(d_obj, is_past_day=False)
         exp_new = fc.get("expected_new_orders", 27)
         booked = fc.get("due_known", 0)
-        lo = fc.get("range_low", 15)
-        hi = fc.get("range_high", 41)
-        tot_due = booked + exp_new
-        tot_lo = booked + lo
-        tot_hi = booked + hi
+        tot_due = fc.get("total_demand_due", booked + exp_new)
+        tot_lo = fc.get("range_low", booked + fc.get("new_orders_range_low", 15))
+        tot_hi = fc.get("range_high", booked + fc.get("new_orders_range_high", 41))
 
         # Product breakdown of booked units due in D+1..D+7
         d_start = d_obj + timedelta(days=1)

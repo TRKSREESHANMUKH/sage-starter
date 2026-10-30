@@ -16,7 +16,7 @@ SAGE connects discrete daily operations to an expert-defined, frozen causal dire
 Before we demonstrate the 10-day scripted feed, I want to disclose our foundational findings with complete academic honesty:
 1. **The Simulator Sourcing Assignment**: In our frozen simulation engine, a supplier selection function omitted the daily timestamp, deterministically assigning routine purchase orders to three active vendors while leaving two backup vendors idle. We discovered this during our forensic audit, kept the foundation frozen, and transparently report our evaluation metrics across all cohorts.
 2. **Backorder Settlement Mechanics**: In our simulation, customer shipments evaluate strictly on their requested delivery date; unfulfilled orders remain as standing backorder rather than shipping late.
-3. **The 10-Day January 2026 Scripted Rehearsal**: We will step through 10 days of operations—from routine baseline, to an inbound steel delay, safety stock erosion, assembly line starvation, crisis peak, and recovery. In our automated pre-registered evaluation, SAGE achieves 9 Hits, 0 Partials, and 1 honest Miss.
+3. **The 10-Day January 2026 Scripted Rehearsal**: We will step through 10 days of operations—from routine baseline, to an inbound steel delay, safety stock erosion, assembly line starvation, crisis peak, and recovery. In our automated pre-registered evaluation, SAGE scores 7 Hits, 3 Partials against original v1; 9 Hits, 1 Partial against v2; and 10 Hits against v3 rehearsal.
 
 Let's begin the live feed from the controller."
 
@@ -87,20 +87,20 @@ Before starting the live demonstration, state the following foundational data fa
 ## Ten-Day Demonstration Overview (1–10 January 2026)
 
 > **Evaluation Honesty & Rehearsal Disclosure:**  
-> Version 3 expectations were written after seeing results (rehearsal, not validation). Scored against original v1 expectations, SAGE achieves **7/10 HITS (70.0%)**, 3 PARTIALS (30.0%), and 0 MISSES. Against rehearsal v3 expectations, SAGE scores **10/10 HITS (100.0%)**.
+> The ten evaluation days are scripted; tiers matching the script show that the product responds faithfully to operational inputs, not that it predicts the future. Customer orders placed in the 2026 demo feed operate with a 1-day lead time by design to create immediate pressure, contrasting with the 2025 historical data where lead times had a median of 6.0 days (range 3–8 days). Version 3 expectations were written after seeing results (rehearsal, not validation). Scored against original v1 expectations, SAGE achieves **7/10 HITS (70.0%)**, 3 PARTIALS (30.0%), and 0 MISSES. Scored against v2 expectations, SAGE achieves **9/10 HITS (90.0%)**, 1 PARTIAL (10.0%), and 0 MISSES. Against rehearsal v3 expectations, SAGE scores **10/10 HITS (100.0%)**.
 
-| Day | Date | Operational Scenario | v1 Expected | v2 Expected | v3 Expected (Rehearsal) | Actual Tier | v1 Score | v3 Score |
-| :---: | :---: | :--- | :--- | :--- | :--- | :--- | :---: | :---: |
-| **D-01** | 2026-01-01 | Normal operations baseline | NORMAL | NORMAL | NORMAL | NORMAL | HIT | HIT |
-| **D-02** | 2026-01-02 | Demand spike (Widget Model X surge) | WATCH | WATCH | WATCH | WATCH | HIT | HIT |
-| **D-03** | 2026-01-03 | Steel PO #19 delayed (buffer holds) | WATCH | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | PARTIAL | HIT |
-| **D-04** | 2026-01-04 | Partial plastic receipt & steel late | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | HIT | HIT |
-| **D-05** | 2026-01-05 | Capacity disruption (Line 2 bottleneck) | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | HIT | HIT |
-| **D-06** | 2026-01-06 | Steel at safety stock, backlog onset | CRITICAL | CRITICAL | CRITICAL | CRITICAL | HIT | HIT |
-| **D-07** | 2026-01-07 | Crisis: Steel stockout, assembly halt | CRITICAL | CRITICAL | CRITICAL | CRITICAL | HIT | HIT |
-| **D-08** | 2026-01-08 | Inbound arrival, recovery in progress | IMPROVING | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | PARTIAL | HIT |
-| **D-09** | 2026-01-09 | Friday seasonal demand peak (control) | NORMAL / CALM | NORMAL / CALM | NEEDS_ATTENTION | NEEDS_ATTENTION | PARTIAL | HIT |
-| **D-10** | 2026-01-10 | Dual unrelated operational alerts | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | HIT | HIT |
+| Day | Date | Operational Scenario | v1 Expected | v2 Expected | v3 Expected (Rehearsal) | Actual Tier | v1 Score | v2 Score | v3 Score |
+| :---: | :---: | :--- | :--- | :--- | :--- | :--- | :---: | :---: | :---: |
+| **D-01** | 2026-01-01 | Normal operations baseline | NORMAL | NORMAL | NORMAL | NORMAL | HIT | HIT | HIT |
+| **D-02** | 2026-01-02 | Demand spike (Widget Model X surge) | WATCH | WATCH | WATCH | WATCH | HIT | HIT | HIT |
+| **D-03** | 2026-01-03 | Steel PO #19 delayed (buffer holds) | WATCH | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | PARTIAL | HIT | HIT |
+| **D-04** | 2026-01-04 | Partial plastic receipt & steel late | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | HIT | HIT | HIT |
+| **D-05** | 2026-01-05 | Capacity disruption (Line 2 bottleneck) | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | HIT | HIT | HIT |
+| **D-06** | 2026-01-06 | Steel at safety stock, backlog onset | CRITICAL | CRITICAL | CRITICAL | CRITICAL | HIT | HIT | HIT |
+| **D-07** | 2026-01-07 | Crisis: Steel stockout, assembly halt | CRITICAL | CRITICAL | CRITICAL | CRITICAL | HIT | HIT | HIT |
+| **D-08** | 2026-01-08 | Inbound arrival, recovery in progress | IMPROVING | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | PARTIAL | HIT | HIT |
+| **D-09** | 2026-01-09 | Friday seasonal demand peak (control) | NORMAL / CALM | NORMAL / WATCH | NEEDS_ATTENTION | NEEDS_ATTENTION | PARTIAL | PARTIAL | HIT |
+| **D-10** | 2026-01-10 | Dual unrelated operational alerts | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | HIT | HIT | HIT |
 
 ---
 
