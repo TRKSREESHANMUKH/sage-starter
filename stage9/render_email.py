@@ -448,21 +448,14 @@ def render_nightly_digest(
             status_badge_border = "#86efac"
             status_summary = "All operations on schedule"
 
-        # 2. Bottom Line (2 sentences from facts)
-        bottom_lines = narr.get("bottom_line", [])
-        if len(bottom_lines) >= 2:
-            bottom_line_text = f"{bottom_lines[0]} {bottom_lines[1]}"
-            preheader_text = bottom_lines[0]
-        elif len(bottom_lines) == 1:
-            bottom_line_text = f"{bottom_lines[0]} All active manufacturing schedules remain on track."
-            preheader_text = bottom_lines[0]
-        else:
-            if total_action_items > 0:
-                bottom_line_text = f"Production operations face {total_action_items} critical delivery items today. Immediate scheduling interventions are required."
-                preheader_text = f"Production operations face {total_action_items} critical delivery items today."
-            else:
-                bottom_line_text = "Factory operations ran smoothly across all workcenters today. All customer shipments and supplier replenishments are tracking within planned parameters."
-                preheader_text = "Factory operations ran smoothly across all workcenters today."
+        # 2. Structured Summary (Stage 10 Part C)
+        from web.one_page_data import generate_plain_summary
+        ns_ctx = {
+            "overdue_orders": {"val": kpi_ctx['today_orders_late'], "units": kpi_ctx['today_units_short']},
+            "orders_due": {"val": kpi_ctx['today_orders_due'], "units": kpi_ctx['today_orders_due'] * 10},
+        }
+        summary_sentences, summary_text = generate_plain_summary(as_of, snap, pri.get("issues", []), ns_ctx)
+        preheader_text = summary_sentences[0] if summary_sentences else "Operations Daily Brief"
 
         # Computed projection line (only if recent usage > 0)
         projection_html = ""
@@ -524,9 +517,9 @@ def render_nightly_digest(
             </div>
             """
 
-        # 5. Focus tomorrow (Top 5)
+        # 5. Focus tomorrow (Top 3)
         focus_rows_html = ""
-        for it in focus_items[:5]:
+        for it in focus_items[:3]:
             badge_bg = "#dbeafe" if it.get("is_root_fix") else "#f1f5f9"
             badge_fg = "#1e40af" if it.get("is_root_fix") else "#475569"
             focus_rows_html += f"""
@@ -615,12 +608,12 @@ def render_nightly_digest(
             </td>
           </tr>
 
-          <!-- 2. Bottom Line -->
+          <!-- 2. Summary Box -->
           <tr>
             <td style="padding: 8px 16px; background-color: #f8fafc; border-bottom: 1px solid #e2e8f0;">
-              <div style="font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 2px;">The Bottom Line</div>
-              <div style="font-size: 11.5px; line-height: 1.4; color: #0f172a; font-weight: 500;">
-                {bottom_line_text}
+              <div style="font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 2px;">Summary</div>
+              <div style="font-size: 11px; line-height: 1.45; color: #0f172a; font-weight: 500;">
+                {summary_text}
               </div>
             </td>
           </tr>
@@ -731,8 +724,8 @@ def render_nightly_digest(
             f"Status: {status_title.upper()} ({status_summary})",
             "=" * 70,
             "",
-            "THE BOTTOM LINE:",
-            textwrap.fill(bottom_line_text, width=72),
+            "SUMMARY:",
+            textwrap.fill(summary_text, width=72),
             "",
             "TODAY'S NUMBERS IN CONTEXT:",
             f"• Orders Due     : {kpi_ctx['orders_due_text']}",
@@ -758,9 +751,9 @@ def render_nightly_digest(
 
         text_lines.extend([
             "",
-            "FOCUS TOMORROW (TOP 5 PRIORITIES):",
+            "FOCUS TOMORROW (TOP 3 PRIORITIES):",
         ])
-        for it in focus_items[:5]:
+        for it in focus_items[:3]:
             text_lines.append(f"{it['rank']}. {it['action']} ({it['owner_role']}) - Due {it['due_time']}")
             text_lines.append(f"   Reason: {it['reason']}")
 

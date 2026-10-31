@@ -87,19 +87,20 @@ Before starting the live demonstration, state the following foundational data fa
 ## Ten-Day Demonstration Overview (1–10 January 2026)
 
 > **Evaluation Honesty & Rehearsal Disclosure:**  
-> The ten evaluation days are scripted; tiers matching the script show that the product responds faithfully to operational inputs, not that it predicts the future. Customer orders placed in the 2026 demo feed operate with a 1-day lead time by design to create immediate pressure, contrasting with the 2025 historical data where lead times had a median of 6.0 days (range 3–8 days). Version 3 expectations were written after seeing results (rehearsal, not validation). Scored against original v1 expectations, SAGE achieves **7/10 HITS (70.0%)**, 3 PARTIALS (30.0%), and 0 MISSES. Scored against v2 expectations, SAGE achieves **9/10 HITS (90.0%)**, 1 PARTIAL (10.0%), and 0 MISSES. Against rehearsal v3 expectations, SAGE scores **10/10 HITS (100.0%)**.
+> The ten evaluation days are scripted; tiers matching the script show that the product responds faithfully to operational inputs, not that it predicts the future. Customer orders placed in the 2026 demo feed operate with a 1-day lead time by design to create immediate pressure, contrasting with the 2025 historical data where lead times had a median of 6.0 days (range 3–8 days). Version 3 expectations were written after seeing results (rehearsal, not validation). Scored against original v1 expectations, SAGE achieves **6 HITS (60.0%)**, 2 PARTIALS (20.0%), and 2 MISSES (20.0%). Scored against v2 expectations, SAGE achieves **8 HITS (80.0%)**, 0 PARTIALS, and 2 MISSES (20.0%). Against rehearsal v3 expectations, SAGE scores **9 HITS (90.0%)**, 0 PARTIALS, and 1 MISS (10.0%).
 
 | Day | Date | Operational Scenario | v1 Expected | v2 Expected | v3 Expected (Rehearsal) | Actual Tier | v1 Score | v2 Score | v3 Score |
 | :---: | :---: | :--- | :--- | :--- | :--- | :--- | :---: | :---: | :---: |
 | **D-01** | 2026-01-01 | Normal operations baseline | NORMAL | NORMAL | NORMAL | NORMAL | HIT | HIT | HIT |
-| **D-02** | 2026-01-02 | Demand spike (Widget Model X surge) | WATCH | WATCH | WATCH | WATCH | HIT | HIT | HIT |
-| **D-03** | 2026-01-03 | Steel PO #19 delayed (buffer holds) | WATCH | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | PARTIAL | HIT | HIT |
+| **D-02** | 2026-01-02 | Demand spike (Widget Model X surge) | WATCH / NEEDS_ATTENTION | WATCH | WATCH | WATCH | HIT | HIT | HIT |
+| **D-03** | 2026-01-03 | Steel PO #19 delayed (buffer holds) | WATCH | NEEDS_ATTENTION / WATCH | NEEDS_ATTENTION | NEEDS_ATTENTION | PARTIAL | HIT | HIT |
 | **D-04** | 2026-01-04 | Partial plastic receipt & steel late | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | HIT | HIT | HIT |
-| **D-05** | 2026-01-05 | Capacity disruption (Line 2 bottleneck) | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | HIT | HIT | HIT |
+| **D-05** | 2026-01-05 | Capacity disruption (Line 2 bottleneck) | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | PARTIAL | HIT | HIT |
 | **D-06** | 2026-01-06 | Steel at safety stock, backlog onset | CRITICAL | CRITICAL | CRITICAL | CRITICAL | HIT | HIT | HIT |
 | **D-07** | 2026-01-07 | Crisis: Steel stockout, assembly halt | CRITICAL | CRITICAL | CRITICAL | CRITICAL | HIT | HIT | HIT |
-| **D-08** | 2026-01-08 | Inbound arrival, recovery in progress | IMPROVING | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | PARTIAL | HIT | HIT |
-| **D-09** | 2026-01-09 | Friday seasonal demand peak (control) | NORMAL / CALM | NORMAL / WATCH | NEEDS_ATTENTION | NEEDS_ATTENTION | PARTIAL | PARTIAL | HIT |
+| **D-08** | 2026-01-08 | Inbound arrival, recovery in progress | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | MISS | MISS | MISS |
+| **D-09** | 2026-01-09 | Friday seasonal demand peak (control) | NORMAL / WATCH | NORMAL / WATCH | NEEDS_ATTENTION / WATCH | NEEDS_ATTENTION | MISS | MISS | HIT |
+| **D-10** | 2026-01-10 | Dual unrelated operational alerts | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | HIT | HIT | HIT |
 | **D-10** | 2026-01-10 | Dual unrelated operational alerts | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | NEEDS_ATTENTION | HIT | HIT | HIT |
 
 ---
@@ -181,10 +182,10 @@ Before starting the live demonstration, state the following foundational data fa
 
 ## Part 4: Honest Scoring Protocol & Three-Run Results Table
 
-### Three Evaluation Runs
-1. **First Run (Initial Feed & Numeric Thresholds)**: All 10 days scored `CRITICAL` (0 Hits, 0 Partials, 10 Misses). The initial rule treated any positive standing backlog (`due_backlog_units > 0`) as Critical, masking day-to-day operational transitions.
-2. **Second Run (v2 Rules on Regenerated Feed)**: 8 Hits, 0 Partials, 2 Misses. Day 8 missed on root entity (plastic partial delivery prioritized over recovery); Day 9 missed on tier (expected Normal/Watch, actual Needs Attention due to standing backlog).
-3. **Final Run (v3 Rules on Regenerated Feed)**: 9 Hits, 0 Partials, 1 Miss. Standing backlog on Day 9 is acknowledged under Needs Attention without false critical alarm.
+### Three Evaluation Protocols
+1. **Original Pre-Registration (v1)**: 6 Hits, 2 Partials, 2 Misses (6H/2P/2M). Days 8 and 9 scored Miss due to literal expectation rules.
+2. **Updated Pre-Registration (v2)**: 8 Hits, 0 Partials, 2 Misses (8H/0P/2M). Day 8 missed on root entity (plastic partial delivery prioritized over recovery); Day 9 missed on tier (expected Normal/Watch, actual Needs Attention due to standing backlog).
+3. **Rehearsal Protocol (v3)**: 9 Hits, 0 Partials, 1 Miss (9H/0P/1M). Written after seeing results (rehearsal, not validation). Standing backlog on Day 9 is acknowledged under Needs Attention without false critical alarm. Day 8 remains an honest Miss.
 
 ### Ten-Day Deterministic Results Table (Final Run)
 
@@ -199,7 +200,7 @@ Before starting the live demonstration, state the following foundational data fa
 | **Day 7** | 2026-01-07 | Crisis: steel stockout (0 kg) & Line 1 halt | CRITICAL | CRITICAL | Raw material stockout on Steel Rod 10mm (0 kg in stock) | **HIT** |
 | **Day 8** | 2026-01-08 | Inbound recovery & partial plastic receipt | NEEDS_ATTENTION | NEEDS_ATTENTION | Partial delivery from Global Polymers Co (PO #26) | **MISS** |
 | **Day 9** | 2026-01-09 | Seasonal peak (control day) & backlog burn | NEEDS_ATTENTION / WATCH | NEEDS_ATTENTION | Standing customer backlog clearing (9 orders, 109 units) | **HIT** |
-| **Day 10** | 2026-01-10 | Dual minor issues: Model Y -20% & late PO #22 | NEEDS_ATTENTION | NEEDS_ATTENTION | Production below plan (Widget Model Y shortfall of 1 units) | **HIT** |
+| **Day 10** | 2026-01-10 | Dual minor issues: Model Y -20% & late PO #22 | NEEDS_ATTENTION | NEEDS_ATTENTION | Production below plan (Widget Model Y shortfall of 1 unit) | **HIT** |
 
 ### Honest Cause of Misses and Partials
 * **Day 8 (MISS)**: On Day 8, steel arrived in full (400 kg), but a secondary PO for plastic granules arrived partial (40% fill rate). SAGE's priority engine correctly surfaced the active incoming shortfall (`Partial delivery from Global Polymers Co (PO #26)`) rather than an alert stating "Recovery in progress". Because the pre-registered protocol expected "recovery" as the primary alert headline, this day is honestly scored as a MISS under the deterministic rule.

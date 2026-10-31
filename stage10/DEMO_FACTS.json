@@ -18,7 +18,7 @@
       "shipped_date": null,
       "status": "Backorder",
       "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
-      "sha256": "19795406339036144bf94e904e9ef73cdc0a57ba5d0d7c4971f13ba707964bd9"
+      "sha256": "9a377d4b0cae13f6d4cf165af9faa02efb29390ed666b1a265a405adf69d1104"
     },
     {
       "order_id": 221,
@@ -30,7 +30,7 @@
       "shipped_date": null,
       "status": "Backorder",
       "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
-      "sha256": "19795406339036144bf94e904e9ef73cdc0a57ba5d0d7c4971f13ba707964bd9"
+      "sha256": "9a377d4b0cae13f6d4cf165af9faa02efb29390ed666b1a265a405adf69d1104"
     },
     {
       "order_id": 224,
@@ -42,7 +42,7 @@
       "shipped_date": null,
       "status": "Backorder",
       "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
-      "sha256": "19795406339036144bf94e904e9ef73cdc0a57ba5d0d7c4971f13ba707964bd9"
+      "sha256": "9a377d4b0cae13f6d4cf165af9faa02efb29390ed666b1a265a405adf69d1104"
     },
     {
       "order_id": 225,
@@ -54,7 +54,7 @@
       "shipped_date": null,
       "status": "Backorder",
       "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
-      "sha256": "19795406339036144bf94e904e9ef73cdc0a57ba5d0d7c4971f13ba707964bd9"
+      "sha256": "9a377d4b0cae13f6d4cf165af9faa02efb29390ed666b1a265a405adf69d1104"
     },
     {
       "order_id": 226,
@@ -66,7 +66,7 @@
       "shipped_date": null,
       "status": "Backorder",
       "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
-      "sha256": "19795406339036144bf94e904e9ef73cdc0a57ba5d0d7c4971f13ba707964bd9"
+      "sha256": "9a377d4b0cae13f6d4cf165af9faa02efb29390ed666b1a265a405adf69d1104"
     },
     {
       "order_id": 227,
@@ -78,7 +78,7 @@
       "shipped_date": null,
       "status": "Backorder",
       "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
-      "sha256": "19795406339036144bf94e904e9ef73cdc0a57ba5d0d7c4971f13ba707964bd9"
+      "sha256": "9a377d4b0cae13f6d4cf165af9faa02efb29390ed666b1a265a405adf69d1104"
     },
     {
       "order_id": 228,
@@ -90,7 +90,7 @@
       "shipped_date": null,
       "status": "Backorder",
       "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
-      "sha256": "19795406339036144bf94e904e9ef73cdc0a57ba5d0d7c4971f13ba707964bd9"
+      "sha256": "9a377d4b0cae13f6d4cf165af9faa02efb29390ed666b1a265a405adf69d1104"
     },
     {
       "order_id": 229,
@@ -102,7 +102,7 @@
       "shipped_date": null,
       "status": "Backorder",
       "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
-      "sha256": "19795406339036144bf94e904e9ef73cdc0a57ba5d0d7c4971f13ba707964bd9"
+      "sha256": "9a377d4b0cae13f6d4cf165af9faa02efb29390ed666b1a265a405adf69d1104"
     },
     {
       "order_id": 230,
@@ -114,7 +114,7 @@
       "shipped_date": null,
       "status": "Backorder",
       "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
-      "sha256": "19795406339036144bf94e904e9ef73cdc0a57ba5d0d7c4971f13ba707964bd9"
+      "sha256": "9a377d4b0cae13f6d4cf165af9faa02efb29390ed666b1a265a405adf69d1104"
     },
     {
       "order_id": 231,
@@ -411,10 +411,11 @@
         "likely_range_high": 161,
         "booked_units": 117,
         "expected_new_orders": 29,
-        "actual_units_due_next_7d": 223,
+        "forecast_window_complete": true,
+        "actual_units_due_next_7d": "223u (X=113, Y=110)",
         "actual_units_due_x": 113,
         "actual_units_due_y": 110,
-        "actual_units_placed_next_7d": 118,
+        "actual_units_placed_next_7d": "118u (X=90, Y=28)",
         "actual_units_placed_x": 90,
         "actual_units_placed_y": 28
       },
@@ -500,10 +501,11 @@
         "likely_range_high": 155,
         "booked_units": 99,
         "expected_new_orders": 37,
-        "actual_units_due_next_7d": 185,
+        "forecast_window_complete": true,
+        "actual_units_due_next_7d": "185u (X=116, Y=69)",
         "actual_units_due_x": 116,
         "actual_units_due_y": 69,
-        "actual_units_placed_next_7d": 96,
+        "actual_units_placed_next_7d": "96u (X=68, Y=28)",
         "actual_units_placed_x": 68,
         "actual_units_placed_y": 28
       },
@@ -590,10 +592,11 @@
         "likely_range_high": 130,
         "booked_units": 69,
         "expected_new_orders": 41,
-        "actual_units_due_next_7d": 151,
+        "forecast_window_complete": true,
+        "actual_units_due_next_7d": "151u (X=82, Y=69)",
         "actual_units_due_x": 82,
         "actual_units_due_y": 69,
-        "actual_units_placed_next_7d": 92,
+        "actual_units_placed_next_7d": "92u (X=64, Y=28)",
         "actual_units_placed_x": 64,
         "actual_units_placed_y": 28
       },
@@ -681,12 +684,13 @@
         "likely_range_high": 112,
         "booked_units": 46,
         "expected_new_orders": 44,
-        "actual_units_due_next_7d": 124,
-        "actual_units_due_x": 78,
-        "actual_units_due_y": 46,
-        "actual_units_placed_next_7d": 78,
-        "actual_units_placed_x": 54,
-        "actual_units_placed_y": 24
+        "forecast_window_complete": false,
+        "actual_units_due_next_7d": "incomplete (data ends 10 Jan)",
+        "actual_units_due_x": null,
+        "actual_units_due_y": null,
+        "actual_units_placed_next_7d": "incomplete (data ends 10 Jan)",
+        "actual_units_placed_x": null,
+        "actual_units_placed_y": null
       },
       "active_pos": [
         {
@@ -772,12 +776,13 @@
         "likely_range_high": 104,
         "booked_units": 32,
         "expected_new_orders": 48,
-        "actual_units_due_next_7d": 96,
-        "actual_units_due_x": 54,
-        "actual_units_due_y": 42,
-        "actual_units_placed_next_7d": 64,
-        "actual_units_placed_x": 44,
-        "actual_units_placed_y": 20
+        "forecast_window_complete": false,
+        "actual_units_due_next_7d": "incomplete (data ends 10 Jan)",
+        "actual_units_due_x": null,
+        "actual_units_due_y": null,
+        "actual_units_placed_next_7d": "incomplete (data ends 10 Jan)",
+        "actual_units_placed_x": null,
+        "actual_units_placed_y": null
       },
       "active_pos": [
         {
@@ -863,12 +868,13 @@
         "likely_range_high": 96,
         "booked_units": 18,
         "expected_new_orders": 52,
-        "actual_units_due_next_7d": 64,
-        "actual_units_due_x": 44,
-        "actual_units_due_y": 20,
-        "actual_units_placed_next_7d": 46,
-        "actual_units_placed_x": 30,
-        "actual_units_placed_y": 16
+        "forecast_window_complete": false,
+        "actual_units_due_next_7d": "incomplete (data ends 10 Jan)",
+        "actual_units_due_x": null,
+        "actual_units_due_y": null,
+        "actual_units_placed_next_7d": "incomplete (data ends 10 Jan)",
+        "actual_units_placed_x": null,
+        "actual_units_placed_y": null
       },
       "active_pos": [
         {
@@ -954,12 +960,13 @@
         "likely_range_high": 98,
         "booked_units": 14,
         "expected_new_orders": 56,
-        "actual_units_due_next_7d": 46,
-        "actual_units_due_x": 30,
-        "actual_units_due_y": 16,
-        "actual_units_placed_next_7d": 32,
-        "actual_units_placed_x": 20,
-        "actual_units_placed_y": 12
+        "forecast_window_complete": false,
+        "actual_units_due_next_7d": "incomplete (data ends 10 Jan)",
+        "actual_units_due_x": null,
+        "actual_units_due_y": null,
+        "actual_units_placed_next_7d": "incomplete (data ends 10 Jan)",
+        "actual_units_placed_x": null,
+        "actual_units_placed_y": null
       },
       "active_pos": [
         {
@@ -1043,12 +1050,13 @@
         "likely_range_high": 100,
         "booked_units": 12,
         "expected_new_orders": 59,
-        "actual_units_due_next_7d": 32,
-        "actual_units_due_x": 20,
-        "actual_units_due_y": 12,
-        "actual_units_placed_next_7d": 20,
-        "actual_units_placed_x": 12,
-        "actual_units_placed_y": 8
+        "forecast_window_complete": false,
+        "actual_units_due_next_7d": "incomplete (data ends 10 Jan)",
+        "actual_units_due_x": null,
+        "actual_units_due_y": null,
+        "actual_units_placed_next_7d": "incomplete (data ends 10 Jan)",
+        "actual_units_placed_x": null,
+        "actual_units_placed_y": null
       },
       "active_pos": [
         {
@@ -1144,12 +1152,13 @@
         "likely_range_high": 102,
         "booked_units": 10,
         "expected_new_orders": 61,
-        "actual_units_due_next_7d": 20,
-        "actual_units_due_x": 12,
-        "actual_units_due_y": 8,
-        "actual_units_placed_next_7d": 10,
-        "actual_units_placed_x": 6,
-        "actual_units_placed_y": 4
+        "forecast_window_complete": false,
+        "actual_units_due_next_7d": "incomplete (data ends 10 Jan)",
+        "actual_units_due_x": null,
+        "actual_units_due_y": null,
+        "actual_units_placed_next_7d": "incomplete (data ends 10 Jan)",
+        "actual_units_placed_x": null,
+        "actual_units_placed_y": null
       },
       "active_pos": [
         {
@@ -1245,12 +1254,13 @@
         "likely_range_high": 106,
         "booked_units": 10,
         "expected_new_orders": 64,
-        "actual_units_due_next_7d": 10,
-        "actual_units_due_x": 6,
-        "actual_units_due_y": 4,
-        "actual_units_placed_next_7d": 0,
-        "actual_units_placed_x": 0,
-        "actual_units_placed_y": 0
+        "forecast_window_complete": false,
+        "actual_units_due_next_7d": "incomplete (data ends 10 Jan)",
+        "actual_units_due_x": null,
+        "actual_units_due_y": null,
+        "actual_units_placed_next_7d": "incomplete (data ends 10 Jan)",
+        "actual_units_placed_x": null,
+        "actual_units_placed_y": null
       },
       "active_pos": [
         {

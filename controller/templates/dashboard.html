@@ -181,12 +181,50 @@
       <p style="font-size:0.88rem; color:var(--muted); margin-bottom:12px">
         Prepare and dispatch today's brief immediately. Respects current send mode.
       </p>
-      <label>Recipient</label>
-      <select id="send-recipient">
-        {% for r in allowlist %}
-        <option value="{{ r }}">{{ r }}</option>
-        {% endfor %}
-      </select>
+      <!-- Recipient Selection (Stage 10 Part D) -->
+      <div style="margin-bottom: 8px;">
+        <label style="font-size:0.82rem; font-weight:600; color:var(--muted); display:block; margin-bottom:4px">Recipient Target</label>
+        <div style="display:flex; gap:14px; margin-bottom:8px; font-size:0.85rem;">
+          <label style="cursor:pointer; display:inline-flex; align-items:center; gap:5px;">
+            <input type="radio" name="recipient_type" value="default" checked onchange="toggleRecipientType(this.value)"> Default ({{ default_recipient }})
+          </label>
+          <label style="cursor:pointer; display:inline-flex; align-items:center; gap:5px;">
+            <input type="radio" name="recipient_type" value="custom" onchange="toggleRecipientType(this.value)"> Custom / Mentor
+          </label>
+        </div>
+      </div>
+
+      <!-- Default Recipient Selection -->
+      <div id="default-recipient-wrapper">
+        <select id="send-recipient" style="width:100%; padding:7px 10px; border:1px solid var(--border); border-radius:6px; font-size:0.85rem;">
+          {% for r in allowlist %}
+          <option value="{{ r }}" {% if r == default_recipient %}selected{% endif %}>{{ r }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Custom Recipient Input & Recent Recipients Dropdown -->
+      <div id="custom-recipient-wrapper" style="display:none; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:12px; margin-bottom:8px;">
+        <label for="custom-recipient-input" style="font-size:0.80rem; font-weight:700; color:#1e293b; display:block; margin-bottom:4px;">
+          Type Email Address (e.g. mentor)
+        </label>
+        <input type="email" id="custom-recipient-input" placeholder="e.g. mentor@university.edu" style="width:100%; padding:6px 10px; border:1px solid #94a3b8; border-radius:4px; font-size:0.85rem; font-family:inherit; margin-bottom:10px;">
+
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:8px;">
+          <div style="flex-grow:1;">
+            <label for="recent-recipients-select" style="font-size:0.75rem; font-weight:600; color:#64748b; display:block; margin-bottom:2px;">Recent Recipients</label>
+            <select id="recent-recipients-select" onchange="onSelectRecentRecipient(this.value)" style="width:100%; padding:5px 8px; border:1px solid #cbd5e1; border-radius:4px; font-size:0.80rem;">
+              <option value="">-- Choose recent recipient --</option>
+              {% for rec in recent_recipients %}
+              <option value="{{ rec }}">{{ rec }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <button type="button" class="btn btn-ghost" onclick="removeSelectedRecentRecipient()" style="padding:4px 10px; font-size:0.75rem; color:#dc2626; border-color:#fca5a5; white-space:nowrap;">
+            Remove
+          </button>
+        </div>
+      </div>
       <div style="margin-top:10px">
         <label for="past-day-picker" style="font-size:0.82rem; font-weight:600; color:var(--muted); display:block; margin-bottom:4px">Report Date (Preview past day)</label>
         <input type="date" id="past-day-picker" class="day-select" value="{{ current_day }}" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:6px; font-size:0.88rem; font-weight:600; color:var(--text); background:var(--surface)">
@@ -343,10 +381,24 @@
     <div id="modal-live-info" style="{% if send_mode != 'live' %}display:none;{% endif %} background:#ecfdf5; border:1px solid #a7f3d0; color:#065f46; padding:10px 14px; border-radius:6px; font-size:0.85rem; margin-bottom:14px; line-height:1.4">
       ⚡ <strong>Live mode active:</strong> Email will be delivered via Gmail SMTP.
     </div>
-    <p style="font-size:0.88rem; color:var(--muted); margin-bottom:14px">
-      Recipient: <strong id="modal-recipient-display">—</strong><br>
-      Mode: <strong id="modal-mode-display">{{ send_mode }}</strong>
-    </p>
+    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:10px 14px; margin-bottom:14px; font-size:0.88rem;">
+      <div style="margin-bottom:4px;">
+        <span style="color:var(--muted); font-size:0.80rem; font-weight:600; text-transform:uppercase;">Send to:</span><br>
+        <strong id="modal-recipient-display" style="color:#0f172a; word-break:break-all;">—</strong>
+      </div>
+      <div>
+        <span style="color:var(--muted); font-size:0.80rem; font-weight:600; text-transform:uppercase;">Mode:</span>
+        <strong id="modal-mode-display">{{ send_mode }}</strong>
+      </div>
+    </div>
+
+    <!-- Live Confirmation Checkbox (Required for live sends) -->
+    <div id="modal-live-checkbox-wrapper" style="{% if send_mode != 'live' %}display:none;{% endif %} margin-bottom:14px; background:#fff7ed; border:1px solid #fed7aa; padding:10px 12px; border-radius:6px;">
+      <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; font-size:0.82rem; color:#9a3412; font-weight:600;">
+        <input type="checkbox" id="modal-live-confirm-checkbox" onchange="onLiveCheckboxChange(this)" style="margin-top:2px;">
+        <span>I confirm dispatching a real live email to the exact address(es) listed above.</span>
+      </label>
+    </div>
     <div id="send-result" style="display:none; margin-bottom:12px"></div>
     <div class="modal-footer">
       <button class="btn btn-ghost" type="button" onclick="closeSendModal()">Cancel</button>
@@ -638,11 +690,104 @@ async function resetDemo() {
   }
 }
 
+function toggleRecipientType(type) {
+  const defWrap = document.getElementById("default-recipient-wrapper");
+  const custWrap = document.getElementById("custom-recipient-wrapper");
+  if (type === "custom") {
+    defWrap.style.display = "none";
+    custWrap.style.display = "block";
+    document.getElementById("custom-recipient-input").focus();
+  } else {
+    defWrap.style.display = "block";
+    custWrap.style.display = "none";
+  }
+}
+
+function onSelectRecentRecipient(val) {
+  if (val) {
+    document.getElementById("custom-recipient-input").value = val;
+  }
+}
+
+async function removeSelectedRecentRecipient() {
+  const sel = document.getElementById("recent-recipients-select");
+  const val = sel.value;
+  if (!val) {
+    showToast("Please choose a recent recipient to remove", "error");
+    return;
+  }
+  try {
+    const res = await postForm("/ctrl/api/recent-recipients/remove", { recipient: val });
+    if (res.status === "ok") {
+      sel.innerHTML = '<option value="">-- Choose recent recipient --</option>';
+      (res.recent_recipients || []).forEach(r => {
+        const opt = document.createElement("option");
+        opt.value = r;
+        opt.textContent = r;
+        sel.appendChild(opt);
+      });
+      document.getElementById("custom-recipient-input").value = "";
+      showToast("Removed recipient: " + val, "success");
+    } else {
+      showToast("Failed to remove: " + res.detail, "error");
+    }
+  } catch (err) {
+    showToast("Network error", "error");
+  }
+}
+
+function getActiveRecipient() {
+  const isCustom = document.querySelector('input[name="recipient_type"]:checked')?.value === "custom";
+  if (isCustom) {
+    const val = document.getElementById("custom-recipient-input").value.trim().toLowerCase();
+    if (!val) {
+      showToast("Please enter an email address for custom recipient", "error");
+      return null;
+    }
+    if (/[\r\n\t ,;]/.test(val)) {
+      showToast("Recipient contains invalid whitespace, newlines, commas or semicolons", "error");
+      return null;
+    }
+    const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+    if (!emailRegex.test(val) || val.endsWith(".local") || val.endsWith("@local")) {
+      showToast("Please enter a valid email address (RFC format, no .local)", "error");
+      return null;
+    }
+    return val;
+  } else {
+    return document.getElementById("send-recipient").value;
+  }
+}
+
+function onLiveCheckboxChange(cb) {
+  if (currentSendMode === "live") {
+    document.getElementById("confirm-send-btn").disabled = !cb.checked;
+  }
+}
+
 function openSendModal() {
-  const rec = document.getElementById("send-recipient").value;
+  const rec = getActiveRecipient();
+  if (!rec) return;
+
   document.getElementById("modal-recipient-display").textContent = rec;
   document.getElementById("send-modal").classList.add("open");
   document.getElementById("send-result").style.display = "none";
+
+  const isLive = (currentSendMode === "live");
+  const chkWrap = document.getElementById("modal-live-checkbox-wrapper");
+  const chk = document.getElementById("modal-live-confirm-checkbox");
+  const btn = document.getElementById("confirm-send-btn");
+
+  if (isLive) {
+    chkWrap.style.display = "block";
+    chk.checked = false;
+    btn.disabled = true;
+    btn.textContent = "📤 Confirm Send [LIVE]";
+  } else {
+    chkWrap.style.display = "none";
+    btn.disabled = false;
+    btn.textContent = "🧪 Dry Run (Nothing will be sent) [DRY-RUN]";
+  }
 }
 
 function closeSendModal() {
@@ -650,11 +795,14 @@ function closeSendModal() {
 }
 
 async function confirmSend() {
-  const rec = document.getElementById("send-recipient").value;
+  const rec = getActiveRecipient();
+  if (!rec) return;
+
   const resultEl = document.getElementById("send-result");
   const btn = document.getElementById("confirm-send-btn");
   btn.disabled = true;
   btn.textContent = "Sending…";
+
   try {
     const isLive = (currentSendMode === "live");
     const res = await postForm("/ctrl/api/send-now", { recipient: rec, force_live: isLive ? "true" : "false" });
@@ -672,6 +820,19 @@ async function confirmSend() {
         resultEl.innerHTML = `<span class="pill pill-green">✓ ${st}</span>`;
         showToast("Complete: " + st, "success");
       }
+      const sel = document.getElementById("recent-recipients-select");
+      if (sel && rec) {
+        let exists = false;
+        for (let opt of sel.options) {
+          if (opt.value === rec) { exists = true; break; }
+        }
+        if (!exists) {
+          const opt = document.createElement("option");
+          opt.value = rec;
+          opt.textContent = rec;
+          sel.insertBefore(opt, sel.children[1] || null);
+        }
+      }
     } else {
       resultEl.innerHTML = `<span class="pill pill-red">✗ ${res.detail}</span>`;
       showToast("Send failed: " + res.detail, "error");
@@ -681,7 +842,7 @@ async function confirmSend() {
     showToast("Network error", "error");
   }
   btn.disabled = false;
-  btn.textContent = (currentSendMode === "live") ? "📤 Confirm Live Send" : "Dry run (nothing will be sent)";
+  btn.textContent = (currentSendMode === "live") ? "📤 Confirm Send [LIVE]" : "🧪 Dry Run (Nothing will be sent) [DRY-RUN]";
 }
 
 async function prepareOnly() {

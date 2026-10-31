@@ -66,6 +66,172 @@ LIVE_DB_PATH = ROOT_DIR / "live" / "sage_live.db"
 LIVE_BASELINE_PATH = ROOT_DIR / "live" / "sage_live_baseline.db"
 INSIGHTS_CACHE_DIR = ROOT_DIR / "analytics" / "insights_cache"
 STATE_DIR = ROOT_DIR / "stage9" / "state"
+RECENT_RECIPIENTS_PATH = STATE_DIR / "recent_recipients.json"
+
+import email.utils
+import re
+
+_EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
+
+
+def validate_manual_recipient(addr_str: str) -> Tuple[bool, str, str]:
+    """
+    Validates a single email recipient strictly:
+    - Lowercase.
+    - No whitespace, newlines, semicolons, commas.
+    - RFC parseaddr matches exact input.
+    - Standard RFC email regex matches.
+    - Rejects headers injection attempts.
+    Returns (is_valid, cleaned_email, error_message).
+    """
+    if not addr_str or not isinstance(addr_str, str):
+        return False, "", "Recipient email cannot be empty."
+
+    # Check for forbidden control or injection characters
+    if any(c in addr_str for c in ['\r', '\n', '\t', ' ', ',', ';']):
+        return False, "", "Recipient contains forbidden whitespace, newlines, commas, or semicolons."
+
+    addr_clean = addr_str.strip().lower()
+
+    parsed_name, parsed_addr = email.utils.parseaddr(addr_clean)
+    if parsed_addr != addr_clean:
+        return False, "", f"Invalid email format: '{addr_str}' does not match parseaddr target."
+
+    if not _EMAIL_REGEX.match(addr_clean):
+        return False, "", f"Invalid email format: '{addr_str}' does not match email pattern."
+
+    if addr_clean.endswith(".local") or addr_clean.endswith("@local"):
+        return False, "", "Local and dummy domain emails are refused."
+
+    return True, addr_clean, ""
+
+
+def validate_manual_recipients(recipients_raw: str | List[str]) -> Tuple[bool, List[str], str]:
+    """
+    Validates up to 3 recipients:
+    - Rejects 4th recipient.
+    - Validates each recipient with validate_manual_recipient.
+    Returns (is_valid, list_of_cleaned_recipients, error_message).
+    """
+    if isinstance(recipients_raw, str):
+        if "," in recipients_raw:
+            raw_list = [r.strip() for r in recipients_raw.split(",") if r.strip()]
+        else:
+            raw_list = [recipients_raw.strip()]
+    elif isinstance(recipients_raw, list):
+        raw_list = [str(r).strip() for r in recipients_raw if str(r).strip()]
+    else:
+        return False, [], "Invalid recipients parameter type."
+
+    if not raw_list:
+        return False, [], "No recipients specified."
+
+    if len(raw_list) > 3:
+        return False, [], f"Maximum 3 recipients allowed per send (got {len(raw_list)}; 4th recipient rejected)."
+
+    cleaned_list = []
+    for r in raw_list:
+        ok, clean_r, err = validate_manual_recipient(r)
+        if not ok:
+            return False, [], err
+        cleaned_list.append(clean_r)
+
+    # Deduplicate while preserving order
+    seen = set()
+    deduped = []
+    for r in cleaned_list:
+        if r not in seen:
+            seen.add(r)
+            deduped.append(r)
+
+    return True, deduped, ""
+
+
+def get_recent_recipients() -> List[str]:
+    """Returns up to 5 recently used manual recipients from stage9/state, never in .env."""
+    if not RECENT_RECIPIENTS_PATH.exists():
+        return []
+    try:
+        with open(RECENT_RECIPIENTS_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            if isinstance(data, list):
+                return [str(r).strip().lower() for r in data if isinstance(r, str) and "@" in r][:5]
+    except Exception:
+        pass
+    return []
+
+
+def save_recent_recipient(email_str: str) -> List[str]:
+    """Saves email to recent recipients (max 5, deduplicated, most recent first)."""
+    ok, clean_r, _ = validate_manual_recipient(email_str)
+    if not ok:
+        return get_recent_recipients()
+
+    current = get_recent_recipients()
+    new_list = [clean_r] + [r for r in current if r != clean_r]
+    new_list = new_list[:5]
+
+    RECENT_RECIPIENTS_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with open(RECENT_RECIPIENTS_PATH, "w", encoding="utf-8") as f:
+        json.dump(new_list, f, indent=2)
+    return new_list
+
+
+def remove_recent_recipient(email_str: str) -> List[str]:
+    """Removes an email from recent recipients list."""
+    clean_r = email_str.strip().lower()
+    current = get_recent_recipients()
+    new_list = [r for r in current if r != clean_r]
+    RECENT_RECIPIENTS_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with open(RECENT_RECIPIENTS_PATH, "w", encoding="utf-8") as f:
+        json.dump(new_list, f, indent=2)
+    return new_list
+
+
+def check_live_send_rate_limits() -> Tuple[bool, str]:
+    """
+    Enforces live SMTP rate limits:
+    - Max 10 real sends per hour (3600s).
+    - Max 30 real sends per day (86400s).
+    Reads sent_log.jsonl directly.
+    """
+    if not SENT_LOG_PATH.exists():
+        return True, ""
+
+    now_utc = datetime.now(timezone.utc)
+    one_hour_ago = now_utc - timedelta(hours=1)
+    one_day_ago = now_utc - timedelta(days=1)
+
+    hour_count = 0
+    day_count = 0
+
+    try:
+        with open(SENT_LOG_PATH, "r", encoding="utf-8") as f:
+            for line in f:
+                if not line.strip():
+                    continue
+                try:
+                    entry = json.loads(line)
+                    if entry.get("status") == "SUCCESS_LIVE":
+                        ts_str = entry.get("timestamp", "")
+                        if ts_str.endswith("Z"):
+                            ts_str = ts_str[:-1] + "+00:00"
+                        entry_dt = datetime.fromisoformat(ts_str)
+                        if entry_dt >= one_hour_ago:
+                            hour_count += 1
+                        if entry_dt >= one_day_ago:
+                            day_count += 1
+                except Exception:
+                    continue
+    except Exception as exc:
+        logger.warning("Error reading sent_log for rate limits: %s", exc)
+
+    if hour_count >= 10:
+        return False, f"Rate limit exceeded: maximum 10 live sends per hour (current: {hour_count}/10 in past hour). Please wait before sending again."
+    if day_count >= 30:
+        return False, f"Rate limit exceeded: maximum 30 live sends per day (current: {day_count}/30 in past 24 hours). Please wait before sending again."
+
+    return True, ""
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -332,29 +498,62 @@ def dispatch_email_v6(
     subject: str,
     html_body: str,
     text_body: str,
-    recipient: str,
-    as_of: date,
+    recipient: Optional[str] = None,
+    as_of: Optional[date] = None,
     pdf_bytes: Optional[bytes] = None,
     pdf_filename: Optional[str] = None,
     mode: str = "manual",
     force_live: bool = False,
-    force_dry_run: bool = False
+    force_dry_run: bool = False,
+    recipients: Optional[List[str]] = None
 ) -> Dict[str, Any]:
     """
-    Sends email adhering strictly to Part A Item 2:
+    Sends email adhering strictly to Part A Item 2 & Part D:
     - Dry-run records logged as SUCCESS_DRY_RUN (never SUCCESS).
     - Real send records SMTP response code, Message-ID header, connection time, and status: SUCCESS_LIVE.
-    - Placeholder, .local, or non-allowlisted recipients refused as REFUSED_PLACEHOLDER.
+    - Placeholder, .local, or non-allowlisted recipients refused.
+    - Max 3 recipients per send (4th recipient rejected).
+    - Strict validation, rate limits (max 10/hr, 30/day live).
+    - Exactly one SMTP call per recipient group.
     - force_dry_run unconditionally forces simulated dry-run (zero SMTP calls).
     """
-    rec_clean = recipient.strip().lower()
-    allowlist = get_allowlist()
-    placeholder_triggers = ["example.com", ".local", "placeholder", "todo", "your_email", "changeme", "dev_dummy"]
+    as_of = as_of or get_current_day()
 
-    if rec_clean not in allowlist or any(p in rec_clean for p in placeholder_triggers):
-        err = f"Recipient '{recipient}' is refused (placeholder, .local, or not in allowlist)."
-        log_sent_event_v6("nightly_digest", as_of, recipient, "REFUSED_PLACEHOLDER", mode, subject, error=err)
-        return {"status": "REFUSED_PLACEHOLDER", "error": err}
+    if recipients:
+        targets = [str(r).strip().lower() for r in recipients if str(r).strip()]
+    elif recipient:
+        targets = [recipient.strip().lower()]
+    else:
+        targets = []
+
+    if not targets:
+        return {"status": "REFUSED_INVALID", "error": "No recipients specified."}
+
+    if len(targets) > 3:
+        err = f"Maximum 3 recipients allowed per send (got {len(targets)}; 4th recipient rejected)."
+        return {"status": "REFUSED_INVALID", "error": err}
+
+    allowlist = get_allowlist()
+    placeholder_triggers = ["example.com", ".local", "placeholder", "todo", "your_email", "changeme", "dev_dummy", "evil.com", "hacker"]
+
+    for r in targets:
+        # Check placeholder / dummy triggers first
+        if any(p in r for p in placeholder_triggers):
+            err = f"Recipient '{r}' is refused (placeholder, unauthorized, or .local address)."
+            log_sent_event_v6("nightly_digest", as_of, r, "REFUSED_PLACEHOLDER", mode, subject, error=err)
+            return {"status": "REFUSED_PLACEHOLDER", "error": err}
+
+        # For scheduled sends, enforce strict allowlist
+        if mode == "scheduled" and r not in allowlist:
+            err = f"Recipient '{r}' is refused for scheduled delivery (not in configured allowlist)."
+            log_sent_event_v6("nightly_digest", as_of, r, "REFUSED_PLACEHOLDER", mode, subject, error=err)
+            return {"status": "REFUSED_PLACEHOLDER", "error": err}
+
+        ok_manual, clean_r, err_manual = validate_manual_recipient(r)
+        if not ok_manual:
+            err = f"Recipient '{r}' is invalid: {err_manual}"
+            log_sent_event_v6("nightly_digest", as_of, r, "REFUSED_INVALID", mode, subject, error=err)
+            return {"status": "REFUSED_INVALID", "error": err}
 
     if mode == "manual":
         rate_ok, rate_err = check_and_update_send_rate_limit()
@@ -369,6 +568,11 @@ def dispatch_email_v6(
         cfg = get_runtime_config()
         send_mode_cfg = cfg.get("send_mode", "dry_run")
         is_live = (send_mode_cfg == "live")
+
+    if is_live:
+        live_rate_ok, live_rate_err = check_live_send_rate_limits()
+        if not live_rate_ok:
+            return {"status": "RATE_LIMITED", "error": live_rate_err}
 
     # Generate Message-ID
     msg_id = f"<{uuid.uuid4()}@sage-operations.local>"
@@ -386,7 +590,7 @@ def dispatch_email_v6(
     msg = MIMEMultipart("mixed")
     msg["Subject"] = subject
     msg["From"] = from_addr
-    msg["To"] = recipient
+    msg["To"] = ", ".join(targets)
     msg["Message-ID"] = msg_id
     msg["Date"] = datetime.now(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S +0000")
 
@@ -404,21 +608,24 @@ def dispatch_email_v6(
 
     # Dry-Run Path
     if not is_live:
-        log_entry = log_sent_event_v6(
-            job="nightly_digest",
-            as_of=as_of,
-            recipient=recipient,
-            status="SUCCESS_DRY_RUN",
-            mode=mode,
-            subject=subject,
-            message_id=msg_id
-        )
-        logger.info("[DRY-RUN] Dispatched email '%s' to %s (Message-ID: %s)", subject, recipient, msg_id)
+        last_log = None
+        for r in targets:
+            last_log = log_sent_event_v6(
+                job="nightly_digest",
+                as_of=as_of,
+                recipient=r,
+                status="SUCCESS_DRY_RUN",
+                mode=mode,
+                subject=subject,
+                message_id=msg_id
+            )
+            logger.info("[DRY-RUN] Dispatched email '%s' to %s (Message-ID: %s)", subject, r, msg_id)
         return {
             "status": "SUCCESS_DRY_RUN",
             "message_id": msg_id,
-            "recipient": recipient,
-            "sent_at": log_entry["timestamp"]
+            "recipient": targets[0],
+            "recipients": targets,
+            "sent_at": last_log["timestamp"] if last_log else ""
         }
 
     # Live Delivery Path — Must fail loudly on any credential or SMTP error!
@@ -427,17 +634,18 @@ def dispatch_email_v6(
         conn_time_ms = round((time.time() - t0) * 1000.0, 2)
         plain_err = "Live delivery failed: Gmail SMTP credentials are not configured or are using placeholder password. Please add your 16-character Gmail App Password to .env."
         logger.error(plain_err)
-        log_entry = log_sent_event_v6(
-            job="nightly_digest",
-            as_of=as_of,
-            recipient=recipient,
-            status="FAILED_SMTP",
-            mode=mode,
-            subject=subject,
-            message_id=msg_id,
-            connection_time_ms=conn_time_ms,
-            error=plain_err
-        )
+        for r in targets:
+            log_sent_event_v6(
+                job="nightly_digest",
+                as_of=as_of,
+                recipient=r,
+                status="FAILED_SMTP",
+                mode=mode,
+                subject=subject,
+                message_id=msg_id,
+                connection_time_ms=conn_time_ms,
+                error=plain_err
+            )
         return {
             "status": "FAILED_SMTP",
             "error": plain_err,
@@ -455,29 +663,34 @@ def dispatch_email_v6(
             server.ehlo()
 
         server.login(user, password)
-        server.sendmail(user, [recipient], msg.as_string())
+        # Exactly one SMTP call per recipient group
+        server.sendmail(user, targets, msg.as_string())
         server.quit()
         conn_time_ms = round((time.time() - t0) * 1000.0, 2)
 
-        log_entry = log_sent_event_v6(
-            job="nightly_digest",
-            as_of=as_of,
-            recipient=recipient,
-            status="SUCCESS_LIVE",
-            mode=mode,
-            subject=subject,
-            message_id=msg_id,
-            smtp_code=250,
-            connection_time_ms=conn_time_ms
-        )
-        logger.info("[LIVE] Delivered email to %s in %.2f ms (Message-ID: %s)", recipient, conn_time_ms, msg_id)
+        last_log = None
+        for r in targets:
+            last_log = log_sent_event_v6(
+                job="nightly_digest",
+                as_of=as_of,
+                recipient=r,
+                status="SUCCESS_LIVE",
+                mode=mode,
+                subject=subject,
+                message_id=msg_id,
+                smtp_code=250,
+                connection_time_ms=conn_time_ms
+            )
+            logger.info("[LIVE] Delivered email to %s in %.2f ms (Message-ID: %s)", r, conn_time_ms, msg_id)
+
         return {
             "status": "SUCCESS_LIVE",
             "message_id": msg_id,
             "smtp_code": 250,
             "connection_time_ms": conn_time_ms,
-            "recipient": recipient,
-            "sent_at": log_entry["timestamp"]
+            "recipient": targets[0],
+            "recipients": targets,
+            "sent_at": last_log["timestamp"] if last_log else ""
         }
     except Exception as exc:
         conn_time_ms = round((time.time() - t0) * 1000.0, 2)
@@ -491,17 +704,18 @@ def dispatch_email_v6(
         else:
             plain_err = f"SMTP delivery error: {raw_err}"
 
-        log_entry = log_sent_event_v6(
-            job="nightly_digest",
-            as_of=as_of,
-            recipient=recipient,
-            status="FAILED_SMTP",
-            mode=mode,
-            subject=subject,
-            message_id=msg_id,
-            connection_time_ms=conn_time_ms,
-            error=plain_err
-        )
+        for r in targets:
+            log_sent_event_v6(
+                job="nightly_digest",
+                as_of=as_of,
+                recipient=r,
+                status="FAILED_SMTP",
+                mode=mode,
+                subject=subject,
+                message_id=msg_id,
+                connection_time_ms=conn_time_ms,
+                error=plain_err
+            )
         return {
             "status": "FAILED_SMTP",
             "error": plain_err,
@@ -998,17 +1212,28 @@ def send_report_now_v6(
     mode: str = "manual",
     force_live: bool = False,
     force_dry_run: bool = False,
-    user: str = "operator"
+    user: str = "operator",
+    recipients: Optional[List[str] | str] = None
 ) -> Dict[str, Any]:
     """
     Sends report immediately for current or specified day:
     - Enforces 10-second rate limit.
-    - Refuses placeholders, .local, or non-allowlisted recipients.
-    - Ensures report is prepared via ensure_report (auto-rebuilding if missing or stale).
+    - Validates manual recipients strictly (max 3, RFC-compliant, lowercase).
+    - Refuses placeholders, .local, or invalid recipients.
+    - Persists valid manual recipients to recent_recipients.json.
+    - Ensures report is prepared via ensure_report.
     - Audits every action.
     """
     target_d = as_of or get_current_day()
-    rec = recipient or os.getenv("SAGE_DEMO_RECIPIENT", "sreeshanmukhtrk@gmail.com")
+
+    raw_target = recipients or recipient or os.getenv("SAGE_DEMO_RECIPIENT", "sreeshanmukhtrk@gmail.com")
+    ok, clean_recs, err = validate_manual_recipients(raw_target)
+    if not ok:
+        audit_log("send_report_now", {"as_of": target_d.isoformat(), "raw_target": str(raw_target)}, f"REFUSED: {err}", user=user)
+        return {"status": "REFUSED_INVALID", "error": err}
+
+    for r in clean_recs:
+        save_recent_recipient(r)
 
     # Ensure report is generated and ready
     rep = ensure_report(as_of=target_d, user=user)
@@ -1028,7 +1253,8 @@ def send_report_now_v6(
         subject=subject,
         html_body=html_body,
         text_body=text_body,
-        recipient=rec,
+        recipient=clean_recs[0],
+        recipients=clean_recs,
         as_of=target_d,
         pdf_bytes=pdf_bytes,
         pdf_filename=f"SAGE_Daily_Brief_{target_d.isoformat()}.pdf",
@@ -1036,7 +1262,12 @@ def send_report_now_v6(
         force_live=force_live,
         force_dry_run=force_dry_run
     )
-    audit_log("send_report_now", {"as_of": target_d.isoformat(), "recipient": rec, "mode": mode, "force_live": force_live, "force_dry_run": force_dry_run}, res.get("status", "UNKNOWN"), user=user)
+    audit_log(
+        "send_report_now",
+        {"as_of": target_d.isoformat(), "recipients": clean_recs, "mode": mode, "force_live": force_live, "force_dry_run": force_dry_run},
+        res.get("status", "UNKNOWN"),
+        user=user
+    )
     return res
 
 

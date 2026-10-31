@@ -39,9 +39,10 @@
 ---
 
 ### 5. Ten-Day Demonstration Feed Rehearsal
-- **Design:** Deterministically scripted scenarios with a 1-day customer lead time (contrasting with 2025 historical median of 6 days) to test immediate operational response.
-- **Honest Scoring Tallies:**
-  - **v1 Original Pre-registration (`a31aef9`):** **7 HITS (70.0%)**, **3 PARTIALS (30.0%)**, **0 MISSES**.
-  - **v2 Intermediate Pre-registration (`cfa45f2`):** **9 HITS (90.0%)**, **1 PARTIAL (10.0%)**, **0 MISSES**.
-  - **v3 Rehearsal (`a38b8fd`):** **10 HITS (100.0%)** (or 9 HITS, 1 MISS if Day 9 is strictly evaluated against WATCH).  
+- **Design:** Deterministically scripted scenarios with a 1-day customer lead time (contrasting with 2025 historical median of 6.0 days) to test immediate operational response.
+- **Order-Rate Ratio:** Demo feed order rate is elevated: ~7.3 units/day (2025 baseline requested) vs ~14.6 units/day (demo days, 2.0x units ratio), and ~0.63 orders/day (2025) vs 2.2 orders/day (demo days, 3.5x order-count ratio). Demo-day forward looks demonstrate live software operation and rolling buffer sizing under live inputs; they are not an accuracy test.
+- **Honest Scoring Tallies (score.py):**
+  - **v1 Original Pre-registration (`a31aef9`):** **6 HITS (60.0%)**, **2 PARTIALS (20.0%)**, **2 MISSES (20.0%)**.
+  - **v2 Intermediate Pre-registration (`cfa45f2`):** **8 HITS (80.0%)**, **0 PARTIALS (0.0%)**, **2 MISSES (20.0%)**.
+  - **v3 Rehearsal (`a38b8fd`):** **9 HITS (90.0%)**, **0 PARTIALS (0.0%)**, **1 MISS (10.0%)**.  
   *Disclosure: Version 3 expectations were written after seeing results (rehearsal, not validation).*

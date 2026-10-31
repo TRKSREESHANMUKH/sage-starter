@@ -369,6 +369,56 @@
     border-radius: 0 4px 4px 0;
     margin-top: 4px;
   }
+
+  /* Monochrome Neutral Styles for History & Slider Section (Stage 10 Part B) */
+  .mono-chip {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    transition: all 0.15s ease;
+  }
+  .mono-chip:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+  }
+  .mono-chip.active {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+  }
+  .mono-badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .mono-badge-dark, .mono-pill-dark { background: #0f172a; color: #ffffff; border: 1px solid #0f172a; }
+  .mono-badge-med, .mono-pill-med { background: #475569; color: #ffffff; border: 1px solid #475569; }
+  .mono-badge-light, .mono-pill-light { background: #94a3b8; color: #ffffff; border: 1px solid #94a3b8; }
+  .mono-badge-ghost, .mono-pill-ghost { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
+  .month-tick-btn {
+    background: none;
+    border: none;
+    font-size: 0.70rem;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .month-tick-btn:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+  }
 </style>
 {% endblock %}
 
@@ -461,116 +511,143 @@
   {% endfor %}
 </div>
 
-<!-- History and Key Events Section (Stage 10 Part A3) -->
+<!-- History and Key Events Section (Redesigned Horizontal Slider & Neutral Monochrome) -->
 <div class="insight-section" id="history-and-key-events" style="margin-top: 28px;">
   <div class="insight-section-head">
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
       <div>
         <h2 class="insight-section-title">History and Key Events</h2>
         <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 3px;">
-          Plant operating history, daily alert status heat grid, and chronological operational episodes.
+          Interactive plant operating timeline, read-only past day inspector, and chronological disruption episodes.
         </p>
       </div>
       <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="font-size: 0.75rem; background: #e0f2fe; color: #0369a1; padding: 3px 8px; border-radius: 4px; font-weight: 600;">
+        <span class="mono-badge mono-badge-ghost">
           {{ history_and_key_events.total_days_indexed }} days indexed
         </span>
-        <span style="font-size: 0.75rem; background: #fef3c7; color: #92400e; padding: 3px 8px; border-radius: 4px; font-weight: 600;">
+        <span class="mono-badge mono-badge-ghost">
           {{ history_and_key_events.total_episodes }} key episodes
         </span>
       </div>
     </div>
   </div>
 
-  <!-- 1. Year at a Glance (Calendar Heat Grid) -->
-  <div class="card" style="margin-bottom: 20px; border-top: 3px solid var(--accent);">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+  <!-- Filter Chips Bar (Monochrome Neutral) -->
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px;">
+    <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="slider-filter-chips">
+      <button type="button" class="mono-chip active" data-filter="all" onclick="selectFilterChip('all', this)">
+        All ({{ history_and_key_events.filter_counts.all if (history_and_key_events.filter_counts is defined and history_and_key_events.filter_counts) else (history_and_key_events.total_days_indexed or 0) }})
+      </button>
+      <button type="button" class="mono-chip" data-filter="Critical" onclick="selectFilterChip('Critical', this)">
+        Critical ({{ history_and_key_events.filter_counts.Critical if (history_and_key_events.filter_counts is defined and history_and_key_events.filter_counts) else 0 }})
+      </button>
+      <button type="button" class="mono-chip" data-filter="Needs attention" onclick="selectFilterChip('Needs attention', this)">
+        Needs attention ({{ history_and_key_events.filter_counts['Needs attention'] if (history_and_key_events.filter_counts is defined and history_and_key_events.filter_counts) else 0 }})
+      </button>
+      <button type="button" class="mono-chip" data-filter="Watch" onclick="selectFilterChip('Watch', this)">
+        Watch ({{ history_and_key_events.filter_counts.Watch if (history_and_key_events.filter_counts is defined and history_and_key_events.filter_counts) else 0 }})
+      </button>
+      <button type="button" class="mono-chip" data-filter="Normal" onclick="selectFilterChip('Normal', this)">
+        Normal (safe) ({{ history_and_key_events.filter_counts.Normal if (history_and_key_events.filter_counts is defined and history_and_key_events.filter_counts) else 0 }})
+      </button>
+    </div>
+    <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 600; color: #475569; cursor: pointer; background: #ffffff; padding: 5px 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
+      <input type="checkbox" id="toggle-new-events" onchange="toggleNewEvents(this)" style="cursor: pointer; accent-color: #0f172a;">
+      Show only new events
+    </label>
+  </div>
+
+  <!-- Horizontal Day Slider Card -->
+  <div class="card" id="slider-card" style="margin-bottom: 20px; border: 1px solid #cbd5e1; background: #ffffff; padding: 20px 24px; border-radius: 8px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px;">
       <div>
-        <h3 style="font-size: 1.0rem; font-weight: 700; margin: 0; color: var(--text-main);">Year at a Glance</h3>
-        <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">Daily banner tier from 1 Jan 2025 to {{ as_of }}. Click any cell to view that past day's briefing.</p>
+        <h3 style="font-size: 1.05rem; font-weight: 800; margin: 0; color: #0f172a;">Plant History Slider</h3>
+        <p style="font-size: 0.78rem; color: #64748b; margin-top: 2px;">
+          Drag slider or use arrow buttons/keyboard arrows to inspect any historical day without page reload.
+        </p>
       </div>
-      <!-- Heat Grid Legend -->
-      <div style="display: flex; align-items: center; gap: 12px; font-size: 0.75rem; color: var(--text-muted);">
-        <span style="display: inline-flex; align-items: center; gap: 4px;">
-          <span style="width: 12px; height: 12px; background: #10b981; border-radius: 2px;"></span> Normal
-        </span>
-        <span style="display: inline-flex; align-items: center; gap: 4px;">
-          <span style="width: 12px; height: 12px; background: #3b82f6; border-radius: 2px;"></span> Watch
-        </span>
-        <span style="display: inline-flex; align-items: center; gap: 4px;">
-          <span style="width: 12px; height: 12px; background: #f59e0b; border-radius: 2px;"></span> Needs attention
-        </span>
-        <span style="display: inline-flex; align-items: center; gap: 4px;">
-          <span style="width: 12px; height: 12px; background: #ef4444; border-radius: 2px;"></span> Critical
-        </span>
+      <!-- Slider Navigation Controls -->
+      <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <button type="button" class="header-btn" id="slider-prev-btn" onclick="stepSlider(-1)" title="Previous matching day (Left Arrow)">&larr; Prev</button>
+        <button type="button" class="header-btn" id="slider-next-btn" onclick="stepSlider(1)" title="Next matching day (Right Arrow)">Next &rarr;</button>
+        <div style="display: flex; align-items: center; gap: 4px; border-left: 1px solid #e2e8f0; padding-left: 8px;">
+          <input type="date" id="slider-jump-date" min="2025-01-01" max="{{ as_of }}" value="{{ as_of }}" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #cbd5e1; font-size: 0.80rem; font-family: inherit;">
+          <button type="button" class="header-btn" onclick="jumpToDatePicker()" style="padding: 4px 10px;">Jump</button>
+        </div>
+        <button type="button" class="header-btn header-btn-primary" onclick="jumpToLatest()" style="padding: 4px 12px; font-weight: 700;">Latest</button>
       </div>
     </div>
 
-    <!-- Calendar Months Rows -->
-    <div style="display: flex; flex-direction: column; gap: 8px;">
-      {% for m in history_and_key_events.year_at_a_glance %}
-      <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-        <span style="width: 110px; font-size: 0.78rem; font-weight: 600; color: var(--text-muted); flex-shrink: 0;">{{ m.month_name }}</span>
-        <div style="display: flex; flex-wrap: wrap; gap: 3px; flex-grow: 1;">
-          {% for d in m.days %}
-          <a href="{{ d.link }}" class="heat-cell" style="width: 22px; height: 22px; border-radius: 3px; background: {{ d.color }}; display: inline-flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; color: #ffffff; text-decoration: none; transition: transform 0.1s;" title="{{ d.aria_label }}" aria-label="{{ d.aria_label }}">
-            {{ d.day }}
-          </a>
-          {% endfor %}
-        </div>
+    <!-- Draggable Range Slider Track -->
+    <div style="position: relative; padding: 10px 0 4px 0;">
+      <input type="range" id="history-slider" min="0" max="{{ history_and_key_events.total_days_indexed - 1 }}" value="{{ history_and_key_events.total_days_indexed - 1 }}" oninput="onSliderInput(this.value)" style="width: 100%; height: 8px; border-radius: 4px; accent-color: #0f172a; cursor: pointer; background: #e2e8f0;">
+      <!-- Month Tick Labels Container -->
+      <div style="display: flex; justify-content: space-between; margin-top: 6px; overflow-x: auto; gap: 4px;">
+        {% for mt in history_and_key_events.month_ticks %}
+        <button type="button" class="month-tick-btn" onclick="jumpToDayIndex({{ mt.day_index }})" title="Jump to {{ mt.date }}">
+          {{ mt.month_name }}
+        </button>
+        {% endfor %}
       </div>
-      {% endfor %}
+    </div>
+
+    <!-- Read-Only Day Preview Panel -->
+    <div id="slider-preview-card" style="margin-top: 18px; padding: 16px 18px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span id="preview-tier-badge" class="mono-badge mono-badge-dark">CRITICAL</span>
+          <span id="preview-date-text" style="font-size: 1.05rem; font-weight: 800; color: #0f172a;">31 December 2025</span>
+        </div>
+        <a id="preview-open-link" href="/?date={{ as_of }}" class="header-btn header-btn-primary" style="padding: 5px 12px; font-size: 0.80rem; font-weight: 700;">
+          Open full briefing for this day &rarr;
+        </a>
+      </div>
+      <div id="preview-summary-text" style="font-size: 0.92rem; line-height: 1.6; color: #1e293b; font-weight: 500;">
+        Loading day summary...
+      </div>
+      <div style="margin-top: 10px; padding-top: 8px; border-top: 1px solid #f1f5f9; display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Top Alert:</span>
+        <span id="preview-top-alert" style="font-size: 0.82rem; font-weight: 600; color: #0f172a;">Loading...</span>
+      </div>
     </div>
   </div>
 
-  <!-- 2. Key Events & Episodes -->
-  <div class="card" style="margin-bottom: 20px;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+  <!-- Key Events & Disruption Episodes (Neutral Monochrome) -->
+  <div class="card" style="margin-bottom: 24px; border: 1px solid #cbd5e1; background: #ffffff;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
       <div>
-        <h3 style="font-size: 1.0rem; font-weight: 700; margin: 0; color: var(--text-main);">Key Events &amp; Disruption Episodes <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">(Newest First)</span></h3>
-        <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">Chronological episodes grouped by daily operational status (snapshot &amp; priorities trace).</p>
-      </div>
-      <!-- Tier Filter Buttons & New Events Toggle -->
-      <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
-        <div style="display: flex; gap: 6px;">
-          <button type="button" class="ep-filter-btn active" onclick="filterEpisodes('all', this)" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 600; border-radius: 4px; border: 1px solid #cbd5e1; background: #ffffff; cursor: pointer;">All</button>
-          <button type="button" class="ep-filter-btn" onclick="filterEpisodes('Critical', this)" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 600; border-radius: 4px; border: 1px solid #fee2e2; color: #dc2626; background: #ffffff; cursor: pointer;">Critical</button>
-          <button type="button" class="ep-filter-btn" onclick="filterEpisodes('Needs attention', this)" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 600; border-radius: 4px; border: 1px solid #fef3c7; color: #b45309; background: #ffffff; cursor: pointer;">Needs attention</button>
-          <button type="button" class="ep-filter-btn" onclick="filterEpisodes('Watch', this)" style="padding: 4px 10px; font-size: 0.75rem; font-weight: 600; border-radius: 4px; border: 1px solid #e0f2fe; color: #0369a1; background: #ffffff; cursor: pointer;">Watch</button>
-        </div>
-        <label style="display: inline-flex; align-items: center; gap: 5px; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); cursor: pointer; margin-left: 4px; background: #f8fafc; padding: 4px 8px; border-radius: 4px; border: 1px solid #e2e8f0;">
-          <input type="checkbox" id="toggle-new-events" onchange="toggleNewEvents(this)" style="cursor: pointer;">
-          Show only new events
-        </label>
+        <h3 style="font-size: 1.0rem; font-weight: 800; margin: 0; color: #0f172a;">Key Events &amp; Disruption Episodes <span style="font-size: 0.75rem; font-weight: 600; color: #64748b;">(Newest First)</span></h3>
+        <p style="font-size: 0.78rem; color: #64748b; margin-top: 2px;">Chronological operational episodes filtered by status and novelty.</p>
       </div>
     </div>
 
     <div id="episodes-container" style="display: flex; flex-direction: column; gap: 10px; max-height: 480px; overflow-y: auto; padding-right: 4px;">
       {% for ep in history_and_key_events.key_events %}
-      <div class="episode-row" data-tier="{{ ep.max_tier }}" data-is-new="{{ 'true' if ep.days_count > 1 or ep.max_tier in ['Critical', 'Needs attention'] else 'false' }}" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border-color, #e2e8f0); border-radius: 6px; flex-wrap: wrap; gap: 8px;">
+      <div class="episode-row" data-tier="{{ ep.max_tier }}" data-is-new="{{ 'true' if ep.days_count > 1 or ep.max_tier in ['Critical', 'Needs attention'] else 'false' }}" onclick="jumpToDateStr('{{ ep.start_date }}')" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; flex-wrap: wrap; gap: 8px; cursor: pointer;">
         <div style="flex-grow: 1; min-width: 260px;">
           <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-            <span class="badge {{ ep.tier_class }}" style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase;">{{ ep.max_tier }}</span>
-            <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">{{ ep.range_display }}</span>
-            <span style="font-size: 0.72rem; color: var(--text-muted); background: #f1f5f9; padding: 1px 6px; border-radius: 3px;">{{ ep.evidence_label }}</span>
+            <span class="mono-badge {{ ep.tier_class }}">{{ ep.max_tier }}</span>
+            <span style="font-size: 0.85rem; font-weight: 700; color: #0f172a;">{{ ep.range_display }}</span>
+            <span style="font-size: 0.72rem; color: #475569; background: #f8fafc; padding: 1px 6px; border-radius: 3px; border: 1px solid #e2e8f0;">{{ ep.days_count }} day{% if ep.days_count != 1 %}s{% endif %}</span>
+            <span style="font-size: 0.72rem; color: #475569; background: #f1f5f9; padding: 1px 6px; border-radius: 3px; border: 1px solid #e2e8f0;">{{ ep.evidence_label }}</span>
           </div>
-          <div style="font-size: 0.88rem; font-weight: 600; color: var(--text-main);">{{ ep.headline }}</div>
-          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">{{ ep.trigger }}</div>
+          <div style="font-size: 0.88rem; font-weight: 600; color: #1e293b;">{{ ep.headline }}</div>
+          <div style="font-size: 0.75rem; color: #64748b; margin-top: 2px;">{{ ep.trigger }}</div>
         </div>
         <div style="display: flex; gap: 8px; align-items: center;">
-          <a href="{{ ep.open_link }}" class="header-btn" style="padding: 4px 10px; font-size: 0.78rem;">Open that day &rarr;</a>
-          <a href="{{ ep.pdf_link }}" target="_blank" class="header-btn" title="Download PDF report for this day" style="padding: 4px 8px; font-size: 0.78rem;">PDF</a>
+          <a href="{{ ep.open_link }}" onclick="event.stopPropagation()" class="header-btn" style="padding: 4px 10px; font-size: 0.78rem;">Open that day &rarr;</a>
+          <a href="{{ ep.pdf_link }}" onclick="event.stopPropagation()" target="_blank" class="header-btn" title="Download PDF report for this day" style="padding: 4px 8px; font-size: 0.78rem;">PDF</a>
         </div>
       </div>
       {% endfor %}
     </div>
   </div>
 
-  <!-- 3. View a Past Day Date Picker -->
-  <div class="card" style="margin-bottom: 28px; background: #f8fafc; border: 1px solid #e2e8f0;">
+  <!-- View a Past Day Date Picker -->
+  <div class="card" style="margin-bottom: 28px; background: #f8fafc; border: 1px solid #cbd5e1;">
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
       <div>
-        <h3 style="font-size: 0.95rem; font-weight: 700; margin: 0; color: #1e293b;">View a Past Day Briefing</h3>
+        <h3 style="font-size: 0.95rem; font-weight: 700; margin: 0; color: #0f172a;">View a Past Day Briefing</h3>
         <p style="font-size: 0.78rem; color: #64748b; margin-top: 2px;">
           Choose any date from 1 Jan 2025 to {{ as_of }} to open the complete read-only briefing calculated as of that day.
         </p>
@@ -611,7 +688,7 @@
   <div class="card" style="margin-bottom: 20px; border-left: 4px solid var(--accent);">
     <h3 style="font-size: 1.0rem; font-weight: 700; margin: 0 0 4px 0; color: var(--text-main);">Weekly Demand Target Benchmark: Known Booked vs Model Forecast (Protocol v4)</h3>
     <p style="font-size: 0.82rem; color: #334155; line-height: 1.6; margin-bottom: 12px;">
-      <strong>Plain-English Attribution:</strong> The headline accuracy of the deployed weekly demand forecast is driven primarily by the ERP order book: between 68.0% and 76.2% of customer demand due in rolling 7-day windows is <strong>already booked</strong> on origin day D (historical median customer lead time is 6.0 days). The predictive model adds only the marginal difference printed. The new-order part S(D) alone is hard to predict (WAPE near 1.0; no separate oracle is computed for S(D)). In the 10-day demo feed, orders use a 1-day lead time, meaning demo-day forward looks are mostly model-based; the demo feed's order rate is about 3x the 2025 rate, so demo-day forecasts are not an accuracy test. Prediction intervals are wide (average width 39.4 units).
+      <strong>Plain-English Attribution:</strong> The headline accuracy of the deployed weekly demand forecast is driven primarily by the ERP order book: between 68.0% and 76.2% of customer demand due in rolling 7-day windows is <strong>already booked</strong> on origin day D (historical median customer lead time is 6.0 days). The predictive model adds only the marginal difference printed. The new-order part S(D) alone is hard to predict (WAPE 0.9848; no separate oracle is computed for S(D)). In the 10-day demo feed, orders use a 1-day lead time, meaning demo-day forward looks are mostly model-based; the demo feed's order rate is elevated (~7.3 vs ~14.6 units/day, 2.0x units ratio; ~0.63 vs 2.2 orders/day, 3.5x orders ratio), so demo-day forecasts are not an accuracy test. Prediction intervals are wide (average width 39.4 units).
     </p>
 
     <div class="table-responsive">
@@ -1424,32 +1501,42 @@ function toggleNewEvents(cb) {
   applyEpisodeFilters();
 }
 
-function filterEpisodes(tier, btnEl) {
-  document.querySelectorAll('.ep-filter-btn').forEach(b => {
+function selectFilterChip(filterName, btnEl) {
+  currentFilter = filterName;
+  document.querySelectorAll('#slider-filter-chips .mono-chip').forEach(b => {
     b.classList.remove('active');
-    b.style.fontWeight = '600';
   });
   if (btnEl) {
     btnEl.classList.add('active');
-    btnEl.style.fontWeight = '800';
   }
   applyEpisodeFilters();
+
+  if (filterName !== 'all' && timelineDays && timelineDays.length > 0) {
+    if (timelineDays[currentSliderIndex].tier !== filterName) {
+      let bestIdx = -1;
+      let minDiff = 999999;
+      for (let i = 0; i < timelineDays.length; i++) {
+        if (timelineDays[i].tier === filterName) {
+          const diff = Math.abs(i - currentSliderIndex);
+          if (diff < minDiff) {
+            minDiff = diff;
+            bestIdx = i;
+          }
+        }
+      }
+      if (bestIdx !== -1) {
+        updateSliderPreview(bestIdx);
+      }
+    }
+  }
 }
 
 function applyEpisodeFilters() {
-  const activeBtn = document.querySelector('.ep-filter-btn.active');
-  let activeTier = 'all';
-  if (activeBtn) {
-    const text = activeBtn.textContent.trim().toLowerCase();
-    if (text === 'critical') activeTier = 'Critical';
-    else if (text === 'needs attention') activeTier = 'Needs attention';
-    else if (text === 'watch') activeTier = 'Watch';
-  }
   const onlyNew = document.getElementById('toggle-new-events')?.checked;
   const rows = document.querySelectorAll('.episode-row');
   rows.forEach(r => {
     const rowTier = r.getAttribute('data-tier');
-    const tierMatch = (activeTier === 'all' || rowTier === activeTier);
+    const tierMatch = (currentFilter === 'all' || rowTier === currentFilter);
     const isNew = r.getAttribute('data-is-new') === 'true';
     if (tierMatch && (!onlyNew || isNew)) {
       r.style.display = 'flex';
@@ -1457,6 +1544,172 @@ function applyEpisodeFilters() {
       r.style.display = 'none';
     }
   });
+}
+</script>
+
+<script id="timeline-data" type="application/json">
+{{ history_and_key_events.timeline_days | tojson }}
+</script>
+
+<script>
+let timelineDays = [];
+let currentSliderIndex = 0;
+let currentFilter = 'all';
+
+document.addEventListener('DOMContentLoaded', () => {
+  const dataEl = document.getElementById('timeline-data');
+  if (dataEl) {
+    try {
+      timelineDays = JSON.parse(dataEl.textContent);
+    } catch (e) {
+      console.error('Failed to parse timeline data', e);
+    }
+  }
+
+  if (timelineDays && timelineDays.length > 0) {
+    currentSliderIndex = timelineDays.length - 1;
+    updateSliderPreview(currentSliderIndex);
+  }
+
+  // Keyboard navigation on window or slider card
+  window.addEventListener('keydown', (e) => {
+    if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+    if (e.key === 'ArrowLeft') {
+      stepSlider(-1);
+    } else if (e.key === 'ArrowRight') {
+      stepSlider(1);
+    }
+  });
+
+  // Touch swipe support on slider-card
+  const sliderCard = document.getElementById('slider-card');
+  if (sliderCard) {
+    let touchStartX = 0;
+    let touchStartY = 0;
+    sliderCard.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
+    sliderCard.addEventListener('touchend', (e) => {
+      const touchEndX = e.changedTouches[0].screenX;
+      const touchEndY = e.changedTouches[0].screenY;
+      const dx = touchEndX - touchStartX;
+      const dy = touchEndY - touchStartY;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+        if (dx < 0) {
+          stepSlider(1);
+        } else {
+          stepSlider(-1);
+        }
+      }
+    }, { passive: true });
+  }
+});
+
+function updateSliderPreview(idx) {
+  if (!timelineDays || timelineDays.length === 0) return;
+  if (idx < 0) idx = 0;
+  if (idx >= timelineDays.length) idx = timelineDays.length - 1;
+  currentSliderIndex = idx;
+
+  const d = timelineDays[idx];
+  const slider = document.getElementById('history-slider');
+  if (slider) slider.value = idx;
+
+  const dateInput = document.getElementById('slider-jump-date');
+  if (dateInput) dateInput.value = d.date;
+
+  const dateText = document.getElementById('preview-date-text');
+  if (dateText) dateText.textContent = d.formatted_date || d.display_date || d.date;
+
+  const tierBadge = document.getElementById('preview-tier-badge');
+  if (tierBadge) {
+    tierBadge.textContent = d.tier.toUpperCase();
+    tierBadge.className = 'mono-badge ' + (
+      d.tier === 'Critical' ? 'mono-badge-dark' :
+      d.tier === 'Needs attention' ? 'mono-badge-med' :
+      d.tier === 'Watch' ? 'mono-badge-light' : 'mono-badge-ghost'
+    );
+  }
+
+  const summaryText = document.getElementById('preview-summary-text');
+  if (summaryText) summaryText.textContent = d.summary;
+
+  const topAlert = document.getElementById('preview-top-alert');
+  if (topAlert) topAlert.textContent = d.top_alert || 'No active alerts (normal operations)';
+
+  const openLink = document.getElementById('preview-open-link');
+  if (openLink) openLink.href = d.link;
+}
+
+function onSliderInput(val) {
+  updateSliderPreview(parseInt(val, 10));
+}
+
+function stepSlider(dir) {
+  if (!timelineDays || timelineDays.length === 0) return;
+  if (currentFilter === 'all') {
+    updateSliderPreview(currentSliderIndex + dir);
+  } else {
+    let targetIdx = -1;
+    if (dir > 0) {
+      for (let i = currentSliderIndex + 1; i < timelineDays.length; i++) {
+        if (timelineDays[i].tier === currentFilter) {
+          targetIdx = i;
+          break;
+        }
+      }
+    } else {
+      for (let i = currentSliderIndex - 1; i >= 0; i--) {
+        if (timelineDays[i].tier === currentFilter) {
+          targetIdx = i;
+          break;
+        }
+      }
+    }
+    if (targetIdx !== -1) {
+      updateSliderPreview(targetIdx);
+    }
+  }
+}
+
+function jumpToDayIndex(idx) {
+  updateSliderPreview(idx);
+}
+
+function jumpToDateStr(dateStr) {
+  if (!timelineDays || timelineDays.length === 0) return;
+  const idx = timelineDays.findIndex(d => d.date === dateStr);
+  if (idx !== -1) {
+    updateSliderPreview(idx);
+    const sliderCard = document.getElementById('slider-card');
+    if (sliderCard) {
+      sliderCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+}
+
+function jumpToDatePicker() {
+  const dateInput = document.getElementById('slider-jump-date');
+  if (!dateInput || !dateInput.value) return;
+  const pickedDate = dateInput.value;
+  if (!timelineDays || timelineDays.length === 0) return;
+  const maxDate = timelineDays[timelineDays.length - 1].date;
+  if (pickedDate > maxDate) {
+    alert('Future date refused: SAGE operates strictly in historical replay without look-ahead.');
+    return;
+  }
+  const idx = timelineDays.findIndex(d => d.date === pickedDate);
+  if (idx !== -1) {
+    updateSliderPreview(idx);
+  } else {
+    alert('Date not found in indexed history: ' + pickedDate);
+  }
+}
+
+function jumpToLatest() {
+  if (!timelineDays || timelineDays.length === 0) return;
+  updateSliderPreview(timelineDays.length - 1);
 }
 </script>
 

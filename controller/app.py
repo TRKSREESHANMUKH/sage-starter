@@ -53,15 +53,18 @@ from stage9.ops import (
     feed_next_queue_day,
     get_allowlist,
     get_audit_log_entries,
+    get_recent_recipients,
     get_runtime_config,
     load_year_review,
     pause_scheduler_v6,
     prepare_daily_run_v6,
+    remove_recent_recipient,
     reschedule_v6,
     reset_demo_v6,
     send_report_now_v6,
     set_send_mode_v6,
     validate_and_ingest_pack_v6,
+    validate_manual_recipients,
     QUEUE_DIR,
 )
 from stage9.current_day import get_current_day, get_ingested_days
@@ -216,6 +219,8 @@ def _base_ctx(request: Request, sess: Optional[Dict] = None) -> Dict[str, Any]:
         "send_time": cfg.get("send_time", "20:00"),
         "timezone": cfg.get("timezone", "Asia/Kolkata"),
         "recipients": cfg.get("recipients", {}).get("nightly_digest", []),
+        "recent_recipients": get_recent_recipients(),
+        "default_recipient": os.getenv("SAGE_DEMO_RECIPIENT", "sreeshanmukhtrk@gmail.com").strip().lower(),
         "allowlist": sorted(get_allowlist()),
         "framing": (
             "SAGE performs controlled synthetic causal-attribution evaluation "
@@ -380,21 +385,39 @@ async def api_send_now(
     sess: Dict = Depends(_require_session),
 ):
     _check_csrf(csrf_token, sess["csrf"])
-    allowlist = get_allowlist()
-    rec_clean = recipient.strip().lower()
-    if rec_clean not in allowlist:
+    ok, clean_recs, err = validate_manual_recipients(recipient)
+    if not ok:
         return JSONResponse(
-            {"status": "error", "detail": f"Recipient '{recipient}' not in allowlist."},
+            {"status": "error", "detail": err},
             status_code=400,
         )
     try:
         fl = force_live.lower() in ("true", "1", "yes")
-        result = send_report_now_v6(recipient=recipient, force_live=fl, user="controller")
+        result = send_report_now_v6(recipients=clean_recs, force_live=fl, user="controller")
         if result.get("status") == "FAILED_SMTP":
             return JSONResponse({"status": "error", "detail": result.get("error", "SMTP send failed"), "result": result}, status_code=500)
+        if result.get("status") in ("REFUSED_INVALID", "REFUSED_PLACEHOLDER"):
+            return JSONResponse({"status": "error", "detail": result.get("error", "Recipient refused"), "result": result}, status_code=400)
+        if result.get("status") == "RATE_LIMITED":
+            return JSONResponse({"status": "error", "detail": result.get("error", "Rate limit exceeded"), "result": result}, status_code=429)
         return JSONResponse({"status": "ok", "result": result})
     except Exception as exc:
         logger.error("Send now failed: %s", exc)
+        return JSONResponse({"status": "error", "detail": str(exc)}, status_code=500)
+
+
+@app.post("/ctrl/api/recent-recipients/remove")
+async def api_remove_recent_recipient(
+    request: Request,
+    csrf_token: str = Form(...),
+    recipient: str = Form(...),
+    sess: Dict = Depends(_require_session),
+):
+    _check_csrf(csrf_token, sess["csrf"])
+    try:
+        updated = remove_recent_recipient(recipient)
+        return JSONResponse({"status": "ok", "recent_recipients": updated})
+    except Exception as exc:
         return JSONResponse({"status": "error", "detail": str(exc)}, status_code=500)
 
 

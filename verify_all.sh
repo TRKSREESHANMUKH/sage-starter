@@ -226,11 +226,13 @@ echo "PASS: Multi-date reconciliation passed."
 
 # 8. DETERMINISTIC SCORING, OUTLOOK & CONSISTENCY UNIT TESTS
 echo ""
-echo ">>> STEP 8: Running Scoring Determinism, Weekly Outlook & Consistency Unit Tests..."
+echo ">>> STEP 8: Running Scoring Determinism, Weekly Outlook, Consistency & Summary Tests..."
 $PYTHON stage10/test_score.py
 $PYTHON -m unittest stage10/test_outlook.py
 $PYTHON -m unittest stage9/test_consistency_fixes.py
-echo "PASS: Scoring determinism, weekly outlook & consistency unit tests passed."
+$PYTHON stage9/test_controller_recipients.py
+$PYTHON stage9/test_summary_and_focus.py
+echo "PASS: Scoring determinism, weekly outlook, consistency, controller recipients & summary variation tests passed."
 
 # 9. STAGE 9 COMPREHENSIVE TEST SUITE
 echo ""

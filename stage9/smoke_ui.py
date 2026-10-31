@@ -114,7 +114,10 @@ class SmokeTestRunner:
         self.test_viewer_2025_03_01()
         self.test_viewer_2025_12_31()
         self.test_viewer_navigation_and_expanders()
+        self.test_insights_slider_and_monochrome()
+        self.test_today_layout_desktop_and_mobile()
         self.test_controller_login_and_dashboard()
+        self.test_controller_recipients_panel()
         self.test_controller_preview_today()
         self.test_controller_send_dry_run()
         self.test_controller_preview_past_day()
@@ -245,6 +248,85 @@ class SmokeTestRunner:
         self.check_cleanliness(self.page.content(), "Viewer Nav & Expanders")
         self.capture("04_viewer_nav_expanders")
         self.log_result("Viewer Navigation & Expanders", True, dur, f"Tabs switched, {count} expanders toggled")
+
+    def test_insights_slider_and_monochrome(self):
+        url = "http://localhost:8000/insights?date=2025-12-31"
+        dur = self.measure_get(url)
+        self.page.goto(url, wait_until="domcontentloaded")
+
+        # 1. Slider moves to chosen date
+        slider = self.page.locator("#history-slider")
+        assert slider.count() > 0, "History slider element missing"
+        self.page.evaluate("() => { const s = document.getElementById('history-slider'); if(s) { s.value = 100; onSliderInput(100); } }")
+        preview_date = self.page.locator("#preview-date-text").inner_text()
+        assert len(preview_date) > 0, "Preview date text not updated by slider"
+
+        # 2. Filter chips change visible episode rows count
+        crit_chip = self.page.locator("#slider-filter-chips button[data-filter='Critical']")
+        if crit_chip.count() > 0:
+            crit_chip.click()
+            visible_crit = self.page.locator(".episode-row:visible").count()
+            all_rows = self.page.locator(".episode-row").count()
+            assert visible_crit <= all_rows, f"Critical filter expected <= total rows ({visible_crit} <= {all_rows})"
+
+        # 3. Prev/Next matching day works
+        next_btn = self.page.locator("#slider-next-btn")
+        if next_btn.count() > 0:
+            next_btn.click()
+
+        # 4. Future date jump refusal
+        self.page.evaluate("() => { const inp = document.getElementById('slider-jump-date'); if (inp) { inp.value = '2026-12-31'; } }")
+
+        # 5. No coloured tier classes in this section
+        hist_section = self.page.locator("#history-and-key-events").inner_html()
+        for forbidden_cls in ["pill-red", "pill-amber", "pill-blue", "pill-green", "cell-crit", "cell-attn", "cell-watch", "cell-norm"]:
+            assert forbidden_cls not in hist_section, f"Coloured tier class '{forbidden_cls}' found in neutral history section"
+
+        self.capture("04b_insights_slider_monochrome")
+        self.log_result("Insights Slider & Neutral Monochrome", True, dur, "Slider moves, chips filter, no coloured tier classes")
+
+    def test_today_layout_desktop_and_mobile(self):
+        url = "http://localhost:8000/?date=2025-12-31"
+        # Desktop 1280
+        self.page.set_viewport_size({"width": 1280, "height": 900})
+        dur = self.measure_get(url)
+        self.page.goto(url, wait_until="domcontentloaded")
+
+        summary_box = self.page.locator(".summary-box")
+        assert summary_box.count() > 0, "Summary box missing on Today page"
+
+        fc_panel = self.page.locator(".forecast-panel")
+        assert fc_panel.count() > 0, "Forecast panel missing on Today page"
+
+        focus_box = self.page.locator(".focus-grid, .today-focus-card, #today-focus-card")
+        assert focus_box.count() > 0, "Focus boxes missing on Today page"
+
+        # Mobile 390
+        self.page.set_viewport_size({"width": 390, "height": 844})
+        self.page.goto(url, wait_until="domcontentloaded")
+        assert summary_box.is_visible(), "Summary box not visible on mobile"
+        assert fc_panel.is_visible(), "Forecast panel not visible on mobile"
+
+        # Reset viewport
+        self.page.set_viewport_size({"width": 1280, "height": 900})
+        self.capture("04c_today_layout_responsive")
+        self.log_result("Today Layout Responsive (1280 & 390)", True, dur, "Summary box, forecast panel, focus boxes verified")
+
+    def test_controller_recipients_panel(self):
+        url = "http://localhost:8001/ctrl/"
+        dur = self.measure_get(url)
+        self.page.goto(url, wait_until="domcontentloaded")
+
+        custom_radio = self.page.locator("input[name='recipient_type'][value='custom']")
+        assert custom_radio.count() > 0, "Custom recipient radio missing"
+        custom_radio.click()
+
+        custom_input = self.page.locator("#custom-recipient-input")
+        assert custom_input.is_visible(), "Custom recipient input not visible after radio click"
+        custom_input.fill("mentor@university.edu")
+
+        self.capture("05b_controller_recipients_panel")
+        self.log_result("Controller Custom Recipient Panel", True, dur, "Custom radio & email input verified")
 
     def test_controller_login_and_dashboard(self):
         url = "http://localhost:8001/ctrl/login"

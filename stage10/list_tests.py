@@ -113,8 +113,21 @@ def build_test_inventory():
         ("FORECAST_PREREG_ORDERING", "Pre-registration commit strictly precedes evaluation code commit", "NEW"),
         ("EPISODE_TOGGLE_FILTER", "#toggle-new-events checkbox and filtering logic exist in insights.html", "NEW"),
         ("MAIL_SAFETY_ZERO_REAL_SMTP", "Test harness enforces mock SMTP and dry-run safety", "NEW"),
+        # test_controller_recipients.py (8 new)
+        ("RECIPIENTS_INVALID_REJECTED", "Controller rejects invalid email and header injection attempts", "NEW"),
+        ("RECIPIENTS_MAX_THREE", "Controller strictly caps manual recipients to 3 (4th rejected)", "NEW"),
+        ("RECIPIENTS_RECENT_DROPDOWN", "Recent recipients persisted to state file (max 5, no .env)", "NEW"),
+        ("RECIPIENTS_DRY_RUN_ZERO_SMTP", "Dry-run send records SUCCESS_DRY_RUN with 0 SMTP calls", "NEW"),
+        ("RECIPIENTS_LIVE_SINGLE_CALL", "Live send makes exactly ONE mocked SMTP call per group", "NEW"),
+        ("RECIPIENTS_LIVE_RATE_LIMIT", "Live send enforces 10/hour and 30/day rate limits", "NEW"),
+        ("RECIPIENTS_SCHEDULED_UNAFFECTED", "Scheduled mail remains locked to configured recipient", "NEW"),
+        ("RECIPIENTS_AUDIT_LOGGING", "Every recipient addition/removal and dispatch is audited", "NEW"),
+        # test_summary_and_focus.py (3 new)
+        ("SUMMARY_STRUCTURE_AND_LEAD", "Summary has 6-8 sentences, <=22 words/sent, strictly grounded", "NEW"),
+        ("SUMMARY_TEXT_VARIATION", "Summaries differ across days with <40% word overlap pairwise", "NEW"),
+        ("SUMMARY_PDF_AND_BRIEFING", "PDF fits single page with >=11pt summary and verbatim framing", "NEW"),
     ]
-    inventory.append(("Suite 8: Scoring Determinism, Weekly Outlook & Consistency Suite", s8_tests))
+    inventory.append(("Suite 8: Scoring Determinism, Weekly Outlook, Consistency & Summary Suite", s8_tests))
 
     # Suite 9: Comprehensive Stage 9 Test Suite (67 checks)
     with open(ROOT_DIR / "stage9" / "state" / "test_final_results.json", "r", encoding="utf-8") as f:

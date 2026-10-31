@@ -498,52 +498,98 @@
       </div>
     </div>
 
-    <!-- Editorial Lead Paragraph (<= 60 words, fact validated) -->
-    <div class="editorial-lead" style="margin-top: 0;">
-      {{ editorial_lead }}
+    <!-- 3. Prominent Summary Box -->
+    <div class="card summary-box" style="margin-top: 20px; margin-bottom: 24px; padding: 20px 24px; border: 2px solid #0f172a; border-radius: 8px; background: #ffffff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
+        <h2 style="font-size: 1.25rem; font-weight: 800; margin: 0; color: #0f172a; letter-spacing: -0.2px;">Summary</h2>
+        <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: #f1f5f9; color: #334155; padding: 2px 8px; border-radius: 4px;">Operational Brief</span>
+      </div>
+      <div class="summary-body" style="font-size: 1.15rem; line-height: 1.6; color: #1e293b; font-weight: 500;">
+        {{ editorial_lead }}
+      </div>
+      <!-- Key Stats Footer Row (3-5 stats) -->
+      <div class="summary-stats-footer" style="display: flex; gap: 18px; margin-top: 14px; padding-top: 10px; border-top: 1px solid #e2e8f0; font-size: 0.82rem; color: #475569; flex-wrap: wrap;">
+        {% for st in summary_key_stats %}
+        <div style="display: flex; gap: 4px; align-items: baseline;">
+          <span style="color: #64748b; font-weight: 600;">{{ st.label }}:</span>
+          <strong style="color: #0f172a;">{{ st.val }}</strong>
+        </div>
+        {% endfor %}
+      </div>
     </div>
   </section>
 
+  <!-- 4. Next 7 Days Forecast Panel (3-Column Layout) -->
   {% if outlook and outlook.available %}
-  <!-- Next 7 Days Slim Forward-Look Strip (Pre-registered Weekly Demand Forecast) -->
-  <section class="card forecast-card" style="margin-bottom: 24px; border-left: 4px solid var(--accent); background: var(--card-bg, #ffffff); padding: 12px 18px; border-radius: var(--radius); box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
-    <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 4px;">
-      <h2 style="font-size: 0.95rem; font-weight: 700; margin: 0; color: #0f172a;">
-        {{ outlook.headline }}
-      </h2>
-      <a href="/insights?date={{ selected_date }}#forecast" style="color: var(--accent); font-size: 0.78rem; font-weight: 600; text-decoration: underline;">
-        Forecast details in Insights &rarr;
-      </a>
-    </div>
-
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 4px;">
-      <div style="font-size: 0.85rem; font-weight: 600; color: #334155;">
-        {{ outlook.breakdown_line }}
+  <section class="card forecast-panel forecast-card" style="margin-bottom: 24px; padding: 18px 22px; border-radius: 8px; border: 1px solid #cbd5e1; background: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; align-items: center;">
+      
+      <!-- Left Column: Demand Summary & Range -->
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <div style="font-size: 0.80rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b;">
+          Next 7 days: expected demand
+        </div>
+        <div style="font-size: 1.65rem; font-weight: 800; color: #0f172a; line-height: 1.2;">
+          ~{{ outlook.total_demand_due }} units due
+        </div>
+        <div style="font-size: 0.82rem; font-weight: 600; color: #475569;">
+          likely range {{ outlook.range_low }}–{{ outlook.range_high }}
+        </div>
+        {% if outlook.sparkline_svg %}
+        <div style="margin-top: 6px;">
+          {{ outlook.sparkline_svg | safe }}
+        </div>
+        {% endif %}
+        <div style="margin-top: 6px;">
+          <a href="/insights?date={{ selected_date }}#forecast" style="color: #0284c7; font-size: 0.78rem; font-weight: 600; text-decoration: underline;">
+            Details in Insights &rarr;
+          </a>
+        </div>
       </div>
-      {% if outlook.sparkline_svg %}
-      <div title="12-week actual vs forecast volume" style="display: flex; align-items: center;">
-        {{ outlook.sparkline_svg | safe }}
+
+      <!-- Middle Column: Horizontal Stacked Bar -->
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="font-size: 0.85rem; font-weight: 700; color: #1e293b;">
+          Already booked {{ outlook.due_known }} | Expected new orders ~{{ outlook.expected_new_orders }}
+        </div>
+        {% set total_vis = outlook.due_known + outlook.expected_new_orders %}
+        {% set pct_booked = (outlook.due_known / total_vis * 100) if total_vis > 0 else 50 %}
+        {% set pct_new = 100 - pct_booked %}
+        <div style="height: 20px; width: 100%; border-radius: 4px; overflow: hidden; display: flex; background: #e2e8f0; border: 1px solid #cbd5e1;">
+          <div style="width: {{ pct_booked }}%; background: #0f172a;" title="Already booked: {{ outlook.due_known }} units"></div>
+          <div style="width: {{ pct_new }}%; background: #94a3b8;" title="Expected new orders: ~{{ outlook.expected_new_orders }} units"></div>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #64748b; font-weight: 600;">
+          <span><span style="display: inline-block; width: 8px; height: 8px; background: #0f172a; border-radius: 2px;"></span> Booked ({{ pct_booked | round(1) }}%)</span>
+          <span><span style="display: inline-block; width: 8px; height: 8px; background: #94a3b8; border-radius: 2px;"></span> Expected New ({{ pct_new | round(1) }}%)</span>
+        </div>
       </div>
-      {% endif %}
-    </div>
 
-    <div style="font-size: 0.80rem; color: #475569; padding-top: 4px; border-top: 1px solid #f1f5f9;">
-      {{ outlook.product_breakdown }}
-    </div>
+      <!-- Right Column: Product Breakdown -->
+      <div style="display: flex; flex-direction: column; gap: 8px; border-left: 1px solid #f1f5f9; padding-left: 16px;">
+        <div style="font-size: 0.80rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">
+          Product Breakdown
+        </div>
+        <div style="font-size: 0.85rem; color: #1e293b; line-height: 1.5;">
+          <div><strong>Widget Model X:</strong> ~{{ outlook.total_x }}u due ({{ outlook.booked_x }} booked + ~{{ outlook.new_x }} new)</div>
+          <div style="margin-top: 6px;"><strong>Widget Model Y:</strong> ~{{ outlook.total_y }}u due ({{ outlook.booked_y }} booked + ~{{ outlook.new_y }} new)</div>
+        </div>
+      </div>
 
-    <div style="font-size: 0.68rem; font-style: italic; color: #94a3b8; margin-top: 4px;">
+    </div>
+    <div style="font-size: 0.68rem; font-style: italic; color: #94a3b8; margin-top: 10px; border-top: 1px solid #f8fafc; padding-top: 6px;">
       "{{ outlook.framing }}"
     </div>
   </section>
   {% elif is_past_day %}
-  <section class="card forecast-card" style="margin-bottom: 24px; border-left: 4px solid #94a3b8; background: #f8fafc; padding: 12px 16px; border-radius: var(--radius);">
+  <section class="card forecast-panel" style="margin-bottom: 24px; border-left: 4px solid #94a3b8; background: #f8fafc; padding: 14px 18px; border-radius: var(--radius);">
     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
       <div>
         <strong style="color: #475569; font-size: 0.88rem;">Next 7 days forecast:</strong>
         <span style="color: #64748b; font-size: 0.82rem; margin-left: 6px;">No forecast stored for this day</span>
       </div>
       <a href="/insights?date={{ selected_date }}#forecast" style="color: var(--accent); font-size: 0.78rem; font-weight: 600; text-decoration: underline;">
-        Forecast details in Insights &rarr;
+        Details in Insights &rarr;
       </a>
     </div>
     <div style="font-size: 0.68rem; font-style: italic; color: #94a3b8; margin-top: 4px;">
@@ -552,7 +598,60 @@
   </section>
   {% endif %}
 
-  <!-- Alert Cards or Calm Day Banner -->
+  <!-- 5. Focus Section (Today's Focus + Weekly Focus Side-by-Side) -->
+  <section class="focus-section" style="margin-bottom: 24px;">
+    <div class="focus-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px;">
+      
+      <!-- Today's Focus Box -->
+      <div class="card focus-box today-focus-card" id="today-focus-card" style="padding: 16px 18px; border-radius: 8px; border: 1px solid #cbd5e1; background: #ffffff;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
+          <h3 style="font-size: 0.95rem; font-weight: 700; margin: 0; color: #0f172a;">Today's Focus &bull; Shift Actions</h3>
+          <span style="font-size: 0.72rem; color: #64748b; font-weight: 600;">Ranked by urgency</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          {% for item in today_focus_items %}
+          <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 0.82rem;">
+            <span style="background: #0f172a; color: #ffffff; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; flex-shrink: 0;">{{ item.rank }}</span>
+            <div style="flex-grow: 1;">
+              <div style="font-weight: 700; color: #0f172a;">{{ item.action }}</div>
+              <div style="color: #64748b; font-size: 0.75rem; margin-top: 1px;">{{ item.reason }}</div>
+              <div style="display: flex; gap: 10px; margin-top: 3px; font-size: 0.72rem; color: #475569;">
+                <span><strong>Owner:</strong> {{ item.owner }}</span>
+                <span><strong>Time:</strong> {{ item.due_time }}</span>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Weekly Focus Box -->
+      <div class="card focus-box" style="padding: 16px 18px; border-radius: 8px; border: 1px solid #cbd5e1; background: #ffffff;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">
+          <h3 style="font-size: 0.95rem; font-weight: 700; margin: 0; color: #0f172a;">Weekly Focus &bull; Rolling 7-Day Priorities</h3>
+          <span style="font-size: 0.70rem; color: #64748b; font-style: italic;">planned from known data, not predictions</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          {% for item in weekly_focus_items %}
+          <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 0.82rem;">
+            <span style="background: #334155; color: #ffffff; border-radius: 4px; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; flex-shrink: 0;">{{ item.rank }}</span>
+            <div style="flex-grow: 1;">
+              <div style="font-weight: 700; color: #0f172a;">{{ item.action }}</div>
+              <div style="color: #64748b; font-size: 0.75rem; margin-top: 1px;">{{ item.reason }}</div>
+              <div style="display: flex; gap: 10px; margin-top: 3px; font-size: 0.72rem; color: #475569;">
+                <span><strong>Context:</strong> {{ item.context }}</span>
+                <span><strong>Category:</strong> {{ item.category }}</span>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 6. Alert Cards or Calm Day Banner -->
   <section class="section-h">
     <div class="section-h-title">Operational Status</div>
   </section>
@@ -619,41 +718,6 @@
     {% endfor %}
   </div>
   {% endif %}
-
-  <!-- Today's Focus Dark Band -->
-  <section class="focus-band">
-    <div class="focus-band-title">
-      <span>Today's Focus &bull; Top 5 Shift Actions</span>
-      <span style="font-size:0.75rem; text-transform:none; color:#cbd5e1">Ranked by operational impact</span>
-    </div>
-
-    <div style="overflow-x:auto">
-      <table class="focus-table">
-        <thead>
-          <tr>
-            <th style="width:36px">#</th>
-            <th>Action</th>
-            <th>Owner</th>
-            <th>Target Time</th>
-            <th>Reason</th>
-            <th>Root Fix</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for item in focus_items %}
-          <tr>
-            <td><span class="rank-badge">{{ item.rank }}</span></td>
-            <td><strong>{{ item.action }}</strong></td>
-            <td><span class="owner-pill">{{ item.owner }}</span></td>
-            <td style="color:#cbd5e1; font-family:monospace">{{ item.due_time }}</td>
-            <td style="color:#cbd5e1">{{ item.reason }}</td>
-            <td style="color:#93c5fd">{{ item.root_fix }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </section>
 
   <!-- Supplier Watch -->
   <section class="section-h">

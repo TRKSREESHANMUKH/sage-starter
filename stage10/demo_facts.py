@@ -360,6 +360,10 @@ def generate_demo_facts() -> Dict[str, Any]:
         act_placed_x = sum(so["quantity_ordered"] for so in actual_placed if so["product_id"] == 201)
         act_placed_y = sum(so["quantity_ordered"] for so in actual_placed if so["product_id"] == 202)
 
+        is_complete_window = (d_obj + timedelta(days=7)) <= date(2026, 1, 10)
+        act_due_display = f"{act_due_tot}u (X={act_due_x}, Y={act_due_y})" if is_complete_window else "incomplete (data ends 10 Jan)"
+        act_placed_display = f"{act_placed_tot}u (X={act_placed_x}, Y={act_placed_y})" if is_complete_window else "incomplete (data ends 10 Jan)"
+
         daily_ledger.append({
             "day": d_num,
             "date": d_str,
@@ -383,12 +387,13 @@ def generate_demo_facts() -> Dict[str, Any]:
                 "likely_range_high": tot_hi,
                 "booked_units": booked,
                 "expected_new_orders": exp_new,
-                "actual_units_due_next_7d": act_due_tot,
-                "actual_units_due_x": act_due_x,
-                "actual_units_due_y": act_due_y,
-                "actual_units_placed_next_7d": act_placed_tot,
-                "actual_units_placed_x": act_placed_x,
-                "actual_units_placed_y": act_placed_y,
+                "forecast_window_complete": is_complete_window,
+                "actual_units_due_next_7d": act_due_display,
+                "actual_units_due_x": act_due_x if is_complete_window else None,
+                "actual_units_due_y": act_due_y if is_complete_window else None,
+                "actual_units_placed_next_7d": act_placed_display,
+                "actual_units_placed_x": act_placed_x if is_complete_window else None,
+                "actual_units_placed_y": act_placed_y if is_complete_window else None,
             },
             "active_pos": daily_po_status.get(d_str, [])
         })
@@ -431,13 +436,13 @@ def generate_demo_facts() -> Dict[str, Any]:
 
         f.write("\n---\n\n")
         f.write("## 2. Daily Forecast Strip Values & Realized Ledger Actuals (Days 1–10)\n\n")
-        f.write("> *Method Note*: The demo feed's order rate is about 3x the 2025 rate, so demo-day forecasts are not an accuracy test. Accuracy metrics are never displayed for demo days.\n\n")
+        f.write("> *Method Note*: The demo feed's order rate is elevated (~7.3 vs ~14.6 units/day, 2.0x units ratio; ~0.63 vs 2.2 orders/day, 3.5x orders ratio), so demo-day forecasts are not an accuracy test. Accuracy metrics are never displayed for demo days.\n\n")
         f.write("| Day | Date | Forecast Strip Headline | Booked vs Expected New | Product Breakdown | Actual Units Due (D+1..D+7) | Actual Units Placed (D+1..D+7) |\n")
         f.write("| :--- | :--- | :--- | :--- | :--- | :---: | :---: |\n")
         for d in daily_ledger:
             fc = d["forecast_strip"]
-            act_due = f"{fc['actual_units_due_next_7d']}u (X={fc['actual_units_due_x']}, Y={fc['actual_units_due_y']})"
-            act_placed = f"{fc['actual_units_placed_next_7d']}u (X={fc['actual_units_placed_x']}, Y={fc['actual_units_placed_y']})"
+            act_due = fc["actual_units_due_next_7d"]
+            act_placed = fc["actual_units_placed_next_7d"]
             f.write(f"| Day {d['day']} | {d['date']} | {fc['headline']} | {fc['breakdown_text']} | {fc['product_breakdown']} | {act_due} | {act_placed} |\n")
 
         f.write("\n---\n\n")

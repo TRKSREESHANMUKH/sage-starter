@@ -24,20 +24,20 @@
 
 ## 2. Daily Forecast Strip Values & Realized Ledger Actuals (Days 1–10)
 
-> *Method Note*: The demo feed's order rate is about 3x the 2025 rate, so demo-day forecasts are not an accuracy test. Accuracy metrics are never displayed for demo days.
+> *Method Note*: The demo feed's order rate is elevated (~7.3 vs ~14.6 units/day, 2.0x units ratio; ~0.63 vs 2.2 orders/day, 3.5x orders ratio), so demo-day forecasts are not an accuracy test. Accuracy metrics are never displayed for demo days.
 
 | Day | Date | Forecast Strip Headline | Booked vs Expected New | Product Breakdown | Actual Units Due (D+1..D+7) | Actual Units Placed (D+1..D+7) |
 | :--- | :--- | :--- | :--- | :--- | :---: | :---: |
 | Day 1 | 2026-01-01 | Next 7 days: expected demand ~146 units due (likely range 133–161) | 117 already booked + ~29 expected new orders | Widget Model X: ~39u due (31 booked + ~8 new) | Widget Model Y: ~108u due (86 booked + ~22 new) | 223u (X=113, Y=110) | 118u (X=90, Y=28) |
 | Day 2 | 2026-01-02 | Next 7 days: expected demand ~136 units due (likely range 120–155) | 99 already booked + ~37 expected new orders | Widget Model X: ~69u due (54 booked + ~15 new) | Widget Model Y: ~67u due (45 booked + ~22 new) | 185u (X=116, Y=69) | 96u (X=68, Y=28) |
 | Day 3 | 2026-01-03 | Next 7 days: expected demand ~110 units due (likely range 91–130) | 69 already booked + ~41 expected new orders | Widget Model X: ~41u due (24 booked + ~17 new) | Widget Model Y: ~69u due (45 booked + ~24 new) | 151u (X=82, Y=69) | 92u (X=64, Y=28) |
-| Day 4 | 2026-01-04 | Next 7 days: expected demand ~90 units due (likely range 70–112) | 46 already booked + ~44 expected new orders | Widget Model X: ~44u due (24 booked + ~20 new) | Widget Model Y: ~46u due (22 booked + ~24 new) | 124u (X=78, Y=46) | 78u (X=54, Y=24) |
-| Day 5 | 2026-01-05 | Next 7 days: expected demand ~80 units due (likely range 58–104) | 32 already booked + ~48 expected new orders | Widget Model X: ~32u due (10 booked + ~22 new) | Widget Model Y: ~48u due (22 booked + ~26 new) | 96u (X=54, Y=42) | 64u (X=44, Y=20) |
-| Day 6 | 2026-01-06 | Next 7 days: expected demand ~70 units due (likely range 47–96) | 18 already booked + ~52 expected new orders | Widget Model X: ~40u due (14 booked + ~26 new) | Widget Model Y: ~30u due (4 booked + ~26 new) | 64u (X=44, Y=20) | 46u (X=30, Y=16) |
-| Day 7 | 2026-01-07 | Next 7 days: expected demand ~70 units due (likely range 45–98) | 14 already booked + ~56 expected new orders | Widget Model X: ~38u due (10 booked + ~28 new) | Widget Model Y: ~32u due (4 booked + ~28 new) | 46u (X=30, Y=16) | 32u (X=20, Y=12) |
-| Day 8 | 2026-01-08 | Next 7 days: expected demand ~71 units due (likely range 44–100) | 12 already booked + ~59 expected new orders | Widget Model X: ~38u due (8 booked + ~30 new) | Widget Model Y: ~32u due (4 booked + ~28 new) | 32u (X=20, Y=12) | 20u (X=12, Y=8) |
-| Day 9 | 2026-01-09 | Next 7 days: expected demand ~71 units due (likely range 44–102) | 10 already booked + ~61 expected new orders | Widget Model X: ~38u due (6 booked + ~32 new) | Widget Model Y: ~34u due (4 booked + ~30 new) | 20u (X=12, Y=8) | 10u (X=6, Y=4) |
-| Day 10 | 2026-01-10 | Next 7 days: expected demand ~74 units due (likely range 45–106) | 10 already booked + ~64 expected new orders | Widget Model X: ~39u due (6 booked + ~33 new) | Widget Model Y: ~34u due (4 booked + ~30 new) | 10u (X=6, Y=4) | 0u (X=0, Y=0) |
+| Day 4 | 2026-01-04 | Next 7 days: expected demand ~90 units due (likely range 70–112) | 46 already booked + ~44 expected new orders | Widget Model X: ~44u due (24 booked + ~20 new) | Widget Model Y: ~46u due (22 booked + ~24 new) | incomplete (data ends 10 Jan) | incomplete (data ends 10 Jan) |
+| Day 5 | 2026-01-05 | Next 7 days: expected demand ~80 units due (likely range 58–104) | 32 already booked + ~48 expected new orders | Widget Model X: ~32u due (10 booked + ~22 new) | Widget Model Y: ~48u due (22 booked + ~26 new) | incomplete (data ends 10 Jan) | incomplete (data ends 10 Jan) |
+| Day 6 | 2026-01-06 | Next 7 days: expected demand ~70 units due (likely range 47–96) | 18 already booked + ~52 expected new orders | Widget Model X: ~40u due (14 booked + ~26 new) | Widget Model Y: ~30u due (4 booked + ~26 new) | incomplete (data ends 10 Jan) | incomplete (data ends 10 Jan) |
+| Day 7 | 2026-01-07 | Next 7 days: expected demand ~70 units due (likely range 45–98) | 14 already booked + ~56 expected new orders | Widget Model X: ~38u due (10 booked + ~28 new) | Widget Model Y: ~32u due (4 booked + ~28 new) | incomplete (data ends 10 Jan) | incomplete (data ends 10 Jan) |
+| Day 8 | 2026-01-08 | Next 7 days: expected demand ~71 units due (likely range 44–100) | 12 already booked + ~59 expected new orders | Widget Model X: ~38u due (8 booked + ~30 new) | Widget Model Y: ~32u due (4 booked + ~28 new) | incomplete (data ends 10 Jan) | incomplete (data ends 10 Jan) |
+| Day 9 | 2026-01-09 | Next 7 days: expected demand ~71 units due (likely range 44–102) | 10 already booked + ~61 expected new orders | Widget Model X: ~38u due (6 booked + ~32 new) | Widget Model Y: ~34u due (4 booked + ~30 new) | incomplete (data ends 10 Jan) | incomplete (data ends 10 Jan) |
+| Day 10 | 2026-01-10 | Next 7 days: expected demand ~74 units due (likely range 45–106) | 10 already booked + ~64 expected new orders | Widget Model X: ~39u due (6 booked + ~33 new) | Widget Model Y: ~34u due (4 booked + ~30 new) | incomplete (data ends 10 Jan) | incomplete (data ends 10 Jan) |
 
 ---
 
@@ -57,15 +57,15 @@
 
 | Order ID | Placed Date | Requested Date | Product | Qty | Shipped Date | Final Status | Source Provenance | Pack CSV SHA256 |
 | :---: | :---: | :---: | :--- | :---: | :---: | :---: | :--- | :--- |
-| SO #220 | 2025-12-25 | 2026-01-02 | Widget Model Y (202) | 13u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `197954063390…` |
-| SO #221 | 2025-12-25 | 2026-01-02 | Widget Model Y (202) | 8u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `197954063390…` |
-| SO #224 | 2025-12-29 | 2026-01-04 | Widget Model Y (202) | 14u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `197954063390…` |
-| SO #225 | 2025-12-29 | 2026-01-02 | Widget Model Y (202) | 12u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `197954063390…` |
-| SO #226 | 2025-12-29 | 2026-01-02 | Widget Model Y (202) | 9u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `197954063390…` |
-| SO #227 | 2025-12-30 | 2026-01-03 | Widget Model X (201) | 12u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `197954063390…` |
-| SO #228 | 2025-12-30 | 2026-01-06 | Widget Model Y (202) | 18u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `197954063390…` |
-| SO #229 | 2025-12-30 | 2026-01-05 | Widget Model X (201) | 14u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `197954063390…` |
-| SO #230 | 2025-12-31 | 2026-01-04 | Widget Model Y (202) | 9u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `197954063390…` |
+| SO #220 | 2025-12-25 | 2026-01-02 | Widget Model Y (202) | 13u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `9a377d4b0cae…` |
+| SO #221 | 2025-12-25 | 2026-01-02 | Widget Model Y (202) | 8u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `9a377d4b0cae…` |
+| SO #224 | 2025-12-29 | 2026-01-04 | Widget Model Y (202) | 14u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `9a377d4b0cae…` |
+| SO #225 | 2025-12-29 | 2026-01-02 | Widget Model Y (202) | 12u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `9a377d4b0cae…` |
+| SO #226 | 2025-12-29 | 2026-01-02 | Widget Model Y (202) | 9u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `9a377d4b0cae…` |
+| SO #227 | 2025-12-30 | 2026-01-03 | Widget Model X (201) | 12u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `9a377d4b0cae…` |
+| SO #228 | 2025-12-30 | 2026-01-06 | Widget Model Y (202) | 18u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `9a377d4b0cae…` |
+| SO #229 | 2025-12-30 | 2026-01-05 | Widget Model X (201) | 14u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `9a377d4b0cae…` |
+| SO #230 | 2025-12-31 | 2026-01-04 | Widget Model Y (202) | 9u | Unshipped (Backordered) | Backorder | 2025 Baseline Ledger (live/sage_live_baseline.db) | `9a377d4b0cae…` |
 | SO #231 | 2026-01-01 | 2026-01-02 | Widget Model X (201) | 5u | 2026-01-02 | Delivered | demo_data/packs/2026-01-01/sales_orders.csv | `9db69b75ff32…` |
 | SO #232 | 2026-01-01 | 2026-01-02 | Widget Model Y (202) | 3u | 2026-01-02 | Delivered | demo_data/packs/2026-01-01/sales_orders.csv | `9db69b75ff32…` |
 | SO #233 | 2026-01-02 | 2026-01-03 | Widget Model X (201) | 16u | 2026-01-03 | Delivered | demo_data/packs/2026-01-02/sales_orders.csv | `41f297e6c322…` |

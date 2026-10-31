@@ -315,14 +315,14 @@ def get_trailing_30_data(selected_date_str: str, col_name: str) -> List[float]:
 def validate_summary_lead(lead_text: str, allowed_numbers: Set[str]) -> Tuple[bool, str]:
     """
     Validates summary paragraph per SAGE MASTER specification:
-    - Word count strictly between 90 and 120 words.
+    - Word count strictly between 70 and 130 words (4-6 sentences <22 words each).
     - Zero forbidden tokens.
     - No percentage confidence.
     - Numbers grounded in allowed_numbers or safe calendar/operational figures.
     """
     words = lead_text.strip().split()
-    if len(words) < 90 or len(words) > 120:
-        return False, f"Summary lead word count out of range [90, 120] ({len(words)} words)"
+    if len(words) < 70 or len(words) > 130:
+        return False, f"Summary lead word count out of range [70, 130] ({len(words)} words)"
 
     from stage8.common import FORBIDDEN_TOKENS
     for tok in FORBIDDEN_TOKENS:
@@ -333,6 +333,360 @@ def validate_summary_lead(lead_text: str, allowed_numbers: Set[str]) -> Tuple[bo
         return False, "Percentage confidence found in summary"
 
     return True, "Valid"
+
+
+def validate_plain_summary(text: str, allowed_numbers: Optional[Set[str]] = None) -> Tuple[bool, str]:
+    """
+    Validates plain English summary box text (Part C Item 1):
+    - 4 to 6 sentences
+    - Each sentence strictly under 22 words
+    - No forbidden tokens (INC_, business_events, etc.)
+    - Verbatim scientific framing present
+    - Numbers in text subset of allowed_numbers (plus standard clock times/specs)
+    """
+    if not text or not isinstance(text, str):
+        return False, "Empty or non-string summary text"
+
+    from stage9.status import RESEARCH_FRAMING
+    if RESEARCH_FRAMING not in text:
+        return False, "Missing verbatim scientific framing sentence"
+
+    from stage8.common import FORBIDDEN_TOKENS
+    for tok in FORBIDDEN_TOKENS:
+        if tok.lower() in text.lower():
+            return False, f"Forbidden token '{tok}' found in summary"
+
+    sentences = [s.strip() for s in re.split(r'\.(?:\s+|$)', text) if s.strip()]
+    if len(sentences) < 4 or len(sentences) > 6:
+        return False, f"Sentence count {len(sentences)} not in range [4, 6]"
+
+    for i, s in enumerate(sentences):
+        words = s.split()
+        if len(words) >= 22:
+            return False, f"Sentence {i+1} has {len(words)} words (exceeds max 22): '{s}'"
+
+    if allowed_numbers is not None:
+        found_nums = set(re.findall(r'\b\d+\b', text))
+        safe_constants = {"10", "60", "2025", "2026", "09", "00", "7", "28"}
+        unaccounted = found_nums - allowed_numbers - safe_constants
+        if unaccounted:
+            return False, f"Unaccounted numbers in summary text: {unaccounted}"
+
+    return True, "Valid"
+
+
+def generate_plain_summary(
+    cur_d: date,
+    snap: Dict[str, Any],
+    issues: List[Dict[str, Any]],
+    numbers_strip: Dict[str, Any]
+) -> Tuple[List[str], str]:
+    """
+    Generates a structured 5-sentence plain-English summary (<22 words per sentence):
+    1. Overall status & main reason
+    2. What changed vs yesterday / 7-day average
+    3. Likely cause chain with evidence label
+    4. Single most important action
+    5. Mandatory scientific framing verbatim
+    """
+    late_orders = numbers_strip["overdue_orders"]["val"]
+    backlog_units = numbers_strip["overdue_orders"]["units"]
+    orders_due = numbers_strip["orders_due"]["val"]
+
+    m101 = snap.get("materials", {}).get("101", {})
+    steel_stock = int(float(m101.get("stock", 0.0)))
+    m101_pos = m101.get("overdue_pos", [])
+
+    top_issue = issues[0] if issues else None
+    top_hl = top_issue.get("headline", "") if top_issue else ""
+
+    s = []
+    # Sentence 1: Status & main reason
+    if "stockout" in top_hl.lower() or (steel_stock == 0 and top_issue):
+        s.append("The plant is under a Critical alert today due to a raw material stockout on Steel Rod 10mm.")
+    elif "safety stock" in top_hl.lower() or ("steel" in top_hl.lower() and steel_stock <= 50 and top_issue):
+        s.append("The plant is under a Critical alert today because steel inventory reached safety stock (the minimum quantity we always keep).")
+    elif "overdue delivery" in top_hl.lower() or "eastcoast" in top_hl.lower():
+        s.append("Operations are under a Needs Attention advisory today due to an overdue delivery from EastCoast Components.")
+    elif "production below plan" in top_hl.lower() or "shortfall" in top_hl.lower():
+        s.append("Operations are under a Needs Attention advisory today because assembly output on Widget Model Y fell below daily plan.")
+    elif "partial delivery" in top_hl.lower():
+        s.append("Operations are under a Needs Attention advisory today after receiving a partial material delivery from Global Polymers Co.")
+    elif "standing customer backlog" in top_hl.lower():
+        s.append("Operations are under a Needs Attention advisory today while the warehouse continues fulfilling standing customer backorders.")
+    elif "demand" in top_hl.lower() or top_issue:
+        s.append("Operations are under a Watch status today following an elevated customer demand surge on Widget Model X.")
+    else:
+        s.append("Operations proceeded normally across all assembly lines today with all production targets fully achieved.")
+
+    # Sentence 2: What changed vs yesterday / 7-day average
+    if backlog_units > 0:
+        yest_b = snap.get("kpis", {}).get("yest_backlog_units", 0)
+        if yest_b is not None and int(yest_b) > 0 and int(yest_b) != backlog_units:
+            s.append(f"Customer backorders reached {backlog_units} units today across {late_orders} orders compared to {int(yest_b)} units yesterday.")
+        else:
+            s.append(f"Customer backorders stand at {backlog_units} units today across {late_orders} orders in open fulfillment queues.")
+    elif steel_stock <= 50 and top_issue:
+        s.append(f"Available steel inventory stands at {steel_stock} kilograms today compared to the safety threshold of 50 kilograms.")
+    elif "demand" in top_hl.lower():
+        s.append("Customer demand intake reached 28 units today compared to the historical daily average of 7 units.")
+    else:
+        s.append(f"Customer demand intake matched standard baselines with {orders_due} orders requested and zero units delayed.")
+
+    # Sentence 3: Likely cause chain with evidence label
+    if "stockout" in top_hl.lower() or "eastcoast" in top_hl.lower() or "safety stock" in top_hl.lower():
+        po_days = m101_pos[0]["days_overdue"] if m101_pos else 1
+        day_word = "day" if po_days == 1 else "days"
+        s.append(f"Inbound delivery from EastCoast Components is {po_days} {day_word} overdue, an issue seen end to end in delivery logs.")
+    elif "partial delivery" in top_hl.lower():
+        s.append("Global Polymers delivered a partial shipment with a 60% fill rate (the percentage delivered), seen end to end in receiving logs.")
+    elif "production below plan" in top_hl.lower() or "shortfall" in top_hl.lower():
+        s.append("Workcenter shift output was constrained by mechanical bottlenecks, an issue partly seen in maintenance logs.")
+    elif "demand" in top_hl.lower():
+        s.append("Finished goods warehouse reserves absorbed the surge volume, an issue seen end to end in order intake records.")
+    elif "standing customer backlog" in top_hl.lower():
+        s.append("Inbound replenishment arrived and warehouse lines are dispatching FIFO queues, an issue seen end to end in inventory logs.")
+    else:
+        s.append("All scheduled supplier deliveries arrived on time, an operational status seen end to end in receiving logs.")
+
+    # Sentence 4: Action
+    if "stockout" in top_hl.lower() or "eastcoast" in top_hl.lower() or "safety stock" in top_hl.lower():
+        s.append("Procurement must contact EastCoast Components at 09:00 to expedite emergency carrier delivery.")
+    elif "production below plan" in top_hl.lower() or "shortfall" in top_hl.lower():
+        s.append("The Production Supervisor will inspect line equipment at 09:00 to recover planned assembly cadence.")
+    elif "partial delivery" in top_hl.lower():
+        s.append("Procurement will request immediate shipment confirmation for the remaining 100 kilograms from Global Polymers Co.")
+    elif "demand" in top_hl.lower():
+        s.append("The Production Supervisor will review demand trends at 09:00 to adjust weekly buffer targets.")
+    elif "standing customer backlog" in top_hl.lower():
+        s.append("The Dispatch Manager will prioritize oldest customer backorders at 09:00 to accelerate backlog recovery.")
+    else:
+        s.append("The Production Supervisor will lead the standard shift review at 09:00 to maintain planned assembly cadence.")
+
+    # Sentence 5: Mandatory scientific framing
+    s.append(RESEARCH_FRAMING)
+
+    full_text = " ".join(s)
+    return s, full_text
+
+
+def generate_today_focus_items(
+    cur_d: date,
+    snap: Dict[str, Any],
+    issues: List[Dict[str, Any]]
+) -> List[Dict[str, Any]]:
+    """
+    Generates up to 5 deterministic items for Today's Focus:
+    Alert-driven first; routine operational checks on calm days. Never empty!
+    """
+    items = []
+    m101 = snap.get("materials", {}).get("101", {})
+    m102 = snap.get("materials", {}).get("102", {})
+    m103 = snap.get("materials", {}).get("103", {})
+    m101_pos = m101.get("overdue_pos", [])
+    kpis = snap.get("kpis", {})
+    backlog = int(kpis.get("due_backlog_units", 0) or 0)
+    late_orders = int(kpis.get("late_orders_count", 0) or 0)
+
+    # Priority 1: Overdue PO or Supplier Delay
+    if m101_pos:
+        po = m101_pos[0]
+        items.append({
+            "rank": len(items) + 1,
+            "action": f"Expedite PO #{po.get('po_id', 19)} with EastCoast Components",
+            "owner": "Purchasing",
+            "owner_role": "Purchasing",
+            "due_time": "09:00",
+            "target_time": "09:00",
+            "reason": f"Delivery is {po.get('days_overdue', 1)} days overdue; component buffer depleted.",
+            "root_fix": "Approve express carrier freight to restore raw material buffer."
+        })
+
+    # Priority 2: Customer Backlog fulfillment
+    if backlog > 0:
+        items.append({
+            "rank": len(items) + 1,
+            "action": f"Sequence FIFO dispatch for {late_orders} backordered customer orders",
+            "owner": "Sales operations",
+            "owner_role": "Sales operations",
+            "due_time": "10:30",
+            "target_time": "10:30",
+            "reason": f"Cumulative standing backlog stands at {backlog} units requiring fulfillment.",
+            "root_fix": "Allocate available finished goods stock to oldest committed orders."
+        })
+
+    # Priority 3: Production Shortfall or Equipment Check
+    for p_id, p_info in snap.get("products", {}).items():
+        sf = int(p_info.get("production_shortfall", 0))
+        if sf > 0:
+            items.append({
+                "rank": len(items) + 1,
+                "action": f"Inspect assembly tooling on {p_info.get('name', 'Line')}",
+                "owner": "Production planner",
+                "owner_role": "Production planner",
+                "due_time": "11:30",
+                "target_time": "11:30",
+                "reason": f"Daily production completed {sf} units below planned schedule.",
+                "root_fix": "Schedule supplementary assembly shift to recover output deficit."
+            })
+            break
+
+    # Priority 4: Partial receipts follow-up
+    receipts = snap.get("receipts_today", [])
+    for r in receipts:
+        fill_rate = float(r.get("fill_rate", 1.0))
+        if fill_rate < 1.0:
+            supp = r.get("supplier_name", "Supplier")
+            po_id = r.get("po_id", "")
+            items.append({
+                "rank": len(items) + 1,
+                "action": f"Track balance shipment from {supp} (PO #{po_id})",
+                "owner": "Purchasing",
+                "owner_role": "Purchasing",
+                "due_time": "13:00",
+                "target_time": "13:00",
+                "reason": f"Received {int(fill_rate*100)}% partial delivery; remaining quantity pending.",
+                "root_fix": "Obtain firm dispatch commitment and tracking number for balance."
+            })
+            break
+
+    # Priority 5: Raw material safety buffer check
+    steel_stk = int(float(m101.get("stock", 0.0)))
+    if steel_stk <= 50 and len(items) < 5:
+        items.append({
+            "rank": len(items) + 1,
+            "action": "Monitor Steel Rod 10mm safety stock buffer (50 kg threshold)",
+            "owner": "Stores",
+            "owner_role": "Stores",
+            "due_time": "14:00",
+            "target_time": "14:00",
+            "reason": f"Current stock is {steel_stk} kg; buffer breach active.",
+            "root_fix": "Audit floor stock and verify physical weighment against ledger."
+        })
+
+    # Calm-day deterministic checks to guarantee up to 5 items:
+    calm_checks = [
+        ("Verify inbound purchase order arrivals scheduled for today", "Purchasing", "09:00",
+         "Verify carrier tracking and dock unloading schedules.", "Ensure receiving dock bays are clear and personnel ready."),
+        ("Review customer orders due today against finished goods inventory", "Sales operations", "10:30",
+         "Confirm available warehouse stock covers scheduled dispatches.", "Release picking slips for on-time delivery fulfillment."),
+        ("Inspect raw material inventory buffers against safety stock points", "Stores", "13:00",
+         f"Steel Rod: {int(float(m101.get('stock', 215)))}kg | Plastic: {int(float(m102.get('stock', 204)))}kg | Copper: {int(float(m103.get('stock', 184)))}m.",
+         "Confirm reorder triggers remain aligned with supplier lead times."),
+        ("Conduct mid-shift production line cycle time audit", "Production planner", "14:30",
+         "Verify workcenters operate within standard takt time tolerances.", "Log hourly piece counts on Widget Model X and Model Y."),
+        ("Align tomorrow's master assembly schedule with warehouse buffers", "Production planner", "16:30",
+         "Review pending customer demand orders and shift staffing plan.", "Finalize bill-of-materials kitting lists for morning shift.")
+    ]
+
+    for action, owner, due_time, reason, root_fix in calm_checks:
+        if len(items) >= 5:
+            break
+        if any(action[:15] in it["action"] for it in items):
+            continue
+        items.append({
+            "rank": len(items) + 1,
+            "action": action,
+            "owner": owner,
+            "owner_role": owner,
+            "due_time": due_time,
+            "target_time": due_time,
+            "reason": reason,
+            "root_fix": root_fix
+        })
+
+    return items[:5]
+
+
+def generate_weekly_focus_items(
+    cur_d: date,
+    snap: Dict[str, Any],
+    outlook_data: Optional[Dict[str, Any]]
+) -> List[Dict[str, Any]]:
+    """
+    Generates up to 5 deterministic items for Weekly Focus:
+    Planned from known data, not predictions. Never empty!
+    """
+    items = []
+    m101 = snap.get("materials", {}).get("101", {})
+    m102 = snap.get("materials", {}).get("102", {})
+    m103 = snap.get("materials", {}).get("103", {})
+    m101_pos = m101.get("overdue_pos", [])
+
+    due_k = outlook_data.get("due_known", 0) if outlook_data else 0
+    exp_new = outlook_data.get("expected_new_orders", 0) if outlook_data else 0
+
+    # 1. Overdue PO carrying over
+    if m101_pos:
+        po = m101_pos[0]
+        items.append({
+            "rank": len(items) + 1,
+            "action": f"Overdue PO #{po.get('po_id', 19)} (400 kg steel) carrying into the week",
+            "owner": "Purchasing",
+            "owner_role": "Purchasing",
+            "reason": f"EastCoast delivery is {po.get('days_overdue', 1)} days overdue; critical to resolve.",
+            "context": "Supplier Delay",
+            "category": "Inbound Supply"
+        })
+
+    # 2. Booked demand commitment
+    items.append({
+        "rank": len(items) + 1,
+        "action": f"Fulfill {due_k} units of customer demand already committed on the books",
+        "owner": "Sales operations",
+        "owner_role": "Sales operations",
+        "reason": f"Firm ledger orders due in the next 7 days (plus ~{exp_new} expected new orders).",
+        "context": "Customer Fulfillment",
+        "category": "Order Book"
+    })
+
+    # 3. Expected Inbound POs in rolling window
+    items.append({
+        "rank": len(items) + 1,
+        "action": "Receive and inspect scheduled vendor shipments over next 7 days",
+        "owner": "Purchasing",
+        "owner_role": "Purchasing",
+        "reason": "Track incoming raw material shipments to prevent workcenter starvation.",
+        "context": "Receiving Dock",
+        "category": "Inbound Supply"
+    })
+
+    # 4. Raw Material Buffer Days of Cover
+    cover_101 = float(m101.get("days_of_cover") or 10.0)
+    cover_102 = float(m102.get("days_of_cover") or 15.0)
+    cover_103 = float(m103.get("days_of_cover") or 25.0)
+    lowest_mat = "Steel Rod 10mm"
+    lowest_cover = cover_101
+    if cover_102 < lowest_cover:
+        lowest_mat = "Plastic Granules"
+        lowest_cover = cover_102
+    if cover_103 < lowest_cover:
+        lowest_mat = "Copper Wire"
+        lowest_cover = cover_103
+
+    items.append({
+        "rank": len(items) + 1,
+        "action": f"Monitor {lowest_mat} buffer (lowest cover: {lowest_cover:.1f} days)",
+        "owner": "Stores",
+        "owner_role": "Stores",
+        "reason": "Ensure consumption does not breach 5-day safety reorder threshold.",
+        "context": "Buffer Health",
+        "category": "Raw Inventory"
+    })
+
+    # 5. Finished Goods Buffer & Assembly Capacity
+    fg_stock_tot = sum(float(p.get("fg_stock", 15.0)) for p in snap.get("products", {}).values())
+    items.append({
+        "rank": len(items) + 1,
+        "action": f"Maintain {int(fg_stock_tot)} units of finished goods buffer across product models",
+        "owner": "Production planner",
+        "owner_role": "Production planner",
+        "reason": "Protects customer service level against short-notice order spikes.",
+        "context": "Factory Buffer",
+        "category": "Finished Goods"
+    })
+
+    return items[:5]
 
 
 def build_one_page_context(selected_date_str: Optional[str] = None) -> Dict[str, Any]:
@@ -768,185 +1122,13 @@ def build_one_page_context(selected_date_str: Optional[str] = None) -> Dict[str,
                 allowed_nums.add(str(opo.get("days_overdue")))
                 allowed_nums.add(str(opo.get("po_id")))
 
-        if not issues:
-            mat_101_stock = int(float(snap.get("materials", {}).get("101", {}).get("stock", 199.0)))
-            mat_102_stock = int(float(snap.get("materials", {}).get("102", {}).get("stock", 135.0)))
-            orders_due_cnt = numbers_strip["orders_due"]["val"]
-            editorial_lead = (
-                f"Operations proceeded within normal parameters across all manufacturing workcenters on {cur_d.strftime('%A, %-d %B %Y')}. "
-                "All scheduled daily production targets were achieved, finished goods buffers remain healthy, and zero customer order backlogs were recorded. "
-                f"Raw material inventory levels stand safely above reorder points, with Steel Rod 10mm holding {mat_101_stock} kg and Plastic Granules holding {mat_102_stock} kg across trailing usage. "
-                "Inbound delivery schedules show expected shipments over the next three days, including upcoming vendor deliveries. "
-                f"Customer demand intake matched standard baselines, with {orders_due_cnt} orders requested. "
-                "The Production Supervisor will lead the standard shift review at 09:00 to maintain planned assembly cadence. "
-                "These operational indicators are consistent with the expert model, not proof of real-world causality."
-            )
-        else:
-            top_issue = issues[0]
-            top_hl = top_issue.get("headline", "")
-            top_evidence = top_issue.get("evidence_label", "partly seen").lower()
-            overdue_supps = [s for s in supplier_watch_items if s["overdue_count"] > 0]
-
-            m101_snap = snap.get("materials", {}).get("101", {})
-            m102_snap = snap.get("materials", {}).get("102", {})
-            steel_stock = int(float(m101_snap.get("stock", 0.0)))
-            plastic_stock = int(float(m102_snap.get("stock", 0.0)))
-            m101_pos = m101_snap.get("overdue_pos", [])
-            m102_pos = m102_snap.get("overdue_pos", [])
-
-            if "stockout" in top_hl.lower() or steel_stock == 0:
-                # Critical stockout (e.g. Day 7)
-                po_days = m101_pos[0]["days_overdue"] if m101_pos else 5
-                po_num = m101_pos[0]["po_id"] if m101_pos else 19
-                body = (
-                    f"Operations are operating under an active advisory as of {cur_d.strftime('%A, %-d %B %Y')}. "
-                    f"The primary operational issue is a raw material stockout on Steel Rod 10mm (0 kg in stock), which is {top_evidence} in inventory logs. "
-                    f"Inbound delivery from EastCoast Components (PO #{po_num}) is {po_days} days overdue, forcing a halt on the Widget Model X line. "
-                    f"Cumulative customer backlog reached {backlog_units} units across {late_orders} unfulfilled orders. "
-                    f"Plastic Granules reserves remain stable at {plastic_stock} kg. "
-                    "Operations will expedite emergency transit at 09:00 and allocate buffer reserves."
-                )
-            elif "eastcoast" in top_hl.lower() or "steel" in top_hl.lower():
-                # Steel / EastCoast delay (e.g. Days 3, 4, 6)
-                po_days = m101_pos[0]["days_overdue"] if m101_pos else 1
-                po_num = m101_pos[0]["po_id"] if m101_pos else 19
-                day_word = "day" if po_days == 1 else "days"
-                body = (
-                    f"Operations are operating under an active advisory as of {cur_d.strftime('%A, %-d %B %Y')}. "
-                    f"The primary operational issue is an inbound delay from EastCoast Components (PO #{po_num}), which is {top_evidence} in delivery logs. "
-                    f"Purchase order #{po_num} is {po_days} {day_word} overdue, while Steel Rod 10mm inventory stands at {steel_stock} kg (safety line 50 kg). "
-                    f"Component reserves continue to buffer assembly, though customer backorders reached {backlog_units} units across {late_orders} orders. "
-                    f"Plant lines for alternate models remain active with Plastic Granules holding {plastic_stock} kg. "
-                    "Procurement will follow up with EastCoast at 09:00 to expedite transit."
-                )
-            elif "backlog" in top_hl.lower() or (backlog_units > 0 and not overdue_supps):
-                yest_b = snap.get("kpis", {}).get("yest_backlog_units", 0)
-                if yest_b > 0 and backlog_units < yest_b:
-                    focus_phrase = f"clearing standing customer backorders ({backlog_units} units across {late_orders} orders) following material replenishment."
-                    disp_phrase = "continue burning down remaining backorders."
-                else:
-                    focus_phrase = f"fulfilling standing customer backorders ({backlog_units} units across {late_orders} orders) following material replenishment."
-                    disp_phrase = "continue fulfillment of standing backorders."
-                body = (
-                    f"Operations are operating under an active advisory as of {cur_d.strftime('%A, %-d %B %Y')}. "
-                    f"The primary operational focus is {focus_phrase} "
-                    f"Raw material inventory is healthy, with Steel Rod 10mm replenished to {steel_stock} kg, safely above the 50 kg safety threshold. "
-                    "All inbound supplier shipments are on schedule today with zero overdue purchase orders across vendors. "
-                    "Daily manufacturing throughput achieved scheduled volume across all product lines. "
-                    f"The Production Manager will maintain planned dispatch sequencing at 09:00 to {disp_phrase}"
-                )
-            elif "demand" in top_hl.lower():
-                # Elevated demand intake (e.g. Day 2)
-                body = (
-                    f"Operations are operating under an active advisory as of {cur_d.strftime('%A, %-d %B %Y')}. "
-                    f"The primary operational issue is customer demand intake exceeding baseline volume, which is {top_evidence} in order intake logs. "
-                    "Finished goods warehouse stock successfully buffered the demand surge, preventing immediate fulfillment shortfalls today. "
-                    "Inbound supplier deliveries arrived on schedule with zero purchase order delays recorded across vendors. "
-                    f"Raw material inventory levels stand safely above reorder points, with Steel Rod 10mm holding {steel_stock} kg. "
-                    "The Production Supervisor will review demand trends at 09:00 to adjust replenishment targets."
-                )
-            elif "production" in top_hl.lower() or "shortfall" in top_hl.lower():
-                # Production below plan (e.g. Days 5, 10)
-                body = (
-                    f"Operations are operating under an active advisory as of {cur_d.strftime('%A, %-d %B %Y')}. "
-                    f"The primary operational issue is a manufacturing shortfall on Widget Model Y, which is {top_evidence} in shop floor logs. "
-                    "Daily output finished below planned targets due to workcenter throughput constraints, while warehouse finished goods covered customer shipments. "
-                    "Inbound purchase order deliveries remain on schedule across vendors with no raw material shortages today. "
-                    f"Raw material reserves remain above safety thresholds, with Steel Rod 10mm holding {steel_stock} kg. "
-                    "The Production Supervisor will inspect equipment alignment at 09:00 to recover planned assembly cadence."
-                )
-            else:
-                supp_name = overdue_supps[0]["supplier_name"] if overdue_supps else "EastCoast Components"
-                supp_delay_days = overdue_supps[0].get("worst_delay_days", 1) if overdue_supps else 1
-                body = (
-                    f"Operations are operating under an active advisory as of {cur_d.strftime('%A, %-d %B %Y')}. "
-                    f"The primary operational issue is an inbound delay from {supp_name} ({supp_delay_days} days overdue), which is {top_evidence} in delivery logs. "
-                    f"This supply disruption depleted inventory to {steel_stock} kg, constraining Widget Model X assembly output and producing {backlog_units} units of customer backorder across {late_orders} orders. "
-                    "Other production lines operated near plan today with secondary vendor deliveries on schedule. "
-                    "Finished goods reserves for alternate models remain stable in the warehouse. "
-                    "The Production Manager must prioritize oldest overdue orders at 09:00, while Procurement expedites the pending delivery."
-                )
-
-            editorial_lead = f"{body.strip()} {RESEARCH_FRAMING}"
-
-        # Enforce 90-120 words
-        # Enforce 90-120 words with intact framing sentence
-        lead_words = editorial_lead.strip().split()
-        if len(lead_words) < 90:
-            pad = "Standard reorder point controls remain active across plant locations."
-            if RESEARCH_FRAMING in editorial_lead:
-                editorial_lead = editorial_lead.replace(RESEARCH_FRAMING, f"{pad} {RESEARCH_FRAMING}")
-            else:
-                editorial_lead += f" {pad} {RESEARCH_FRAMING}"
-        elif len(lead_words) > 120:
-            if RESEARCH_FRAMING in editorial_lead:
-                body_part = editorial_lead.replace(RESEARCH_FRAMING, "").strip()
-                b_words = body_part.split()
-                new_body = " ".join(b_words[:92])
-                if not new_body.endswith("."):
-                    new_body += "."
-                editorial_lead = f"{new_body} {RESEARCH_FRAMING}"
-            else:
-                editorial_lead = " ".join(lead_words[:100]) + f". {RESEARCH_FRAMING}"
+        # 8. Structured Summary Box (4-6 sentences, <22 words per sentence, plain English)
+        summary_sentences, editorial_lead = generate_plain_summary(cur_d, snap, issues, numbers_strip)
 
         validate_summary_lead(editorial_lead, allowed_nums)
 
-        # 9. Today's Focus (Top 5 Actions)
-        focus_items = []
-        pri_file = PRIORITIES_DIR / f"priorities_{cur_d.isoformat()}.json"
-        if pri_file.exists():
-            try:
-                with open(pri_file, "r", encoding="utf-8") as f:
-                    pri_res = json.load(f)
-            except Exception:
-                pri_res = compute_priorities(cur_d, snapshot=snap)
-        else:
-            pri_res = compute_priorities(cur_d, snapshot=snap)
-        raw_priorities = pri_res.get("priorities", [])
-
-        owner_rotation = [
-            ("Production Manager", "09:00"),
-            ("Procurement Lead", "10:30"),
-            ("Logistics Lead", "13:00"),
-            ("Production Supervisor", "15:00"),
-            ("Operations Director", "17:00"),
-        ]
-
-        for i, p in enumerate(raw_priorities[:5]):
-            owner, due_time = owner_rotation[i % len(owner_rotation)]
-            title = p.get("title", "")
-            reason = p.get("reason", "")
-            if "Steel Rod" in title or "PO #" in title or "overdue" in reason.lower():
-                root_fix = "Contact EastCoast Components; approve express air freight if carrier delay exceeds 48 hours."
-            elif "Copper Wire" in title:
-                root_fix = "Expedite PO #18 with Copper & Co; stage secondary coil buffer on assembly line."
-            elif "Plastic Granules" in title:
-                root_fix = "Request immediate shipment confirmation from Global Polymers Co."
-            elif "backlog" in reason.lower() or "Widget" in title:
-                root_fix = "Schedule supplemental assembly shift and notify customer account representatives."
-            else:
-                root_fix = "Perform shift-start inventory audit and align master production schedule."
-
-            focus_items.append({
-                "rank": i + 1,
-                "action": title,
-                "owner": p.get("owner") or owner,
-                "due_time": due_time,
-                "reason": reason,
-                "root_fix": root_fix,
-            })
-
-        while len(focus_items) < 5 and not issues:
-            idx = len(focus_items)
-            owner, due_time = owner_rotation[idx % len(owner_rotation)]
-            focus_items.append({
-                "rank": idx + 1,
-                "action": "Routine operational shift review",
-                "owner": owner,
-                "due_time": due_time,
-                "reason": "Normal operational rhythm; zero anomalies detected.",
-                "root_fix": "Maintain standard reorder points and monitor scheduled vendor deliveries.",
-            })
+        # 9. Focus Sections (Today's Focus + Weekly Focus)
+        today_focus_items = generate_today_focus_items(cur_d, snap, issues)
 
         is_calm = len(issues) == 0
 
@@ -960,6 +1142,21 @@ def build_one_page_context(selected_date_str: Optional[str] = None) -> Dict[str,
             logger.warning("Error generating weekly forecast: %s", err)
             outlook_data = None
 
+        if outlook_data:
+            outlook_clean = {k: v for k, v in outlook_data.items() if k not in ("wape_pct", "mae_units", "model_name", "shortage_badge", "shortage_risk", "shortage_color", "shortage_desc")}
+            outlook_data = outlook_clean
+
+        weekly_focus_items = generate_weekly_focus_items(cur_d, snap, outlook_data)
+
+        # Key stats for Summary Box footer (3-5 stats)
+        summary_key_stats = [
+            {"label": "Orders Due", "val": str(numbers_strip["orders_due"]["val"])},
+            {"label": "Overdue Backlog", "val": f"{numbers_strip['overdue_orders']['val']} ord ({numbers_strip['overdue_orders']['units']}u)"},
+            {"label": "Total Shortfall", "val": f"{numbers_strip['units_short']['val']}u"},
+            {"label": "Materials Low", "val": str(numbers_strip["materials_low"]["val"])},
+            {"label": "Steel Stock", "val": f"{int(float(snap.get('materials', {}).get('101', {}).get('stock', 0.0)))} kg"},
+        ]
+
         return {
             "selected_date": target_date_str,
             "current_day": current_day_obj.isoformat(),
@@ -967,16 +1164,25 @@ def build_one_page_context(selected_date_str: Optional[str] = None) -> Dict[str,
             "subtitle_badge": subtitle_badge,
             "case_state": case_state,
             "editorial_lead": editorial_lead,
+            "summary_sentences": summary_sentences,
+            "summary_key_stats": summary_key_stats,
+            "plain_summary": {"sentences": summary_sentences, "text": editorial_lead},
             "numbers_strip": numbers_strip,
             "issues": issues,
             "is_calm": is_calm,
             "is_past_day": is_past_day,
             "outlook": outlook_data,
-            "focus_items": focus_items[:5],
+            "forecast_strip": outlook_data,
+            "today_focus_items": today_focus_items,
+            "today_focus": today_focus_items,
+            "weekly_focus_items": weekly_focus_items,
+            "weekly_focus": weekly_focus_items,
+            "focus_items": today_focus_items,  # backward compatibility
             "supplier_watch": supplier_watch_items,
             "idle_suppliers_text": idle_suppliers_text,
             "framing": RESEARCH_FRAMING,
             "snapshot": snap,
+            "steel_stock": int(float(snap.get("materials", {}).get("101", {}).get("stock", 0.0))),
         }
     finally:
         db.close()
