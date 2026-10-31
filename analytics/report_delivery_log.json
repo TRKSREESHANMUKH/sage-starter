@@ -474,5 +474,15 @@
     ],
     "status": "SUCCESS_LIVE",
     "delivery_mode": "live_smtp"
+  },
+  {
+    "timestamp": "2026-10-31T11:28:32.404268+00:00",
+    "job": "nightly_digest",
+    "as_of": "2025-06-15",
+    "recipients": [
+      "sreeshanmukhtrk@gmail.com"
+    ],
+    "status": "SUCCESS_LIVE",
+    "delivery_mode": "live_smtp"
   }
 ]

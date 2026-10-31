@@ -100,8 +100,9 @@ def derive_day_entry(as_of: date, snap: Dict[str, Any]) -> Dict[str, Any]:
         top_p = sf_prods[0] if sf_prods else {}
         p_name = top_p.get("name", "Product")
         sf_qty = top_p.get("production_shortfall", 0)
-        headline = f"Production below plan ({p_name} shortfall of {sf_qty} units)"
-        trigger = f"Workcenter shift output completed {sf_qty} units below scheduled plan"
+        u_sf = "unit" if sf_qty == 1 else "units"
+        headline = f"Production below plan ({p_name} shortfall of {sf_qty} {u_sf})"
+        trigger = f"Workcenter shift output completed {sf_qty} {u_sf} below scheduled plan"
         evidence = "Partly seen"
     elif has_partial_receipt:
         issue_count += 1

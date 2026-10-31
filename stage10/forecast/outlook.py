@@ -144,9 +144,11 @@ def get_weekly_forecast(
 
     b_x = 0
     b_y = 0
+    pred_x = 0.0
+    pred_y = 0.0
 
-    # 1. Past-Day Rule Check
-    if is_past_day:
+    # 1. Past-Day Rule Check (only for pre-2026 historical dates)
+    if is_past_day and as_of.year < 2026:
         if as_of_str in stored_fc:
             fc_entry = stored_fc[as_of_str]
             pred_pt = fc_entry["expected_new_orders"]
@@ -155,6 +157,8 @@ def get_weekly_forecast(
             due_k = fc_entry["due_known"]
             b_x = int(round(due_k * 0.55))
             b_y = due_k - b_x
+            pred_x = round(pred_pt * 0.55, 1)
+            pred_y = round(pred_pt - pred_x, 1)
             is_stored = True
         else:
             res = {
@@ -168,7 +172,7 @@ def get_weekly_forecast(
                 _OUTLOOK_CACHE[cache_key] = res
             return res
     else:
-        # Live simulated day calculation
+        # Live calculation (as_of.year >= 2026 or live current day)
         is_stored = False
         source = "live" if as_of.year >= 2026 else "main"
         close_sess = False
@@ -178,11 +182,12 @@ def get_weekly_forecast(
             close_sess = True
 
         try:
+            import csv, glob
             from app.models.sales import SalesOrder, SalesOrderLine
             # Trailing 28 days of new sales ordered up to as_of
             d_start_28 = as_of - timedelta(days=28)
-            t28_units = (
-                db_session.query(SalesOrderLine.quantity_ordered)
+            t28_records = (
+                db_session.query(SalesOrderLine.product_id, SalesOrderLine.quantity_ordered)
                 .join(SalesOrder, SalesOrder.id == SalesOrderLine.sales_order_id)
                 .filter(
                     SalesOrder.order_date > d_start_28,
@@ -191,8 +196,35 @@ def get_weekly_forecast(
                 )
                 .all()
             )
-            sum_28 = sum(r[0] for r in t28_units if r[0])
-            pred_pt = round((sum_28 / 28.0) * 7.0, 1)
+
+            # Check if live DB contains 2026 pack orders if as_of.year >= 2026
+            # If the database was reset to 2025-12-31 and packs have not been fed into DB, supplement from packs up to as_of
+            db_max_date = date(2025, 12, 31)
+            if as_of.year >= 2026:
+                max_dt = db_session.query(SalesOrder.order_date).order_by(SalesOrder.order_date.desc()).first()
+                if max_dt and max_dt[0]:
+                    db_max_date = max_dt[0] if isinstance(max_dt[0], date) else date.fromisoformat(str(max_dt[0]))
+                if db_max_date < as_of:
+                    t28_records = list(t28_records)
+                    for d_path in sorted(glob.glob(str(ROOT_DIR / "demo_data" / "packs" / "2026-01-*"))):
+                        day_name = Path(d_path).name
+                        pack_d = date.fromisoformat(day_name)
+                        if d_start_28 < pack_d <= as_of:
+                            so_csv = Path(d_path) / "sales_orders.csv"
+                            sol_csv = Path(d_path) / "sales_order_lines.csv"
+                            if so_csv.exists() and sol_csv.exists():
+                                with open(so_csv, "r", encoding="utf-8") as f_so:
+                                    so_valid = {row["id"] for row in csv.DictReader(f_so) if row.get("status") != "Cancelled"}
+                                with open(sol_csv, "r", encoding="utf-8") as f_sol:
+                                    for sol_row in csv.DictReader(f_sol):
+                                        if sol_row["sales_order_id"] in so_valid:
+                                            t28_records.append((int(sol_row["product_id"]), int(sol_row["quantity_ordered"])))
+
+            sum_28_x = sum(r[1] for r in t28_records if r[0] == 201 and r[1])
+            sum_28_y = sum(r[1] for r in t28_records if r[0] == 202 and r[1])
+            pred_x = round((sum_28_x / 28.0) * 7.0, 1)
+            pred_y = round((sum_28_y / 28.0) * 7.0, 1)
+            pred_pt = round(pred_x + pred_y, 1)
             q10 = round(max(0.0, pred_pt * 0.55), 1)
             q90 = round(pred_pt * 1.50, 1)
 
@@ -210,6 +242,24 @@ def get_weekly_forecast(
                 )
                 .all()
             )
+
+            if as_of.year >= 2026 and db_max_date < as_of:
+                due_records = list(due_records)
+                for d_path in sorted(glob.glob(str(ROOT_DIR / "demo_data" / "packs" / "2026-01-*"))):
+                    day_name = Path(d_path).name
+                    pack_d = date.fromisoformat(day_name)
+                    if pack_d <= as_of:
+                        so_csv = Path(d_path) / "sales_orders.csv"
+                        sol_csv = Path(d_path) / "sales_order_lines.csv"
+                        if so_csv.exists() and sol_csv.exists():
+                            with open(so_csv, "r", encoding="utf-8") as f_so:
+                                so_map = {row["id"]: date.fromisoformat(row["requested_delivery_date"]) for row in csv.DictReader(f_so) if row.get("status") != "Cancelled"}
+                            with open(sol_csv, "r", encoding="utf-8") as f_sol:
+                                for sol_row in csv.DictReader(f_sol):
+                                    so_id = sol_row["sales_order_id"]
+                                    if so_id in so_map and d_next_1 <= so_map[so_id] <= d_next_7:
+                                        due_records.append((int(sol_row["product_id"]), int(sol_row["quantity_ordered"])))
+
             due_k = int(sum(r[1] for r in due_records if r[1]))
             b_x = int(sum(r[1] for r in due_records if r[0] == 201 and r[1]))
             b_y = int(sum(r[1] for r in due_records if r[0] == 202 and r[1]))
@@ -254,8 +304,8 @@ def get_weekly_forecast(
     tot_lo = due_k + lo
     tot_hi = due_k + hi
 
-    new_x = int(round(exp_new * 0.55))
-    new_y = exp_new - new_x
+    new_x = int(round(pred_x))
+    new_y = int(round(pred_y))
     tot_x = b_x + new_x
     tot_y = b_y + new_y
 

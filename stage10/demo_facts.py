@@ -295,36 +295,70 @@ def generate_demo_facts() -> Dict[str, Any]:
         total_backlog_orders = od_orders + dt_orders
         total_backlog_units = od_units + dt_units
 
-        # Top 3 alerts
-        top_alerts = [a["headline"] for a in feed_info.get("alerts", [])[:3]]
+        # Top 3 alerts (fixing any '1 units' grammar)
+        raw_top_alerts = [a["headline"] for a in feed_info.get("alerts", [])[:3]]
+        top_alerts = [a.replace("shortfall of 1 units", "shortfall of 1 unit") for a in raw_top_alerts]
 
-        # Forecast strip values
-        fc = get_weekly_forecast(d_obj, is_past_day=False)
-        exp_new = fc.get("expected_new_orders", 27)
-        booked = fc.get("due_known", 0)
-        tot_due = fc.get("total_demand_due", booked + exp_new)
-        tot_lo = fc.get("range_low", booked + fc.get("new_orders_range_low", 15))
-        tot_hi = fc.get("range_high", booked + fc.get("new_orders_range_high", 41))
-
-        # Product breakdown of booked units due in D+1..D+7
+        # Forecast strip values calculated dynamically from ledger orders placed on or before d_obj
         d_start = d_obj + timedelta(days=1)
         d_end = d_obj + timedelta(days=7)
-        c.execute("""
-            SELECT sol.product_id, SUM(sol.quantity_ordered)
-            FROM sales_orders so
-            JOIN sales_order_lines sol ON so.id = sol.sales_order_id
-            WHERE so.order_date <= ? AND so.requested_delivery_date >= ? AND so.requested_delivery_date <= ? AND so.status != 'Cancelled'
-            GROUP BY sol.product_id
-        """, (d_str, d_start.isoformat(), d_end.isoformat()))
-        p_rows = dict(c.fetchall())
-        b_x = p_rows.get(201, 0)
-        b_y = p_rows.get(202, 0)
+        t28_start = d_obj - timedelta(days=28)
 
-        # Expected new orders historical breakdown (~55% X, 45% Y)
-        new_x = int(round(exp_new * 0.55))
-        new_y = exp_new - new_x
+        # 1. Known booked units due in D+1..D+7 (placed on or before day D)
+        booked_orders = [
+            so for so in all_sales_orders
+            if date.fromisoformat(so["order_date"]) <= d_obj
+            and d_start <= date.fromisoformat(so["requested_delivery_date"]) <= d_end
+            and so.get("status") != "Cancelled"
+        ]
+        b_x = sum(so["quantity_ordered"] for so in booked_orders if so["product_id"] == 201)
+        b_y = sum(so["quantity_ordered"] for so in booked_orders if so["product_id"] == 202)
+        booked = b_x + b_y
+
+        # 2. Deployed Model: Trailing 28-day mean of placed units x 7 computed live as of day D
+        t28_orders = [
+            so for so in all_sales_orders
+            if t28_start < date.fromisoformat(so["order_date"]) <= d_obj
+            and so.get("status") != "Cancelled"
+        ]
+        t28_x = sum(so["quantity_ordered"] for so in t28_orders if so["product_id"] == 201)
+        t28_y = sum(so["quantity_ordered"] for so in t28_orders if so["product_id"] == 202)
+        pred_x = round((t28_x / 28.0) * 7.0, 1)
+        pred_y = round((t28_y / 28.0) * 7.0, 1)
+        pred_tot = round(pred_x + pred_y, 1)
+        exp_new = int(round(pred_tot))
+        new_x = int(round(pred_x))
+        new_y = int(round(pred_y))
+
+        # CV-calibrated range method (v4): 80% interval on new arrivals
+        lo = int(round(max(0, pred_tot * 0.55)))
+        hi = int(round(pred_tot * 1.50))
+        tot_due = booked + exp_new
+        tot_lo = booked + lo
+        tot_hi = booked + hi
+
         tot_x = b_x + new_x
         tot_y = b_y + new_y
+
+        # 3. Actual units due in D+1..D+7 in ledger (placed anytime)
+        actual_due = [
+            so for so in all_sales_orders
+            if d_start <= date.fromisoformat(so["requested_delivery_date"]) <= d_end
+            and so.get("status") != "Cancelled"
+        ]
+        act_due_tot = sum(so["quantity_ordered"] for so in actual_due)
+        act_due_x = sum(so["quantity_ordered"] for so in actual_due if so["product_id"] == 201)
+        act_due_y = sum(so["quantity_ordered"] for so in actual_due if so["product_id"] == 202)
+
+        # 4. Actual units placed in D+1..D+7 in ledger
+        actual_placed = [
+            so for so in all_sales_orders
+            if d_start <= date.fromisoformat(so["order_date"]) <= d_end
+            and so.get("status") != "Cancelled"
+        ]
+        act_placed_tot = sum(so["quantity_ordered"] for so in actual_placed)
+        act_placed_x = sum(so["quantity_ordered"] for so in actual_placed if so["product_id"] == 201)
+        act_placed_y = sum(so["quantity_ordered"] for so in actual_placed if so["product_id"] == 202)
 
         daily_ledger.append({
             "day": d_num,
@@ -348,7 +382,13 @@ def generate_demo_facts() -> Dict[str, Any]:
                 "likely_range_low": tot_lo,
                 "likely_range_high": tot_hi,
                 "booked_units": booked,
-                "expected_new_orders": exp_new
+                "expected_new_orders": exp_new,
+                "actual_units_due_next_7d": act_due_tot,
+                "actual_units_due_x": act_due_x,
+                "actual_units_due_y": act_due_y,
+                "actual_units_placed_next_7d": act_placed_tot,
+                "actual_units_placed_x": act_placed_x,
+                "actual_units_placed_y": act_placed_y,
             },
             "active_pos": daily_po_status.get(d_str, [])
         })
@@ -390,12 +430,15 @@ def generate_demo_facts() -> Dict[str, Any]:
             f.write(f"| Day {d['day']} | {d['date']} | **{d['tier']}** | {d['overdue_orders_count']} ord ({d['overdue_orders_units']}u) | {d['due_today_orders_count']} ord ({d['due_today_orders_units']}u) | {d['total_open_orders']} ord ({d['total_open_units']}u) | {stk_str} | {top_h} |\n")
 
         f.write("\n---\n\n")
-        f.write("## 2. Daily Forecast Strip Values (Days 1–10)\n\n")
-        f.write("| Day | Date | Headline | Booked vs New | Product Breakdown |\n")
-        f.write("| :--- | :--- | :--- | :--- | :--- |\n")
+        f.write("## 2. Daily Forecast Strip Values & Realized Ledger Actuals (Days 1–10)\n\n")
+        f.write("> *Method Note*: The demo feed's order rate is about 3x the 2025 rate, so demo-day forecasts are not an accuracy test. Accuracy metrics are never displayed for demo days.\n\n")
+        f.write("| Day | Date | Forecast Strip Headline | Booked vs Expected New | Product Breakdown | Actual Units Due (D+1..D+7) | Actual Units Placed (D+1..D+7) |\n")
+        f.write("| :--- | :--- | :--- | :--- | :--- | :---: | :---: |\n")
         for d in daily_ledger:
             fc = d["forecast_strip"]
-            f.write(f"| Day {d['day']} | {d['date']} | {fc['headline']} | {fc['breakdown_text']} | {fc['product_breakdown']} |\n")
+            act_due = f"{fc['actual_units_due_next_7d']}u (X={fc['actual_units_due_x']}, Y={fc['actual_units_due_y']})"
+            act_placed = f"{fc['actual_units_placed_next_7d']}u (X={fc['actual_units_placed_x']}, Y={fc['actual_units_placed_y']})"
+            f.write(f"| Day {d['day']} | {d['date']} | {fc['headline']} | {fc['breakdown_text']} | {fc['product_breakdown']} | {act_due} | {act_placed} |\n")
 
         f.write("\n---\n\n")
         f.write("## 3. Purchase Orders Status Ledger (Days 1–10)\n\n")

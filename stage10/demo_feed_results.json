@@ -1,5 +1,5 @@
 {
-  "generated_at": 1793374146.624372,
+  "generated_at": 1793446380.1293828,
   "summary": "10 hits, 0 partial, 0 miss",
   "hits": 10,
   "partials": 0,
@@ -273,14 +273,14 @@
       "status_word": "NEEDS_ATTENTION",
       "status_label": "NEEDS_ATTENTION",
       "alert_count": 1,
-      "top_headline": "Production below plan (Widget Model Y shortfall of 1 units)",
-      "top_cause": "Workcenter capacity constraint \u2192 Widget Model Y assembly shortfall of 1 units",
+      "top_headline": "Production below plan (Widget Model Y shortfall of 1 unit)",
+      "top_cause": "Workcenter capacity constraint \u2192 Widget Model Y assembly shortfall of 1 unit",
       "top_focus": "None",
       "alerts": [
         {
-          "headline": "Production below plan (Widget Model Y shortfall of 1 units)",
+          "headline": "Production below plan (Widget Model Y shortfall of 1 unit)",
           "badge": "NEEDS ATTENTION",
-          "cause_chain": "Workcenter capacity constraint \u2192 Widget Model Y assembly shortfall of 1 units",
+          "cause_chain": "Workcenter capacity constraint \u2192 Widget Model Y assembly shortfall of 1 unit",
           "evidence_label": "Partly seen",
           "model_check": "Model check not run for this day"
         }

@@ -95,7 +95,7 @@ Evaluated deterministically in `stage10/demo_feed/score.py`:
 | **D7** | 2026-01-07 | Crisis: steel stockout (0 kg) & Line 1 halt | CRITICAL | CRITICAL | Raw material stockout on Steel Rod 10mm (0 kg in stock) | **HIT** |
 | **D8** | 2026-01-08 | Inbound recovery & partial plastic receipt | NEEDS_ATTENTION | NEEDS_ATTENTION | Partial delivery from Global Polymers Co (PO #26) | **MISS** |
 | **D9** | 2026-01-09 | Seasonal peak (control day) & backlog burn | NEEDS_ATTENTION/WATCH | NEEDS_ATTENTION | Standing customer backlog clearing (9 orders, 109 units) | **HIT** |
-| **D10** | 2026-01-10 | Dual minor issues: Model Y -20% & late PO #22 | NEEDS_ATTENTION | NEEDS_ATTENTION | Production below plan (Widget Model Y shortfall of 1 units) | **HIT** |
+| **D10** | 2026-01-10 | Dual minor issues: Model Y -20% & late PO #22 | NEEDS_ATTENTION | NEEDS_ATTENTION | Production below plan (Widget Model Y shortfall of 1 unit) | **HIT** |
 
 **Feed Summary:** 9 Hits, 0 Partials, 1 Miss (100% deterministic coverage).
 

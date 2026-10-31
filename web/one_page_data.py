@@ -668,18 +668,19 @@ def build_one_page_context(selected_date_str: Optional[str] = None) -> Dict[str,
                     pts = get_trailing_30_data(target_date_str, f"product_{p_id}_actual_production")
                     svg = generate_sparkline_svg(pts, threshold=20.0, unit="units")
                     mc = get_model_check_summary("production_shortfall", "capacity", cur_d)
-                    chain = f"Workcenter capacity constraint → {p_info['name']} assembly shortfall of {p_sf} units"
+                    u_sf = "unit" if p_sf == 1 else "units"
+                    chain = f"Workcenter capacity constraint → {p_info['name']} assembly shortfall of {p_sf} {u_sf}"
                     issues.append({
                         "badge": "NEEDS ATTENTION",
                         "badge_class": "pill-amber",
-                        "headline": f"Production below plan ({p_info['name']} shortfall of {p_sf} units)",
+                        "headline": f"Production below plan ({p_info['name']} shortfall of {p_sf} {u_sf})",
                         "cause_chain": chain,
                         "evidence_label": "Partly seen",
                         "what_to_do": f"Inspect line equipment and schedule supplemental assembly shift.",
-                        "step1_text": f"{p_info['name']} actual production was {p_sf} units below daily plan.",
+                        "step1_text": f"{p_info['name']} actual production was {p_sf} {u_sf} below daily plan.",
                         "step1_svg": svg,
                         "step2_chain": chain,
-                        "step3_sure": f"Confirmed in shop floor receipts: {p_sf} units uncompleted at shift conclusion.",
+                        "step3_sure": f"Confirmed in shop floor receipts: {p_sf} {u_sf} uncompleted at shift conclusion.",
                         "tech_details": {
                             "method": "Stage 7 Causal Anomaly Attribution",
                             "score": "Operational trace vs expert causal DAG",

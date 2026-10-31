@@ -2,7 +2,7 @@
   "metadata": {
     "title": "SAGE Stage 10 Deterministic Demo Facts",
     "framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
-    "generated_at": "2026-10-30",
+    "generated_at": "2026-10-31",
     "scope": "Ten-Day Operational Demo Feed (2026-01-01 to 2026-01-10)",
     "total_sales_orders": 31,
     "total_days": 10
@@ -18,7 +18,7 @@
       "shipped_date": null,
       "status": "Backorder",
       "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
-      "sha256": "51df664d71ef71eef69fce3e12c915c7544a7b4bd4d6523a50709e9b84d4bddd"
+      "sha256": "19795406339036144bf94e904e9ef73cdc0a57ba5d0d7c4971f13ba707964bd9"
     },
     {
       "order_id": 221,
@@ -30,7 +30,7 @@
       "shipped_date": null,
       "status": "Backorder",
       "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
-      "sha256": "51df664d71ef71eef69fce3e12c915c7544a7b4bd4d6523a50709e9b84d4bddd"
+      "sha256": "19795406339036144bf94e904e9ef73cdc0a57ba5d0d7c4971f13ba707964bd9"
     },
     {
       "order_id": 224,
@@ -42,7 +42,7 @@
       "shipped_date": null,
       "status": "Backorder",
       "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
-      "sha256": "51df664d71ef71eef69fce3e12c915c7544a7b4bd4d6523a50709e9b84d4bddd"
+      "sha256": "19795406339036144bf94e904e9ef73cdc0a57ba5d0d7c4971f13ba707964bd9"
     },
     {
       "order_id": 225,
@@ -54,7 +54,7 @@
       "shipped_date": null,
       "status": "Backorder",
       "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
-      "sha256": "51df664d71ef71eef69fce3e12c915c7544a7b4bd4d6523a50709e9b84d4bddd"
+      "sha256": "19795406339036144bf94e904e9ef73cdc0a57ba5d0d7c4971f13ba707964bd9"
     },
     {
       "order_id": 226,
@@ -66,7 +66,7 @@
       "shipped_date": null,
       "status": "Backorder",
       "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
-      "sha256": "51df664d71ef71eef69fce3e12c915c7544a7b4bd4d6523a50709e9b84d4bddd"
+      "sha256": "19795406339036144bf94e904e9ef73cdc0a57ba5d0d7c4971f13ba707964bd9"
     },
     {
       "order_id": 227,
@@ -78,7 +78,7 @@
       "shipped_date": null,
       "status": "Backorder",
       "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
-      "sha256": "51df664d71ef71eef69fce3e12c915c7544a7b4bd4d6523a50709e9b84d4bddd"
+      "sha256": "19795406339036144bf94e904e9ef73cdc0a57ba5d0d7c4971f13ba707964bd9"
     },
     {
       "order_id": 228,
@@ -90,7 +90,7 @@
       "shipped_date": null,
       "status": "Backorder",
       "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
-      "sha256": "51df664d71ef71eef69fce3e12c915c7544a7b4bd4d6523a50709e9b84d4bddd"
+      "sha256": "19795406339036144bf94e904e9ef73cdc0a57ba5d0d7c4971f13ba707964bd9"
     },
     {
       "order_id": 229,
@@ -102,7 +102,7 @@
       "shipped_date": null,
       "status": "Backorder",
       "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
-      "sha256": "51df664d71ef71eef69fce3e12c915c7544a7b4bd4d6523a50709e9b84d4bddd"
+      "sha256": "19795406339036144bf94e904e9ef73cdc0a57ba5d0d7c4971f13ba707964bd9"
     },
     {
       "order_id": 230,
@@ -114,7 +114,7 @@
       "shipped_date": null,
       "status": "Backorder",
       "source_provenance": "2025 Baseline Ledger (live/sage_live_baseline.db)",
-      "sha256": "51df664d71ef71eef69fce3e12c915c7544a7b4bd4d6523a50709e9b84d4bddd"
+      "sha256": "19795406339036144bf94e904e9ef73cdc0a57ba5d0d7c4971f13ba707964bd9"
     },
     {
       "order_id": 231,
@@ -403,14 +403,20 @@
       },
       "top_3_alerts": [],
       "forecast_strip": {
-        "headline": "Next 7 days: expected demand ~136 units due (likely range 124\u2013150)",
-        "breakdown_text": "109 already booked + ~27 expected new orders",
-        "product_breakdown": "Widget Model X: ~41u due (26 booked + ~15 new) | Widget Model Y: ~95u due (83 booked + ~12 new)",
-        "total_expected_due_units": 136,
-        "likely_range_low": 124,
-        "likely_range_high": 150,
-        "booked_units": 109,
-        "expected_new_orders": 27
+        "headline": "Next 7 days: expected demand ~146 units due (likely range 133\u2013161)",
+        "breakdown_text": "117 already booked + ~29 expected new orders",
+        "product_breakdown": "Widget Model X: ~39u due (31 booked + ~8 new) | Widget Model Y: ~108u due (86 booked + ~22 new)",
+        "total_expected_due_units": 146,
+        "likely_range_low": 133,
+        "likely_range_high": 161,
+        "booked_units": 117,
+        "expected_new_orders": 29,
+        "actual_units_due_next_7d": 223,
+        "actual_units_due_x": 113,
+        "actual_units_due_y": 110,
+        "actual_units_placed_next_7d": 118,
+        "actual_units_placed_x": 90,
+        "actual_units_placed_y": 28
       },
       "active_pos": [
         {
@@ -486,14 +492,20 @@
         "Elevated demand intake (Widget Model X surge of 28 units)"
       ],
       "forecast_strip": {
-        "headline": "Next 7 days: expected demand ~94 units due (likely range 82\u2013108)",
-        "breakdown_text": "67 already booked + ~27 expected new orders",
-        "product_breakdown": "Widget Model X: ~41u due (26 booked + ~15 new) | Widget Model Y: ~53u due (41 booked + ~12 new)",
-        "total_expected_due_units": 94,
-        "likely_range_low": 82,
-        "likely_range_high": 108,
-        "booked_units": 67,
-        "expected_new_orders": 27
+        "headline": "Next 7 days: expected demand ~136 units due (likely range 120\u2013155)",
+        "breakdown_text": "99 already booked + ~37 expected new orders",
+        "product_breakdown": "Widget Model X: ~69u due (54 booked + ~15 new) | Widget Model Y: ~67u due (45 booked + ~22 new)",
+        "total_expected_due_units": 136,
+        "likely_range_low": 120,
+        "likely_range_high": 155,
+        "booked_units": 99,
+        "expected_new_orders": 37,
+        "actual_units_due_next_7d": 185,
+        "actual_units_due_x": 116,
+        "actual_units_due_y": 69,
+        "actual_units_placed_next_7d": 96,
+        "actual_units_placed_x": 68,
+        "actual_units_placed_y": 28
       },
       "active_pos": [
         {
@@ -570,14 +582,20 @@
         "Elevated demand intake (Widget Model X surge of 10 units)"
       ],
       "forecast_strip": {
-        "headline": "Next 7 days: expected demand ~82 units due (likely range 70\u201396)",
-        "breakdown_text": "55 already booked + ~27 expected new orders",
-        "product_breakdown": "Widget Model X: ~29u due (14 booked + ~15 new) | Widget Model Y: ~53u due (41 booked + ~12 new)",
-        "total_expected_due_units": 82,
-        "likely_range_low": 70,
-        "likely_range_high": 96,
-        "booked_units": 55,
-        "expected_new_orders": 27
+        "headline": "Next 7 days: expected demand ~110 units due (likely range 91\u2013130)",
+        "breakdown_text": "69 already booked + ~41 expected new orders",
+        "product_breakdown": "Widget Model X: ~41u due (24 booked + ~17 new) | Widget Model Y: ~69u due (45 booked + ~24 new)",
+        "total_expected_due_units": 110,
+        "likely_range_low": 91,
+        "likely_range_high": 130,
+        "booked_units": 69,
+        "expected_new_orders": 41,
+        "actual_units_due_next_7d": 151,
+        "actual_units_due_x": 82,
+        "actual_units_due_y": 69,
+        "actual_units_placed_next_7d": 92,
+        "actual_units_placed_x": 64,
+        "actual_units_placed_y": 28
       },
       "active_pos": [
         {
@@ -655,14 +673,20 @@
         "Elevated demand intake (Widget Model X surge of 10 units)"
       ],
       "forecast_strip": {
-        "headline": "Next 7 days: expected demand ~59 units due (likely range 47\u201373)",
-        "breakdown_text": "32 already booked + ~27 expected new orders",
-        "product_breakdown": "Widget Model X: ~29u due (14 booked + ~15 new) | Widget Model Y: ~30u due (18 booked + ~12 new)",
-        "total_expected_due_units": 59,
-        "likely_range_low": 47,
-        "likely_range_high": 73,
-        "booked_units": 32,
-        "expected_new_orders": 27
+        "headline": "Next 7 days: expected demand ~90 units due (likely range 70\u2013112)",
+        "breakdown_text": "46 already booked + ~44 expected new orders",
+        "product_breakdown": "Widget Model X: ~44u due (24 booked + ~20 new) | Widget Model Y: ~46u due (22 booked + ~24 new)",
+        "total_expected_due_units": 90,
+        "likely_range_low": 70,
+        "likely_range_high": 112,
+        "booked_units": 46,
+        "expected_new_orders": 44,
+        "actual_units_due_next_7d": 124,
+        "actual_units_due_x": 78,
+        "actual_units_due_y": 46,
+        "actual_units_placed_next_7d": 78,
+        "actual_units_placed_x": 54,
+        "actual_units_placed_y": 24
       },
       "active_pos": [
         {
@@ -740,14 +764,20 @@
         "Production below plan (Widget Model Y shortfall of 2 units)"
       ],
       "forecast_strip": {
-        "headline": "Next 7 days: expected demand ~45 units due (likely range 33\u201359)",
-        "breakdown_text": "18 already booked + ~27 expected new orders",
-        "product_breakdown": "Widget Model X: ~15u due (0 booked + ~15 new) | Widget Model Y: ~30u due (18 booked + ~12 new)",
-        "total_expected_due_units": 45,
-        "likely_range_low": 33,
-        "likely_range_high": 59,
-        "booked_units": 18,
-        "expected_new_orders": 27
+        "headline": "Next 7 days: expected demand ~80 units due (likely range 58\u2013104)",
+        "breakdown_text": "32 already booked + ~48 expected new orders",
+        "product_breakdown": "Widget Model X: ~32u due (10 booked + ~22 new) | Widget Model Y: ~48u due (22 booked + ~26 new)",
+        "total_expected_due_units": 80,
+        "likely_range_low": 58,
+        "likely_range_high": 104,
+        "booked_units": 32,
+        "expected_new_orders": 48,
+        "actual_units_due_next_7d": 96,
+        "actual_units_due_x": 54,
+        "actual_units_due_y": 42,
+        "actual_units_placed_next_7d": 64,
+        "actual_units_placed_x": 44,
+        "actual_units_placed_y": 20
       },
       "active_pos": [
         {
@@ -825,14 +855,20 @@
         "Production below plan (Widget Model X shortfall of 6 units)"
       ],
       "forecast_strip": {
-        "headline": "Next 7 days: expected demand ~27 units due (likely range 15\u201341)",
-        "breakdown_text": "0 already booked + ~27 expected new orders",
-        "product_breakdown": "Widget Model X: ~15u due (0 booked + ~15 new) | Widget Model Y: ~12u due (0 booked + ~12 new)",
-        "total_expected_due_units": 27,
-        "likely_range_low": 15,
-        "likely_range_high": 41,
-        "booked_units": 0,
-        "expected_new_orders": 27
+        "headline": "Next 7 days: expected demand ~70 units due (likely range 47\u201396)",
+        "breakdown_text": "18 already booked + ~52 expected new orders",
+        "product_breakdown": "Widget Model X: ~40u due (14 booked + ~26 new) | Widget Model Y: ~30u due (4 booked + ~26 new)",
+        "total_expected_due_units": 70,
+        "likely_range_low": 47,
+        "likely_range_high": 96,
+        "booked_units": 18,
+        "expected_new_orders": 52,
+        "actual_units_due_next_7d": 64,
+        "actual_units_due_x": 44,
+        "actual_units_due_y": 20,
+        "actual_units_placed_next_7d": 46,
+        "actual_units_placed_x": 30,
+        "actual_units_placed_y": 16
       },
       "active_pos": [
         {
@@ -910,14 +946,20 @@
         "Production below plan (Widget Model X shortfall of 10 units)"
       ],
       "forecast_strip": {
-        "headline": "Next 7 days: expected demand ~27 units due (likely range 15\u201341)",
-        "breakdown_text": "0 already booked + ~27 expected new orders",
-        "product_breakdown": "Widget Model X: ~15u due (0 booked + ~15 new) | Widget Model Y: ~12u due (0 booked + ~12 new)",
-        "total_expected_due_units": 27,
-        "likely_range_low": 15,
-        "likely_range_high": 41,
-        "booked_units": 0,
-        "expected_new_orders": 27
+        "headline": "Next 7 days: expected demand ~70 units due (likely range 45\u201398)",
+        "breakdown_text": "14 already booked + ~56 expected new orders",
+        "product_breakdown": "Widget Model X: ~38u due (10 booked + ~28 new) | Widget Model Y: ~32u due (4 booked + ~28 new)",
+        "total_expected_due_units": 70,
+        "likely_range_low": 45,
+        "likely_range_high": 98,
+        "booked_units": 14,
+        "expected_new_orders": 56,
+        "actual_units_due_next_7d": 46,
+        "actual_units_due_x": 30,
+        "actual_units_due_y": 16,
+        "actual_units_placed_next_7d": 32,
+        "actual_units_placed_x": 20,
+        "actual_units_placed_y": 12
       },
       "active_pos": [
         {
@@ -993,14 +1035,20 @@
         "Partial delivery from Global Polymers Co (PO #20)"
       ],
       "forecast_strip": {
-        "headline": "Next 7 days: expected demand ~27 units due (likely range 15\u201341)",
-        "breakdown_text": "0 already booked + ~27 expected new orders",
-        "product_breakdown": "Widget Model X: ~15u due (0 booked + ~15 new) | Widget Model Y: ~12u due (0 booked + ~12 new)",
-        "total_expected_due_units": 27,
-        "likely_range_low": 15,
-        "likely_range_high": 41,
-        "booked_units": 0,
-        "expected_new_orders": 27
+        "headline": "Next 7 days: expected demand ~71 units due (likely range 44\u2013100)",
+        "breakdown_text": "12 already booked + ~59 expected new orders",
+        "product_breakdown": "Widget Model X: ~38u due (8 booked + ~30 new) | Widget Model Y: ~32u due (4 booked + ~28 new)",
+        "total_expected_due_units": 71,
+        "likely_range_low": 44,
+        "likely_range_high": 100,
+        "booked_units": 12,
+        "expected_new_orders": 59,
+        "actual_units_due_next_7d": 32,
+        "actual_units_due_x": 20,
+        "actual_units_due_y": 12,
+        "actual_units_placed_next_7d": 20,
+        "actual_units_placed_x": 12,
+        "actual_units_placed_y": 8
       },
       "active_pos": [
         {
@@ -1088,14 +1136,20 @@
         "Standing customer backlog (9 orders, 109 units)"
       ],
       "forecast_strip": {
-        "headline": "Next 7 days: expected demand ~27 units due (likely range 15\u201341)",
-        "breakdown_text": "0 already booked + ~27 expected new orders",
-        "product_breakdown": "Widget Model X: ~15u due (0 booked + ~15 new) | Widget Model Y: ~12u due (0 booked + ~12 new)",
-        "total_expected_due_units": 27,
-        "likely_range_low": 15,
-        "likely_range_high": 41,
-        "booked_units": 0,
-        "expected_new_orders": 27
+        "headline": "Next 7 days: expected demand ~71 units due (likely range 44\u2013102)",
+        "breakdown_text": "10 already booked + ~61 expected new orders",
+        "product_breakdown": "Widget Model X: ~38u due (6 booked + ~32 new) | Widget Model Y: ~34u due (4 booked + ~30 new)",
+        "total_expected_due_units": 71,
+        "likely_range_low": 44,
+        "likely_range_high": 102,
+        "booked_units": 10,
+        "expected_new_orders": 61,
+        "actual_units_due_next_7d": 20,
+        "actual_units_due_x": 12,
+        "actual_units_due_y": 8,
+        "actual_units_placed_next_7d": 10,
+        "actual_units_placed_x": 6,
+        "actual_units_placed_y": 4
       },
       "active_pos": [
         {
@@ -1180,17 +1234,23 @@
         "widget_y_units": 18
       },
       "top_3_alerts": [
-        "Production below plan (Widget Model Y shortfall of 1 units)"
+        "Production below plan (Widget Model Y shortfall of 1 unit)"
       ],
       "forecast_strip": {
-        "headline": "Next 7 days: expected demand ~27 units due (likely range 15\u201341)",
-        "breakdown_text": "0 already booked + ~27 expected new orders",
-        "product_breakdown": "Widget Model X: ~15u due (0 booked + ~15 new) | Widget Model Y: ~12u due (0 booked + ~12 new)",
-        "total_expected_due_units": 27,
-        "likely_range_low": 15,
-        "likely_range_high": 41,
-        "booked_units": 0,
-        "expected_new_orders": 27
+        "headline": "Next 7 days: expected demand ~74 units due (likely range 45\u2013106)",
+        "breakdown_text": "10 already booked + ~64 expected new orders",
+        "product_breakdown": "Widget Model X: ~39u due (6 booked + ~33 new) | Widget Model Y: ~34u due (4 booked + ~30 new)",
+        "total_expected_due_units": 74,
+        "likely_range_low": 45,
+        "likely_range_high": 106,
+        "booked_units": 10,
+        "expected_new_orders": 64,
+        "actual_units_due_next_7d": 10,
+        "actual_units_due_x": 6,
+        "actual_units_due_y": 4,
+        "actual_units_placed_next_7d": 0,
+        "actual_units_placed_x": 0,
+        "actual_units_placed_y": 0
       },
       "active_pos": [
         {

@@ -351,3 +351,14 @@
 {"timestamp": "2026-10-30T15:28:57.774261+00:00", "pack_name": "2026-01-08", "pack_date": "2026-01-08", "rows_ingested": 32, "status": "SUCCESS"}
 {"timestamp": "2026-10-30T15:29:00.987305+00:00", "pack_name": "2026-01-09", "pack_date": "2026-01-09", "rows_ingested": 24, "status": "SUCCESS"}
 {"timestamp": "2026-10-30T15:29:03.992890+00:00", "pack_name": "2026-01-10", "pack_date": "2026-01-10", "rows_ingested": 24, "status": "SUCCESS"}
+{"timestamp": "2026-10-31T11:28:47.975850+00:00", "pack_name": "2026-01-01", "pack_date": "2026-01-01", "rows_ingested": 18, "status": "SUCCESS"}
+{"timestamp": "2026-10-31T11:32:44.391469+00:00", "pack_name": "2026-01-01", "pack_date": "2026-01-01", "rows_ingested": 18, "status": "SUCCESS"}
+{"timestamp": "2026-10-31T11:32:50.470135+00:00", "pack_name": "2026-01-02", "pack_date": "2026-01-02", "rows_ingested": 26, "status": "SUCCESS"}
+{"timestamp": "2026-10-31T11:32:51.881992+00:00", "pack_name": "2026-01-03", "pack_date": "2026-01-03", "rows_ingested": 27, "status": "SUCCESS"}
+{"timestamp": "2026-10-31T11:32:52.708962+00:00", "pack_name": "2026-01-04", "pack_date": "2026-01-04", "rows_ingested": 27, "status": "SUCCESS"}
+{"timestamp": "2026-10-31T11:32:53.547290+00:00", "pack_name": "2026-01-05", "pack_date": "2026-01-05", "rows_ingested": 24, "status": "SUCCESS"}
+{"timestamp": "2026-10-31T11:32:54.564621+00:00", "pack_name": "2026-01-06", "pack_date": "2026-01-06", "rows_ingested": 29, "status": "SUCCESS"}
+{"timestamp": "2026-10-31T11:32:56.255162+00:00", "pack_name": "2026-01-07", "pack_date": "2026-01-07", "rows_ingested": 17, "status": "SUCCESS"}
+{"timestamp": "2026-10-31T11:32:57.236483+00:00", "pack_name": "2026-01-08", "pack_date": "2026-01-08", "rows_ingested": 32, "status": "SUCCESS"}
+{"timestamp": "2026-10-31T11:32:58.511510+00:00", "pack_name": "2026-01-09", "pack_date": "2026-01-09", "rows_ingested": 24, "status": "SUCCESS"}
+{"timestamp": "2026-10-31T11:32:59.325812+00:00", "pack_name": "2026-01-10", "pack_date": "2026-01-10", "rows_ingested": 24, "status": "SUCCESS"}
