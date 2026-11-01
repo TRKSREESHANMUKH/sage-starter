@@ -142,12 +142,9 @@
 </nav>
 
 <div class="main">
-  <!-- FRAMING BAR -->
-  <div class="framing-bar">{{ framing }}</div>
-
   <!-- PERMANENT DRY-RUN RED BANNER -->
   <div id="dryrun-alert-banner" style="{% if send_mode == 'live' %}display:none;{% endif %} background:#fee2e2; border:1px solid #ef4444; color:#b91c1c; font-weight:700; padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:0.92rem; display:flex; align-items:center; gap:8px;">
-    ⚠️ DRY-RUN: emails are NOT being delivered
+    DRY-RUN: emails are NOT being delivered
   </div>
 
   <div class="grid">
@@ -160,17 +157,17 @@
       </div>
       <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap">
         {% if case_state and case_state.is_case_mode %}
-        <span class="pill pill-blue">🎯 Case {{ case_state.active_case }} / {{ case_state.total_cases }}</span>
+        <span class="pill pill-blue">Case {{ case_state.active_case }} / {{ case_state.total_cases }}</span>
         {% endif %}
         {% if send_mode == "live" %}
-        <span class="pill pill-green" id="status-mode-pill">🟢 Live Send</span>
+        <span class="pill pill-green" id="status-mode-pill">Live Send</span>
         {% else %}
-        <span class="pill pill-amber" id="status-mode-pill">🟡 Dry Run</span>
+        <span class="pill pill-amber" id="status-mode-pill">Dry Run</span>
         {% endif %}
         {% if scheduler_paused %}
-        <span class="pill pill-red">⏸ Scheduler Paused</span>
+        <span class="pill pill-red">Scheduler Paused</span>
         {% else %}
-        <span class="pill pill-green">▶ Scheduler Active</span>
+        <span class="pill pill-green">Scheduler Active</span>
         {% endif %}
       </div>
     </div>
@@ -181,60 +178,137 @@
       <p style="font-size:0.88rem; color:var(--muted); margin-bottom:12px">
         Prepare and dispatch today's brief immediately. Respects current send mode.
       </p>
-      <!-- Recipient Selection (Stage 10 Part D) -->
-      <div style="margin-bottom: 8px;">
-        <label style="font-size:0.82rem; font-weight:600; color:var(--muted); display:block; margin-bottom:4px">Recipient Target</label>
-        <div style="display:flex; gap:14px; margin-bottom:8px; font-size:0.85rem;">
-          <label style="cursor:pointer; display:inline-flex; align-items:center; gap:5px;">
-            <input type="radio" name="recipient_type" value="default" checked onchange="toggleRecipientType(this.value)"> Default ({{ default_recipient }})
-          </label>
-          <label style="cursor:pointer; display:inline-flex; align-items:center; gap:5px;">
-            <input type="radio" name="recipient_type" value="custom" onchange="toggleRecipientType(this.value)"> Custom / Mentor
-          </label>
-        </div>
-      </div>
 
-      <!-- Default Recipient Selection -->
-      <div id="default-recipient-wrapper">
-        <select id="send-recipient" style="width:100%; padding:7px 10px; border:1px solid var(--border); border-radius:6px; font-size:0.85rem;">
-          {% for r in allowlist %}
-          <option value="{{ r }}" {% if r == default_recipient %}selected{% endif %}>{{ r }}</option>
-          {% endfor %}
+      <!-- Recipient Selection (C1) -->
+      <div style="margin-bottom: 8px;">
+        <label for="send-recipient-select" style="font-size:0.82rem; font-weight:600; color:var(--muted); display:block; margin-bottom:4px">Recipient Target</label>
+        <select id="send-recipient-select" onchange="onRecipientSelectChange(this.value)" style="width:100%; padding:7px 10px; border:1px solid var(--border); border-radius:6px; font-size:0.85rem;">
+          {% if saved_recipients %}
+            {% for r in saved_recipients %}
+            <option value="{{ r.email }}">{{ r.name }}{% if r.role %} ({{ r.role }}){% endif %} &lt;{{ r.email }}&gt;</option>
+            {% endfor %}
+            <option value="custom">-- Custom email address --</option>
+          {% else %}
+            <option value="custom" selected>-- Custom email address --</option>
+          {% endif %}
         </select>
       </div>
 
-      <!-- Custom Recipient Input & Recent Recipients Dropdown -->
-      <div id="custom-recipient-wrapper" style="display:none; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:12px; margin-bottom:8px;">
-        <label for="custom-recipient-input" style="font-size:0.80rem; font-weight:700; color:#1e293b; display:block; margin-bottom:4px;">
-          Type Email Address (e.g. mentor)
+      <div id="custom-recipient-wrapper" style="{% if saved_recipients %}display:none;{% else %}display:block;{% endif %} background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:10px; margin-bottom:8px;">
+        <label for="custom-recipient-input" style="font-size:0.75rem; font-weight:700; color:#1e293b; display:block; margin-bottom:4px">
+          Custom Email Address
         </label>
-        <input type="email" id="custom-recipient-input" placeholder="e.g. mentor@university.edu" style="width:100%; padding:6px 10px; border:1px solid #94a3b8; border-radius:4px; font-size:0.85rem; font-family:inherit; margin-bottom:10px;">
-
-        <div style="display:flex; justify-content:space-between; align-items:flex-end; gap:8px;">
-          <div style="flex-grow:1;">
-            <label for="recent-recipients-select" style="font-size:0.75rem; font-weight:600; color:#64748b; display:block; margin-bottom:2px;">Recent Recipients</label>
-            <select id="recent-recipients-select" onchange="onSelectRecentRecipient(this.value)" style="width:100%; padding:5px 8px; border:1px solid #cbd5e1; border-radius:4px; font-size:0.80rem;">
-              <option value="">-- Choose recent recipient --</option>
-              {% for rec in recent_recipients %}
-              <option value="{{ rec }}">{{ rec }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <button type="button" class="btn btn-ghost" onclick="removeSelectedRecentRecipient()" style="padding:4px 10px; font-size:0.75rem; color:#dc2626; border-color:#fca5a5; white-space:nowrap;">
-            Remove
-          </button>
-        </div>
+        <input type="email" id="custom-recipient-input" placeholder="name@company.com" style="width:100%; padding:6px 10px; border:1px solid #94a3b8; border-radius:4px; font-size:0.85rem;">
       </div>
+      <div id="recipient-inline-error" style="display:none; color:#dc2626; font-size:0.80rem; font-weight:600; margin-bottom:8px;"></div>
+
       <div style="margin-top:10px">
         <label for="past-day-picker" style="font-size:0.82rem; font-weight:600; color:var(--muted); display:block; margin-bottom:4px">Report Date (Preview past day)</label>
         <input type="date" id="past-day-picker" class="day-select" value="{{ current_day }}" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:6px; font-size:0.88rem; font-weight:600; color:var(--text); background:var(--surface)">
       </div>
       <div class="btn-row" style="margin-top:12px; gap:8px; flex-wrap:wrap">
         <button class="btn btn-success" id="main-send-btn" onclick="openSendModal()">
-          {% if send_mode == 'live' %}📤 Send Report Now [LIVE]{% else %}🧪 Dry Run (Nothing will be sent) [DRY-RUN]{% endif %}
+          {% if send_mode == 'live' %}Send Report Now [LIVE]{% else %}Dry Run (Nothing will be sent) [DRY-RUN]{% endif %}
         </button>
-        <button class="btn btn-primary" onclick="openPreviewModal()">👁 Preview</button>
-        <button class="btn btn-ghost" onclick="prepareOnly()">🔧 Prepare Only</button>
+        <button class="btn btn-primary" onclick="openPreviewModal()">Preview</button>
+        <button class="btn btn-ghost" onclick="prepareOnly()">Prepare Only</button>
+      </div>
+    </div>
+
+    <!-- ─── BRIEFING RECIPIENTS (C1) ─── -->
+    <div class="card full-width">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px">
+        <div>
+          <div class="card-title" style="margin-bottom:2px">Briefing Recipients</div>
+          <div style="font-size:0.82rem; color:var(--muted)">
+            Save up to 3 authorized operational recipients for daily executive digests. Only Active recipients receive nightly digests.
+          </div>
+        </div>
+        <div class="btn-row" style="margin-top:0; gap:8px;">
+          <button class="btn btn-ghost" type="button" onclick="openAddRecipientModal()" id="add-recipient-btn">
+            + Add Recipient
+          </button>
+          <button class="btn btn-primary" type="button" onclick="saveRecipientsForm()" id="save-recipients-btn">
+            Save Recipients
+          </button>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap:14px;" id="recipients-grid">
+        {% for idx in [0, 1, 2] %}
+          {% set rec = saved_recipients[idx] if saved_recipients and saved_recipients|length > idx else None %}
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:14px; position:relative;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <div style="font-size:0.75rem; font-weight:700; color:var(--muted); text-transform:uppercase;">
+                Slot #{{ idx + 1 }}
+              </div>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <label style="display:inline-flex; align-items:center; gap:6px; font-size:0.75rem; font-weight:600; cursor:pointer; margin:0;">
+                  <input type="checkbox" id="rec_active_{{ idx + 1 }}" {% if not rec or rec.active %}checked{% endif %} onchange="toggleSlotActiveUI({{ idx + 1 }})" style="cursor:pointer">
+                  <span id="rec_active_badge_{{ idx + 1 }}" class="pill {% if not rec or rec.active %}pill-green{% else %}pill-gray{% endif %}" style="font-size:0.72rem; padding:2px 8px;">
+                    {% if not rec or rec.active %}[Active]{% else %}[Paused]{% endif %}
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <div>
+                <label style="font-size:0.75rem; color:var(--muted); display:block; margin-bottom:2px">Email Address</label>
+                <input type="email" id="rec_email_{{ idx + 1 }}" value="{{ rec.email if rec else '' }}" placeholder="name@company.com" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.84rem;">
+              </div>
+              <div>
+                <label style="font-size:0.75rem; color:var(--muted); display:block; margin-bottom:2px">Full Name</label>
+                <input type="text" id="rec_name_{{ idx + 1 }}" value="{{ rec.name if rec else '' }}" placeholder="Full Name" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.84rem;">
+              </div>
+              <div>
+                <label style="font-size:0.75rem; color:var(--muted); display:block; margin-bottom:2px">Role</label>
+                <input type="text" id="rec_role_{{ idx + 1 }}" value="{{ rec.role if rec else '' }}" placeholder="e.g. Operations Lead, VP Supply Chain" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.84rem;">
+              </div>
+            </div>
+
+            <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); padding-top:8px;">
+              <button class="btn btn-ghost" type="button" onclick="sendTestToSlot({{ idx + 1 }})" style="padding:4px 8px; font-size:0.75rem;" title="Send test report to this recipient">
+                Send Test to Me
+              </button>
+              <button class="btn btn-ghost" type="button" onclick="clearSlot({{ idx + 1 }})" style="padding:4px 8px; font-size:0.75rem; color:#dc2626;" title="Clear this slot">
+                Clear
+              </button>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+      <div id="recipients-save-status" style="font-size:0.80rem; margin-top:8px; display:none;"></div>
+
+      <!-- Send History Micro-table (C1) -->
+      <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:16px;">
+        <div style="font-size:0.85rem; font-weight:700; color:var(--text); margin-bottom:8px">Send History (Last 5 Dispatches)</div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%; border-collapse:collapse; font-size:0.80rem;">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border); color:var(--muted); text-align:left;">
+                <th style="padding:6px 8px;">Recipient</th>
+                <th style="padding:6px 8px;">Timestamp</th>
+                <th style="padding:6px 8px;">Status</th>
+                <th style="padding:6px 8px;">Digest Date</th>
+                <th style="padding:6px 8px;">Mode</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in send_history %}
+              <tr style="border-bottom:1px solid var(--border);">
+                <td style="padding:6px 8px; font-weight:500;">{{ item.recipient }}</td>
+                <td style="padding:6px 8px; color:var(--muted);">{{ item.timestamp }}</td>
+                <td style="padding:6px 8px;"><span class="{{ item.badge }}">{{ item.status }}</span></td>
+                <td style="padding:6px 8px; color:var(--muted);">{{ item.digest_date }}</td>
+                <td style="padding:6px 8px; color:var(--muted);">{{ item.mode }}</td>
+              </tr>
+              {% else %}
+              <tr><td colspan="5" style="padding:10px 8px; color:var(--muted); text-align:center;">No recent dispatch history.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -253,7 +327,7 @@
         </div>
         <div class="btn-row" style="margin-top:0">
           {% if queue_remaining > 0 %}
-          <button class="btn btn-primary" type="button" onclick="feedNextDay()" id="feed-next-btn">▶ Feed next day</button>
+          <button class="btn btn-primary" type="button" onclick="feedNextDay()" id="feed-next-btn">Feed next day</button>
           {% else %}
           <button class="btn btn-ghost" type="button" disabled>Queue Complete</button>
           {% endif %}
@@ -265,11 +339,11 @@
       <div id="feed-progress-box" style="display:none; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px; margin-top:12px">
         <div style="font-size:0.82rem; font-weight:700; margin-bottom:8px; color:#334155" id="feed-status-title">Feeding Progress:</div>
         <div style="display:flex; gap:16px; font-size:0.8rem; color:#64748b; flex-wrap:wrap">
-          <span id="tick-validate">⏳ Validate pack</span>
-          <span id="tick-ingest">⏳ Ingest events</span>
-          <span id="tick-panel">⏳ Update daily panel</span>
-          <span id="tick-causal">⏳ Causal analysis</span>
-          <span id="tick-report">⏳ Daily brief built</span>
+          <span id="tick-validate">[Pending] Validate pack</span>
+          <span id="tick-ingest">[Pending] Ingest events</span>
+          <span id="tick-panel">[Pending] Update daily panel</span>
+          <span id="tick-causal">[Pending] Causal analysis</span>
+          <span id="tick-report">[Pending] Daily brief built</span>
         </div>
       </div>
       <div id="feed-status" style="font-size:0.82rem; color:var(--muted); margin-top:6px; display:none"></div>
@@ -367,6 +441,11 @@
         </table>
       </div>
     </div>
+    
+  <footer style="margin-top:28px; padding-top:16px; border-top:1px solid var(--border); text-align:center; font-size:0.72rem; color:var(--muted); line-height:1.5;">
+    SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.
+  </footer>
+
   </div>
 </div>
 
@@ -375,11 +454,11 @@
   <div class="modal" style="max-width:480px">
     <div class="modal-title" id="send-modal-title">Confirm Dispatch</div>
     <div id="modal-dryrun-warning" style="{% if send_mode == 'live' %}display:none;{% endif %} background:#fffbeb; border:1px solid #fde68a; color:#92400e; padding:10px 14px; border-radius:6px; font-size:0.85rem; margin-bottom:14px; line-height:1.4">
-      ⚠️ <strong>Dry-run mode:</strong> no email will be sent. Switch to Live to deliver.<br>
+      <strong>Dry-run mode:</strong> no email will be sent. Switch to Live to deliver.<br>
       <button class="btn btn-ghost" type="button" style="margin-top:8px; padding:4px 10px; font-size:0.78rem; border-color:#d97706; color:#b45309" onclick="closeSendModal(); promptSwitchLive();">Switch to Live →</button>
     </div>
     <div id="modal-live-info" style="{% if send_mode != 'live' %}display:none;{% endif %} background:#ecfdf5; border:1px solid #a7f3d0; color:#065f46; padding:10px 14px; border-radius:6px; font-size:0.85rem; margin-bottom:14px; line-height:1.4">
-      ⚡ <strong>Live mode active:</strong> Email will be delivered via Gmail SMTP.
+      <strong>Live mode active:</strong> Email will be delivered via Gmail SMTP.
     </div>
     <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:10px 14px; margin-bottom:14px; font-size:0.88rem;">
       <div style="margin-bottom:4px;">
@@ -403,7 +482,7 @@
     <div class="modal-footer">
       <button class="btn btn-ghost" type="button" onclick="closeSendModal()">Cancel</button>
       <button class="btn btn-success" type="button" id="confirm-send-btn" onclick="confirmSend()">
-        {% if send_mode == 'live' %}📤 Confirm Send [LIVE]{% else %}🧪 Dry Run (Nothing will be sent) [DRY-RUN]{% endif %}
+        {% if send_mode == 'live' %}Confirm Send [LIVE]{% else %}Dry Run (Nothing will be sent) [DRY-RUN]{% endif %}
       </button>
     </div>
   </div>
@@ -412,7 +491,7 @@
 <!-- SWITCH TO LIVE MODAL -->
 <div class="modal-overlay" id="switch-live-modal">
   <div class="modal" style="max-width:480px">
-    <div class="modal-title" style="color:#b91c1c">⚠️ Switch to LIVE Email Delivery</div>
+    <div class="modal-title" style="color:#b91c1c">Switch to LIVE Email Delivery</div>
     <p style="font-size:0.86rem; color:var(--text); margin-bottom:12px; line-height:1.5">
       In <strong>Live mode</strong>, the daily brief will be delivered via real Gmail SMTP.
     </p>
@@ -432,6 +511,36 @@
 </div>
 
 <!-- PREVIEW MODAL -->
+
+<!-- ADD RECIPIENT MODAL (C1) -->
+<div class="modal-overlay" id="add-recipient-modal">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-title">Add Briefing Recipient</div>
+    <p style="font-size:0.84rem; color:var(--muted); margin-bottom:12px;">
+      Add a new operational contact. Disallowed domains (@example.com, @test.com, @placeholder.com) are rejected.
+    </p>
+    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:14px;">
+      <div>
+        <label style="font-size:0.75rem; color:var(--muted); display:block; margin-bottom:2px">Email Address</label>
+        <input type="email" id="modal-new-rec-email" placeholder="name@company.com" style="width:100%; padding:7px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.85rem;" oninput="validateModalEmail(this.value)">
+        <div id="modal-email-val-msg" style="display:none; font-size:0.75rem; color:#dc2626; margin-top:3px;"></div>
+      </div>
+      <div>
+        <label style="font-size:0.75rem; color:var(--muted); display:block; margin-bottom:2px">Full Name</label>
+        <input type="text" id="modal-new-rec-name" placeholder="Full Name" style="width:100%; padding:7px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.85rem;">
+      </div>
+      <div>
+        <label style="font-size:0.75rem; color:var(--muted); display:block; margin-bottom:2px">Role</label>
+        <input type="text" id="modal-new-rec-role" placeholder="e.g. Risk Manager" style="width:100%; padding:7px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.85rem;">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" type="button" onclick="closeAddRecipientModal()">Cancel</button>
+      <button class="btn btn-primary" type="button" id="modal-confirm-add-rec-btn" onclick="confirmAddRecipient()">Add Contact</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="preview-modal">
   <div class="modal" style="max-width:850px; width:95%; max-height:90vh; display:flex; flex-direction:column">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
@@ -439,7 +548,7 @@
         <div class="modal-title" style="margin-bottom:2px">Email & PDF Report Preview</div>
         <div id="preview-meta-info" style="font-size:0.82rem; color:var(--muted)">Loading preview...</div>
       </div>
-      <button class="btn btn-ghost" type="button" onclick="closePreviewModal()" style="padding:4px 8px; font-size:0.85rem">✕ Close</button>
+      <button class="btn btn-ghost" type="button" onclick="closePreviewModal()" style="padding:4px 8px; font-size:0.85rem">Close</button>
     </div>
     <div id="preview-content-area" style="flex:1; overflow-y:auto; border:1px solid var(--border); border-radius:6px; background:#fff; padding:16px; min-height:400px">
       <div style="text-align:center; padding:40px; color:var(--muted)">Rendering report...</div>
@@ -453,6 +562,181 @@
 <div id="toast"></div>
 
 <script>
+
+// ─── BRIEFING RECIPIENTS LOGIC (C1) ───
+function toggleSlotActiveUI(slotNum) {
+  const chk = document.getElementById(`rec_active_${slotNum}`);
+  const badge = document.getElementById(`rec_active_badge_${slotNum}`);
+  if (chk && badge) {
+    if (chk.checked) {
+      badge.className = "pill pill-green";
+      badge.textContent = "[Active]";
+    } else {
+      badge.className = "pill pill-gray";
+      badge.textContent = "[Paused]";
+    }
+  }
+}
+
+function clearSlot(slotNum) {
+  document.getElementById(`rec_email_${slotNum}`).value = "";
+  document.getElementById(`rec_name_${slotNum}`).value = "";
+  document.getElementById(`rec_role_${slotNum}`).value = "";
+  const chk = document.getElementById(`rec_active_${slotNum}`);
+  if (chk) chk.checked = false;
+  toggleSlotActiveUI(slotNum);
+}
+
+function openAddRecipientModal() {
+  document.getElementById("modal-new-rec-email").value = "";
+  document.getElementById("modal-new-rec-name").value = "";
+  document.getElementById("modal-new-rec-role").value = "";
+  document.getElementById("modal-email-val-msg").style.display = "none";
+  document.getElementById("add-recipient-modal").classList.add("open");
+}
+
+function closeAddRecipientModal() {
+  document.getElementById("add-recipient-modal").classList.remove("open");
+}
+
+function validateEmailSyntax(email) {
+  if (!email || !email.includes("@")) return "Email cannot be empty.";
+  if (/[\r\n\t ,;]/.test(email)) return "Email cannot contain whitespace, commas, or semicolons.";
+  const re = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+$/;
+  if (!re.test(email)) return "Invalid email address format.";
+  const domain = email.split("@")[1].toLowerCase();
+  const disallowed = ["example.com", "test.com", "placeholder.com", "sample.com", "domain.com", "localhost"];
+  if (disallowed.includes(domain) || domain.endsWith(".local") || domain === "local") {
+    return `Domain '@${domain}' is a test/placeholder domain and is rejected.`;
+  }
+  return "";
+}
+
+function validateModalEmail(val) {
+  const msgEl = document.getElementById("modal-email-val-msg");
+  const err = validateEmailSyntax(val.trim());
+  if (err) {
+    msgEl.textContent = err;
+    msgEl.style.display = "block";
+    return false;
+  } else {
+    msgEl.style.display = "none";
+    return true;
+  }
+}
+
+function confirmAddRecipient() {
+  const em = document.getElementById("modal-new-rec-email").value.trim().toLowerCase();
+  const nm = document.getElementById("modal-new-rec-name").value.trim();
+  const rl = document.getElementById("modal-new-rec-role").value.trim();
+  const err = validateEmailSyntax(em);
+  if (err) {
+    validateModalEmail(em);
+    return;
+  }
+  // Find first empty or lowest index slot
+  let targetSlot = null;
+  for (let i = 1; i <= 3; i++) {
+    const existing = document.getElementById(`rec_email_${i}`).value.trim();
+    if (!existing) {
+      targetSlot = i;
+      break;
+    }
+  }
+  if (!targetSlot) targetSlot = 3; // overwrite slot 3 if all full
+
+  document.getElementById(`rec_email_${targetSlot}`).value = em;
+  document.getElementById(`rec_name_${targetSlot}`).value = nm || "Operator";
+  document.getElementById(`rec_role_${targetSlot}`).value = rl || "Operations Lead";
+  const chk = document.getElementById(`rec_active_${targetSlot}`);
+  if (chk) chk.checked = true;
+  toggleSlotActiveUI(targetSlot);
+
+  closeAddRecipientModal();
+  saveRecipientsForm();
+}
+
+async function saveRecipientsForm() {
+  const btn = document.getElementById("save-recipients-btn");
+  const statusEl = document.getElementById("recipients-save-status");
+  btn.disabled = true;
+  btn.textContent = "Saving…";
+  
+  const contacts = [];
+  for (let i = 1; i <= 3; i++) {
+    const em = document.getElementById(`rec_email_${i}`).value.trim().toLowerCase();
+    const nm = document.getElementById(`rec_name_${i}`).value.trim();
+    const rl = document.getElementById(`rec_role_${i}`).value.trim();
+    const act = document.getElementById(`rec_active_${i}`)?.checked ?? true;
+    if (em) {
+      const err = validateEmailSyntax(em);
+      if (err) {
+        showToast(`Slot #${i}: ${err}`, "error");
+        btn.disabled = false;
+        btn.textContent = "Save Recipients";
+        return;
+      }
+      contacts.push({ email: em, name: nm, role: rl, active: act });
+    }
+  }
+
+  try {
+    const body = new URLSearchParams({ csrf_token: CSRF });
+    contacts.forEach((c, idx) => {
+      body.append(`email_${idx+1}`, c.email);
+      body.append(`name_${idx+1}`, c.name);
+      body.append(`role_${idx+1}`, c.role);
+      body.append(`active_${idx+1}`, c.active ? "true" : "false");
+    });
+    const r = await fetch("/ctrl/api/recipients", { method: "POST", body });
+    const res = await r.json();
+    if (res.status === "ok") {
+      showToast("Briefing recipients saved successfully.", "success");
+      setTimeout(() => location.reload(), 800);
+    } else {
+      showToast("Failed to save: " + res.detail, "error");
+    }
+  } catch(err) {
+    showToast("Network error while saving recipients.", "error");
+  }
+  btn.disabled = false;
+  btn.textContent = "Save Recipients";
+}
+
+function sendTestToSlot(slotNum) {
+  const em = document.getElementById(`rec_email_${slotNum}`).value.trim().toLowerCase();
+  if (!em) {
+    showToast(`Slot #${slotNum} has no email configured.`, "error");
+    return;
+  }
+  const err = validateEmailSyntax(em);
+  if (err) {
+    showToast(`Slot #${slotNum}: ${err}`, "error");
+    return;
+  }
+
+  // Pre-select or populate target
+  const select = document.getElementById("send-recipient-select");
+  let found = false;
+  if (select) {
+    for (let opt of select.options) {
+      if (opt.value === em) {
+        select.value = em;
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      select.value = "custom";
+      onRecipientSelectChange("custom");
+      document.getElementById("custom-recipient-input").value = em;
+    } else {
+      onRecipientSelectChange(em);
+    }
+  }
+  openSendModal();
+}
+
 const CSRF = {{ csrf | tojson }};
 let currentSendMode = {{ send_mode | tojson }};
 
@@ -486,12 +770,12 @@ function updateSendModeUI(mode) {
   const pill = document.getElementById("status-mode-pill");
   if (pill) {
     pill.className = isLive ? "pill pill-green" : "pill pill-amber";
-    pill.textContent = isLive ? "🟢 Live Send" : "🟡 Dry Run";
+    pill.textContent = isLive ? "[Live]" : "[Dry Run]";
   }
 
   // Main Send Button
   const mainBtn = document.getElementById("main-send-btn");
-  if (mainBtn) mainBtn.textContent = isLive ? "📤 Send Report Now [LIVE]" : "🧪 Dry Run (Nothing will be sent) [DRY-RUN]";
+  if (mainBtn) mainBtn.textContent = isLive ? "Send Report Now [LIVE]" : "Dry Run (Nothing will be sent) [DRY-RUN]";
 
   // Send Modal Elements
   const dryWarn = document.getElementById("modal-dryrun-warning");
@@ -501,7 +785,7 @@ function updateSendModeUI(mode) {
   const modeDisp = document.getElementById("modal-mode-display");
   if (modeDisp) modeDisp.textContent = mode;
   const confirmBtn = document.getElementById("confirm-send-btn");
-  if (confirmBtn) confirmBtn.textContent = isLive ? "📤 Confirm Send [LIVE]" : "🧪 Dry Run (Nothing will be sent) [DRY-RUN]";
+  if (confirmBtn) confirmBtn.textContent = isLive ? "Confirm Send [LIVE]" : "Dry Run (Nothing will be sent) [DRY-RUN]";
 }
 
 function handleModeToggleChange(checkbox) {
@@ -590,25 +874,25 @@ async function feedNextDay() {
   if (status) { status.style.display = "block"; status.textContent = "Processing feed..."; }
 
   // Tick feed steps
-  setTimeout(() => { const el = document.getElementById("tick-validate"); if (el) el.textContent = "✓ Validate pack"; }, 300);
-  setTimeout(() => { const el = document.getElementById("tick-ingest"); if (el) el.textContent = "✓ Ingest events"; }, 700);
-  setTimeout(() => { const el = document.getElementById("tick-panel"); if (el) el.textContent = "✓ Update daily panel"; }, 1100);
-  setTimeout(() => { const el = document.getElementById("tick-causal"); if (el) el.textContent = "✓ Causal analysis"; }, 1500);
+  setTimeout(() => { const el = document.getElementById("tick-validate"); if (el) el.textContent = "[Done] Validate pack"; }, 300);
+  setTimeout(() => { const el = document.getElementById("tick-ingest"); if (el) el.textContent = "[Done] Ingest events"; }, 700);
+  setTimeout(() => { const el = document.getElementById("tick-panel"); if (el) el.textContent = "[Done] Update daily panel"; }, 1100);
+  setTimeout(() => { const el = document.getElementById("tick-causal"); if (el) el.textContent = "[Done] Causal analysis"; }, 1500);
 
   try {
     const res = await postForm("/ctrl/api/feed-next-day", {});
     if (res.status === "ok") {
-      const elRep = document.getElementById("tick-report"); if (elRep) elRep.textContent = "✓ Daily brief built";
-      if (status) status.textContent = `✓ Ingested pack for ${res.result.day || 'next day'}`;
+      const elRep = document.getElementById("tick-report"); if (elRep) elRep.textContent = "[Done] Daily brief built";
+      if (status) status.textContent = `[Done] Ingested pack for ${res.result.day || 'next day'}`;
       showToast(`Fed next day successfully!`, "success");
       setTimeout(() => location.reload(), 1200);
     } else {
-      if (status) status.textContent = "✗ " + (res.detail || "Error");
+      if (status) status.textContent = "[Error] " + (res.detail || "Error");
       showToast("Feed failed: " + res.detail, "error");
       if (btn) btn.disabled = false;
     }
   } catch(err) {
-    if (status) status.textContent = "✗ Network error";
+    if (status) status.textContent = "[Error] Network error";
     showToast("Network error", "error");
     if (btn) btn.disabled = false;
   }
@@ -626,15 +910,15 @@ async function runCase(k) {
     const res = await postForm("/ctrl/api/run-case", { case_num: k });
     bar.style.width = "100%";
     if (res.status === "ok") {
-      status.textContent = `✓ Switched to Case ${k} (${res.case.date})`;
+      status.textContent = `[Done] Switched to Case ${k} (${res.case.date})`;
       showToast(`Case ${k} active!`, "success");
       setTimeout(() => location.reload(), 1000);
     } else {
-      status.textContent = "✗ " + (res.detail || "Error");
+      status.textContent = "[Error] " + (res.detail || "Error");
       showToast("Case failed: " + res.detail, "error");
     }
   } catch(err) {
-    status.textContent = "✗ Network error";
+    status.textContent = "[Error] Network error";
     showToast("Network error", "error");
   }
 }
@@ -680,7 +964,7 @@ async function resetDemo() {
   try {
     const res = await postForm("/ctrl/api/reset-start", {});
     if (res.status === "ok") {
-      showToast("Reset in " + res.result.elapsed_seconds + "s ✓", "success");
+      showToast("Reset in " + res.result.elapsed_seconds + "s", "success");
       setTimeout(() => location.reload(), 1200);
     } else {
       showToast("Reset failed: " + res.detail, "error");
@@ -782,11 +1066,11 @@ function openSendModal() {
     chkWrap.style.display = "block";
     chk.checked = false;
     btn.disabled = true;
-    btn.textContent = "📤 Confirm Send [LIVE]";
+    btn.textContent = "Confirm Send [LIVE]";
   } else {
     chkWrap.style.display = "none";
     btn.disabled = false;
-    btn.textContent = "🧪 Dry Run (Nothing will be sent) [DRY-RUN]";
+    btn.textContent = "Dry Run (Nothing will be sent) [DRY-RUN]";
   }
 }
 
@@ -810,14 +1094,14 @@ async function confirmSend() {
     if (res.status === "ok") {
       const st = res.result?.status || "ok";
       if (st === "SUCCESS_DRY_RUN") {
-        resultEl.innerHTML = `<span class="pill pill-amber">✓ Dry run complete</span> Nothing was sent.`;
+        resultEl.innerHTML = `<span class="pill pill-amber">Dry run complete</span> Nothing was sent.`;
         showToast("Dry run complete. Nothing was sent.", "success");
       } else if (st === "SUCCESS_LIVE") {
         const sentTime = res.result?.sent_at || new Date().toLocaleTimeString();
-        resultEl.innerHTML = `<span class="pill pill-green">✓ Sent to ${rec}</span> at ${sentTime}`;
+        resultEl.innerHTML = `<span class="pill pill-green">Sent to ${rec}</span> at ${sentTime}`;
         showToast(`Sent to ${rec} at ${sentTime}`, "success");
       } else {
-        resultEl.innerHTML = `<span class="pill pill-green">✓ ${st}</span>`;
+        resultEl.innerHTML = `<span class="pill pill-green">${st}</span>`;
         showToast("Complete: " + st, "success");
       }
       const sel = document.getElementById("recent-recipients-select");
@@ -834,7 +1118,7 @@ async function confirmSend() {
         }
       }
     } else {
-      resultEl.innerHTML = `<span class="pill pill-red">✗ ${res.detail}</span>`;
+      resultEl.innerHTML = `<span class="pill pill-red">[Failed] ${res.detail}</span>`;
       showToast("Send failed: " + res.detail, "error");
     }
   } catch(err) {
@@ -842,13 +1126,13 @@ async function confirmSend() {
     showToast("Network error", "error");
   }
   btn.disabled = false;
-  btn.textContent = (currentSendMode === "live") ? "📤 Confirm Send [LIVE]" : "🧪 Dry Run (Nothing will be sent) [DRY-RUN]";
+  btn.textContent = (currentSendMode === "live") ? "Confirm Send [LIVE]" : "Dry Run (Nothing will be sent) [DRY-RUN]";
 }
 
 async function prepareOnly() {
   const res = await postForm("/ctrl/api/prepare", {});
   if (res.status === "ok") {
-    showToast("Report prepared ✓ PDF pages: " + (res.result?.pdf_pages || "?"), "success");
+    showToast("Report prepared. PDF pages: " + (res.result?.pdf_pages || "?"), "success");
   } else {
     showToast("Prepare failed: " + res.detail, "error");
   }

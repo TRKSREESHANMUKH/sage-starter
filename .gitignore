@@ -22,3 +22,5 @@ analytics/insights_cache/
 demo_data/case_packs/
 analytics/snapshots/snapshot_2026-*.json
 CN-Anomaly-Detection/
+stage9/state/recipients.json
+stage9/state/users.json

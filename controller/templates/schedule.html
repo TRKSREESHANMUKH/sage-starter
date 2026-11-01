@@ -72,7 +72,7 @@
       <p class="rule-note">Rule: send must be ≥ 5 minutes after prepare. Defaults: 19:45 prepare, 20:00 send.</p>
 
       <div class="btn-row">
-        <button class="btn btn-primary" type="submit">💾 Save Schedule</button>
+        <button class="btn btn-primary" type="submit">Save Schedule</button>
       </div>
     </form>
     <div id="result"></div>
@@ -95,10 +95,10 @@ async function saveSchedule(e) {
     resultEl.style.display = "block";
     if (data.status === "ok") {
       resultEl.className = "success";
-      resultEl.textContent = `✓ Saved — Prepare: ${data.result.prepare_time}, Send: ${data.result.send_time}`;
+      resultEl.textContent = `[Saved] Prepare: ${data.result.prepare_time}, Send: ${data.result.send_time}`;
     } else {
       resultEl.className = "error";
-      resultEl.textContent = "✗ " + data.detail;
+      resultEl.textContent = "[Error] " + data.detail;
     }
   } catch(err) {
     resultEl.style.display = "block";

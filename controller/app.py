@@ -67,6 +67,12 @@ from stage9.ops import (
     validate_manual_recipients,
     QUEUE_DIR,
 )
+from stage9.recipients import (
+    load_saved_recipients,
+    save_recipients,
+    validate_recipient_email,
+    load_send_history,
+)
 from stage9.current_day import get_current_day, get_ingested_days
 from stage9.clock import get_as_of_date
 
@@ -220,7 +226,9 @@ def _base_ctx(request: Request, sess: Optional[Dict] = None) -> Dict[str, Any]:
         "timezone": cfg.get("timezone", "Asia/Kolkata"),
         "recipients": cfg.get("recipients", {}).get("nightly_digest", []),
         "recent_recipients": get_recent_recipients(),
-        "default_recipient": os.getenv("SAGE_DEMO_RECIPIENT", "sreeshanmukhtrk@gmail.com").strip().lower(),
+        "saved_recipients": load_saved_recipients(),
+        "default_recipient": load_saved_recipients()[0]["email"] if load_saved_recipients() else "",
+        "send_history": load_send_history(5),
         "allowlist": sorted(get_allowlist()),
         "framing": (
             "SAGE performs controlled synthetic causal-attribution evaluation "
@@ -373,6 +381,47 @@ async def api_prepare(
 
 
 # ─────────────────────────────────────────────────────────────
+# API: Briefing Recipients Management
+# ─────────────────────────────────────────────────────────────
+
+@app.post("/ctrl/api/recipients")
+async def api_save_recipients(
+    request: Request,
+    sess: Dict = Depends(_require_session),
+):
+    try:
+        content_type = request.headers.get("content-type", "")
+        if "application/json" in content_type:
+            data = await request.json()
+            csrf = data.get("csrf_token", "")
+            _check_csrf(csrf, sess["csrf"])
+            contacts = data.get("contacts", [])
+        else:
+            form = await request.form()
+            csrf = form.get("csrf_token", "")
+            _check_csrf(csrf, sess["csrf"])
+            contacts = []
+            for i in range(1, 4):
+                em = str(form.get(f"email_{i}", "")).strip()
+                nm = str(form.get(f"name_{i}", "")).strip()
+                rl = str(form.get(f"role_{i}", "")).strip()
+                act = str(form.get(f"active_{i}", "true")).lower() in ("true", "1", "yes", "on")
+                if em or nm or rl:
+                    contacts.append({"email": em, "name": nm, "role": rl, "active": act})
+
+        ok, msg = save_recipients(contacts, user="controller")
+        if not ok:
+            return JSONResponse({"status": "error", "detail": msg}, status_code=400)
+        audit_log("save_recipients", {"count": len(contacts)}, "SUCCESS", user=sess.get("user", "controller"))
+        return JSONResponse({"status": "ok", "message": msg, "recipients": contacts})
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.error("Save recipients failed: %s", exc)
+        return JSONResponse({"status": "error", "detail": str(exc)}, status_code=500)
+
+
+# ─────────────────────────────────────────────────────────────
 # API: Send Now
 # ─────────────────────────────────────────────────────────────
 
@@ -385,7 +434,7 @@ async def api_send_now(
     sess: Dict = Depends(_require_session),
 ):
     _check_csrf(csrf_token, sess["csrf"])
-    ok, clean_recs, err = validate_manual_recipients(recipient)
+    ok, clean_rec, err = validate_recipient_email(recipient)
     if not ok:
         return JSONResponse(
             {"status": "error", "detail": err},
@@ -393,7 +442,7 @@ async def api_send_now(
         )
     try:
         fl = force_live.lower() in ("true", "1", "yes")
-        result = send_report_now_v6(recipients=clean_recs, force_live=fl, user="controller")
+        result = send_report_now_v6(recipients=[clean_rec], force_live=fl, user="controller")
         if result.get("status") == "FAILED_SMTP":
             return JSONResponse({"status": "error", "detail": result.get("error", "SMTP send failed"), "result": result}, status_code=500)
         if result.get("status") in ("REFUSED_INVALID", "REFUSED_PLACEHOLDER"):
