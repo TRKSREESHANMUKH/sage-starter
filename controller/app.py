@@ -73,6 +73,7 @@ from stage9.recipients import (
     validate_recipient_email,
     load_send_history,
 )
+from stage9.pipeline_runner import run_feed_with_telemetry, get_pipeline_state
 from stage9.current_day import get_current_day, get_ingested_days
 from stage9.clock import get_as_of_date
 from stage9.snapshot import compute_daily_snapshot
@@ -396,11 +397,16 @@ async def api_feed_next_day(
 ):
     _check_csrf(csrf_token, sess["csrf"])
     try:
-        result = feed_next_queue_day(user="controller")
+        result = run_feed_with_telemetry(user="controller")
         return JSONResponse({"status": "ok", "result": result})
     except Exception as exc:
         logger.error("Feed next day failed: %s", exc)
         return JSONResponse({"status": "error", "detail": str(exc)}, status_code=500)
+
+
+@app.get("/ctrl/api/feed-next-day/progress")
+async def api_feed_progress(request: Request, sess: Dict = Depends(_require_session)):
+    return JSONResponse(get_pipeline_state())
 
 
 @app.get("/ctrl/api/feed-next-day/stream")

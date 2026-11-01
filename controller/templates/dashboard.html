@@ -127,6 +127,39 @@
     /* ALLOWLIST */
     .allowlist-item { display: inline-block; background: #0b0f19; border: 1px solid var(--border); border-radius: 6px;
                       padding: 3px 10px; font-size: 0.8rem; margin: 3px; color: var(--text); }
+  
+    /* Part D Animations */
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5); }
+      70% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+    }
+    .step-running {
+      border-color: #3b82f6 !important;
+      background: rgba(59, 130, 246, 0.14) !important;
+    }
+    .dot-running {
+      background: #3b82f6 !important;
+      box-shadow: 0 0 8px #3b82f6;
+      animation: pulseGlow 1.2s infinite;
+    }
+    .dot-complete {
+      background: #10b981 !important;
+      box-shadow: 0 0 6px #10b981;
+    }
+    .dag-node-active {
+      background: rgba(59, 130, 246, 0.25) !important;
+      border-color: #3b82f6 !important;
+      color: #93c5fd !important;
+      box-shadow: 0 0 14px rgba(59, 130, 246, 0.5) !important;
+      transform: translateY(-2px);
+    }
+    .dag-node-complete {
+      background: rgba(16, 185, 129, 0.2) !important;
+      border-color: #10b981 !important;
+      color: #34d399 !important;
+    }
+
   </style>
 </head>
 <body>
@@ -385,18 +418,74 @@
         </div>
       </div>
 
-      <!-- Feed Progress Ticks -->
-      <div id="feed-progress-box" style="display:none; background:#0b0f19; border:1px solid var(--border); border-radius:8px; padding:12px; margin-top:12px">
-        <div style="font-size:0.82rem; font-weight:700; margin-bottom:8px; color:#334155" id="feed-status-title">Feeding Progress:</div>
-        <div style="display:flex; gap:16px; font-size:0.8rem; color:#64748b; flex-wrap:wrap">
-          <span id="tick-validate">[Pending] Validate pack</span>
-          <span id="tick-ingest">[Pending] Ingest events</span>
-          <span id="tick-panel">[Pending] Update daily panel</span>
-          <span id="tick-causal">[Pending] Causal analysis</span>
-          <span id="tick-report">[Pending] Daily brief built</span>
+      <!-- ─── LIVE STEPPER & CAUSAL DAG (Part D) ─── -->
+      <div id="live-stepper-box" style="display:none; background:#0b0f19; border:1px solid var(--border); border-radius:8px; padding:16px; margin-top:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+          <div>
+            <div style="font-size:0.84rem; font-weight:700; color:#f8fafc;" id="stepper-title">
+              Live Engine Pipeline &bull; 9 Stages Running
+            </div>
+            <div style="font-size:0.75rem; color:var(--muted);" id="stepper-sub">
+              Ingesting pack telemetry into physical constraints model
+            </div>
+          </div>
+          <div id="stepper-total-time" style="font-size:0.78rem; font-family:monospace; color:#3b82f6; font-weight:700; background:rgba(59,130,246,0.1); padding:3px 10px; border-radius:6px; border:1px solid rgba(59,130,246,0.3);">
+            Executing...
+          </div>
+        </div>
+
+        <!-- 9 Engine Steps Grid -->
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap:10px;" id="stepper-steps-grid">
+          {% set step_names = [
+            "Validate pack",
+            "Ingest ERP events",
+            "Material balance check",
+            "BOM explosion",
+            "Production reconciliation",
+            "Backlog calculation",
+            "Stage 7 GCM fit",
+            "Stage 8 Narration",
+            "Daily brief render"
+          ] %}
+          {% for sname in step_names %}
+          <div id="step-card-{{ loop.index0 }}" class="stepper-step-card" style="background:#131b2e; border:1px solid #1e293b; border-radius:6px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span id="step-dot-{{ loop.index0 }}" style="width:8px; height:8px; border-radius:50%; background:#475569; display:inline-block;"></span>
+              <span id="step-name-{{ loop.index0 }}" style="font-size:0.78rem; font-weight:600; color:#94a3b8;">{{ loop.index }}. {{ sname }}</span>
+            </div>
+            <span id="step-time-{{ loop.index0 }}" style="font-size:0.72rem; font-family:monospace; color:#64748b;">pending</span>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Mini Causal DAG Visualizer (Pulses during Stage 7) -->
+        <div id="mini-causal-dag" style="display:none; margin-top:16px; padding:14px; background:#131b2e; border:1px solid #1e293b; border-radius:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <span style="font-size:0.75rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.05em;">
+              Stage 7 &bull; Expert Causal DAG Propagation
+            </span>
+            <span style="font-size:0.70rem; color:#60a5fa; font-weight:600;">Evaluating structural equations...</span>
+          </div>
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; flex-wrap:wrap;">
+            <div id="dag-node-po" class="dag-node" style="padding:6px 14px; border-radius:6px; background:#0b0f19; border:1px solid #1e293b; font-size:0.78rem; font-weight:700; color:#64748b; transition:all 0.25s;">
+              PO Late
+            </div>
+            <span class="dag-arrow" style="color:#475569; font-weight:800;">&rarr;</span>
+            <div id="dag-node-stock" class="dag-node" style="padding:6px 14px; border-radius:6px; background:#0b0f19; border:1px solid #1e293b; font-size:0.78rem; font-weight:700; color:#64748b; transition:all 0.25s;">
+              Stock Low
+            </div>
+            <span class="dag-arrow" style="color:#475569; font-weight:800;">&rarr;</span>
+            <div id="dag-node-shortfall" class="dag-node" style="padding:6px 14px; border-radius:6px; background:#0b0f19; border:1px solid #1e293b; font-size:0.78rem; font-weight:700; color:#64748b; transition:all 0.25s;">
+              Shortfall
+            </div>
+            <span class="dag-arrow" style="color:#475569; font-weight:800;">&rarr;</span>
+            <div id="dag-node-backorder" class="dag-node" style="padding:6px 14px; border-radius:6px; background:#0b0f19; border:1px solid #1e293b; font-size:0.78rem; font-weight:700; color:#64748b; transition:all 0.25s;">
+              Backorder
+            </div>
+          </div>
         </div>
       </div>
-      <div id="feed-status" style="font-size:0.82rem; color:var(--muted); margin-top:6px; display:none"></div>
+      <div id="feed-status" style="font-size:0.82rem; color:var(--muted); margin-top:8px; display:none"></div>
     </div>
 
     <!-- ─── SEND MODE ─── -->
@@ -917,32 +1006,118 @@ function closePreviewModal() {
 async function feedNextDay() {
   const btn = document.getElementById("feed-next-btn");
   if (btn) btn.disabled = true;
-  const pbox = document.getElementById("feed-progress-box");
-  const ptitle = document.getElementById("feed-status-title");
+  const sbox = document.getElementById("live-stepper-box");
+  const stitle = document.getElementById("stepper-title");
+  const ssub = document.getElementById("stepper-sub");
+  const stime = document.getElementById("stepper-total-time");
+  const dag = document.getElementById("mini-causal-dag");
   const status = document.getElementById("feed-status");
-  if (pbox) pbox.style.display = "block";
-  if (status) { status.style.display = "block"; status.textContent = "Processing feed..."; }
 
-  // Tick feed steps
-  setTimeout(() => { const el = document.getElementById("tick-validate"); if (el) el.textContent = "[Done] Validate pack"; }, 300);
-  setTimeout(() => { const el = document.getElementById("tick-ingest"); if (el) el.textContent = "[Done] Ingest events"; }, 700);
-  setTimeout(() => { const el = document.getElementById("tick-panel"); if (el) el.textContent = "[Done] Update daily panel"; }, 1100);
-  setTimeout(() => { const el = document.getElementById("tick-causal"); if (el) el.textContent = "[Done] Causal analysis"; }, 1500);
+  if (sbox) sbox.style.display = "block";
+  if (dag) dag.style.display = "none";
+  if (status) { status.style.display = "none"; status.textContent = ""; }
+
+  // Reset all 9 steps to pending
+  for (let i = 0; i < 9; i++) {
+    const card = document.getElementById(`step-card-${i}`);
+    const dot = document.getElementById(`step-dot-${i}`);
+    const name = document.getElementById(`step-name-${i}`);
+    const timeEl = document.getElementById(`step-time-${i}`);
+    if (card) { card.className = "stepper-step-card"; card.style.background = "#131b2e"; card.style.borderColor = "#1e293b"; }
+    if (dot) dot.className = "";
+    if (name) name.style.color = "#94a3b8";
+    if (timeEl) { timeEl.textContent = "pending"; timeEl.style.color = "#64748b"; }
+  }
+
+  // Poll progress state
+  let isDone = false;
+  const pollInterval = setInterval(async () => {
+    if (isDone) return;
+    try {
+      const pr = await fetch("/ctrl/api/feed-next-day/progress");
+      const p = await pr.json();
+      if (!p || !p.steps) return;
+
+      p.steps.forEach((st, idx) => {
+        const card = document.getElementById(`step-card-${idx}`);
+        const dot = document.getElementById(`step-dot-${idx}`);
+        const name = document.getElementById(`step-name-${idx}`);
+        const timeEl = document.getElementById(`step-time-${idx}`);
+
+        if (st.status === "running") {
+          if (card) { card.classList.add("step-running"); }
+          if (dot) dot.className = "dot-running";
+          if (name) name.style.color = "#60a5fa";
+          if (timeEl) { timeEl.textContent = "running..."; timeEl.style.color = "#60a5fa"; }
+          if (idx === 6 && dag) {
+            dag.style.display = "block";
+            pulseDagNodes();
+          }
+        } else if (st.status === "complete") {
+          if (card) { card.classList.remove("step-running"); card.style.borderColor = "#10b981"; card.style.background = "rgba(16, 185, 129, 0.08)"; }
+          if (dot) dot.className = "dot-complete";
+          if (name) name.style.color = "#f8fafc";
+          if (timeEl) { timeEl.textContent = `+${st.elapsed_ms}ms`; timeEl.style.color = "#34d399"; }
+        }
+      });
+    } catch (_) {}
+  }, 120);
+
+  function pulseDagNodes() {
+    const nodes = ["dag-node-po", "dag-node-stock", "dag-node-shortfall", "dag-node-backorder"];
+    nodes.forEach((id, i) => {
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) el.className = "dag-node dag-node-active";
+      }, i * 150);
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) el.className = "dag-node dag-node-complete";
+      }, (i + 1) * 150 + 100);
+    });
+  }
 
   try {
     const res = await postForm("/ctrl/api/feed-next-day", {});
+    isDone = true;
+    clearInterval(pollInterval);
+
     if (res.status === "ok") {
-      const elRep = document.getElementById("tick-report"); if (elRep) elRep.textContent = "[Done] Daily brief built";
-      if (status) status.textContent = `[Done] Ingested pack for ${res.result.day || 'next day'}`;
-      showToast(`Fed next day successfully!`, "success");
-      setTimeout(() => location.reload(), 1200);
+      const totalMs = res.result?.total_elapsed_ms || 1200;
+      const totalSec = (totalMs / 1000).toFixed(2);
+      if (stime) stime.textContent = `Completed in ${totalSec}s (${totalMs}ms)`;
+
+      // Ensure all 9 steps show complete with actual ms
+      (res.result?.steps || []).forEach((st, idx) => {
+        const card = document.getElementById(`step-card-${idx}`);
+        const dot = document.getElementById(`step-dot-${idx}`);
+        const name = document.getElementById(`step-name-${idx}`);
+        const timeEl = document.getElementById(`step-time-${idx}`);
+        if (card) { card.classList.remove("step-running"); card.style.borderColor = "#10b981"; card.style.background = "rgba(16, 185, 129, 0.08)"; }
+        if (dot) dot.className = "dot-complete";
+        if (name) name.style.color = "#f8fafc";
+        if (timeEl) { timeEl.textContent = `+${st.elapsed_ms}ms`; timeEl.style.color = "#34d399"; }
+      });
+
+      if (dag) {
+        dag.style.display = "block";
+        ["dag-node-po", "dag-node-stock", "dag-node-shortfall", "dag-node-backorder"].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.className = "dag-node dag-node-complete";
+        });
+      }
+
+      showToast(`Ingested day ${res.result?.day || 'next day'} in ${totalSec}s`, "success");
+      setTimeout(() => location.reload(), 1500);
     } else {
-      if (status) status.textContent = "[Error] " + (res.detail || "Error");
+      if (status) { status.style.display = "block"; status.textContent = "[Error] " + (res.detail || "Error"); }
       showToast("Feed failed: " + res.detail, "error");
       if (btn) btn.disabled = false;
     }
   } catch(err) {
-    if (status) status.textContent = "[Error] Network error";
+    isDone = true;
+    clearInterval(pollInterval);
+    if (status) { status.style.display = "block"; status.textContent = "[Error] Network error"; }
     showToast("Network error", "error");
     if (btn) btn.disabled = false;
   }
