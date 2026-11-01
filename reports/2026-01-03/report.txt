@@ -6,8 +6,8 @@ SUMMARY:
 Operations proceeded normally across all manufacturing cells today with
 all planned production schedules fully achieved. Today, 3 customer
 orders totaling 30 units were booked while manufacturing completed 14
-finished goods units. Steel Rod 10mm inventory stands at 120 kg
-providing approximately 4 days of forward production cover. Inbound
+finished goods units. Steel Rod 10mm inventory stands at 215 kg
+providing approximately 7 days of forward production cover. Inbound
 purchase order #19 from EastCoast Components remains overdue since 02
 January (now 1 day late). All scheduled supplier deliveries arrived on
 time, an operational status seen end to end in receiving logs.
@@ -17,30 +17,22 @@ evaluation under an expert-defined causal model; it does not claim to
 prove real-world causality.
 
 TODAY'S NUMBERS IN CONTEXT:
-• Orders Due     : 2 orders due, same as yesterday (7d avg: 1.4)
+• Orders Due     : 0 orders due, same as yesterday (7d avg: 0.6)
 • Orders Late    : 4 late orders, up from 0 yesterday (7d avg: 0.6)
 • Units Short    : 42 units short, up from 0 yesterday (7d avg: 13.1)
 • Materials Low  : 0 materials low, same as yesterday (7d avg: 0.4)
-• Forward-look   : Next 7 days demand: ~212 units due (likely range 188–239); 159 already booked + ~53 expected new orders.
+• Forward-look   : Next 7 days demand: ~191 units due (likely range 169–216); 142 already booked + ~49 expected new orders.
 
 PAST ANALYSED CASES: WHAT CAUSED WHAT:
-• Chain: EastCoast delivery late → Steel Rod 10mm below safety level
-  Observed steel rod 10mm below safety level on 03 Jan is consistent with eastcoast delivery late starting on 01 Jan.
-  Confidence: Partly seen | Model check: Model agrees (Precomputed for the demo feed)
-• Chain: Customer demand spike for Widget Model Y → Widget Model Y orders late
-  Observed widget model y orders late on 03 Jan is consistent with customer demand spike for widget model y starting on 29 Dec.
-  Confidence: Partly seen | Model check: Model check not run for this day (Not scheduled)
-• Chain: Widget Model X orders late
-  Observed widget model x orders late on 03 Jan is consistent with widget model x orders late starting on 03 Jan.
-  Confidence: No upstream explanation found | Model check: Model check not run for this day (Not scheduled)
+No abnormal causal cascades observed in the trailing 7 days.
 
 FOCUS TOMORROW (TOP 3 PRIORITIES):
-1. Fix at the root: EastCoast delivery late (Supply Chain Lead) - Due Immediate
-   Reason: Observed steel rod 10mm below safety level on 03 Jan is consistent with eastcoast delivery late starting on 01 Jan. (Confidence: Partly seen)
-2. Fix at the root: Customer demand spike for Widget Model Y (Production Supervisor) - Due Immediate
-   Reason: Observed widget model y orders late on 03 Jan is consistent with customer demand spike for widget model y starting on 29 Dec. (Confidence: Partly seen)
-3. Expedite delivery for SO-220 to Coastal Traders (Customer Logistics) - Due 10:00 AM
+1. Expedite delivery for SO-220 to Coastal Traders (Customer Logistics) - Due 10:00 AM
    Reason: 13 units of Widget Model Y are 1 days overdue (was due 02 Jan).
+2. Expedite delivery for SO-225 to Nova Retailers (Customer Logistics) - Due 10:00 AM
+   Reason: 12 units of Widget Model Y are 1 days overdue (was due 02 Jan).
+3. Expedite delivery for SO-226 to Sunrise Wholesalers (Customer Logistics) - Due 10:00 AM
+   Reason: 9 units of Widget Model Y are 1 days overdue (was due 02 Jan).
 
 SUPPLIER WATCH:
 • PO-18 (EastCoast Components): 407 units Steel Rod 10mm - 142 days late (expected 14 Aug)
@@ -50,5 +42,5 @@ Receipts expected tomorrow: PO-20 from Global Polymers Co (250 units Plastic Gra
 ======================================================================
 FRAMING: SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.
 
-Simulated data. System knows data up to 2026-01-03 only.
+Synthetic data. System knows data up to 2026-01-03 only.
 Dashboard: http://127.0.0.1:8000

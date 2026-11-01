@@ -623,7 +623,7 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
     elif period_str == "full_year" and is_demo:
         start_d = date(2025, 1, 1)
         as_of = date(2025, 12, 31)
-        period_label = "Full-year view (demo)"
+        period_label = "Full-year view"
     else:
         start_d = date(2025, 1, 1)
         period_label = "All history (since 1 Jan 2025)"
@@ -1328,7 +1328,7 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
             shortfall_202 = panel_window.get("product_202_production_shortfall", 0).sum()
             total_lost_production = int(shortfall_201 + shortfall_202)
 
-        cancelled_info = f", including {total_cancelled_all} orders cancelled at the demo opening position" if total_cancelled_all > 0 else ""
+        cancelled_info = f", including {total_cancelled_all} orders cancelled at the feed opening position" if total_cancelled_all > 0 else ""
         summary_strip = [
             {
                 "id": "kpi_on_time",
@@ -1513,7 +1513,7 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
         # Reliability Summary Box
         reliability_summary = [
             "In zero-shot evaluation on fresh synthetic worlds (Test A), SAGE detected 0 of 3 target disruptions (Scenarios 3, 4, 6) and triggered false alarms on 60% to 90% of quiet windows because thresholds fitted to Seed 42 did not transfer across environments.",
-            "In site-calibrated deployment (Test A2, tested on one new simulated world), recalibrating null thresholds on Seed 7's own baseline panel controlled false alarms to 5.0% on quiet windows, but still detected 0 of 3 target disruptions because incident scores remained below the site's higher baseline noise threshold.",
+            "In site-calibrated deployment (Test A2, tested on one new synthetic world), recalibrating null thresholds on Seed 7's own baseline panel controlled false alarms to 5.0% on quiet windows, but still detected 0 of 3 target disruptions because incident scores remained below the site's higher baseline noise threshold.",
             "On real retail demand data (Test B), SAGE detected 1 of 4 holidays (Thanksgiving at 6.26x above null) with a 2.1% false-alarm rate, while a naive year-over-year baseline detected 0 of 4 holidays with a 4.2% false-alarm rate."
         ]
 

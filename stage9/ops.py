@@ -1159,7 +1159,7 @@ def jump_to_case(k: int, user: str = "operator") -> Dict[str, Any]:
         "case_id": case["id"],
         "date": target_d.isoformat(),
         "total_cases": len(cases),
-        "label": f"Demo case {k} of {len(cases)} — {target_d.strftime('%-d %b %Y')} (simulated)"
+        "label": f"Feed case {k} of {len(cases)} — {target_d.strftime('%-d %b %Y')}"
     }
     set_case_state(state)
     audit_log("jump_to_case", {"case": k, "case_id": case["id"], "date": target_d.isoformat()}, "SUCCESS", user=user)
@@ -1178,7 +1178,7 @@ def load_year_review(user: str = "operator") -> Dict[str, Any]:
         "active_case": None,
         "case_id": None,
         "date": end_date.isoformat(),
-        "label": "Full-year review — 31 Dec 2025 (simulated)"
+        "label": "Full-year review — 31 Dec 2025"
     }
     set_case_state(state)
     audit_log("load_year_review", {"date": end_date.isoformat()}, "SUCCESS", user=user)

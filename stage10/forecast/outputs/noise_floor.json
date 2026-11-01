@@ -47,6 +47,6 @@
     "oracle_irreducible_wape": 0.5034,
     "oracle_irreducible_mae": 25.11,
     "excess_error_wape": 0.144,
-    "explanation": "Due to discrete Bernoulli order arrival (p=0.42) and Uniform customer selection, even an omniscient Oracle knowing the true simulation equations cannot achieve a WAPE lower than ~0.50 (accuracy > 50%). The deployed model achieves 0.6474 WAPE, operating close to the irreducible aleatoric noise floor."
+    "explanation": "Due to discrete Bernoulli order arrival (p=0.42) and Uniform customer selection, even an omniscient Oracle knowing the true equations cannot achieve a WAPE lower than ~0.50 (accuracy > 50%). The deployed model achieves 0.6474 WAPE, operating close to the irreducible aleatoric noise floor."
   }
 }

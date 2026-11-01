@@ -454,6 +454,7 @@ async def api_preview(
 # API: Demo Reset
 # ─────────────────────────────────────────────────────────────
 
+@app.post("/ctrl/api/reset-start")
 @app.post("/ctrl/api/reset-demo")
 async def api_reset_demo(
     request: Request,

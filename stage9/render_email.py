@@ -595,7 +595,7 @@ def render_nightly_digest(
                       <span style="color: #2563eb;">SAGE</span> Daily Brief
                     </div>
                     <div style="font-size: 10px; color: #64748b; font-weight: 500; margin-top: 1px;">
-                      Simulated factory data as of {as_of.isoformat()}
+                      Synthetic operational data as of {as_of.isoformat()}
                     </div>
                   </td>
                   <td align="right">
@@ -703,7 +703,7 @@ def render_nightly_digest(
                 <strong>Framing:</strong> {RESEARCH_FRAMING}
               </div>
               <div>
-                Simulated data. System knows data up to {as_of.isoformat()} only. &bull; Generated at {sent_time_str}.
+                Synthetic data. System knows data up to {as_of.isoformat()} only. &bull; Generated at {sent_time_str}.
               </div>
               <div style="margin-top: 3px;">
                 <a href="{dashboard_url}" style="color: #2563eb; text-decoration: underline; font-weight: 600;">Open SAGE Web Dashboard &rarr;</a>
@@ -776,7 +776,7 @@ def render_nightly_digest(
             "=" * 70,
             f"FRAMING: {RESEARCH_FRAMING}",
             "",
-            f"Simulated data. System knows data up to {as_of.isoformat()} only.",
+            f"Synthetic data. System knows data up to {as_of.isoformat()} only.",
             f"Dashboard: {dashboard_url}"
         ])
 

@@ -15,10 +15,17 @@
   </p>
 </div>
 
-<div class="card" style="border-left: 4px solid #3b82f6;">
-  <div class="card-title">How the Demo Starts (Opening Position Setup)</div>
+<div class="card" style="border-left: 4px solid #3b82f6;" id="about-the-data">
+  <div class="card-title">About the data</div>
   <p style="font-size: 0.88rem; color: var(--text-main); line-height: 1.6; margin-bottom: 10px;">
-    To evaluate SAGE's operational detection on a live multi-day feed, the ten-day simulated sequence (1–10 Jan 2026) begins from an audited opening operating baseline established on <strong>31 Dec 2025</strong>. As pre-registered in <code>stage10/demo_seed_manifest.json</code>:
+    The operational dataset powering SAGE is synthetic, generated under a controlled physics-based enterprise manufacturing model. The ten sequential feed days (1–10 January 2026) are scripted operational scenarios designed to evaluate causal root-cause attribution, inventory depletion dynamics, and executive briefing accuracy under deterministic operational events. All historical 2025 transactions and 2026 incoming feeds represent synthetic manufacturing activity.
+  </p>
+</div>
+
+<div class="card" style="border-left: 4px solid #3b82f6;">
+  <div class="card-title">How the Feed Starts (Opening Position Setup)</div>
+  <p style="font-size: 0.88rem; color: var(--text-main); line-height: 1.6; margin-bottom: 10px;">
+    To evaluate SAGE's operational detection on a live multi-day feed, the ten-day synthetic sequence (1–10 Jan 2026) begins from an audited opening operating baseline established on <strong>31 Dec 2025</strong>. As pre-registered in <code>stage10/demo_seed_manifest.json</code>:
   </p>
   <ul style="padding-left: 20px; font-size: 0.85rem; color: var(--text-main); line-height: 1.6;">
     <li><strong>48 Stale Customer Backorders (652 units total):</strong> Accumulated unfulfilled 2025 sales orders with requested delivery dates &le; 2025-12-31 were formally cancelled at year-end closing, preventing historical standing backlog from drowning out new operational anomalies.</li>
@@ -29,7 +36,7 @@
     <strong>Day 1 Stock Reconciliation:</strong> Early planning drafts cited target inventory levels of 420/310/250 (and 215/140/110 in draft notes); the verified transactional ERP closing inventory on 2025-12-31 and opening Day 1 balance is Steel: 215 kg / Plastic: 204 kg / Copper: 184 meters.
   </p>
   <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 4px;">
-    These year-end adjustments are fully audited and accounted for in the Insights reconciliation table under the dedicated <em>"Cancelled at demo opening position"</em> category so that 100% of the 2025 transaction ledger reconciles without hidden drops.
+    These year-end adjustments are fully audited and accounted for in the Insights reconciliation table under the dedicated <em>"Cancelled at feed opening position"</em> category so that 100% of the 2025 transaction ledger reconciles without hidden drops.
   </p>
 </div>
 
@@ -116,12 +123,12 @@
 <div class="card" style="border-left: 4px solid #10b981;">
   <div class="card-title">Trust &amp; Empirical Evaluation</div>
   <p style="font-size: 0.9rem; color: var(--text-main); line-height: 1.6; margin-bottom: 12px;">
-    <strong>10-day scripted demo feed (1–10 Jan 2026):</strong> Evaluated across progressive pre-registration protocols (v1, v2, v3).
+    <strong>10-day scripted feed (1–10 Jan 2026):</strong> Evaluated across progressive pre-registration protocols (v1, v2, v3).
   </p>
 
   <div class="card-title" style="font-size: 0.95rem; margin-top: 10px;">Ten-Day Feed Multi-Version Evaluation &amp; Rehearsal Disclosure</div>
   <p style="font-size: 0.82rem; color: #b45309; background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 8px 12px; margin-bottom: 10px;">
-    <strong>Scripted Feed &amp; Rehearsal Disclosure:</strong> The 10 demonstration days (1–10 Jan 2026) are scripted; tiers matching the script demonstrate that the product responds deterministically to operational inputs, not predictive accuracy. Demo feed orders follow a 1-day lead time design, whereas 2025 customer orders had a median lead time of 6.0 days. Version 3 expectations were written after seeing results (rehearsal, not validation). Scored against original v1 expectations, SAGE achieves <strong>6 HITS (60.0%)</strong>, 2 PARTIALS (20.0%), and 2 MISSES (20.0%). Scored against v2 expectations, SAGE achieves <strong>8 HITS (80.0%)</strong>, 0 PARTIALS, and 2 MISSES (20.0%). Against rehearsal v3 expectations, SAGE scores <strong>9 HITS (90.0%)</strong>, 0 PARTIALS, and 1 MISS (10.0%).
+    <strong>Scripted Feed &amp; Rehearsal Disclosure:</strong> The 10 feed days (1–10 Jan 2026) are scripted; tiers matching the script demonstrate that the product responds deterministically to operational inputs, not predictive accuracy. Feed orders follow a 1-day lead time design, whereas 2025 customer orders had a median lead time of 6.0 days. Version 3 expectations were written after seeing results (rehearsal, not validation). Scored against original v1 expectations, SAGE achieves <strong>6 HITS (60.0%)</strong>, 2 PARTIALS (20.0%), and 2 MISSES (20.0%). Scored against v2 expectations, SAGE achieves <strong>8 HITS (80.0%)</strong>, 0 PARTIALS, and 2 MISSES (20.0%). Against rehearsal v3 expectations, SAGE scores <strong>9 HITS (90.0%)</strong>, 0 PARTIALS, and 1 MISS (10.0%).
   </p>
   <table style="margin-top: 8px; font-size: 0.8rem;">
     <thead>
@@ -415,13 +422,13 @@
       <strong>Deployed Model (Trailing 28-day mean):</strong> The deployed production model is a trailing 28-day mean multiplied across the 7-day horizon. It was selected strictly because it achieved the lowest cross-validation WAPE (0.55 / 45.5% accuracy) during walk-forward validation inside the H1 2025 training window.
     </li>
     <li>
-      <strong>Machine Learning Benchmark:</strong> Advanced statistical models, including Negative Binomial count regression and Quantile Gradient Boosted Decision Trees (GBDT), did not beat the trailing 28-day mean on this one-year simulated dataset due to high intermittency (68.2% zero-order days).
+      <strong>Machine Learning Benchmark:</strong> Advanced statistical models, including Negative Binomial count regression and Quantile Gradient Boosted Decision Trees (GBDT), did not beat the trailing 28-day mean on this one-year synthetic dataset due to high intermittency (68.2% zero-order days).
     </li>
     <li>
-      <strong>Theoretical Oracle Limit vs. Deployed Performance:</strong> Independent Monte Carlo simulation over 100,000 weeks proves that discrete Bernoulli order arrivals and random order sizing impose an irreducible theoretical aleatoric error floor of <strong>0.50 WAPE</strong> (an irreducible 50% accuracy ceiling). The deployed model achieves <strong>0.65 WAPE</strong> on out-of-sample weekly tests, operating within 0.14 WAPE of the theoretical noise limit.
+      <strong>Theoretical Oracle Limit vs. Deployed Performance:</strong> Independent Monte Carlo numerical evaluation over 100,000 weeks proves that discrete Bernoulli order arrivals and random order sizing impose an irreducible theoretical aleatoric error floor of <strong>0.50 WAPE</strong> (an irreducible 50% accuracy ceiling). The deployed model achieves <strong>0.65 WAPE</strong> on out-of-sample weekly tests, operating within 0.14 WAPE of the theoretical noise limit.
     </li>
     <li>
-      <strong>Protocol v4 Target Comparison (Units Due vs Units Placed):</strong> As pre-registered in <code>stage10/prereg_forecast_v4.md</code>, forecasting units due in the rolling 7-day window (<em>y</em><sub>due</sub> = known booked + short-notice) achieves <strong>68.5% accuracy</strong> (0.3152 WAPE [TEST]) vs <strong>35.3% accuracy</strong> (0.6474 WAPE [TEST]) when predicting net new arrivals (<em>y</em><sub>placed</sub>). Headline accuracy is driven primarily by the ERP order book (68.0% to 76.2% of due volume is already booked on origin day <em>D</em>); the model adds only the marginal difference printed. The new-order part <em>S(D)</em> alone is hard to predict (WAPE 0.9848; no oracle is computed for S(D)). In the 10-day demo feed, orders use a compressed 1-day lead time, meaning demo-day forecasts are mostly model-based; the demo feed's order rate is elevated (~7.3 vs ~14.6 units/day, 2.0x units ratio; ~0.63 vs 2.2 orders/day, 3.5x orders ratio), so demo-day forecasts are not an accuracy test. The prediction interval is wide (average width 39.4 units).
+      <strong>Protocol v4 Target Comparison (Units Due vs Units Placed):</strong> As pre-registered in <code>stage10/prereg_forecast_v4.md</code>, forecasting units due in the rolling 7-day window (<em>y</em><sub>due</sub> = known booked + short-notice) achieves <strong>68.5% accuracy</strong> (0.3152 WAPE [TEST]) vs <strong>35.3% accuracy</strong> (0.6474 WAPE [TEST]) when predicting net new arrivals (<em>y</em><sub>placed</sub>). Headline accuracy is driven primarily by the ERP order book (68.0% to 76.2% of due volume is already booked on origin day <em>D</em>); the model adds only the marginal difference printed. The new-order part <em>S(D)</em> alone is hard to predict (WAPE 0.9848; no oracle is computed for S(D)). In the 10-day feed, orders use a compressed 1-day lead time, meaning feed-day forecasts are mostly model-based; the feed's order rate is elevated (~7.3 vs ~14.6 units/day, 2.0x units ratio; ~0.63 vs 2.2 orders/day, 3.5x orders ratio), so feed-day forecasts are not an accuracy test. The prediction interval is wide (average width 39.4 units).
     </li>
     <li>
       <strong>Wide Prediction Range:</strong> Because discrete customer demand arrivals are stochastic, the empirical 80% prediction interval is wide. Forecasts provide macro weekly capacity sizing rather than daily precision.
@@ -445,13 +452,13 @@
       <strong>Sourcing Bug &amp; Transparent Multi-Cohort Reporting:</strong> Two of the ten designed scenarios (Scenarios 1 and 5) did not produce an operational effect because of a sourcing bug found in our own audit (routine PO generation locked to default seed 2025-01-01). The causal benchmark is reported across all cohorts (sample size <i>n</i> is small): All 10 scenarios: Hit@1 = 40.0% (4/10), Hit@3 = 60.0% (6/10), MRR = 0.5622; Excluding sourcing bug (8 scenarios): Hit@1 = 50.0% (4/8), Hit@3 = 75.0% (6/8), MRR = 0.6528; Stage 7 evaluated real-cause cohort (6 scenarios): Hit@1 = 33.3% (2/6), Hit@3 = 66.7% (4/6), MRR = 0.5620; Valid non-bugged real-cause cohort (4 scenarios): Hit@1 = 50.0% (2/4), Hit@3 = 100.0% (4/4), MRR = 0.7431.
     </li>
     <li>
-      <strong>Simulator Settlement Limitation (Late-But-Delivered is Zero by Construction):</strong> The synthetic enterprise simulator fulfills customer orders strictly on their requested delivery date. It contains no retroactive fulfillment sweep. Orders encountering stockouts remain permanently backordered rather than being fulfilled late; thus, the 'Shipped Complete AFTER Requested Date' count is zero by construction.
+      <strong>Settlement Limitation (Late-But-Delivered is Zero by Construction):</strong> The synthetic enterprise engine fulfills customer orders strictly on their requested delivery date. It contains no retroactive fulfillment sweep. Orders encountering stockouts remain permanently backordered rather than being fulfilled late; thus, the 'Shipped Complete AFTER Requested Date' count is zero by construction.
     </li>
     <li>
-      <strong>Operational Lead-Time Design in 10-Day Demonstration Feed:</strong> In the 2025 historical dataset, customer sales orders exhibit a lead time of 3 to 10 days (median 6.0 days). In the 10-day demonstration feed (January 1–10, 2026), incoming sales orders were scripted with short-cycle 1-day lead times (<code>lead_d = 1</code>) to allow full order-to-delivery cycles, stockout impacts, and customer backlog resolution to be observed within the compressed 10-day demonstration window without altering frozen 2025 database records.
+      <strong>Operational Lead-Time Design in 10-Day Feed:</strong> In the 2025 historical dataset, customer sales orders exhibit a lead time of 3 to 10 days (median 6.0 days). In the 10-day feed (January 1–10, 2026), incoming sales orders were scripted with short-cycle 1-day lead times (<code>lead_d = 1</code>) to allow full order-to-delivery cycles, stockout impacts, and customer backlog resolution to be observed within the compressed 10-day window without altering frozen 2025 database records.
     </li>
     <li>
-      <strong>Expert Graph Sourcing vs Actual Routing:</strong> The expert graph allows supplier links that the simulated sourcing never used (e.g., theoretical links to backup vendors Sri Materials Pvt Ltd and Bharat Steel Works). Stage 9 cause-chain tracing dynamically restricts traversal to active supplier links verified in historical purchase orders.
+      <strong>Expert Graph Sourcing vs Actual Routing:</strong> The expert graph allows supplier links that the synthetic sourcing never used (e.g., theoretical links to backup vendors Sri Materials Pvt Ltd and Bharat Steel Works). Stage 9 cause-chain tracing dynamically restricts traversal to active supplier links verified in historical purchase orders.
     </li>
     <li>
       <strong>Lag-State Dominance (Scenario 9):</strong> Autoregressive inventory continuity (lag1) captures 60–80% of Shapley variance during prolonged stockouts, suppressing the exogenous supplier delay rank.

@@ -142,8 +142,8 @@ def home(
             if req_d > cur_d:
                 return HTMLResponse(
                     "<html><body style='font-family:sans-serif;padding:40px;color:#1e293b;max-width:600px;margin:40px auto;line-height:1.5;'>"
-                    "<h2 style='color:#dc2626;'>That day has not happened yet in this demo</h2>"
-                    f"<p>The current simulated day is <strong>{cur_d.isoformat()}</strong>. "
+                    "<h2 style='color:#dc2626;'>That day has not happened yet</h2>"
+                    f"<p>The current operational date is <strong>{cur_d.isoformat()}</strong>. "
                     f"Requested future date <strong>{selected}</strong> has not occurred yet.</p>"
                     f"<p><a href='/?date={cur_d.isoformat()}' style='color:#2563eb;font-weight:600;'>&larr; Return to today</a></p>"
                     "</body></html>",
@@ -261,7 +261,7 @@ def download_daily_report_pdf(
     cur_d = get_current_day()
     target_d = datetime.strptime(selected, "%Y-%m-%d").date() if selected else cur_d
     if target_d > cur_d:
-        raise HTTPException(status_code=400, detail="That day has not happened yet in this demo")
+        raise HTTPException(status_code=400, detail="That day has not happened yet")
     try:
         from stage9.ops import ensure_report
         rep = ensure_report(as_of=target_d, user="viewer")
@@ -298,8 +298,8 @@ def view_daily_report_html(
     if target_d > cur_d:
         return HTMLResponse(
             "<html><body style='font-family:sans-serif;padding:40px;color:#1e293b;max-width:600px;margin:40px auto;line-height:1.5;'>"
-            "<h2 style='color:#dc2626;'>That day has not happened yet in this demo</h2>"
-            f"<p>The current simulated day is <strong>{cur_d.isoformat()}</strong>. "
+            "<h2 style='color:#dc2626;'>That day has not happened yet</h2>"
+            f"<p>The current operational date is <strong>{cur_d.isoformat()}</strong>. "
             f"Requested future date <strong>{selected}</strong> has not occurred yet.</p>"
             f"<p><a href='/report?date={cur_d.isoformat()}' style='color:#2563eb;font-weight:600;'>&larr; Return to today's report</a></p>"
             "</body></html>",
@@ -320,6 +320,7 @@ def view_daily_report_html(
     return HTMLResponse(content=html_content)
 
 
+@app.post("/api/feed/send-report")
 @app.post("/api/demo/send-report")
 def api_demo_send_report(
     date: Optional[str] = Query(None),
@@ -337,6 +338,7 @@ def api_demo_send_report(
     return res
 
 
+@app.post("/api/feed/next-day")
 @app.post("/api/demo/next-day")
 def api_demo_next_day(auth_token: str = Depends(verify_token)):
     from stage9.daily_run import load_next_day

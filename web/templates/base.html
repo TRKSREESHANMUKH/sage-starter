@@ -222,7 +222,7 @@
       <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
         <a href="/?date={{ selected_date }}" class="brand-wrap">
           <span class="brand-name">SAGE</span>
-          <span class="sim-tag">Simulated Data</span>
+          <span class="sim-tag">Synthetic Data</span>
         </a>
         <nav class="nav-tabs" aria-label="Main Navigation" style="display: inline-flex; gap: 4px; background: #f1f5f9; padding: 4px; border-radius: 8px; border: 1px solid var(--surface-border);">
           <a href="/?date={{ selected_date }}" class="tab-link {% if active_tab == 'today' %}active{% endif %}" id="nav-tab-today" style="font-size: 0.90rem; font-weight: 600; padding: 5px 12px; border-radius: 6px; text-decoration: none; color: {% if active_tab == 'today' %}var(--accent){% else %}var(--text-muted){% endif %}; background: {% if active_tab == 'today' %}#ffffff{% else %}transparent{% endif %}; box-shadow: {% if active_tab == 'today' %}0 1px 2px rgba(0,0,0,0.05){% else %}none{% endif %};">Today</a>
@@ -234,11 +234,11 @@
         <!-- Global Current Day Info & Dropdown -->
         <div class="current-day-label">
           <span class="current-day-text">
-            Current day: {{ current_day|default(selected_date) }} (simulated)
+            Current day: {{ current_day|default(selected_date) }}
             {% if selected_date and selected_date.startswith('2026-01-') %}
               {% set d_int = selected_date.split('-')[2]|int %}
               {% if d_int >= 1 and d_int <= 10 %}
-              <span class="sim-tag" style="background:#dbeafe; color:#1e40af; font-weight:700; margin-left:4px;">Demo feed: day {{ d_int }} of 10</span>
+              <span class="sim-tag" style="background:#dbeafe; color:#1e40af; font-weight:700; margin-left:4px;">Day {{ d_int }} of 10</span>
               {% endif %}
             {% endif %}
           </span>
@@ -259,7 +259,7 @@
           Controller ↗
         </a>
 
-        <!-- Demo Mode Controls -->
+        <!-- Mode Controls -->
         {% if demo_mode %}
           <button type="button" class="header-btn header-btn-primary" id="btn-send-email" onclick="sendReportEmail('{{ selected_date }}')">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
@@ -285,7 +285,7 @@
         <strong>Research Framing:</strong> {{ framing }}
       </div>
       <div>
-        Simulated data as of <strong>{{ selected_date }}</strong> &bull; Executive Delivery Layer
+        Synthetic operational data as of <strong>{{ selected_date }}</strong> &bull; Executive Delivery Layer
       </div>
       <details class="footer-details">
         <summary>About this analysis &amp; operational limits</summary>
@@ -329,7 +329,7 @@
         statusSpan.textContent = "Sending...";
       }
 
-      fetch(`/api/demo/send-report?date=${targetDate}`, {
+      fetch(`/api/feed/send-report?date=${targetDate}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" }
       })
@@ -362,7 +362,7 @@
     function loadNextDay() {
       const btn = document.getElementById("btn-load-next-day");
       if (btn) btn.disabled = true;
-      fetch("/api/demo/next-day", {
+      fetch("/api/feed/next-day", {
         method: "POST",
         headers: { "Content-Type": "application/json" }
       })

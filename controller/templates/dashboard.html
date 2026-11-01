@@ -238,16 +238,16 @@
       </div>
     </div>
 
-    <!-- ─── DEMO FEED (STAGE 9 FINAL 3: 1–10 JAN 2026) ─── -->
+    <!-- ─── FEED (STAGE 9 FINAL 3: 1–10 JAN 2026) ─── -->
     <div class="card full-width">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px">
         <div>
-          <div class="card-title" style="margin-bottom:4px">Demo Feed (1–10 January 2026)</div>
+          <div class="card-title" style="margin-bottom:4px">Feed (1–10 January 2026)</div>
           <div style="font-size:0.85rem; color:var(--muted)">
             {% if next_queue_label %}
             Next in queue: <strong>{{ next_queue_label }}</strong> ({{ queue_remaining }} packs waiting)
             {% else %}
-            Queue complete: all 10 demo days ingested.
+            Queue complete: all 10 feed days ingested.
             {% endif %}
           </div>
         </div>
@@ -257,7 +257,7 @@
           {% else %}
           <button class="btn btn-ghost" type="button" disabled>Queue Complete</button>
           {% endif %}
-          <button class="btn btn-ghost" type="button" onclick="resetDemo()">⟳ Reset demo feed</button>
+          <button class="btn btn-ghost" type="button" onclick="resetDemo()">Reset to start</button>
         </div>
       </div>
 
@@ -323,7 +323,7 @@
         {% endfor %}
       </div>
       <p style="font-size:0.75rem; color:var(--muted); margin-top:8px">
-        Configured in SAGE_ALLOWED_RECIPIENTS (env) + SAGE_OWNER_EMAIL + SAGE_DEMO_RECIPIENT.<br>
+        Configured in SAGE_ALLOWED_RECIPIENTS (env) + SAGE_OWNER_EMAIL.<br>
         Sends to addresses outside this list are refused automatically.
       </p>
     </div>
@@ -589,7 +589,7 @@ async function feedNextDay() {
   if (pbox) pbox.style.display = "block";
   if (status) { status.style.display = "block"; status.textContent = "Processing feed..."; }
 
-  // Tick simulation
+  // Tick feed steps
   setTimeout(() => { const el = document.getElementById("tick-validate"); if (el) el.textContent = "✓ Validate pack"; }, 300);
   setTimeout(() => { const el = document.getElementById("tick-ingest"); if (el) el.textContent = "✓ Ingest events"; }, 700);
   setTimeout(() => { const el = document.getElementById("tick-panel"); if (el) el.textContent = "✓ Update daily panel"; }, 1100);
@@ -676,11 +676,11 @@ async function loadYearReview() {
 }
 
 async function resetDemo() {
-  if (!confirm("Reset demo? This restores the live DB to 2025-12-31 and refills the queue with 10 packs.")) return;
+  if (!confirm("Reset to start? This restores the live DB to 2025-12-31 and refills the queue with 10 packs.")) return;
   try {
-    const res = await postForm("/ctrl/api/reset-demo", {});
+    const res = await postForm("/ctrl/api/reset-start", {});
     if (res.status === "ok") {
-      showToast("Demo reset in " + res.result.elapsed_seconds + "s ✓", "success");
+      showToast("Reset in " + res.result.elapsed_seconds + "s ✓", "success");
       setTimeout(() => location.reload(), 1200);
     } else {
       showToast("Reset failed: " + res.detail, "error");

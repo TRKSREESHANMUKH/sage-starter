@@ -1,17 +1,17 @@
 {
   "as_of": "2025-12-31",
-  "composite_severity_score": 7216.0,
+  "composite_severity_score": 100.0,
   "kpis": {
     "backlog_rising": false,
-    "oldest_overdue_date": "2025-10-02",
-    "total_backlog_units": 630,
-    "total_due_today_orders": 1,
-    "total_due_today_units": 22,
-    "total_material_stockouts": 1,
-    "total_overdue_orders": 47,
-    "total_po_overdue_days": 139,
+    "oldest_overdue_date": null,
+    "total_backlog_units": 0,
+    "total_due_today_orders": 0,
+    "total_due_today_units": 0,
+    "total_material_stockouts": 0,
+    "total_overdue_orders": 0,
+    "total_po_overdue_days": 0,
     "total_production_shortfall": 50,
-    "yest_backlog_units": 630
+    "yest_backlog_units": 0
   },
   "materials": {
     "101": {
@@ -19,27 +19,17 @@
       "material_id": 101,
       "name": "Steel Rod 10mm",
       "open_pos_count": 1,
-      "overdue_pos": [
-        {
-          "days_overdue": 139,
-          "expected_date": "2025-08-14",
-          "pending_quantity": 407,
-          "po_id": 18,
-          "severity": "CRITICAL",
-          "supplier_id": 4,
-          "supplier_name": "EastCoast Components"
-        }
-      ],
+      "overdue_pos": [],
       "reorder_point": 150.0,
       "safety_stock": 50.0,
-      "severity": "CRITICAL",
-      "stock": 9.0
+      "severity": "NORMAL",
+      "stock": 215.0
     },
     "102": {
       "days_of_cover": null,
       "material_id": 102,
       "name": "Plastic Granules",
-      "open_pos_count": 0,
+      "open_pos_count": 1,
       "overdue_pos": [],
       "reorder_point": 120.0,
       "safety_stock": 40.0,
@@ -50,7 +40,7 @@
       "days_of_cover": null,
       "material_id": 103,
       "name": "Copper Wire",
-      "open_pos_count": 0,
+      "open_pos_count": 1,
       "overdue_pos": [],
       "reorder_point": 100.0,
       "safety_stock": 30.0,
@@ -63,43 +53,54 @@
     "simulated_data": true,
     "source": "PostgreSQL committed operational ERP schema"
   },
-  "plant_severity": "CRITICAL",
+  "plant_severity": "NEEDS_ATTENTION",
   "products": {
     "201": {
-      "actual_production": 0,
+      "actual_production": 25,
       "demand_units": 0,
-      "due_backlog_units": 453,
-      "due_today_orders_count": 1,
-      "due_today_units": 22,
-      "fg_stock": 0.0,
+      "due_backlog_units": 0,
+      "due_today_orders_count": 0,
+      "due_today_units": 0,
+      "fg_stock": 25.0,
       "name": "Widget Model X",
-      "oldest_due_date": "2025-10-02",
-      "overdue_orders_count": 32,
-      "planned_production": 30,
+      "oldest_due_date": null,
+      "overdue_orders_count": 0,
+      "planned_production": 55,
       "product_id": 201,
       "production_shortfall": 30,
       "reorder_point": 30.0,
       "safety_stock": 15.0,
-      "severity": "CRITICAL"
+      "severity": "WARNING"
     },
     "202": {
-      "actual_production": 0,
+      "actual_production": 20,
       "demand_units": 9,
-      "due_backlog_units": 177,
+      "due_backlog_units": 0,
       "due_today_orders_count": 0,
       "due_today_units": 0,
-      "fg_stock": 0.0,
+      "fg_stock": 20.0,
       "name": "Widget Model Y",
-      "oldest_due_date": "2025-10-27",
-      "overdue_orders_count": 15,
-      "planned_production": 20,
+      "oldest_due_date": null,
+      "overdue_orders_count": 0,
+      "planned_production": 40,
       "product_id": 202,
       "production_shortfall": 20,
       "reorder_point": 25.0,
       "safety_stock": 10.0,
-      "severity": "CRITICAL"
+      "severity": "WARNING"
     }
   },
-  "receipts_today": [],
+  "receipts_today": [
+    {
+      "fill_rate": 1.0,
+      "material_id": 101,
+      "po_id": 170,
+      "quantity_ordered": 206,
+      "quantity_received": 206,
+      "receipt_id": 991,
+      "supplier_id": 4,
+      "supplier_name": "EastCoast Components"
+    }
+  ],
   "weekday": "Wednesday"
 }

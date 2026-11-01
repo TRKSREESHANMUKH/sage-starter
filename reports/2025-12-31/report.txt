@@ -42,5 +42,5 @@ SUPPLIER WATCH:
 ======================================================================
 FRAMING: SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.
 
-Simulated data. System knows data up to 2025-12-31 only.
+Synthetic data. System knows data up to 2025-12-31 only.
 Dashboard: http://127.0.0.1:8000

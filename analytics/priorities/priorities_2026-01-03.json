@@ -49,9 +49,14 @@
   ],
   "watchlist": [
     {
-      "item": "Steel Rod 10mm (Material 101) inventory monitoring",
-      "reason": "Steel Rod 10mm (Material 101) is at 120 kg (below reorder point 150 kg), tracking 1 open replenishment POs",
-      "role": "Procurement"
+      "item": "Tight buffer on SO-224 (Widget Model Y (Product 202))",
+      "reason": "Order due 2026-01-04 has only 6 units cushion above planned fulfillment",
+      "role": "Planner"
+    },
+    {
+      "item": "Tight buffer on SO-228 (Widget Model Y (Product 202))",
+      "reason": "Order due 2026-01-06 has only 2 units cushion above planned fulfillment",
+      "role": "Planner"
     }
   ]
 }

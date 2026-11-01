@@ -787,7 +787,7 @@ def build_one_page_context(selected_date_str: Optional[str] = None) -> Dict[str,
     elif case_state.get("label"):
         subtitle_badge = case_state["label"]
     else:
-        subtitle_badge = f"Operations Briefing — {cur_d.strftime('%-d %b %Y')} (simulated)"
+        subtitle_badge = f"Operations Briefing — {cur_d.strftime('%-d %b %Y')}"
 
     # 3. Database connection
     engine = get_engine("live")

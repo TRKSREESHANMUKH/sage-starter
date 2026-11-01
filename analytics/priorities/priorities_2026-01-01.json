@@ -47,5 +47,21 @@
       "role": "Planner"
     }
   ],
-  "watchlist": []
+  "watchlist": [
+    {
+      "item": "Tight buffer on SO-220 (Widget Model Y (Product 202))",
+      "reason": "Order due 2026-01-02 has only 7 units cushion above planned fulfillment",
+      "role": "Planner"
+    },
+    {
+      "item": "Tight buffer on SO-225 (Widget Model Y (Product 202))",
+      "reason": "Order due 2026-01-02 has only 8 units cushion above planned fulfillment",
+      "role": "Planner"
+    },
+    {
+      "item": "Tight buffer on SO-224 (Widget Model Y (Product 202))",
+      "reason": "Order due 2026-01-04 has only 6 units cushion above planned fulfillment",
+      "role": "Planner"
+    }
+  ]
 }

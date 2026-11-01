@@ -7,60 +7,60 @@
   },
   "top_priorities": [
     {
-      "action": "At risk: Order SO-249",
-      "category": "Rule 2",
-      "due_date": "2026-01-11",
+      "action": "Fulfil order SO-220 first",
+      "category": "Rule 1",
+      "due_date": "2026-01-10",
       "rank": 1,
-      "reason": "Order SO-249 (Widget Model X (Product 201)) due in 1 days (12 units) exceeds projected availability of -39 units",
+      "reason": "Order SO-220 for Widget Model Y (Product 202) is 8 days overdue (13 units pending, due 2026-01-02)",
       "role": "Planner"
     },
     {
-      "action": "At risk: Order SO-252",
-      "category": "Rule 2",
-      "due_date": "2026-01-12",
+      "action": "Fulfil order SO-225 first",
+      "category": "Rule 1",
+      "due_date": "2026-01-10",
       "rank": 2,
-      "reason": "Order SO-252 (Widget Model X (Product 201)) due in 2 days (12 units) exceeds projected availability of -39 units",
+      "reason": "Order SO-225 for Widget Model Y (Product 202) is 8 days overdue (12 units pending, due 2026-01-02)",
       "role": "Planner"
     },
     {
-      "action": "At risk: Order SO-253",
-      "category": "Rule 2",
-      "due_date": "2026-01-11",
+      "action": "Fulfil order SO-226 first",
+      "category": "Rule 1",
+      "due_date": "2026-01-10",
       "rank": 3,
-      "reason": "Order SO-253 (Widget Model X (Product 201)) due in 1 days (11 units) exceeds projected availability of -39 units",
+      "reason": "Order SO-226 for Widget Model Y (Product 202) is 8 days overdue (9 units pending, due 2026-01-02)",
       "role": "Planner"
     },
     {
-      "action": "At risk: Order SO-255",
-      "category": "Rule 2",
-      "due_date": "2026-01-13",
+      "action": "Fulfil order SO-221 first",
+      "category": "Rule 1",
+      "due_date": "2026-01-10",
       "rank": 4,
-      "reason": "Order SO-255 (Widget Model X (Product 201)) due in 3 days (10 units) exceeds projected availability of -39 units",
+      "reason": "Order SO-221 for Widget Model Y (Product 202) is 8 days overdue (8 units pending, due 2026-01-02)",
       "role": "Planner"
     },
     {
-      "action": "At risk: Order SO-260",
-      "category": "Rule 2",
-      "due_date": "2026-01-13",
+      "action": "Fulfil order SO-227 first",
+      "category": "Rule 1",
+      "due_date": "2026-01-10",
       "rank": 5,
-      "reason": "Order SO-260 (Widget Model X (Product 201)) due in 3 days (10 units) exceeds projected availability of -39 units",
+      "reason": "Order SO-227 for Widget Model X (Product 201) is 7 days overdue (12 units pending, due 2026-01-03)",
       "role": "Planner"
     }
   ],
   "watchlist": [
     {
-      "item": "At risk: Order SO-254",
-      "reason": "Order SO-254 (Widget Model Y (Product 202)) due in 2 days (9 units) exceeds projected availability of -5 units",
+      "item": "Fulfil order SO-224 first",
+      "reason": "Order SO-224 for Widget Model Y (Product 202) is 6 days overdue (14 units pending, due 2026-01-04)",
       "role": "Planner"
     },
     {
-      "item": "At risk: Order SO-251",
-      "reason": "Order SO-251 (Widget Model Y (Product 202)) due in 1 days (8 units) exceeds projected availability of -5 units",
+      "item": "Fulfil order SO-230 first",
+      "reason": "Order SO-230 for Widget Model Y (Product 202) is 6 days overdue (9 units pending, due 2026-01-04)",
       "role": "Planner"
     },
     {
-      "item": "At risk: Order SO-256",
-      "reason": "Order SO-256 (Widget Model X (Product 201)) due in 2 days (5 units) exceeds projected availability of -39 units",
+      "item": "Fulfil order SO-229 first",
+      "reason": "Order SO-229 for Widget Model X (Product 201) is 5 days overdue (14 units pending, due 2026-01-05)",
       "role": "Planner"
     }
   ]
