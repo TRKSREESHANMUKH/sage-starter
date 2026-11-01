@@ -23,8 +23,9 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request, Form
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from stage9.clock import get_as_of_date
@@ -35,6 +36,19 @@ from stage9.status import RESEARCH_FRAMING, get_packet_display_status
 from stage9.render_email import load_evidence_packets, load_stage8_narratives
 from stage9.scheduler import load_schedule_config, SENT_LOG_PATH
 from web.research_view import load_research_evaluation_data
+from web.auth import (
+    load_users,
+    verify_password,
+    seed_default_user_if_needed,
+    create_session,
+    get_session,
+    delete_session,
+    is_locked_out,
+    record_failed_attempt,
+    clear_failed_attempts,
+    SESSION_COOKIE_NAME,
+    SESSION_TTL_SECONDS,
+)
 
 app = FastAPI(
     title="SAGE Operations & Causal Platform",
@@ -42,12 +56,21 @@ app = FastAPI(
     version="2.0.0"
 )
 
+STATIC_DIR = ROOT_DIR / "web" / "static"
+STATIC_DIR.mkdir(parents=True, exist_ok=True)
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+# Ensure default admin user is seeded on startup
+seed_default_user_if_needed()
+
 @app.get("/health")
+@app.get("/api/health")
 def health_check():
     return {"status": "ok", "app": "viewer"}
 
 TEMPLATES_DIR = ROOT_DIR / "web" / "templates"
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
+templates.env.globals["hasattr"] = hasattr
 
 
 def mask_email(email_str: str) -> str:
@@ -68,23 +91,22 @@ def verify_token(
     authorization: Optional[str] = Header(None)
 ) -> str:
     """
-    Validates token from session cookie, ?token=<token>, or Authorization: Bearer <token>.
-    If SAGE_WEB_TOKEN is not configured in .env, allows local access.
+    Validates token from session or legacy credentials.
     """
+    if hasattr(request, "state") and hasattr(request.state, "user") and request.state.user:
+        return request.state.user["email"]
+
     expected_token = os.getenv("SAGE_WEB_TOKEN")
     if not expected_token:
         return "dev"
 
-    # Check session cookie (no tokens required in URLs)
     cookie_token = request.cookies.get("sage_token")
     if cookie_token and cookie_token == expected_token:
         return cookie_token
 
-    # Check query param
     if token and token == expected_token:
         return token
 
-    # Check header
     if authorization:
         parts = authorization.split()
         if len(parts) == 2 and parts[0].lower() == "bearer" and parts[1] == expected_token:
@@ -92,26 +114,157 @@ def verify_token(
 
     raise HTTPException(
         status_code=401,
-        detail="Unauthorized: Valid SAGE_WEB_TOKEN required via cookie, ?token=, or Authorization: Bearer <token>"
+        detail="Unauthorized: Authentication required."
     )
 
 
+# Exempt routes from viewer session requirement
+EXEMPT_PREFIXES = ("/login", "/logout", "/health", "/api/health", "/static", "/favicon.ico")
+
+
 @app.middleware("http")
-async def cookie_auth_middleware(request: Request, call_next):
+async def session_auth_middleware(request: Request, call_next):
+    path = request.url.path
+    request.state.user = None
+
+    # Check if exempt path
+    if any(path == p or path.startswith(p + "/") or path.startswith(p) for p in EXEMPT_PREFIXES):
+        # If user happens to have session, attach it anyway
+        sid = request.cookies.get(SESSION_COOKIE_NAME)
+        if sid:
+            sess = get_session(sid)
+            if sess:
+                request.state.user = {"email": sess["email"], "role": sess["role"]}
+        return await call_next(request)
+
+    # 1. Check sage_session cookie
+    sid = request.cookies.get(SESSION_COOKIE_NAME)
+    if sid:
+        sess = get_session(sid)
+        if sess:
+            request.state.user = {"email": sess["email"], "role": sess["role"]}
+            return await call_next(request)
+
+    # 2. Check query param ?token= or Authorization header
     token = request.query_params.get("token")
+    auth_header = request.headers.get("Authorization")
+    header_token = None
+    if auth_header and auth_header.startswith("Bearer "):
+        header_token = auth_header[7:].strip()
+
+    req_token = token or header_token
     expected_token = os.getenv("SAGE_WEB_TOKEN")
-    if token and expected_token and token == expected_token:
+
+    if (expected_token and req_token == expected_token) or (not expected_token and req_token == "dev"):
+        admin_email, _ = seed_default_user_if_needed()
+        new_sid = create_session(admin_email, "admin")
+        request.state.user = {"email": admin_email, "role": "admin"}
+
         query_params = dict(request.query_params)
         query_params.pop("token", None)
         from urllib.parse import urlencode
         clean_url = request.url.path
         if query_params:
             clean_url += "?" + urlencode(query_params)
-        from starlette.responses import RedirectResponse
-        resp = RedirectResponse(url=clean_url, status_code=303)
-        resp.set_cookie(key="sage_token", value=token, httponly=True, samesite="lax")
+
+        resp = RedirectResponse(url=clean_url, status_code=303) if token else await call_next(request)
+        resp.set_cookie(
+            key=SESSION_COOKIE_NAME,
+            value=new_sid,
+            httponly=True,
+            samesite="strict",
+            max_age=SESSION_TTL_SECONDS
+        )
         return resp
-    return await call_next(request)
+
+    # 3. Not authenticated
+    if path.startswith("/api/"):
+        return JSONResponse({"detail": "Authentication required. Please log in at /login"}, status_code=401)
+
+    from urllib.parse import quote
+    clean_target = request.url.path
+    if request.url.query:
+        clean_target += f"?{request.url.query}"
+    return RedirectResponse(f"/login?next={quote(clean_target)}", status_code=303)
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Authentication Routes (/login, /logout)
+# ──────────────────────────────────────────────────────────────────────────────
+
+@app.get("/login", response_class=HTMLResponse)
+def login_page(request: Request, next: str = "/"):
+    sid = request.cookies.get(SESSION_COOKIE_NAME)
+    if sid and get_session(sid):
+        target = next if (next and next.startswith("/") and not next.startswith("//")) else "/"
+        return RedirectResponse(target, status_code=303)
+    return templates.TemplateResponse("login.html", {
+        "request": request,
+        "next": next,
+        "error": None
+    })
+
+
+@app.post("/login", response_class=HTMLResponse)
+async def login_submit(
+    request: Request,
+    email: str = Form(...),
+    password: str = Form(...),
+    next: str = Form("/")
+):
+    client_ip = request.client.host if request.client else "127.0.0.1"
+    locked, remaining = is_locked_out(client_ip)
+    if locked:
+        return templates.TemplateResponse(
+            "login.html",
+            {
+                "request": request,
+                "next": next,
+                "email": email,
+                "error": f"Too many failed login attempts. Locked out for {remaining} seconds."
+            },
+            status_code=429
+        )
+
+    users = load_users()
+    user = users.get(email.strip().lower())
+    if user and verify_password(password, user.get("salt", ""), user.get("password_hash", "")):
+        clear_failed_attempts(client_ip)
+        sid = create_session(user["email"], user.get("role", "viewer"))
+        target = next if (next and next.startswith("/") and not next.startswith("//")) else "/"
+        resp = RedirectResponse(target, status_code=303)
+        resp.set_cookie(
+            key=SESSION_COOKIE_NAME,
+            value=sid,
+            httponly=True,
+            samesite="strict",
+            max_age=SESSION_TTL_SECONDS
+        )
+        return resp
+    else:
+        record_failed_attempt(client_ip)
+        return templates.TemplateResponse(
+            "login.html",
+            {
+                "request": request,
+                "next": next,
+                "email": email,
+                "error": "Invalid email or password."
+            },
+            status_code=401
+        )
+
+
+@app.get("/logout")
+@app.post("/logout")
+def logout(request: Request):
+    sid = request.cookies.get(SESSION_COOKIE_NAME)
+    if sid:
+        delete_session(sid)
+    resp = RedirectResponse("/login", status_code=303)
+    resp.delete_cookie(SESSION_COOKIE_NAME)
+    resp.delete_cookie("sage_token")
+    return resp
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -154,6 +307,7 @@ def home(
 
     ctx = build_one_page_context(selected)
     ctx["request"] = request
+    ctx["current_user"] = getattr(request.state, "user", None)
     ctx["active_tab"] = "today"
     return templates.TemplateResponse("home.html", ctx)
 
@@ -169,6 +323,7 @@ def insights(
     payload = get_insights_data(selected, period)
     ctx = dict(payload)
     ctx["request"] = request
+    ctx["current_user"] = getattr(request.state, "user", None)
     ctx["active_tab"] = "insights"
     ctx["selected_date"] = payload["as_of"]
     ctx["current_day"] = get_current_day().isoformat()

@@ -271,6 +271,16 @@
           </button>
           <span id="send-status-msg" style="font-size: 0.80rem; font-weight: 600; margin-left: 4px;"></span>
         {% endif %}
+
+        <!-- User Menu (Part B) -->
+        {% set active_user = current_user %}
+        {% if active_user %}
+        <div class="user-menu" style="display:inline-flex; align-items:center; gap:8px; margin-left:6px; padding-left:10px; border-left:1px solid var(--surface-border);">
+          <span style="font-size:0.78rem; font-weight:600; color:var(--text);" title="{{ active_user.email }}">{{ active_user.email }}</span>
+          <span class="sim-tag" style="background:#e0f2fe; color:#0369a1; font-size:0.70rem; padding:2px 6px; text-transform:uppercase;">{{ active_user.role }}</span>
+          <a href="/logout" class="header-btn" style="padding:4px 8px; font-size:0.75rem;" title="Sign out of SAGE">Logout</a>
+        </div>
+        {% endif %}
       </div>
     </div>
   </header>
