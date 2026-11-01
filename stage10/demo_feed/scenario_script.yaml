@@ -1,4 +1,4 @@
-# SAGE Stage 9 FINAL 3 — Ten-Day Scripted Demo Scenario Configuration
+# SAGE Stage 10 — Ten-Day Scripted Demo Scenario Configuration (v4 Protocol)
 # Seed: 42 (deterministic)
 # Date range: 2026-01-01 to 2026-01-10
 
@@ -10,7 +10,7 @@ scenarios:
     date: "2026-01-01"
     name: "Normal Operations"
     type: "routine"
-    description: "Routine baseline orders, shipments, and manufacturing production; no disruptions."
+    description: "Routine baseline orders and manufacturing production; finished goods buffer covers demand, no disruptions."
     expected_status: "NORMAL"
     parameters:
       demand_mult_x: 1.0
@@ -22,7 +22,7 @@ scenarios:
     date: "2026-01-02"
     name: "Widget Model X Demand Spike"
     type: "demand_spike"
-    description: "Demand spike on Widget Model X (~2.5x normal orders); finished goods buffer covers demand, no shortage."
+    description: "Demand spike on Widget Model X (36 units placed); finished goods buffer covers demand, no shortage."
     expected_status: "WATCH"
     parameters:
       demand_mult_x: 2.5
@@ -34,8 +34,8 @@ scenarios:
     date: "2026-01-03"
     name: "Supplier 4 Steel Delivery Delayed"
     type: "supplier_delay"
-    description: "Steel rod delivery due today (Supplier 4, PO #19) does not arrive; raw material stock remains above safety."
-    expected_status: "WATCH"
+    description: "Steel rod delivery due Jan 2 (Supplier 4, PO #19) does not arrive and slips 1 day overdue; raw stock buffer absorbs deficit."
+    expected_status: "NEEDS_ATTENTION"
     parameters:
       po_19_received: false
       demand_mult_x: 1.0
@@ -45,7 +45,7 @@ scenarios:
     date: "2026-01-04"
     name: "Partial Receipt & Ongoing Steel Delay"
     type: "partial_receipt_and_delay"
-    description: "Plastic granules delivery (Supplier 3, PO #20) arrives with 60% partial quantity (150 of 250 kg), balance on Jan 8; steel PO #19 is 1 day overdue."
+    description: "Plastic granules delivery (Supplier 3, PO #20) arrives with 60% partial quantity (150 of 250 kg), balance on Jan 8; steel PO #19 is 2 days overdue."
     expected_status: "NEEDS_ATTENTION"
     parameters:
       po_20_received_qty: 150
@@ -56,7 +56,7 @@ scenarios:
     date: "2026-01-05"
     name: "Production Line Capacity Disruption"
     type: "capacity_bottleneck"
-    description: "Line downtime for part of the day, Widget Model Y output ~50% below planned production."
+    description: "Line 2 assembly downtime, Widget Model Y output ~50% below planned production (2 units vs 4 planned); SO #237 delayed."
     expected_status: "NEEDS_ATTENTION"
     parameters:
       capacity_factor_y: 0.5
@@ -65,12 +65,12 @@ scenarios:
 
   - day: 6
     date: "2026-01-06"
-    name: "Compound Disruption: Steel at Safety & Backlog Onset"
+    name: "Steel at Safety Stock & Backlog Onset"
     type: "compound_disruption"
-    description: "Steel PO #19 is 3 days overdue, Widget Model X demand elevated, steel reaches safety level, production falls short, first customer orders overdue. Copper PO #21 arrives on time and in full."
+    description: "Steel PO #19 is 4 days overdue, steel reaches safety level (50 kg), production throttled. Copper PO #21 arrives on time and in full."
     expected_status: "CRITICAL"
     parameters:
-      demand_mult_x: 1.6
+      demand_mult_x: 1.0
       po_19_received: false
       po_21_received: true
       po_21_qty: 200
@@ -79,7 +79,7 @@ scenarios:
     date: "2026-01-07"
     name: "Severe Disruption: Steel Stock-out & Production Halt"
     type: "severe_stockout"
-    description: "Steel rod stock-out (0 kg), Widget Model X production completely halted, customer backorders escalate."
+    description: "Steel rod stock-out (0 kg), Widget Model X production completely halted, genuine late customer shipment of SO #237 delivered late."
     expected_status: "CRITICAL"
     parameters:
       steel_stockout: true
@@ -90,7 +90,7 @@ scenarios:
     date: "2026-01-08"
     name: "Inbound Recovery & Production Restart"
     type: "recovery"
-    description: "Steel PO #19 arrives 5 days late in full (400 kg); plastic PO #20 balance arrives (100 kg); manufacturing restarts and backlog clears."
+    description: "Steel PO #19 arrives 5 days late in full (400 kg); plastic PO #20 balance arrives (100 kg); manufacturing restarts and carried-over backorders start shipping FIFO."
     expected_status: "NEEDS_ATTENTION"
     parameters:
       po_19_received: true
@@ -100,12 +100,12 @@ scenarios:
 
   - day: 9
     date: "2026-01-09"
-    name: "Seasonal Demand Peak (Control) & Backlog Clearing"
+    name: "Seasonal Demand Peak & Backlog Burn-Down"
     type: "seasonal_control"
-    description: "Friday demand peak matching standard weekly baseline pattern; backorders continue clearing; no false supply alarm."
-    expected_status: "NORMAL"
+    description: "Friday demand peak matching standard weekly baseline pattern; carried-over backorders continue clearing oldest-first."
+    expected_status: "NEEDS_ATTENTION"
     parameters:
-      demand_mult_x: 1.25  # Normal Friday bump
+      demand_mult_x: 1.25
       demand_mult_y: 1.25
       prod_overtime: true
 
@@ -113,7 +113,7 @@ scenarios:
     date: "2026-01-10"
     name: "Dual Independent Operational Shortfalls"
     type: "dual_unrelated_issues"
-    description: "Two unrelated minor issues: Widget Model Y production -20% below plan and late inbound delivery of plastic reorder PO #22 (placed Jan 8, promised Jan 10, not received). Earlier backorders nearly cleared."
+    description: "Two unrelated minor issues: Widget Model Y production -20% below plan (20 units vs 25 planned) and late inbound delivery of plastic reorder PO #22. Earlier backorders cleared."
     expected_status: "NEEDS_ATTENTION"
     parameters:
       capacity_factor_y: 0.8

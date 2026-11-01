@@ -65,6 +65,20 @@ PREREG_V3_EXPECTATIONS = {
 }
 
 
+PREREG_V4_EXPECTATIONS = {
+    1: {"tier": ["NORMAL"], "entity": "normal", "desc": "Baseline healthy operations: steady demand, on-time shipping, healthy stock"},
+    2: {"tier": ["WATCH"], "entity": "demand", "desc": "Demand surge on Widget Model X; stock covers volume"},
+    3: {"tier": ["NEEDS_ATTENTION"], "entity": "eastcoast", "desc": "Steel PO #19 slips past expected delivery date; buffer absorbs deficit"},
+    4: {"tier": ["NEEDS_ATTENTION"], "entity": "partial", "desc": "Partial delivery of plastic granules (PO #20) + steel PO #19 still late"},
+    5: {"tier": ["NEEDS_ATTENTION"], "entity": "production", "desc": "Workcenter 2 bottleneck; Widget Model Y output below plan"},
+    6: {"tier": ["CRITICAL"], "entity": "safety", "desc": "Steel stock drops to safety stock (50 kg); production throttled"},
+    7: {"tier": ["CRITICAL"], "entity": "stockout", "desc": "Steel stockout (0 kg); Model X halted; genuine late customer shipments"},
+    8: {"tier": ["NEEDS_ATTENTION"], "entity": "recovery", "desc": "Steel PO #19 delivered in full; production restarts; backorders start shipping"},
+    9: {"tier": ["NEEDS_ATTENTION"], "entity": "control", "desc": "Friday demand peak absorbed; carried-over backlog continues shipping oldest-first"},
+    10: {"tier": ["NEEDS_ATTENTION"], "entity": "production", "desc": "Final carried-over orders completed; minor line variance"}
+}
+
+
 TIER_RANKS = {
     "NORMAL": 0,
     "CALM": 0,
@@ -115,12 +129,16 @@ def score_feed(results_path: Path = None, version: str = "v3") -> dict:
         exp_dict = PREREG_V1_EXPECTATIONS
     elif version == "v2":
         exp_dict = PREREG_V2_EXPECTATIONS
+    elif version == "v4":
+        exp_dict = PREREG_V4_EXPECTATIONS
     else:
         exp_dict = PREREG_V3_EXPECTATIONS
 
     title_label = version.upper()
     if version == "v3":
         title_label += " (written after seeing results: rehearsal, not validation)"
+    elif version == "v4":
+        title_label += " (rehearsal on a designed feed, not validation)"
 
     print("=" * 105)
     print(f"SAGE Stage 9 FINAL: Deterministic Scoring (F7) against Pre-Registration {title_label}")
@@ -244,18 +262,23 @@ def score_feed(results_path: Path = None, version: str = "v3") -> dict:
     }
 
 
-def print_reviewer_reading_table(scores_v1: dict, scores_v2: dict, scores_v3: dict):
-    print("\n" + "=" * 90)
+def print_reviewer_reading_table(scores_v1: dict, scores_v2: dict, scores_v3: dict, scores_v4: dict = None):
+    print("\n" + "=" * 105)
     print("REVIEWER-READING TABLE (Cross-Protocol Comparison)")
     print("Note: In this table, 'IMPROVING' is deleted as an expected tier; Day 8 under v1 is marked UNSCORED.")
-    print("Protocol v3 is labelled: 'written after seeing results (rehearsal, not validation)'")
-    print("=" * 90)
-    print(f"{'Day':<6} {'Date':<12} {'Actual Tier':<16} {'v1 Score':<16} {'v2 Score':<16} {'v3 Score (Rehearsal)'}")
-    print("-" * 90)
+    print("Protocol v3: 'written after seeing results (rehearsal, not validation)'")
+    print("Protocol v4: 'rehearsal on redesigned feed, not validation'")
+    print("=" * 105)
+    header = f"{'Day':<6} {'Date':<12} {'Actual Tier':<16} {'v1 Score':<14} {'v2 Score':<14} {'v3 Score':<14}"
+    if scores_v4:
+        header += " {'v4 Score (Redesigned)'}"
+    print(header)
+    print("-" * 105)
 
     v1_map = {s["day"]: s for s in scores_v1["scores"]}
     v2_map = {s["day"]: s for s in scores_v2["scores"]}
     v3_map = {s["day"]: s for s in scores_v3["scores"]}
+    v4_map = {s["day"]: s for s in scores_v4["scores"]} if scores_v4 else {}
 
     v1_hits = 0
     v1_partials = 0
@@ -266,6 +289,7 @@ def print_reviewer_reading_table(scores_v1: dict, scores_v2: dict, scores_v3: di
         s1 = v1_map.get(d, {})
         s2 = v2_map.get(d, {})
         s3 = v3_map.get(d, {})
+        s4 = v4_map.get(d, {})
 
         d_str = s1.get("date", f"2026-01-{d:02d}")
         act_tier = s1.get("actual_tier", "NORMAL")
@@ -282,14 +306,19 @@ def print_reviewer_reading_table(scores_v1: dict, scores_v2: dict, scores_v3: di
 
         dec2 = s2.get("decision", "MISS")
         dec3 = s3.get("decision", "MISS")
+        row = f"Day {d:<2} {d_str:<12} {act_tier:<16} {dec1:<14} {dec2:<14} {dec3:<14}"
+        if scores_v4:
+            dec4 = s4.get("decision", "MISS")
+            row += f" {dec4}"
+        print(row)
 
-        print(f"Day {d:<2} {d_str:<12} {act_tier:<16} {dec1:<16} {dec2:<16} {dec3}")
-
-    print("-" * 90)
+    print("-" * 105)
     print(f"v1 Tally (Reviewer Table): {v1_hits} HITS, {v1_partials} PARTIALS, {v1_misses} MISSES, {v1_unscored} UNSCORED")
     print(f"v2 Tally (Reviewer Table): {scores_v2['hits']} HITS, {scores_v2['partials']} PARTIALS, {scores_v2['misses']} MISSES")
-    print(f"v3 Tally (Reviewer Table): {scores_v3['hits']} HITS, {scores_v3['partials']} PARTIALS, {scores_v3['misses']} MISSES [Rehearsal, not validation]")
-    print("=" * 90 + "\n")
+    print(f"v3 Tally (Reviewer Table): {scores_v3['hits']} HITS, {scores_v3['partials']} PARTIALS, {scores_v3['misses']} MISSES [Rehearsal]")
+    if scores_v4:
+        print(f"v4 Tally (Reviewer Table): {scores_v4['hits']} HITS, {scores_v4['partials']} PARTIALS, {scores_v4['misses']} MISSES [Rehearsal on designed feed, not validation]")
+    print("=" * 105 + "\n")
 
 
 if __name__ == "__main__":
@@ -299,4 +328,6 @@ if __name__ == "__main__":
     print()
     v3_res = score_feed(version="v3")
     print()
-    print_reviewer_reading_table(v1_res, v2_res, v3_res)
+    v4_res = score_feed(version="v4")
+    print()
+    print_reviewer_reading_table(v1_res, v2_res, v3_res, v4_res)

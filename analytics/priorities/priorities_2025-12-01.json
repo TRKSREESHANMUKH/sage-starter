@@ -7,56 +7,45 @@
   },
   "top_priorities": [
     {
-      "action": "Audit master production schedule targets",
+      "action": "Expedite urgent replenishment for Steel Rod 10mm (Material 101)",
+      "category": "Rule 3",
       "due_date": "2025-12-01",
       "rank": 1,
-      "reason": "Verify scheduled workcenter batches against weekly sales order forecasts",
-      "role": "Planner",
-      "rule_tier": 0
+      "reason": "Steel Rod 10mm (Material 101) stock at 9 kg is at or below safety stock (50 kg). no recent use",
+      "role": "Procurement"
     },
     {
-      "action": "Review supplier on-time delivery scorecards",
+      "action": "Review capacity & throughput for Widget Model X (Product 201)",
+      "category": "Rule 5",
       "due_date": "2025-12-01",
       "rank": 2,
-      "reason": "Confirm upcoming replenishment deliveries remain on schedule",
-      "role": "Procurement",
-      "rule_tier": 0
+      "reason": "Widget Model X (Product 201) manufactured 0 units vs 30 planned (30 units shortfall)",
+      "role": "Plant Manager"
     },
     {
-      "action": "Routine workcenter equipment calibration",
+      "action": "Review capacity & throughput for Widget Model Y (Product 202)",
+      "category": "Rule 5",
       "due_date": "2025-12-01",
       "rank": 3,
-      "reason": "Standard preventative maintenance on primary motor assembly lines",
-      "role": "Plant Manager",
-      "rule_tier": 0
+      "reason": "Widget Model Y (Product 202) manufactured 0 units vs 20 planned (20 units shortfall)",
+      "role": "Plant Manager"
     },
     {
-      "action": "Safety stock verification audit",
+      "action": "Monitor inventory buffer for Steel Rod 10mm (Material 101)",
+      "category": "Buffer Health",
       "due_date": "2025-12-01",
       "rank": 4,
-      "reason": "Validate physical inventory cycle counts against ERP closing stock balances",
-      "role": "Planner",
-      "rule_tier": 0
+      "reason": "Steel Rod 10mm (Material 101) has no recent use (9 kg on hand)",
+      "role": "Procurement"
     },
     {
-      "action": "Monitor raw material warehouse receipts",
+      "action": "Monitor inventory buffer for Plastic Granules (Material 102)",
+      "category": "Buffer Health",
       "due_date": "2025-12-01",
       "rank": 5,
-      "reason": "Ensure dock reception procedures meet standard 24-hour turnaround",
-      "role": "Procurement",
-      "rule_tier": 0
-    }
-  ],
-  "watchlist": [
-    {
-      "item": "Finished goods warehouse stock health",
-      "reason": "All finished goods buffers maintained within healthy operating margins",
-      "role": "Planner"
-    },
-    {
-      "item": "Inbound supplier dispatch lead times",
-      "reason": "Vendor shipment intervals tracking within nominal purchase order parameters",
+      "reason": "Plastic Granules (Material 102) has no recent use (204 kg on hand)",
       "role": "Procurement"
     }
-  ]
+  ],
+  "watchlist": []
 }

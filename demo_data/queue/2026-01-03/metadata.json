@@ -12,15 +12,15 @@
     "purchase_order_lines": 0,
     "goods_receipts": 0,
     "goods_receipt_lines": 0,
-    "sales_orders": 2,
-    "sales_order_lines": 2,
-    "deliveries": 3,
-    "delivery_lines": 3,
+    "sales_orders": 3,
+    "sales_order_lines": 3,
+    "deliveries": 0,
+    "delivery_lines": 0,
     "production_orders": 2,
     "material_issues": 5,
-    "stock_movements": 10
+    "stock_movements": 7
   },
-  "total_events": 27,
+  "total_events": 20,
   "closing_stock_simulated": {
     "materials": {
       "101": 120.0,
@@ -28,8 +28,8 @@
       "103": 94.0
     },
     "finished_goods": {
-      "201": 24,
-      "202": 25
+      "201": 57,
+      "202": 32
     }
   }
 }

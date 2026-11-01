@@ -51,8 +51,8 @@ class TestSummaryAndFocus(unittest.TestCase):
             sentences = summary.get("sentences", [])
             text = summary.get("text", "")
 
-            # 4-6 sentences
-            self.assertTrue(4 <= len(sentences) <= 6, f"Day {d} sentence count {len(sentences)} not in 4-6")
+            # 6-8 sentences
+            self.assertTrue(6 <= len(sentences) <= 8, f"Day {d} sentence count {len(sentences)} not in 6-8")
 
             # Max sentence length < 22 words
             for i, s in enumerate(sentences):

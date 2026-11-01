@@ -1,7 +1,7 @@
 {
   "pack_date": "2026-01-06",
   "day_number": 6,
-  "scenario_name": "Compound Disruption: Steel at Safety & Backlog Onset",
+  "scenario_name": "Steel at Safety Stock & Backlog Onset",
   "scenario_type": "compound_disruption",
   "is_simulated": true,
   "label": "SIMULATED ERP OPERATIONAL PACK",
@@ -23,13 +23,13 @@
   "total_events": 29,
   "closing_stock_simulated": {
     "materials": {
-      "101": 47.0,
-      "102": 232.0,
+      "101": 50.0,
+      "102": 233.0,
       "103": 283.0
     },
     "finished_goods": {
-      "201": 20,
-      "202": 20
+      "201": 25,
+      "202": 31
     }
   }
 }

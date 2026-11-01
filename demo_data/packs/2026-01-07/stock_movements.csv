@@ -1,5 +1,4 @@
 id,item_id,date,movement_type,quantity,goods_receipt_line_id,material_issue_id,production_order_id,delivery_line_id
-544,1,2026-01-07,OUT,47,,234,,
-545,4,2026-01-07,OUT,8,,,,188
-546,4,2026-01-07,OUT,6,,,,189
-547,5,2026-01-07,OUT,4,,,,190
+539,1,2026-01-07,OUT,50,,234,,
+540,5,2026-01-07,OUT,8,,,,183
+541,5,2026-01-07,OUT,10,,,,184

@@ -1,3 +1,4 @@
 id,sales_order_id,product_id,quantity_ordered,quantity_fulfilled
-240,240,201,10,0
-241,241,202,4,0
+244,244,201,11,0
+245,245,202,9,0
+246,246,201,10,0

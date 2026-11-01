@@ -4,6 +4,7 @@
   "kpis": {
     "total_backlog_units": 42,
     "total_overdue_orders": 4,
+    "yest_backlog_units": 0,
     "total_due_today_units": 12,
     "total_due_today_orders": 1,
     "backlog_rising": true,

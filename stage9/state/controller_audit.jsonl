@@ -1589,3 +1589,115 @@
 {"timestamp": "2026-10-31T23:33:55.131465+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-09", "rows_loaded": null}, "result": "SUCCESS"}
 {"timestamp": "2026-10-31T23:33:57.021669+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-10", "rows_loaded": null}, "result": "SUCCESS"}
 {"timestamp": "2026-10-31T23:34:06.304365+05:30", "user": "verify_all", "action": "reset_demo", "parameters": {"target_date": "2025-12-31", "elapsed_seconds": 0.453}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:34:35.352166+05:30", "user": "feed_evaluator", "action": "reset_demo", "parameters": {"target_date": "2025-12-31", "elapsed_seconds": 0.874}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:34:36.584883+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-01", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:35:11.094894+05:30", "user": "feed_evaluator", "action": "reset_demo", "parameters": {"target_date": "2025-12-31", "elapsed_seconds": 0.506}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:35:12.142694+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-01", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:35:25.622914+05:30", "user": "feed_evaluator", "action": "ensure_report", "parameters": {"as_of": "2026-01-02", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:35:25.624795+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-02", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:35:37.368311+05:30", "user": "feed_evaluator", "action": "ensure_report", "parameters": {"as_of": "2026-01-03", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:35:37.369782+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-03", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:35:45.082204+05:30", "user": "feed_evaluator", "action": "ensure_report", "parameters": {"as_of": "2026-01-04", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:35:45.084259+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-04", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:35:54.174453+05:30", "user": "feed_evaluator", "action": "ensure_report", "parameters": {"as_of": "2026-01-05", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:35:54.176096+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-05", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:36:06.912873+05:30", "user": "feed_evaluator", "action": "ensure_report", "parameters": {"as_of": "2026-01-06", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:36:06.914275+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-06", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:36:13.061007+05:30", "user": "feed_evaluator", "action": "ensure_report", "parameters": {"as_of": "2026-01-07", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:36:13.062398+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-07", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:36:14.142527+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-08", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:36:21.304505+05:30", "user": "feed_evaluator", "action": "ensure_report", "parameters": {"as_of": "2026-01-09", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:36:21.306078+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-09", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:36:28.517307+05:30", "user": "feed_evaluator", "action": "ensure_report", "parameters": {"as_of": "2026-01-10", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:36:28.518644+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-10", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:37:52.870281+05:30", "user": "feed_evaluator", "action": "reset_demo", "parameters": {"target_date": "2025-12-31", "elapsed_seconds": 0.333}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:37:53.338602+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-01", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:37:53.694462+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-02", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:37:54.092404+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-03", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:37:54.743921+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-04", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:37:55.394667+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-05", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:37:55.998287+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-06", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:37:56.708343+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-07", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:37:57.548982+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-08", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:37:58.423147+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-09", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:37:59.441376+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-10", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:49:56.880700+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:49:56.894877+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:50:10.627188+05:30", "user": "test", "action": "ensure_report", "parameters": {"as_of": "2025-12-31", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:50:12.332279+05:30", "user": "test", "action": "send_report_now", "parameters": {"as_of": "2025-12-31", "recipients": ["sreeshanmukhtrk@gmail.com"], "mode": "manual", "force_live": true, "force_dry_run": false}, "result": "SUCCESS_LIVE"}
+{"timestamp": "2026-11-01T10:50:12.343498+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:50:12.359651+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:50:12.360137+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:50:12.365522+05:30", "user": "test", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:50:12.366412+05:30", "user": "test", "action": "set_send_mode", "parameters": {"send_mode": "live"}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:50:14.366903+05:30", "user": "test", "action": "send_report_now", "parameters": {"as_of": "2025-12-31", "recipients": ["sreeshanmukhtrk@gmail.com"], "mode": "manual", "force_live": false, "force_dry_run": true}, "result": "SUCCESS_DRY_RUN"}
+{"timestamp": "2026-11-01T10:50:14.374947+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:50:14.395587+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:50:14.430089+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:50:14.446590+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:50:14.497756+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:50:14.498247+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:50:23.327445+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:52:23.938254+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:52:23.941361+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:52:25.260953+05:30", "user": "test", "action": "send_report_now", "parameters": {"as_of": "2025-12-31", "recipients": ["sreeshanmukhtrk@gmail.com"], "mode": "manual", "force_live": true, "force_dry_run": false}, "result": "SUCCESS_LIVE"}
+{"timestamp": "2026-11-01T10:52:25.267247+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:52:25.282400+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:52:25.283253+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:52:25.291515+05:30", "user": "test", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:52:25.291929+05:30", "user": "test", "action": "set_send_mode", "parameters": {"send_mode": "live"}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:52:27.079310+05:30", "user": "test", "action": "send_report_now", "parameters": {"as_of": "2025-12-31", "recipients": ["sreeshanmukhtrk@gmail.com"], "mode": "manual", "force_live": false, "force_dry_run": true}, "result": "SUCCESS_DRY_RUN"}
+{"timestamp": "2026-11-01T10:52:27.081849+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:52:27.096943+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:52:27.097444+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:52:27.105360+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:52:27.119654+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:52:27.120224+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:52:41.932544+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:52:46.264382+05:30", "user": "send_check", "action": "send_report_now", "parameters": {"as_of": "2025-12-31", "recipients": ["sreeshanmukhtrk@gmail.com"], "mode": "manual", "force_live": false, "force_dry_run": true}, "result": "SUCCESS_DRY_RUN"}
+{"timestamp": "2026-11-01T10:53:13.422954+05:30", "user": "simulated_restart", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:53:13.429169+05:30", "user": "simulated_restart", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:58:59.307229+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:58:59.308329+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:59:00.981900+05:30", "user": "test", "action": "send_report_now", "parameters": {"as_of": "2025-12-31", "recipients": ["sreeshanmukhtrk@gmail.com"], "mode": "manual", "force_live": true, "force_dry_run": false}, "result": "SUCCESS_LIVE"}
+{"timestamp": "2026-11-01T10:59:00.986441+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:59:01.001350+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:59:01.001925+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:59:01.007325+05:30", "user": "test", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:59:01.007710+05:30", "user": "test", "action": "set_send_mode", "parameters": {"send_mode": "live"}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:59:02.153939+05:30", "user": "test", "action": "send_report_now", "parameters": {"as_of": "2025-12-31", "recipients": ["sreeshanmukhtrk@gmail.com"], "mode": "manual", "force_live": false, "force_dry_run": true}, "result": "SUCCESS_DRY_RUN"}
+{"timestamp": "2026-11-01T10:59:02.155930+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:59:02.206561+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:59:02.207151+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:59:02.222659+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:59:02.234623+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:59:02.234927+05:30", "user": "test_fixture", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:59:12.130896+05:30", "user": "test_fixture", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:59:16.166697+05:30", "user": "send_check", "action": "send_report_now", "parameters": {"as_of": "2025-12-31", "recipients": ["sreeshanmukhtrk@gmail.com"], "mode": "manual", "force_live": false, "force_dry_run": true}, "result": "SUCCESS_DRY_RUN"}
+{"timestamp": "2026-11-01T10:59:31.144487+05:30", "user": "simulated_restart", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T10:59:31.146072+05:30", "user": "simulated_restart", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:00:04.331062+05:30", "user": "simulated_restart", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:00:04.440252+05:30", "user": "simulated_restart", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:00:56.650128+05:30", "user": "scheduler_test_cleanup", "action": "ensure_report", "parameters": {"as_of": "2025-12-31", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:00:56.653356+05:30", "user": "scheduler_test_cleanup", "action": "reset_demo", "parameters": {"target_date": "2025-12-31", "elapsed_seconds": 12.583}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:01:15.634814+05:30", "user": "simulated_restart", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:01:15.635881+05:30", "user": "simulated_restart", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:01:39.243226+05:30", "user": "feed_evaluator", "action": "reset_demo", "parameters": {"target_date": "2025-12-31", "elapsed_seconds": 0.423}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:01:47.463949+05:30", "user": "feed_evaluator", "action": "ensure_report", "parameters": {"as_of": "2026-01-01", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:01:47.465067+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-01", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:01:48.150037+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-02", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:01:49.055621+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-03", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:01:50.478398+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-04", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:01:52.499132+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-05", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:01:54.284763+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-06", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:01:55.992748+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-07", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:01:57.032345+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-08", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:01:57.973178+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-09", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:02:07.242126+05:30", "user": "feed_evaluator", "action": "ensure_report", "parameters": {"as_of": "2026-01-10", "pdf_pages": 1}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:02:07.248170+05:30", "user": "feed_evaluator", "action": "feed_pack", "parameters": {"pack_date": "2026-01-10", "rows_loaded": null}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:48:41.499332+05:30", "user": "run_sage", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:48:41.500127+05:30", "user": "run_sage", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:48:43.742648+05:30", "user": "system_startup", "action": "save_runtime_config", "parameters": {"config_keys": ["jobs", "recipients", "replay", "send_mode", "timezone"]}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:48:43.743161+05:30", "user": "system_startup", "action": "set_send_mode", "parameters": {"send_mode": "dry_run"}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:49:46.563384+05:30", "user": "operator", "action": "login", "parameters": {"ip": "127.0.0.1"}, "result": "SUCCESS"}
+{"timestamp": "2026-11-01T11:50:01.268788+05:30", "user": "controller", "action": "reset_demo", "parameters": {"target_date": "2025-12-31", "elapsed_seconds": 0.219}, "result": "SUCCESS"}

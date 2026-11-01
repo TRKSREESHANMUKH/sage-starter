@@ -15,35 +15,35 @@
       "role": "Planner"
     },
     {
-      "action": "Prepare dispatch for order SO-233 (Widget Model X (Product 201))",
-      "category": "Upcoming Order",
-      "due_date": "2026-01-03",
-      "rank": 2,
-      "reason": "Order SO-233 (16 units) requested for delivery on 2026-01-03",
-      "role": "Planner"
-    },
-    {
-      "action": "Prepare dispatch for order SO-234 (Widget Model X (Product 201))",
-      "category": "Upcoming Order",
-      "due_date": "2026-01-03",
-      "rank": 3,
-      "reason": "Order SO-234 (12 units) requested for delivery on 2026-01-03",
-      "role": "Planner"
-    },
-    {
-      "action": "Prepare dispatch for order SO-235 (Widget Model Y (Product 202))",
-      "category": "Upcoming Order",
-      "due_date": "2026-01-03",
-      "rank": 4,
-      "reason": "Order SO-235 (4 units) requested for delivery on 2026-01-03",
-      "role": "Planner"
-    },
-    {
       "action": "Prepare dispatch for order SO-224 (Widget Model Y (Product 202))",
       "category": "Upcoming Order",
       "due_date": "2026-01-04",
-      "rank": 5,
+      "rank": 2,
       "reason": "Order SO-224 (14 units) requested for delivery on 2026-01-04",
+      "role": "Planner"
+    },
+    {
+      "action": "Prepare dispatch for order SO-230 (Widget Model Y (Product 202))",
+      "category": "Upcoming Order",
+      "due_date": "2026-01-04",
+      "rank": 3,
+      "reason": "Order SO-230 (9 units) requested for delivery on 2026-01-04",
+      "role": "Planner"
+    },
+    {
+      "action": "Prepare dispatch for order SO-231 (Widget Model X (Product 201))",
+      "category": "Upcoming Order",
+      "due_date": "2026-01-04",
+      "rank": 4,
+      "reason": "Order SO-231 (10 units) requested for delivery on 2026-01-04",
+      "role": "Planner"
+    },
+    {
+      "action": "Prepare dispatch for order SO-232 (Widget Model Y (Product 202))",
+      "category": "Upcoming Order",
+      "due_date": "2026-01-04",
+      "rank": 5,
+      "reason": "Order SO-232 (8 units) requested for delivery on 2026-01-04",
       "role": "Planner"
     }
   ],

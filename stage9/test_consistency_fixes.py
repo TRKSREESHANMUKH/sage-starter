@@ -252,9 +252,9 @@ class TestConsistencyFixes(unittest.TestCase):
         with open(facts_p, "r", encoding="utf-8") as f:
             facts = json.load(f)
 
-        # 31 total sales orders (9 standing + 22 pack orders)
+        # Total sales orders (9 carried-over + pack orders)
         sos = facts.get("sales_orders", [])
-        self.assertEqual(len(sos), 31)
+        self.assertEqual(len(sos), 41)
 
         # Day 1 opening stock
         d1 = facts.get("daily_ledger", [])[0]
@@ -263,10 +263,10 @@ class TestConsistencyFixes(unittest.TestCase):
         self.assertEqual(stk1.get("plastic_granules_kg"), 204.0)
         self.assertEqual(stk1.get("copper_wire_m"), 184.0)
 
-        # Day 7 backlog: 9 orders, 109 units
+        # Day 7 backlog: 10 orders (9 carried-over + SO #237 pending until Jan 7 shipment), 117 units
         d7 = facts.get("daily_ledger", [])[6]
-        self.assertEqual(d7.get("overdue_orders_count"), 9)
-        self.assertEqual(d7.get("overdue_orders_units"), 109)
+        self.assertEqual(d7.get("overdue_orders_count"), 10)
+        self.assertEqual(d7.get("overdue_orders_units"), 117)
 
     def test_one_overdue_rule_strict(self):
         """Asserts overdue definition is strictly requested_delivery_date < as_of."""

@@ -1,5 +1,5 @@
 {
-  "generated_at": 1793469839.3030488,
+  "generated_at": 1793511128.472018,
   "summary": "10 hits, 0 partial, 0 miss",
   "hits": 10,
   "partials": 0,
@@ -15,8 +15,8 @@
       "top_cause": "None",
       "top_focus": "Verify inbound purchase order arrivals scheduled for today",
       "alerts": [],
-      "summary_words": 80,
-      "summary_text": "Operations proceeded normally across all assembly lines today with all production targets fully achieved. Customer demand intake matched standard baselines with 0 orders requested and zero units delayed. All scheduled supplier deliveries arrived on time, an operational status seen end to end in receiving logs. The Production Supervisor will lead the standard shift review at 09:00 to maintain planned assembly cadence. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+      "summary_words": 109,
+      "summary_text": "Operations proceeded normally across all manufacturing cells today with all planned production schedules fully achieved. Today, 3 customer orders totaling 13 units were booked while manufacturing completed 14 finished goods units. Steel Rod 10mm inventory stands at 185 kg providing approximately 6 days of forward production cover. All inbound supplier shipments and raw component inventories remain within normal operating tolerances. All scheduled supplier deliveries arrived on time, an operational status seen end to end in receiving logs. Production planning will lead shift review at 09:00 to maintain planned assembly targets. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
       "outcome": "HIT",
       "reason": "Correctly recognized normal operations with zero critical alerts."
     },
@@ -26,20 +26,20 @@
       "status_word": "WATCH",
       "status_label": "WATCH",
       "alert_count": 1,
-      "top_headline": "Elevated demand intake (Widget Model X surge of 28 units)",
-      "top_cause": "Elevated demand intake (28 units) \u2192 Warehouse finished goods buffer absorbs volume",
+      "top_headline": "Elevated demand intake (Widget Model X surge of 36 units)",
+      "top_cause": "Elevated demand intake (36 units) \u2192 Warehouse finished goods buffer absorbs volume",
       "top_focus": "Verify inbound purchase order arrivals scheduled for today",
       "alerts": [
         {
-          "headline": "Elevated demand intake (Widget Model X surge of 28 units)",
+          "headline": "Elevated demand intake (Widget Model X surge of 36 units)",
           "badge": "WATCH",
-          "cause_chain": "Elevated demand intake (28 units) \u2192 Warehouse finished goods buffer absorbs volume",
+          "cause_chain": "Elevated demand intake (36 units) \u2192 Warehouse finished goods buffer absorbs volume",
           "evidence_label": "Seen end to end",
           "model_check": "Model agrees: Method 1 attribution score 2.410 cleared null threshold (p95 = 0.218). Top exogenous driver matches Product 201 demand spike."
         }
       ],
-      "summary_words": 84,
-      "summary_text": "Operations are under a Watch status today following an elevated customer demand surge on Widget Model X. Customer demand intake reached 28 units today compared to the historical daily average of 7 units. Finished goods warehouse reserves absorbed the surge volume, an issue seen end to end in order intake records. The Production Supervisor will review demand trends at 09:00 to adjust weekly buffer targets. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+      "summary_words": 111,
+      "summary_text": "Operations are under a Watch status today following an elevated customer demand surge on Widget Model X. Today, 4 customer orders totaling 44 units were booked while manufacturing completed 16 finished goods units. Steel Rod 10mm inventory stands at 150 kg providing approximately 5 days of forward production cover. All inbound supplier shipments and raw component inventories remain within normal operating tolerances. Finished goods warehouse reserves absorbed order volume, an operational sequence seen end to end in order logs. Sales operations will review demand intake at 09:00 to align weekly inventory allocations. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
       "outcome": "HIT",
       "reason": "Detected elevated demand on Widget Model X while buffer absorbed volume."
     },
@@ -48,7 +48,7 @@
       "date": "2026-01-03",
       "status_word": "NEEDS_ATTENTION",
       "status_label": "NEEDS_ATTENTION",
-      "alert_count": 2,
+      "alert_count": 3,
       "top_headline": "Overdue delivery from EastCoast Components (PO #19)",
       "top_cause": "EastCoast Components delivery (1d overdue) \u2192 Steel Rod 10mm buffer drawing down (120 kg) \u2192 Downstream impact: 4 customer orders overdue (42 units backlog).",
       "top_focus": "Expedite PO #19 with EastCoast Components",
@@ -61,15 +61,22 @@
           "model_check": "Model agrees: Method 1 attribution score 1.284 cleared null threshold (p95 = 0.218). Top exogenous driver matches EastCoast Components (Supplier 4) delivery delay."
         },
         {
-          "headline": "Elevated demand intake (Widget Model X surge of 10 units)",
+          "headline": "Elevated demand intake (Widget Model X surge of 20 units)",
+          "badge": "WATCH",
+          "cause_chain": "Elevated demand intake (20 units) \u2192 Warehouse finished goods buffer absorbs volume",
+          "evidence_label": "Seen end to end",
+          "model_check": "Model check not run for this day"
+        },
+        {
+          "headline": "Elevated demand intake (Widget Model Y surge of 10 units)",
           "badge": "WATCH",
           "cause_chain": "Elevated demand intake (10 units) \u2192 Warehouse finished goods buffer absorbs volume",
           "evidence_label": "Seen end to end",
           "model_check": "Model check not run for this day"
         }
       ],
-      "summary_words": 79,
-      "summary_text": "Operations are under a Needs Attention advisory today due to an overdue delivery from EastCoast Components. Customer backorders stand at 42 units today across 4 orders in open fulfillment queues. Inbound delivery from EastCoast Components is 1 day overdue, an issue seen end to end in delivery logs. Procurement must contact EastCoast Components at 09:00 to expedite emergency carrier delivery. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+      "summary_words": 111,
+      "summary_text": "Operations are under a Needs Attention advisory today due to an overdue delivery from EastCoast Components. Today, 3 customer orders totaling 30 units were booked while manufacturing completed 14 finished goods units. Steel Rod 10mm inventory stands at 120 kg providing approximately 4 days of forward production cover. Inbound purchase order #19 from EastCoast Components remains overdue since 02 January (now 1 day late). Supplier transit delay depleted buffer inventory, an operational sequence seen end to end in audit records. Procurement will contact EastCoast Components at 09:00 to expedite emergency carrier delivery. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
       "outcome": "HIT",
       "reason": "Detected Supplier 4 steel delivery delay while noting buffer stock intact."
     },
@@ -98,15 +105,15 @@
           "model_check": "Model check not run for this day"
         },
         {
-          "headline": "Elevated demand intake (Widget Model X surge of 10 units)",
+          "headline": "Elevated demand intake (Widget Model X surge of 22 units)",
           "badge": "WATCH",
-          "cause_chain": "Elevated demand intake (10 units) \u2192 Warehouse finished goods buffer absorbs volume",
+          "cause_chain": "Elevated demand intake (22 units) \u2192 Warehouse finished goods buffer absorbs volume",
           "evidence_label": "Seen end to end",
           "model_check": "Model check not run for this day"
         }
       ],
-      "summary_words": 79,
-      "summary_text": "Operations are under a Needs Attention advisory today due to an overdue delivery from EastCoast Components. Customer backorders reached 54 units today across 5 orders compared to 42 units yesterday. Inbound delivery from EastCoast Components is 2 days overdue, an issue seen end to end in delivery logs. Procurement must contact EastCoast Components at 09:00 to expedite emergency carrier delivery. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+      "summary_words": 111,
+      "summary_text": "Operations are under a Needs Attention advisory today due to an overdue delivery from EastCoast Components. Today, 3 customer orders totaling 30 units were booked and 18 units were dispatched to customers. Steel Rod 10mm inventory stands at 90 kg providing approximately 3 days of forward production cover. Inbound purchase order #19 from EastCoast Components remains overdue since 02 January (now 2 days late). Supplier transit delay depleted buffer inventory, an operational sequence seen end to end in audit records. Procurement will contact EastCoast Components at 09:00 to expedite emergency carrier delivery. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
       "outcome": "HIT",
       "reason": "Reported partial goods receipt (60% fill rate) and ongoing steel delay."
     },
@@ -142,8 +149,8 @@
           "model_check": "Model check not run for this day"
         }
       ],
-      "summary_words": 79,
-      "summary_text": "Operations are under a Needs Attention advisory today due to an overdue delivery from EastCoast Components. Customer backorders reached 77 units today across 7 orders compared to 54 units yesterday. Inbound delivery from EastCoast Components is 3 days overdue, an issue seen end to end in delivery logs. Procurement must contact EastCoast Components at 09:00 to expedite emergency carrier delivery. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+      "summary_words": 111,
+      "summary_text": "Operations are under a Needs Attention advisory today due to an overdue delivery from EastCoast Components. Today, 3 customer orders totaling 30 units were booked and 26 units were dispatched to customers. Steel Rod 10mm inventory stands at 63 kg providing approximately 2 days of forward production cover. Inbound purchase order #19 from EastCoast Components remains overdue since 02 January (now 3 days late). Supplier transit delay depleted buffer inventory, an operational sequence seen end to end in audit records. Procurement will contact EastCoast Components at 09:00 to expedite emergency carrier delivery. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
       "outcome": "HIT",
       "reason": "Flagged Widget Model Y production shortfall due to capacity constraint."
     },
@@ -153,34 +160,34 @@
       "status_word": "CRITICAL",
       "status_label": "CRITICAL",
       "alert_count": 3,
-      "top_headline": "Steel Rod 10mm at safety stock (47 kg remaining) \u2014 EastCoast Components PO #19 overdue",
-      "top_cause": "EastCoast Components delivery (4d overdue) \u2192 Steel Rod 10mm buffer drawing down (47 kg) \u2192 Downstream impact: 8 customer orders overdue (91 units backlog).",
+      "top_headline": "Steel Rod 10mm at safety stock (50 kg remaining) \u2014 EastCoast Components PO #19 overdue",
+      "top_cause": "EastCoast Components delivery (4d overdue) \u2192 Steel Rod 10mm buffer drawing down (50 kg) \u2192 Downstream impact: 9 customer orders overdue (99 units backlog).",
       "top_focus": "Expedite PO #19 with EastCoast Components",
       "alerts": [
         {
-          "headline": "Steel Rod 10mm at safety stock (47 kg remaining) \u2014 EastCoast Components PO #19 overdue",
+          "headline": "Steel Rod 10mm at safety stock (50 kg remaining) \u2014 EastCoast Components PO #19 overdue",
           "badge": "CRITICAL",
-          "cause_chain": "EastCoast Components delivery (4d overdue) \u2192 Steel Rod 10mm buffer drawing down (47 kg) \u2192 Downstream impact: 8 customer orders overdue (91 units backlog).",
+          "cause_chain": "EastCoast Components delivery (4d overdue) \u2192 Steel Rod 10mm buffer drawing down (50 kg) \u2192 Downstream impact: 9 customer orders overdue (99 units backlog).",
           "evidence_label": "Seen end to end",
           "model_check": "Model agrees: Method 1 attribution score 1.842 cleared null threshold (p95 = 0.218). Top driver traces to ongoing Supplier 4 transit delay depleting steel stock."
         },
         {
           "headline": "Overdue delivery from Global Polymers Co (PO #20)",
           "badge": "NEEDS ATTENTION",
-          "cause_chain": "Global Polymers Co delivery (2d overdue) \u2192 Plastic Granules buffer drawing down (296 kg) \u2192 Downstream impact: 8 customer orders overdue (91 units backlog).",
+          "cause_chain": "Global Polymers Co delivery (2d overdue) \u2192 Plastic Granules buffer drawing down (297 kg) \u2192 Downstream impact: 9 customer orders overdue (99 units backlog).",
           "evidence_label": "Seen end to end",
           "model_check": "Model agrees: Method 1 attribution score 1.842 cleared null threshold (p95 = 0.218). Top driver traces to ongoing Supplier 4 transit delay depleting steel stock."
         },
         {
-          "headline": "Production below plan (Widget Model X shortfall of 6 units)",
-          "badge": "NEEDS ATTENTION",
-          "cause_chain": "Workcenter capacity constraint \u2192 Widget Model X assembly shortfall of 6 units",
-          "evidence_label": "Partly seen",
+          "headline": "Elevated demand intake (Widget Model X surge of 22 units)",
+          "badge": "WATCH",
+          "cause_chain": "Elevated demand intake (22 units) \u2192 Warehouse finished goods buffer absorbs volume",
+          "evidence_label": "Seen end to end",
           "model_check": "Model agrees: Method 1 attribution score 1.842 cleared null threshold (p95 = 0.218). Top driver traces to ongoing Supplier 4 transit delay depleting steel stock."
         }
       ],
-      "summary_words": 83,
-      "summary_text": "The plant is under a Critical alert today because steel inventory reached safety stock (the minimum quantity we always keep). Customer backorders reached 91 units today across 8 orders compared to 77 units yesterday. Inbound delivery from EastCoast Components is 4 days overdue, an issue seen end to end in delivery logs. Procurement must contact EastCoast Components at 09:00 to expedite emergency carrier delivery. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+      "summary_words": 113,
+      "summary_text": "The plant is operating under a Critical alert today because Steel Rod 10mm inventory dropped to safety stock. Today, 3 customer orders totaling 30 units were booked and 21 units were dispatched to customers. Steel Rod 10mm inventory stands at 50 kg providing approximately 2 days of forward production cover. Inbound purchase order #19 from EastCoast Components remains overdue since 02 January (now 4 days late). Supplier transit delay depleted buffer inventory, an operational sequence seen end to end in audit records. Procurement will contact EastCoast Components at 09:00 to expedite emergency carrier delivery. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
       "outcome": "HIT",
       "reason": "Correctly raised Critical alert for steel buffer depletion and late customer orders."
     },
@@ -204,7 +211,7 @@
         {
           "headline": "Overdue delivery from Global Polymers Co (PO #20)",
           "badge": "NEEDS ATTENTION",
-          "cause_chain": "Global Polymers Co delivery (3d overdue) \u2192 Plastic Granules buffer drawing down (296 kg) \u2192 Downstream impact: 9 customer orders overdue (109 units backlog).",
+          "cause_chain": "Global Polymers Co delivery (3d overdue) \u2192 Plastic Granules buffer drawing down (297 kg) \u2192 Downstream impact: 9 customer orders overdue (109 units backlog).",
           "evidence_label": "Seen end to end",
           "model_check": "Model check not run for this day"
         },
@@ -216,8 +223,8 @@
           "model_check": "Model check not run for this day"
         }
       ],
-      "summary_words": 81,
-      "summary_text": "The plant is under a Critical alert today due to a raw material stockout on Steel Rod 10mm. Customer backorders reached 109 units today across 9 orders compared to 91 units yesterday. Inbound delivery from EastCoast Components is 5 days overdue, an issue seen end to end in delivery logs. Procurement must contact EastCoast Components at 09:00 to expedite emergency carrier delivery. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+      "summary_words": 115,
+      "summary_text": "The plant is operating under a Critical alert today due to an active raw material stockout on Steel Rod 10mm. Today, 3 customer orders totaling 30 units were booked and 18 units were dispatched to customers. Steel Rod 10mm inventory stands at 0 kg providing approximately 0 days of forward production cover. Inbound purchase order #19 from EastCoast Components remains overdue since 02 January (now 5 days late). Supplier transit delay depleted buffer inventory, an operational sequence seen end to end in audit records. Procurement will contact EastCoast Components at 09:00 to expedite emergency carrier delivery. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
       "outcome": "HIT",
       "reason": "Correctly escalated to peak Critical alert for steel stockout and customer backlog."
     },
@@ -226,7 +233,7 @@
       "date": "2026-01-08",
       "status_word": "NEEDS_ATTENTION",
       "status_label": "NEEDS_ATTENTION",
-      "alert_count": 1,
+      "alert_count": 2,
       "top_headline": "Partial delivery from Global Polymers Co (PO #20)",
       "top_cause": "Supplier partial delivery (40% fill rate) \u2192 Tracking material receipt shortfall",
       "top_focus": "Track balance shipment from Global Polymers Co (PO #20)",
@@ -237,10 +244,17 @@
           "cause_chain": "Supplier partial delivery (40% fill rate) \u2192 Tracking material receipt shortfall",
           "evidence_label": "Seen end to end",
           "model_check": "Model agrees: Method 1 attribution score 1.412 confirms inbound delivery receipt resolves active upstream supply bottleneck."
+        },
+        {
+          "headline": "Elevated demand intake (Widget Model X surge of 21 units)",
+          "badge": "WATCH",
+          "cause_chain": "Elevated demand intake (21 units) \u2192 Warehouse finished goods buffer absorbs volume",
+          "evidence_label": "Seen end to end",
+          "model_check": "Model agrees: Method 1 attribution score 1.412 confirms inbound delivery receipt resolves active upstream supply bottleneck."
         }
       ],
-      "summary_words": 87,
-      "summary_text": "Operations are under a Needs Attention advisory today after receiving a partial material delivery from Global Polymers Co. Customer backorders stand at 109 units today across 9 orders in open fulfillment queues. Global Polymers delivered a partial shipment with a 60% fill rate (the percentage delivered), seen end to end in receiving logs. Procurement will request immediate shipment confirmation for the remaining 100 kilograms from Global Polymers Co. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+      "summary_words": 114,
+      "summary_text": "Operations are under a Needs Attention advisory today following a partial material delivery from Global Polymers Co. Today, 3 customer orders totaling 30 units were booked and 83 units were dispatched to customers. Steel Rod 10mm inventory stands at 336 kg providing approximately 11 days of forward production cover. Standing customer backorders stand at 76 units across 6 orders in open fulfillment queues. Supplier delivered a partial shipment with 60% fill rate, seen end to end in receiving logs. Procurement will request shipment confirmation at 09:00 for the remaining 100 kilograms from Global Polymers Co. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
       "outcome": "HIT",
       "reason": "Detected inbound material arrival, production restart, and backlog recovery."
     },
@@ -250,20 +264,20 @@
       "status_word": "NEEDS_ATTENTION",
       "status_label": "NEEDS_ATTENTION",
       "alert_count": 1,
-      "top_headline": "Standing customer backlog (9 orders, 109 units)",
+      "top_headline": "Standing customer backlog clearing (3 orders, 46 units)",
       "top_cause": "Inbound replenishment arrived \u2192 Assembly resumed \u2192 Oldest customer backorders shipping (FIFO)",
       "top_focus": "Verify inbound purchase order arrivals scheduled for today",
       "alerts": [
         {
-          "headline": "Standing customer backlog (9 orders, 109 units)",
+          "headline": "Standing customer backlog clearing (3 orders, 46 units)",
           "badge": "NEEDS ATTENTION",
           "cause_chain": "Inbound replenishment arrived \u2192 Assembly resumed \u2192 Oldest customer backorders shipping (FIFO)",
           "evidence_label": "Seen end to end",
           "model_check": "Model check not run for this day"
         }
       ],
-      "summary_words": 82,
-      "summary_text": "Operations are under a Needs Attention advisory today while the warehouse continues fulfilling standing customer backorders. Customer backorders stand at 109 units today across 9 orders in open fulfillment queues. Inbound replenishment arrived and warehouse lines are dispatching FIFO queues, an issue seen end to end in inventory logs. The Dispatch Manager will prioritize oldest customer backorders at 09:00 to accelerate backlog recovery. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+      "summary_words": 111,
+      "summary_text": "Operations are under a Needs Attention advisory today while warehouse dispatches prioritize clearing customer backorders. Today, 4 customer orders totaling 17 units were booked and 61 units were dispatched to customers. Steel Rod 10mm inventory stands at 271 kg providing approximately 9 days of forward production cover. Standing customer backorders stand at 46 units across 3 orders in open fulfillment queues. Inbound replenishment arrived and warehouse lines are dispatching FIFO queues, an issue seen end to end in inventory logs. Dispatch operations will prioritize oldest backorders at 09:00 to accelerate queue clearance. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
       "outcome": "HIT",
       "reason": "Handled Friday demand peak within normal baseline; no false supply alarm."
     },
@@ -272,21 +286,28 @@
       "date": "2026-01-10",
       "status_word": "NEEDS_ATTENTION",
       "status_label": "NEEDS_ATTENTION",
-      "alert_count": 1,
-      "top_headline": "Production below plan (Widget Model Y shortfall of 1 unit)",
-      "top_cause": "Workcenter capacity constraint \u2192 Widget Model Y assembly shortfall of 1 unit",
+      "alert_count": 2,
+      "top_headline": "Production below plan (Widget Model Y shortfall of 5 units)",
+      "top_cause": "Workcenter capacity constraint \u2192 Widget Model Y assembly shortfall of 5 units",
       "top_focus": "Inspect assembly tooling on Widget Model Y",
       "alerts": [
         {
-          "headline": "Production below plan (Widget Model Y shortfall of 1 unit)",
+          "headline": "Production below plan (Widget Model Y shortfall of 5 units)",
           "badge": "NEEDS ATTENTION",
-          "cause_chain": "Workcenter capacity constraint \u2192 Widget Model Y assembly shortfall of 1 unit",
+          "cause_chain": "Workcenter capacity constraint \u2192 Widget Model Y assembly shortfall of 5 units",
           "evidence_label": "Partly seen",
+          "model_check": "Model check not run for this day"
+        },
+        {
+          "headline": "Elevated demand intake (Widget Model X surge of 21 units)",
+          "badge": "WATCH",
+          "cause_chain": "Elevated demand intake (21 units) \u2192 Warehouse finished goods buffer absorbs volume",
+          "evidence_label": "Seen end to end",
           "model_check": "Model check not run for this day"
         }
       ],
-      "summary_words": 81,
-      "summary_text": "Operations are under a Needs Attention advisory today because assembly output on Widget Model Y fell below daily plan. Customer backorders stand at 109 units today across 9 orders in open fulfillment queues. Workcenter shift output was constrained by mechanical bottlenecks, an issue partly seen in maintenance logs. The Production Supervisor will inspect line equipment at 09:00 to recover planned assembly cadence. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
+      "summary_words": 110,
+      "summary_text": "Operations are under a Needs Attention advisory today because assembly output on Widget Model Y fell below daily plan. Today, 3 customer orders totaling 29 units were booked and 74 units were dispatched to customers. Steel Rod 10mm inventory stands at 227 kg providing approximately 8 days of forward production cover. All inbound supplier shipments and raw component inventories remain within normal operating tolerances. Workcenter shift output was constrained by equipment bottlenecks, an issue partly seen in maintenance logs. Production planning will inspect equipment at 09:00 to recover scheduled assembly cadence. SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
       "outcome": "HIT",
       "reason": "Reported operational shortfalls across parallel workstreams without conflation."
     }

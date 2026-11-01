@@ -1,7 +1,7 @@
 {
   "pack_date": "2026-01-09",
   "day_number": 9,
-  "scenario_name": "Seasonal Demand Peak (Control) & Backlog Clearing",
+  "scenario_name": "Seasonal Demand Peak & Backlog Burn-Down",
   "scenario_type": "seasonal_control",
   "is_simulated": true,
   "label": "SIMULATED ERP OPERATIONAL PACK",
@@ -12,24 +12,24 @@
     "purchase_order_lines": 0,
     "goods_receipts": 0,
     "goods_receipt_lines": 0,
-    "sales_orders": 2,
-    "sales_order_lines": 2,
-    "deliveries": 2,
-    "delivery_lines": 2,
+    "sales_orders": 4,
+    "sales_order_lines": 4,
+    "deliveries": 6,
+    "delivery_lines": 6,
     "production_orders": 2,
     "material_issues": 5,
-    "stock_movements": 9
+    "stock_movements": 13
   },
-  "total_events": 24,
+  "total_events": 40,
   "closing_stock_simulated": {
     "materials": {
-      "101": 313.0,
-      "102": 302.0,
-      "103": 269.0
+      "101": 271.0,
+      "102": 303.0,
+      "103": 252.0
     },
     "finished_goods": {
-      "201": 18,
-      "202": 18
+      "201": 0,
+      "202": 0
     }
   }
 }

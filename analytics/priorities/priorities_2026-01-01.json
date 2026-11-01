@@ -39,11 +39,11 @@
       "role": "Planner"
     },
     {
-      "action": "Prepare dispatch for order SO-231 (Widget Model X (Product 201))",
+      "action": "Prepare dispatch for order SO-227 (Widget Model X (Product 201))",
       "category": "Upcoming Order",
-      "due_date": "2026-01-02",
+      "due_date": "2026-01-03",
       "rank": 5,
-      "reason": "Order SO-231 (5 units) requested for delivery on 2026-01-02",
+      "reason": "Order SO-227 (12 units) requested for delivery on 2026-01-03",
       "role": "Planner"
     }
   ],

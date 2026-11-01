@@ -3,22 +3,25 @@ Status: ACTION NEEDED (1 item need action)
 ======================================================================
 
 SUMMARY:
-Operations proceeded normally across all assembly lines today with all
-production targets fully achieved. Customer demand intake matched
-standard baselines with 2 orders requested and zero units delayed. All
-scheduled supplier deliveries arrived on time, an operational status
-seen end to end in receiving logs. The Production Supervisor will lead
-the standard shift review at 09:00 to maintain planned assembly cadence.
-SAGE performs controlled synthetic causal-attribution evaluation under
-an expert-defined causal model; it does not claim to prove real-world
-causality.
+Operations proceeded normally across all manufacturing cells today with
+all planned production schedules fully achieved. Today, 3 customer
+orders totaling 13 units were booked while manufacturing completed 14
+finished goods units. Steel Rod 10mm inventory stands at 185 kg
+providing approximately 6 days of forward production cover. All inbound
+supplier shipments and raw component inventories remain within normal
+operating tolerances. All scheduled supplier deliveries arrived on time,
+an operational status seen end to end in receiving logs. Production
+planning will lead shift review at 09:00 to maintain planned assembly
+targets. SAGE performs controlled synthetic causal-attribution
+evaluation under an expert-defined causal model; it does not claim to
+prove real-world causality.
 
 TODAY'S NUMBERS IN CONTEXT:
 • Orders Due     : 2 orders due, up from 1 yesterday (7d avg: 1.0)
 • Orders Late    : 0 late orders, same as yesterday (7d avg: 0.0)
 • Units Short    : 0 units short, down from 50 yesterday (7d avg: 14.3)
 • Materials Low  : 0 materials low, same as yesterday (7d avg: 0.7)
-• Forward-look   : Next 7 days demand: ~146 units due (likely range 133–161); 117 already booked + ~29 expected new orders.
+• Forward-look   : Next 7 days demand: ~153 units due (likely range 139–168); 122 already booked + ~31 expected new orders.
 
 PAST ANALYSED CASES: WHAT CAUSED WHAT:
 • Chain: EastCoast delivery late → Steel Rod 10mm below safety level

@@ -1,12 +1,12 @@
 {
   "status": "PREPARED",
   "as_of": "2026-01-06",
-  "prepared_at": "2026-10-25T07:41:01.306418+00:00",
-  "subject": "SAGE Daily Brief | 6 Jan 2026 | 12 need action",
+  "prepared_at": "2026-11-01T05:06:06.911851+00:00",
+  "subject": "SAGE Daily Brief | 6 Jan 2026 | 13 need action",
   "no_new_data": false,
   "for_owner_only": false,
   "pdf_pages": 1,
   "pdf_path": "reports/2026-01-06/SAGE_Daily_Brief_2026-01-06.pdf",
-  "sparkline_bytes": 15904,
-  "input_hash": "b64333916ecf3550"
+  "sparkline_bytes": 16169,
+  "input_hash": "20340ec3024f1e4b"
 }

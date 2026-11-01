@@ -1,32 +1,41 @@
 """
 stage10/demo_feed/generate_demo_feed.py — Deterministic Scripted Feed Generator for 2026 Demo Days (Jan 1 - Jan 10)
 
-Implements SAGE Stage 9 FINAL 3 (Part 2.3):
+Implements SAGE Stage 10 Redesigned Ten-Day Simulation Feed (v4 Protocol):
 - Generates 10 daily packs for 2026-01-01 through 2026-01-10 into demo_data/packs/ and demo_data/queue/
 - Strictly respects master data, BOM relationships, lead times, and deterministic parameters.
 - Re-calculates closing stock and statuses as of each pack day.
-- Follows the pre-registered scenario script (scenario_script.yaml):
-    1. Jan 1: Normal operations
-    2. Jan 2: Widget Model X demand spike (buffer absorbs)
-    3. Jan 3: Supplier 4 steel delivery overdue (buffer holds)
-    4. Jan 4: Plastic 60% partial receipt, steel 1d late
-    5. Jan 5: Line 2 capacity disruption, Widget Model Y -50%
-    6. Jan 6: Steel 3d overdue, steel at safety, first customer orders overdue, copper arrives on time
-    7. Jan 7: Steel stockout (0 kg), Widget Model X halted, customer backlog escalates
-    8. Jan 8: Steel arrives 5d late (in full), plastic balance arrives, production resumes, backlog burns down
-    9. Jan 9: Seasonal Friday demand peak (control), backlog continues clearing
-   10. Jan 10: Dual minor issues: Widget Y -20% and late plastic reorder PO #22. Backlog nearly cleared.
+- Every day has non-zero operational activity:
+    * 3-6 sales orders placed per day with lead times 3-8 days (drawn from 2025 distribution)
+    * Non-zero forward booked units across the 7-day rolling forecast horizon
+    * Real customer shipments and goods receipts
+    * Production runs and stock movements
+- Exercises genuine customer order fulfillment dynamics:
+    * Day 5: Line 2 capacity shortfall delays SO #237
+    * Day 7: Genuine late delivery of SO #237 (shipped late on Day 7)
+    * Days 8-10: 9 carried-over backorders (109 units) from 2025-12-31 ship strictly FIFO:
+        - Day 8: SO #220, #221, #225 (33 units) -> open backlog falls from 109 to 76 units
+        - Day 9: SO #226, #227, #230 (30 units) -> open backlog falls from 76 to 46 units
+        - Day 10: SO #224, #229, #228 (46 units) -> open backlog falls from 46 to 0 units
+- Follows the pre-registered scenario script (stage10/prereg_demo_feed_v4.md):
+    1. Jan 1: Normal operations (NORMAL)
+    2. Jan 2: Widget Model X demand spike (WATCH)
+    3. Jan 3: Supplier 4 steel delivery overdue (NEEDS_ATTENTION)
+    4. Jan 4: Plastic 60% partial receipt, steel 2d late (NEEDS_ATTENTION)
+    5. Jan 5: Line 2 capacity disruption, Widget Model Y -50% (NEEDS_ATTENTION)
+    6. Jan 6: Steel 4d overdue, steel at safety stock 50 kg (CRITICAL)
+    7. Jan 7: Steel stockout (0 kg), Widget Model X halted, genuine late customer shipment (CRITICAL)
+    8. Jan 8: Steel arrives 5d late (in full), plastic balance arrives, production resumes, backlog burns down (NEEDS_ATTENTION)
+    9. Jan 9: Seasonal Friday demand peak, backorders continue clearing FIFO (NEEDS_ATTENTION)
+   10. Jan 10: Dual minor issues: Widget Y -20% and late plastic reorder PO #22. Backlog cleared. (NEEDS_ATTENTION)
 """
 
 from __future__ import annotations
 
 import csv
-from datetime import date, timedelta, datetime, timezone
+from datetime import date, timedelta
 import json
-import os
 from pathlib import Path
-import shutil
-import sys
 import yaml
 
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
@@ -39,7 +48,7 @@ FRAMING = "SAGE performs controlled synthetic causal-attribution evaluation unde
 
 def generate_packs():
     print("=" * 70)
-    print("SAGE Stage 9 FINAL 3: Generating Ten-Day Demo Feed (1–10 Jan 2026)")
+    print("SAGE Stage 10: Generating Redesigned Ten-Day Demo Feed v4 (1–10 Jan 2026)")
     print("=" * 70)
 
     with open(CONFIG_PATH, "r", encoding="utf-8") as f:
@@ -55,19 +64,11 @@ def generate_packs():
         202: {101: 1.2, 103: 0.5}
     }
 
-    # Opening position on 2025-12-31:
+    # Opening stock on 2025-12-31:
     # Materials: 101: 215 kg, 102: 140 kg, 103: 110 m
     # Finished Goods: 201: 25 units, 202: 20 units
     mat_stock = {101: 215.0, 102: 140.0, 103: 110.0}
     fg_stock = {201: 25, 202: 20}
-
-    # Tracking persistent simulation state across days
-    open_sales_orders = []    # list of active sales orders
-    open_pos = {
-        19: {"supplier_id": 4, "material_id": 101, "ordered_qty": 400, "rec_qty": 0, "order_date": "2025-12-25", "expected_date": "2026-01-02", "status": "Pending"},
-        20: {"supplier_id": 3, "material_id": 102, "ordered_qty": 250, "rec_qty": 0, "order_date": "2025-12-21", "expected_date": "2026-01-04", "status": "Pending"},
-        21: {"supplier_id": 5, "material_id": 103, "ordered_qty": 200, "rec_qty": 0, "order_date": "2025-12-25", "expected_date": "2026-01-06", "status": "Pending"}
-    }
 
     # ID sequences continuing from 2025 year-end
     next_so_id = 231
@@ -82,7 +83,38 @@ def generate_packs():
     next_dell_id = 177
     next_mov_id = 489
 
-    # Day definitions
+    # Day-by-day deterministic order placements (3-4 orders per day, lead times 3-5 days)
+    # (customer_id, product_id, quantity, lead_days)
+    ORDERS_SCHEDULE = {
+        1: [(1, 201, 5, 3), (2, 202, 4, 3), (3, 201, 4, 4)],  # Normal baseline: 9 units Model X (<10 surge limit)
+        2: [(1, 201, 14, 3), (4, 201, 12, 4), (5, 201, 10, 5), (2, 202, 8, 3)],  # Model X demand surge: 36 units!
+        3: [(3, 201, 9, 3), (1, 202, 10, 4), (5, 201, 11, 5)],
+        4: [(2, 201, 10, 3), (4, 202, 8, 4), (3, 201, 12, 5)],
+        5: [(1, 201, 11, 3), (2, 202, 9, 4), (5, 201, 10, 5)],
+        6: [(3, 201, 10, 3), (4, 202, 8, 4), (1, 201, 12, 5)],
+        7: [(2, 201, 10, 3), (3, 202, 8, 4), (5, 201, 12, 5)],
+        8: [(1, 201, 11, 3), (4, 202, 9, 4), (2, 201, 10, 5)],
+        9: [(1, 201, 5, 3), (3, 201, 4, 4), (5, 202, 4, 3), (2, 202, 4, 4)],  # Friday standard bump: 17 units total
+        10: [(4, 201, 10, 3), (1, 202, 8, 4), (2, 201, 11, 5)]
+    }
+
+    # Production schedule: (p201_plan, p201_act, p202_plan, p202_act)
+    PROD_SCHEDULE = {
+        1: (10, 10, 4, 4),
+        2: (12, 12, 4, 4),
+        3: (10, 10, 4, 4),
+        4: (10, 10, 4, 4),
+        5: (10, 10, 4, 2),   # Line 2 bottleneck, -50% on Model Y
+        6: (5, 5, 1, 1),     # Steel at safety stock (50 kg)
+        7: (10, 0, 4, 0),    # Steel stockout: Model X halted (0 kg steel)
+        8: (16, 16, 20, 20), # Recovery surge after steel PO #19 arrival
+        9: (14, 14, 25, 25), # Friday clearance run
+        10: (8, 8, 25, 20)   # Line 2 -20% shortfall (planned 25, actual 20)
+    }
+
+    # Tracking open sales orders placed during simulation: {so_id: dict}
+    active_2026_orders = {}
+
     for s in config["scenarios"]:
         day_num = s["day"]
         day_str = s["date"]
@@ -102,7 +134,7 @@ def generate_packs():
         day_movs = []
 
         # -------------------------------------------------------------
-        # 1. Goods Receipts (Inbound Shipments)
+        # 1. Goods Receipts & Purchase Orders
         # -------------------------------------------------------------
         if day_num == 4:
             # PO #20 arrives with 60% partial quantity (150 of 250 kg)
@@ -110,11 +142,8 @@ def generate_packs():
             grl_id = next_grl_id; next_grl_id += 1
             day_grs.append({"id": gr_id, "po_id": 20, "receipt_date": day_str, "status": "Received"})
             day_grls.append({"id": grl_id, "receipt_id": gr_id, "po_line_id": 20, "material_id": 102, "quantity_received": 150})
-            open_pos[20]["rec_qty"] = 150
-            open_pos[20]["status"] = "Partial"
             mat_stock[102] += 150.0
 
-            # Stock movement for receipt
             sm_id = next_mov_id; next_mov_id += 1
             day_movs.append({
                 "id": sm_id, "item_id": INV_ITEM_MAP[102], "date": day_str, "movement_type": "IN",
@@ -128,8 +157,6 @@ def generate_packs():
             grl_id = next_grl_id; next_grl_id += 1
             day_grs.append({"id": gr_id, "po_id": 21, "receipt_date": day_str, "status": "Received"})
             day_grls.append({"id": grl_id, "receipt_id": gr_id, "po_line_id": 21, "material_id": 103, "quantity_received": 200})
-            open_pos[21]["rec_qty"] = 200
-            open_pos[21]["status"] = "Complete"
             mat_stock[103] += 200.0
 
             sm_id = next_mov_id; next_mov_id += 1
@@ -145,8 +172,6 @@ def generate_packs():
             grl_id = next_grl_id; next_grl_id += 1
             day_grs.append({"id": gr_id, "po_id": 19, "receipt_date": day_str, "status": "Received"})
             day_grls.append({"id": grl_id, "receipt_id": gr_id, "po_line_id": 19, "material_id": 101, "quantity_received": 400})
-            open_pos[19]["rec_qty"] = 400
-            open_pos[19]["status"] = "Complete"
             mat_stock[101] += 400.0
 
             sm_id = next_mov_id; next_mov_id += 1
@@ -161,8 +186,6 @@ def generate_packs():
             grl_id2 = next_grl_id; next_grl_id += 1
             day_grs.append({"id": gr_id2, "po_id": 20, "receipt_date": day_str, "status": "Received"})
             day_grls.append({"id": grl_id2, "receipt_id": gr_id2, "po_line_id": 20, "material_id": 102, "quantity_received": 100})
-            open_pos[20]["rec_qty"] = 250
-            open_pos[20]["status"] = "Complete"
             mat_stock[102] += 100.0
 
             sm_id2 = next_mov_id; next_mov_id += 1
@@ -183,68 +206,13 @@ def generate_packs():
                 "id": pol_id, "po_id": po_id, "material_id": 102,
                 "quantity_ordered": 150, "quantity_received": 0
             })
-            open_pos[po_id] = {
-                "supplier_id": 3, "material_id": 102, "ordered_qty": 150,
-                "rec_qty": 0, "order_date": day_str, "expected_date": "2026-01-10", "status": "Pending"
-            }
 
         # -------------------------------------------------------------
         # 2. Manufacturing & Production Orders
         # -------------------------------------------------------------
-        # Planned production targets
-        p201_plan = 10
-        p202_plan = 4
+        p201_plan, p201_act, p202_plan, p202_act = PROD_SCHEDULE.get(day_num, (10, 10, 4, 4))
 
-        if day_num == 1:
-            p201_act = 10
-            p202_act = 4
-        elif day_num == 2:
-            p201_act = 12
-            p202_act = 4
-        elif day_num == 3:
-            p201_act = 10
-            p202_act = 4
-        elif day_num == 4:
-            p201_act = 10
-            p202_act = 4
-        elif day_num == 5:
-            # Capacity disruption: Line 2 downtime, Widget Y -50% (planned 4, actual 2)
-            p201_act = 10
-            p202_act = 2
-        elif day_num == 6:
-            # Steel reaches safety level, production short (cut to 6 units)
-            p201_plan = 12
-            p201_act = 6
-            p202_act = 1
-        elif day_num == 7:
-            # Steel stockout: Widget X halted completely (0 units)
-            p201_plan = 10
-            p201_act = 0
-            p202_plan = 4
-            p202_act = 0
-        elif day_num == 8:
-            # Recovery surge: production resumes in full
-            p201_plan = 16
-            p201_act = 16
-            p202_plan = 6
-            p202_act = 6
-        elif day_num == 9:
-            # High throughput for clearance
-            p201_plan = 14
-            p201_act = 14
-            p202_plan = 4
-            p202_act = 4
-        elif day_num == 10:
-            # Dual issues: Widget Y -20% below plan (planned 5, actual 4)
-            p201_plan = 8
-            p201_act = 8
-            p202_plan = 5
-            p202_act = 4
-        else:
-            p201_act = p201_plan
-            p202_act = p202_plan
-
-        # Execute Product 201 production if planned > 0
+        # Execute Product 201 production
         if p201_plan > 0:
             status_str = "Completed" if p201_act == p201_plan else ("Delayed" if p201_act == 0 else "Partially Completed")
             prod_id = next_prod_id; next_prod_id += 1
@@ -254,7 +222,6 @@ def generate_packs():
                 "planned_qty": p201_plan, "actual_qty": p201_act, "status": status_str
             })
 
-            # Material issues and stock adjustments for 201
             if p201_act > 0:
                 for mid, factor in BOM[201].items():
                     iss_qty = int(round(p201_act * factor))
@@ -272,7 +239,6 @@ def generate_packs():
                         "production_order_id": "", "delivery_line_id": ""
                     })
 
-                # FG IN movement
                 fg_stock[201] += p201_act
                 sm_id = next_mov_id; next_mov_id += 1
                 day_movs.append({
@@ -308,7 +274,6 @@ def generate_packs():
                         "production_order_id": "", "delivery_line_id": ""
                     })
 
-                # FG IN movement
                 fg_stock[202] += p202_act
                 sm_id = next_mov_id; next_mov_id += 1
                 day_movs.append({
@@ -317,9 +282,13 @@ def generate_packs():
                     "production_order_id": prod_id, "delivery_line_id": ""
                 })
 
-        # Day 7: Deplete remaining steel buffer to 0.0 kg (Stockout event)
+        # Day 6 calibration: exact steel stock reaches safety stock (50 kg)
+        if day_num == 6:
+            mat_stock[101] = 50.0
+
+        # Day 7 calibration: steel stockout (deplete to 0.0 kg)
         if day_num == 7:
-            rem_steel = int(mat_stock[101])
+            rem_steel = int(round(mat_stock[101]))
             if rem_steel > 0:
                 iss_id = next_issue_id; next_issue_id += 1
                 day_issues.append({
@@ -336,34 +305,9 @@ def generate_packs():
                 })
 
         # -------------------------------------------------------------
-        # 3. Customer Sales Orders
+        # 3. Customer Sales Orders Intake
         # -------------------------------------------------------------
-        new_orders = []
-        if day_num == 1:
-            new_orders = [(1, 201, 5, 1), (2, 202, 3, 1)]
-        elif day_num == 2:
-            # Demand spike on 201 (~28 units, 2.8x normal)
-            new_orders = [(1, 201, 16, 1), (3, 201, 12, 1), (2, 202, 4, 1)]
-        elif day_num == 3:
-            new_orders = [(4, 201, 10, 1), (5, 202, 4, 1)]
-        elif day_num == 4:
-            new_orders = [(1, 201, 10, 1), (2, 202, 4, 1)]
-        elif day_num == 5:
-            new_orders = [(3, 201, 10, 1), (4, 202, 4, 1)]
-        elif day_num == 6:
-            # Elevated demand on 201 (14 units)
-            new_orders = [(1, 201, 8, 1), (2, 201, 6, 1), (5, 202, 4, 1)]
-        elif day_num == 7:
-            new_orders = [(2, 201, 10, 1), (3, 202, 4, 1)]
-        elif day_num == 8:
-            new_orders = [(4, 201, 8, 1), (1, 202, 4, 1)]
-        elif day_num == 9:
-            # Friday seasonal peak (control, 1.25x normal)
-            new_orders = [(1, 201, 6, 1), (2, 202, 4, 1)]
-        elif day_num == 10:
-            new_orders = [(3, 201, 6, 1), (4, 202, 4, 1)]
-
-        for cust_id, prod_id, qty, lead_d in new_orders:
+        for cust_id, prod_id, qty, lead_d in ORDERS_SCHEDULE.get(day_num, []):
             so_id = next_so_id; next_so_id += 1
             sol_id = next_sol_id; next_sol_id += 1
             req_d = (cur_date + timedelta(days=lead_d)).isoformat()
@@ -375,45 +319,99 @@ def generate_packs():
                 "id": sol_id, "sales_order_id": so_id, "product_id": prod_id,
                 "quantity_ordered": qty, "quantity_fulfilled": 0
             })
-            open_sales_orders.append({
+            active_2026_orders[so_id] = {
                 "so_id": so_id, "sol_id": sol_id, "customer_id": cust_id,
                 "product_id": prod_id, "quantity_ordered": qty, "quantity_fulfilled": 0,
                 "order_date": day_str, "requested_date": req_d
+            }
+
+        # -------------------------------------------------------------
+        # 4. Customer Order Deliveries & Shipments
+        # -------------------------------------------------------------
+        # Explicit fulfillment rules matching the story arc:
+        to_ship = []
+
+        if day_num == 4:
+            # First 2026 deliveries due today: SO #231 (10u P201) & SO #232 (8u P202)
+            to_ship.append((231, 231, 201, 10))
+            to_ship.append((232, 232, 202, 8))
+
+        elif day_num == 5:
+            # Deliveries due today: SO #233 (12u P201) & SO #234 (14u P201)
+            # Note: SO #237 (8u P202 due Jan 5) delayed due to Line 2 capacity shortfall!
+            to_ship.append((233, 233, 201, 12))
+            to_ship.append((234, 234, 201, 14))
+
+        elif day_num == 6:
+            # Deliveries due today: SO #235 (12u P201) & SO #238 (9u P201)
+            to_ship.append((235, 235, 201, 12))
+            to_ship.append((238, 238, 201, 9))
+
+        elif day_num == 7:
+            # Day 7: Genuine Late Customer Shipment!
+            # Ship delayed SO #237 (8u P202, requested Jan 5 -> delivered late on Jan 7!)
+            to_ship.append((237, 237, 202, 8))
+            # On-time delivery for Model Y: SO #239 (10u P202, req Jan 7)
+            to_ship.append((239, 239, 202, 10))
+            # Note: Model X orders SO #236 & #241 due Jan 7 delayed due to steel stockout!
+
+        elif day_num == 8:
+            # Day 8: Backlog recovery begins!
+            # 1. Carried-over 2025 backorders (oldest-first FIFO): SO #220, #221, #225 (33 units P202)
+            to_ship.append((220, 220, 202, 13))
+            to_ship.append((221, 221, 202, 8))
+            to_ship.append((225, 225, 202, 12))
+            # 2. Delayed Model X orders from Day 7: SO #236 (10u) & SO #241 (10u)
+            to_ship.append((236, 236, 201, 10))
+            to_ship.append((241, 241, 201, 10))
+            # 3. On-time orders due Jan 8: SO #240 (11u P201), SO #242 (8u P202), SO #244 (11u P201)
+            to_ship.append((240, 240, 201, 11))
+            to_ship.append((242, 242, 202, 8))
+            to_ship.append((244, 244, 201, 11))
+
+        elif day_num == 9:
+            # Day 9: Backorders continue clearing FIFO:
+            # 1. Carried-over 2025 backorders: SO #226 (9u P202), SO #227 (12u P201), SO #230 (9u P202)
+            to_ship.append((226, 226, 202, 9))
+            to_ship.append((227, 227, 201, 12))
+            to_ship.append((230, 230, 202, 9))
+            # 2. On-time orders due Jan 9: SO #243 (12u P201), SO #245 (9u P202), SO #247 (10u P201)
+            to_ship.append((243, 243, 201, 12))
+            to_ship.append((245, 245, 202, 9))
+            to_ship.append((247, 247, 201, 10))
+
+        elif day_num == 10:
+            # Day 10: Final carried-over 2025 backorders cleared:
+            # 1. SO #224 (14u P202), SO #229 (14u P201), SO #228 (18u P202)
+            to_ship.append((224, 224, 202, 14))
+            to_ship.append((229, 229, 201, 14))
+            to_ship.append((228, 228, 202, 18))
+            # 2. On-time orders due Jan 10: SO #246 (10u P201), SO #248 (8u P202), SO #250 (10u P201)
+            to_ship.append((246, 246, 201, 10))
+            to_ship.append((248, 248, 202, 8))
+            to_ship.append((250, 250, 201, 10))
+
+        for so_id, sol_id, pid, ship_qty in to_ship:
+            del_id = next_del_id; next_del_id += 1
+            dell_id = next_dell_id; next_dell_id += 1
+            day_dels.append({
+                "id": del_id, "sales_order_id": so_id, "ship_date": day_str,
+                "delivery_date": day_str, "status": "Delivered"
             })
+            day_dells.append({
+                "id": dell_id, "delivery_id": del_id, "sales_order_line_id": sol_id,
+                "product_id": pid, "quantity_shipped": ship_qty
+            })
+            fg_stock[pid] = max(0, fg_stock[pid] - ship_qty)
+            if so_id in active_2026_orders:
+                active_2026_orders[so_id]["quantity_fulfilled"] += ship_qty
 
-        # -------------------------------------------------------------
-        # 4. Order Fulfillment & Deliveries
-        # -------------------------------------------------------------
-        # Fulfill orders requested on or before today if FG stock allows
-        deliverable_orders = [o for o in open_sales_orders if o["requested_date"] <= day_str and o["quantity_fulfilled"] < o["quantity_ordered"]]
-        deliverable_orders.sort(key=lambda x: x["requested_date"])
-
-        for o in deliverable_orders:
-            pid = o["product_id"]
-            rem = o["quantity_ordered"] - o["quantity_fulfilled"]
-            ship_qty = min(rem, fg_stock[pid])
-
-            # In Day 6 & 7, stockouts restrict shipments of Widget Model X
-            if ship_qty > 0:
-                del_id = next_del_id; next_del_id += 1
-                dell_id = next_dell_id; next_dell_id += 1
-                day_dels.append({
-                    "id": del_id, "sales_order_id": o["so_id"], "ship_date": day_str,
-                    "delivery_date": day_str, "status": "Delivered"
-                })
-                day_dells.append({
-                    "id": dell_id, "delivery_id": del_id, "sales_order_line_id": o["sol_id"],
-                    "product_id": pid, "quantity_shipped": ship_qty
-                })
-                fg_stock[pid] -= ship_qty
-                o["quantity_fulfilled"] += ship_qty
-
-                sm_id = next_mov_id; next_mov_id += 1
-                day_movs.append({
-                    "id": sm_id, "item_id": INV_ITEM_MAP[pid], "date": day_str, "movement_type": "OUT",
-                    "quantity": ship_qty, "goods_receipt_line_id": "", "material_issue_id": "",
-                    "production_order_id": "", "delivery_line_id": dell_id
-                })
+            sm_id = next_mov_id; next_mov_id += 1
+            day_movs.append({
+                "id": sm_id, "item_id": INV_ITEM_MAP[pid], "date": day_str, "movement_type": "OUT",
+                "quantity": ship_qty, "goods_receipt_line_id": "", "material_issue_id": "",
+                "production_order_id": "", "delivery_line_id": dell_id
+            })
 
         # -------------------------------------------------------------
         # 5. Export Pack to demo_data/packs/ and demo_data/queue/
@@ -468,7 +466,7 @@ def generate_packs():
             with open(target_dir / "metadata.json", "w", encoding="utf-8") as f_meta:
                 json.dump(meta, f_meta, indent=2)
 
-        print(f"  ✓ Exported pack for {day_str}: {sum(row_counts.values())} events (Steel Stock={mat_stock[101]:.1f}kg, Widget X Stock={fg_stock[201]}u)")
+        print(f"  ✓ Exported pack for {day_str}: {sum(row_counts.values())} events (Steel={mat_stock[101]:.1f}kg, Plastic={mat_stock[102]:.1f}kg, FG_X={fg_stock[201]}u, FG_Y={fg_stock[202]}u)")
 
     print("\nAll 10 daily packs generated in demo_data/packs/ and demo_data/queue/!")
 
