@@ -4,49 +4,134 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SAGE Controller — Login</title>
+  <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --bg: #0b0f19; --surface: #131b2e; --border: #1e293b;
       --text: #f8fafc; --muted: #94a3b8; --accent: #3b82f6;
-      --danger: #ef4444; --radius: 10px;
+      --danger: #ef4444; --radius: 12px;
     }
-    body { background: var(--bg); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-           display: flex; align-items: center; justify-content: center; min-height: 100vh; color: var(--text); -webkit-font-smoothing: antialiased; }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
-            padding: 40px 36px; width: 100%; max-width: 400px; box-shadow: 0 4px 24px rgba(0,0,0,0.4); }
-    .logo { font-size: 1.5rem; font-weight: 800; color: var(--accent); margin-bottom: 4px; letter-spacing: -0.03em; }
-    .subtitle { font-size: 0.85rem; color: var(--muted); margin-bottom: 28px; }
-    label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--muted);
-            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
-    input[type=password] { width: 100%; padding: 10px 14px; border: 1px solid var(--border);
-                           border-radius: 8px; font-size: 1rem; color: var(--text); outline: none; background: #0b0f19; }
-    input[type=password]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
-    .btn { width: 100%; padding: 11px; background: var(--accent); color: #fff; font-size: 0.95rem;
-           font-weight: 700; border: none; border-radius: 8px; cursor: pointer; margin-top: 16px; }
+    body {
+      background: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      padding: 24px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+    .brand-logo {
+      height: 48px;
+      width: auto;
+      border-radius: 8px;
+      background: #0f172a;
+      padding: 4px;
+      margin-bottom: 12px;
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #f8fafc;
+      letter-spacing: -0.02em;
+    }
+    .subtitle {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 4px;
+      margin-bottom: 24px;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+    input[type=text], input[type=password] {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      color: var(--text);
+      outline: none;
+      background: #0b0f19;
+      transition: all 0.15s ease;
+    }
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+    }
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.15s ease;
+    }
     .btn:hover { background: #2563eb; }
-    .error { background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5;
-             border-radius: 8px; padding: 10px 14px; font-size: 0.88rem; margin-bottom: 16px; }
-    .framing { font-size: 0.72rem; color: var(--muted); margin-top: 24px;
-               padding-top: 16px; border-top: 1px solid var(--border); line-height: 1.5; }
+    .error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.86rem;
+      margin-bottom: 18px;
+      line-height: 1.4;
+    }
   </style>
 </head>
 <body>
 <div class="card">
-  <div style="text-align:center; margin-bottom:12px;">
-    <img src="/static/img/sage_logo.png" alt="SAGE" style="height:44px; width:auto; border-radius:4px; background:#0f172a; padding:2px;">
+  <div style="text-align:center;">
+    <img src="/static/img/sage_logo.png" alt="SAGE" class="brand-logo">
+    <div class="logo">SAGE Controller</div>
+    <div class="subtitle">Operator Control Console</div>
   </div>
-  <div class="logo" style="text-align:center;">SAGE Controller</div>
-  <div class="subtitle" style="text-align:center;">Operator access — Stage 9 v6</div>
+
   {% if error %}
   <div class="error">{{ error }}</div>
   {% endif %}
+
   <form method="post" action="/ctrl/login">
-    <label for="token">Controller Token</label>
-    <input type="password" id="token" name="token" placeholder="Enter controller token" autofocus required>
-    <button class="btn" type="submit">Sign In →</button>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+    <div class="form-group">
+      <label for="username_or_email">Username or email</label>
+      <input type="text" id="username_or_email" name="username_or_email" value="{{ username_or_email|default('') }}" placeholder="admin or name@company.com" required autofocus autocomplete="username">
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="••••••••••••" required autocomplete="current-password">
+    </div>
+
+    <button class="btn" type="submit">Sign In &rarr;</button>
   </form>
-  <p class="framing">{{ framing }}</p>
 </div>
 </body>
 </html>

@@ -38,7 +38,9 @@ from stage9.scheduler import load_schedule_config, SENT_LOG_PATH
 from web.research_view import load_research_evaluation_data
 from web.auth import (
     load_users,
+    find_user,
     verify_password,
+    verify_user_credentials,
     seed_default_user_if_needed,
     create_session,
     get_session,
@@ -46,6 +48,8 @@ from web.auth import (
     is_locked_out,
     record_failed_attempt,
     clear_failed_attempts,
+    issue_login_csrf,
+    verify_login_csrf,
     SESSION_COOKIE_NAME,
     SESSION_TTL_SECONDS,
 )
@@ -198,9 +202,12 @@ def login_page(request: Request, next: str = "/"):
     if sid and get_session(sid):
         target = next if (next and next.startswith("/") and not next.startswith("//")) else "/"
         return RedirectResponse(target, status_code=303)
+    csrf_token = issue_login_csrf()
     return templates.TemplateResponse("login.html", {
         "request": request,
         "next": next,
+        "csrf_token": csrf_token,
+        "username_or_email": "",
         "error": None
     })
 
@@ -208,51 +215,56 @@ def login_page(request: Request, next: str = "/"):
 @app.post("/login", response_class=HTMLResponse)
 async def login_submit(
     request: Request,
-    email: str = Form(...),
+    username_or_email: Optional[str] = Form(None),
+    email: Optional[str] = Form(None),
     password: str = Form(...),
+    csrf_token: Optional[str] = Form(None),
     next: str = Form("/")
 ):
     client_ip = request.client.host if request.client else "127.0.0.1"
-    locked, remaining = is_locked_out(client_ip)
-    if locked:
+    identifier = (username_or_email or email or "").strip()
+
+    if csrf_token and not verify_login_csrf(csrf_token):
+        new_csrf = issue_login_csrf()
         return templates.TemplateResponse(
             "login.html",
             {
                 "request": request,
                 "next": next,
-                "email": email,
-                "error": f"Too many failed login attempts. Locked out for {remaining} seconds."
+                "username_or_email": identifier,
+                "csrf_token": new_csrf,
+                "error": "Session security token expired. Please try again."
             },
-            status_code=429
+            status_code=403
         )
 
-    users = load_users()
-    user = users.get(email.strip().lower())
-    if user and verify_password(password, user.get("salt", ""), user.get("password_hash", "")):
-        clear_failed_attempts(client_ip)
-        sid = create_session(user["email"], user.get("role", "viewer"))
-        target = next if (next and next.startswith("/") and not next.startswith("//")) else "/"
-        resp = RedirectResponse(target, status_code=303)
-        resp.set_cookie(
-            key=SESSION_COOKIE_NAME,
-            value=sid,
-            httponly=True,
-            samesite="strict",
-            max_age=SESSION_TTL_SECONDS
-        )
-        return resp
-    else:
-        record_failed_attempt(client_ip)
+    ok, user, err = verify_user_credentials(identifier, password, client_ip)
+    if not ok:
+        new_csrf = issue_login_csrf()
+        code = 429 if "Too many" in err else 401
         return templates.TemplateResponse(
             "login.html",
             {
                 "request": request,
                 "next": next,
-                "email": email,
-                "error": "Invalid email or password."
+                "username_or_email": identifier,
+                "csrf_token": new_csrf,
+                "error": err
             },
-            status_code=401
+            status_code=code
         )
+
+    sid = create_session(user["email"], user.get("role", "viewer"))
+    target = next if (next and next.startswith("/") and not next.startswith("//")) else "/"
+    resp = RedirectResponse(target, status_code=303)
+    resp.set_cookie(
+        key=SESSION_COOKIE_NAME,
+        value=sid,
+        httponly=True,
+        samesite="strict",
+        max_age=SESSION_TTL_SECONDS
+    )
+    return resp
 
 
 @app.get("/logout")
@@ -479,6 +491,8 @@ def view_daily_report_html(
 @app.post("/api/demo/send-report")
 def api_demo_send_report(
     date: Optional[str] = Query(None),
+    live: bool = Query(True),
+    recipient: Optional[str] = Query(None),
     auth_token: str = Depends(verify_token)
 ):
     global _LAST_DEMO_SEND_TS
@@ -488,7 +502,22 @@ def api_demo_send_report(
 
     target_d = datetime.strptime(date, "%Y-%m-%d").date() if date else get_current_day()
     from stage9.ops import send_report_now_v6
-    res = send_report_now_v6(as_of=target_d, user="viewer")
+    from stage9.recipients import load_saved_recipients, validate_recipient_email
+
+    if recipient and recipient.strip() and recipient.strip().lower() not in ("all", "all_active"):
+        ok, clean_rec, err = validate_recipient_email(recipient.strip())
+        if not ok:
+            raise HTTPException(status_code=400, detail=f"Invalid recipient email: {err}")
+        targets = [clean_rec]
+    else:
+        active_recs = [r["email"] for r in load_saved_recipients() if r.get("active", True)]
+        if not active_recs:
+            active_recs = ["sreeshanmukhtrk@gmail.com", "trksreeshanmukh026@gmail.com"]
+        targets = active_recs
+
+    send_enabled = os.getenv("SAGE_SEND_ENABLED", "false").lower() in ("true", "1", "yes")
+    force_live = bool(live and send_enabled)
+    res = send_report_now_v6(as_of=target_d, recipients=targets, force_live=force_live, user="viewer")
     _LAST_DEMO_SEND_TS = time.time()
     return res
 

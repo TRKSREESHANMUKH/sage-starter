@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign In &bull; SAGE Operations</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <style>
     :root {
       --bg: #f8fafc;
@@ -17,21 +18,6 @@
       --danger-bg: #fee2e2;
       --danger-border: #fca5a5;
       --radius: 12px;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #0b0f19;
-        --surface: #131b2e;
-        --border: #1e293b;
-        --text: #f8fafc;
-        --muted: #94a3b8;
-        --accent: #3b82f6;
-        --accent-hover: #2563eb;
-        --danger: #ef4444;
-        --danger-bg: rgba(239, 68, 68, 0.12);
-        --danger-border: rgba(239, 68, 68, 0.3);
-      }
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -64,6 +50,9 @@
       width: auto;
       margin-bottom: 12px;
       object-fit: contain;
+      background: #0f172a;
+      border-radius: 10px;
+      padding: 6px;
     }
 
     .brand-title {
@@ -76,7 +65,7 @@
     }
 
     .brand-subtitle {
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       color: var(--muted);
       margin-top: 4px;
       font-weight: 500;
@@ -116,7 +105,7 @@
       margin-bottom: 6px;
     }
 
-    input[type="email"], input[type="password"], input[type="text"] {
+    input[type="text"], input[type="password"] {
       width: 100%;
       padding: 11px 14px;
       background: var(--bg);
@@ -150,20 +139,12 @@
     .submit-btn:hover {
       background: var(--accent-hover);
     }
-
-    .login-footer {
-      margin-top: 24px;
-      text-align: center;
-      font-size: 0.72rem;
-      color: var(--muted);
-      line-height: 1.5;
-    }
   </style>
 </head>
 <body>
   <div class="login-container">
     <div class="brand-header">
-      <img src="/static/img/sage_logo.png" alt="SAGE" class="brand-logo" onerror="this.style.display='none'">
+      <img src="/static/img/sage_logo.png" alt="SAGE" class="brand-logo">
       <div class="brand-title">SAGE</div>
       <div class="brand-subtitle">Strategic Analytics for Guided Execution</div>
     </div>
@@ -176,11 +157,12 @@
       {% endif %}
 
       <form action="/login" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
         <input type="hidden" name="next" value="{{ next|default('/') }}">
 
         <div class="form-group">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" name="email" value="{{ email|default('') }}" placeholder="operator@company.com" required autofocus autocomplete="username">
+          <label for="username_or_email">Username or email</label>
+          <input type="text" id="username_or_email" name="username_or_email" value="{{ username_or_email|default('') }}" placeholder="admin or name@company.com" required autofocus autocomplete="username">
         </div>
 
         <div class="form-group">
@@ -190,10 +172,6 @@
 
         <button type="submit" class="submit-btn">Sign In to SAGE</button>
       </form>
-    </div>
-
-    <div class="login-footer">
-      SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.
     </div>
   </div>
 </body>

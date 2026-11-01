@@ -76,6 +76,18 @@ from stage9.recipients import (
     validate_name_and_role,
     load_send_history,
 )
+from web.auth import (
+    find_user,
+    verify_user_credentials,
+    create_session,
+    get_session,
+    delete_session,
+    issue_login_csrf,
+    verify_login_csrf,
+    clear_failed_attempts,
+    seed_default_user_if_needed,
+    SESSION_TTL_SECONDS,
+)
 from stage9.pipeline_runner import run_feed_with_telemetry, get_pipeline_state
 from stage9.current_day import get_current_day, get_ingested_days
 from stage9.clock import get_as_of_date
@@ -170,13 +182,9 @@ async def ctrl_token_query_middleware(request: Request, call_next):
 
 def _get_session(request: Request) -> Optional[Dict[str, Any]]:
     sid = request.cookies.get("sage_ctrl_session")
-    if not sid or sid not in _sessions:
+    if not sid:
         return None
-    sess = _sessions[sid]
-    if time.time() - sess["created_at"] > SESSION_TTL_SECONDS:
-        _sessions.pop(sid, None)
-        return None
-    return sess
+    return get_session(sid)
 
 
 def _require_session(request: Request) -> Dict[str, Any]:
@@ -306,14 +314,15 @@ def _base_ctx(request: Request, sess: Optional[Dict] = None) -> Dict[str, Any]:
 
 @app.get("/ctrl/login", response_class=HTMLResponse)
 async def login_page(request: Request, error: str = ""):
+    sid = request.cookies.get("sage_ctrl_session")
+    if sid and get_session(sid):
+        return RedirectResponse("/ctrl/", status_code=303)
+    csrf_token = issue_login_csrf()
     return templates.TemplateResponse("login.html", {
         "request": request,
         "error": error,
-        "framing": (
-            "SAGE performs controlled synthetic causal-attribution evaluation "
-            "under an expert-defined causal model; it does not claim to prove "
-            "real-world causality."
-        ),
+        "csrf_token": csrf_token,
+        "username_or_email": "",
     })
 
 
@@ -321,43 +330,58 @@ async def login_page(request: Request, error: str = ""):
 async def login_submit(
     request: Request,
     response: Response,
-    token: str = Form(...),
+    username_or_email: Optional[str] = Form(None),
+    password: Optional[str] = Form(None),
+    token: Optional[str] = Form(None),
+    csrf_token: Optional[str] = Form(None),
 ):
-    ip = request.client.host if request.client else "unknown"
+    client_ip = request.client.host if request.client else "127.0.0.1"
+    identifier = (username_or_email or "").strip()
 
-    if _is_locked_out(ip):
-        audit_log("login_attempt", {"ip": ip}, "LOCKED_OUT")
+    # Legacy token fallback if token passed without password
+    if token and not password:
+        expected = _get_controller_token()
+        if hmac.compare_digest(token.strip(), expected):
+            clear_failed_attempts(client_ip)
+            admin_email, _ = seed_default_user_if_needed()
+            sid = create_session(admin_email, "admin")
+            audit_log("login", {"ip": client_ip, "auth": "token"}, "SUCCESS")
+            resp = RedirectResponse("/ctrl/", status_code=303)
+            resp.set_cookie(
+                "sage_ctrl_session", sid,
+                httponly=True, samesite="strict",
+                max_age=SESSION_TTL_SECONDS,
+            )
+            return resp
+
+    if csrf_token and not verify_login_csrf(csrf_token):
+        new_csrf = issue_login_csrf()
         return templates.TemplateResponse("login.html", {
             "request": request,
-            "error": "Too many failed attempts. Please wait 60 seconds.",
-            "framing": (
-                "SAGE performs controlled synthetic causal-attribution evaluation "
-                "under an expert-defined causal model; it does not claim to prove "
-                "real-world causality."
-            ),
-        }, status_code=429)
+            "error": "Session security token expired. Please try again.",
+            "csrf_token": new_csrf,
+            "username_or_email": identifier,
+        }, status_code=403)
 
-    expected = _get_controller_token()
-    if not hmac.compare_digest(token.strip(), expected):
-        _record_failed_login(ip)
-        remaining = MAX_FAILED_ATTEMPTS - len(_failed_logins.get(ip, []))
-        audit_log("login_attempt", {"ip": ip}, "FAILED")
+    pwd = password or token or ""
+    ok, user, err = verify_user_credentials(identifier, pwd, client_ip)
+    if not ok:
+        new_csrf = issue_login_csrf()
+        audit_log("login_attempt", {"ip": client_ip, "identifier": identifier}, "FAILED")
+        code = 429 if "Too many" in err else 401
         return templates.TemplateResponse("login.html", {
             "request": request,
-            "error": f"Invalid token. {max(0, remaining)} attempt(s) remaining.",
-            "framing": (
-                "SAGE performs controlled synthetic causal-attribution evaluation "
-                "under an expert-defined causal model; it does not claim to prove "
-                "real-world causality."
-            ),
-        }, status_code=401)
+            "error": err,
+            "csrf_token": new_csrf,
+            "username_or_email": identifier,
+        }, status_code=code)
 
-    sid = _create_session()
-    audit_log("login", {"ip": ip}, "SUCCESS")
+    sid = create_session(user["email"], user.get("role", "admin"))
+    audit_log("login", {"ip": client_ip, "user": user["email"]}, "SUCCESS")
     resp = RedirectResponse("/ctrl/", status_code=303)
     resp.set_cookie(
         "sage_ctrl_session", sid,
-        httponly=True, samesite="lax",
+        httponly=True, samesite="strict",
         max_age=SESSION_TTL_SECONDS,
     )
     return resp
@@ -367,7 +391,7 @@ async def login_submit(
 async def logout(request: Request):
     sid = request.cookies.get("sage_ctrl_session")
     if sid:
-        _sessions.pop(sid, None)
+        delete_session(sid)
     resp = RedirectResponse("/ctrl/login", status_code=303)
     resp.delete_cookie("sage_ctrl_session")
     return resp
