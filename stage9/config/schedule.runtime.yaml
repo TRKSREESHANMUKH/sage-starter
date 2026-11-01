@@ -1,3 +1,4 @@
+automatic_daily_mail: true
 jobs:
   prepare:
     cron: 45 19 * * *

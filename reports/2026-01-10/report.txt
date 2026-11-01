@@ -1,44 +1,46 @@
 SAGE DAILY BRIEF | 10 Jan 2026
-Status: ACTION NEEDED (13 items need action)
+Status: ACTION NEEDED (1 item need action)
+Prepared for: Sree Shanmukh
 ======================================================================
 
 SUMMARY:
 Operations proceeded normally across all manufacturing cells today with
 all planned production schedules fully achieved. Today, 3 customer
 orders totaling 29 units were booked and 74 units were dispatched to
-customers. Steel Rod 10mm inventory stands at 215 kg providing
-approximately 7 days of forward production cover. Inbound purchase order
-#19 from EastCoast Components remains overdue since 02 January (now 8
-days late). All scheduled supplier deliveries arrived on time, an
-operational status seen end to end in receiving logs. Production
-planning will lead shift review at 09:00 to maintain planned assembly
-targets. SAGE performs controlled synthetic causal-attribution
-evaluation under an expert-defined causal model; it does not claim to
-prove real-world causality.
+customers. Steel Rod 10mm inventory stands at 227 kg providing
+approximately 8 days of forward production cover. Standing customer
+backorders stand at 5 units across 0 orders in open fulfillment queues.
+All scheduled supplier deliveries arrived on time, an operational status
+seen end to end in receiving logs. Production planning will lead shift
+review at 09:00 to maintain planned assembly targets. SAGE performs
+controlled synthetic causal-attribution evaluation under an expert-
+defined causal model; it does not claim to prove real-world causality.
 
 TODAY'S NUMBERS IN CONTEXT:
-• Orders Due     : 0 orders due, same as yesterday (7d avg: 0.0)
-• Orders Late    : 9 late orders, same as yesterday (7d avg: 8.0)
-• Units Short    : 109 units short, same as yesterday (7d avg: 94.0)
-• Materials Low  : 0 materials low, same as yesterday (7d avg: 0.0)
+• Orders Due     : 2 orders due, same as yesterday (7d avg: 2.0)
+• Orders Late    : 0 late orders, down from 3 yesterday (7d avg: 5.6)
+• Units Short    : 5 units short, down from 46 yesterday (7d avg: 68.9)
+• Materials Low  : 0 materials low, same as yesterday (7d avg: 0.3)
 • Forward-look   : Next 7 days demand: ~206 units due (likely range 162–255); 108 already booked + ~98 expected new orders.
 
 PAST ANALYSED CASES: WHAT CAUSED WHAT:
-No abnormal causal cascades observed in the trailing 7 days.
+• Chain: Widget Model X orders late
+  Observed widget model x orders late on 10 Jan is consistent with widget model x orders late starting on 10 Jan.
+  Confidence: No upstream explanation found | Model check: Model check not run for this day (Not scheduled)
+• Chain: Widget Model Y orders late
+  Observed widget model y orders late on 10 Jan is consistent with widget model y orders late starting on 10 Jan.
+  Confidence: No upstream explanation found | Model check: Model check not run for this day (Not scheduled)
 
 FOCUS TOMORROW (TOP 3 PRIORITIES):
-1. Expedite delivery for SO-220 to Coastal Traders (Customer Logistics) - Due 10:00 AM
-   Reason: 13 units of Widget Model Y are 8 days overdue (was due 02 Jan).
-2. Expedite delivery for SO-225 to Nova Retailers (Customer Logistics) - Due 10:00 AM
-   Reason: 12 units of Widget Model Y are 8 days overdue (was due 02 Jan).
-3. Expedite delivery for SO-226 to Sunrise Wholesalers (Customer Logistics) - Due 10:00 AM
-   Reason: 9 units of Widget Model Y are 8 days overdue (was due 02 Jan).
+1. Escalate overdue PO-18 for Steel Rod 10mm (Supplier Relations) - Due 11:30 AM
+   Reason: PO-18 is 149 days overdue from expected delivery date (14 Aug).
+2. Prepare shipment for Nova Retailers (Widget Model X) (Warehouse Dispatch) - Due 02:00 PM
+   Reason: Upcoming order for 12 units due tomorrow (11 Jan).
+3. Prepare shipment for Coastal Traders (Widget Model Y) (Warehouse Dispatch) - Due 02:00 PM
+   Reason: Upcoming order for 8 units due tomorrow (11 Jan).
 
 SUPPLIER WATCH:
 • PO-18 (EastCoast Components): 407 units Steel Rod 10mm - 149 days late (expected 14 Aug)
-• PO-19 (EastCoast Components): 400 units Steel Rod 10mm - 8 days late (expected 02 Jan)
-• PO-20 (Global Polymers Co): 250 units Plastic Granules - 6 days late (expected 04 Jan)
-• PO-21 (Copper & Co): 200 units Copper Wire - 4 days late (expected 06 Jan)
 
 ======================================================================
 FRAMING: SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.

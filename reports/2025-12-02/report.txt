@@ -1,0 +1,43 @@
+SAGE DAILY BRIEF | 2 Dec 2025
+Status: ACTION NEEDED (2 items need action)
+Prepared for: Sree Shanmukh
+======================================================================
+
+SUMMARY:
+Operations proceeded normally across all manufacturing cells today with
+all planned production schedules fully achieved. Today, 3 customer
+orders totaling 30 units were booked while manufacturing completed 14
+finished goods units. Steel Rod 10mm inventory stands at 9 kg providing
+approximately 0 days of forward production cover. All inbound supplier
+shipments and raw component inventories remain within normal operating
+tolerances. All scheduled supplier deliveries arrived on time, an
+operational status seen end to end in receiving logs. Production
+planning will lead shift review at 09:00 to maintain planned assembly
+targets. SAGE performs controlled synthetic causal-attribution
+evaluation under an expert-defined causal model; it does not claim to
+prove real-world causality.
+
+TODAY'S NUMBERS IN CONTEXT:
+• Orders Due     : 0 orders due, same as yesterday (7d avg: 0.4)
+• Orders Late    : 0 late orders, same as yesterday (7d avg: 0.0)
+• Units Short    : 0 units short, down from 50 yesterday (7d avg: 7.1)
+• Materials Low  : 1 material low, same as yesterday (7d avg: 1.0)
+• Forward-look   : Next 7 days demand: ~0 units due (likely range 0–0); 0 already booked + ~0 expected new orders.
+
+PAST ANALYSED CASES: WHAT CAUSED WHAT:
+No abnormal causal cascades observed in the trailing 7 days.
+
+FOCUS TOMORROW (TOP 3 PRIORITIES):
+1. Replenish critical material: Steel Rod 10mm (Procurement Specialist) - Due 12:00 PM
+   Reason: Steel Rod 10mm inventory is 9 kg, at or below safety threshold (50 kg).
+2. Escalate overdue PO-18 for Steel Rod 10mm (Supplier Relations) - Due 11:30 AM
+   Reason: PO-18 is 110 days overdue from expected delivery date (14 Aug).
+
+SUPPLIER WATCH:
+• PO-18 (EastCoast Components): 407 units Steel Rod 10mm - 110 days late (expected 14 Aug)
+
+======================================================================
+FRAMING: SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.
+
+Synthetic data. System knows data up to 2025-12-02 only.
+Dashboard: http://127.0.0.1:8000

@@ -515,7 +515,7 @@
     </div>
 
     <!-- 3. Prominent Summary Box -->
-    <div class="card summary-box" style="margin-top: 20px; margin-bottom: 24px; padding: 20px 24px; border: 2px solid #0f172a; border-radius: 8px; background: #ffffff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+    <div class="card summary-box" style="margin-top: 20px; margin-bottom: 24px; padding: 20px 24px; border: 1px solid #cbd5e1; border-top: 3px solid #2563eb; border-radius: 8px; background: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
         <h2 style="font-size: 1.25rem; font-weight: 800; margin: 0; color: #0f172a; letter-spacing: -0.2px;">Summary</h2>
         <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: #f1f5f9; color: #334155; padding: 2px 8px; border-radius: 4px;">Operational Brief</span>
@@ -572,12 +572,12 @@
         {% set pct_booked = (outlook.due_known / total_vis * 100) if total_vis > 0 else 50 %}
         {% set pct_new = 100 - pct_booked %}
         <div style="height: 20px; width: 100%; border-radius: 4px; overflow: hidden; display: flex; background: #e2e8f0; border: 1px solid #cbd5e1;">
-          <div style="width: {{ pct_booked }}%; background: #0f172a;" title="Already booked: {{ outlook.due_known }} units"></div>
-          <div style="width: {{ pct_new }}%; background: #94a3b8;" title="Expected new orders: ~{{ outlook.expected_new_orders }} units"></div>
+          <div style="width: {{ pct_booked }}%; background: #2563eb;" title="Already booked: {{ outlook.due_known }} units"></div>
+          <div style="width: {{ pct_new }}%; background: #93c5fd;" title="Expected new orders: ~{{ outlook.expected_new_orders }} units"></div>
         </div>
         <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #64748b; font-weight: 600;">
-          <span><span style="display: inline-block; width: 8px; height: 8px; background: #0f172a; border-radius: 2px;"></span> Booked ({{ pct_booked | round(1) }}%)</span>
-          <span><span style="display: inline-block; width: 8px; height: 8px; background: #94a3b8; border-radius: 2px;"></span> Expected New ({{ pct_new | round(1) }}%)</span>
+          <span><span style="display: inline-block; width: 8px; height: 8px; background: #2563eb; border-radius: 2px;"></span> Booked ({{ pct_booked | round(1) }}%)</span>
+          <span><span style="display: inline-block; width: 8px; height: 8px; background: #93c5fd; border-radius: 2px;"></span> Expected New ({{ pct_new | round(1) }}%)</span>
         </div>
       </div>
 
@@ -627,7 +627,7 @@
         <div style="display: flex; flex-direction: column; gap: 10px;">
           {% for item in today_focus_items %}
           <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 0.82rem;">
-            <span style="background: #0f172a; color: #ffffff; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; flex-shrink: 0;">{{ item.rank }}</span>
+            <span style="background: #2563eb; color: #ffffff; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; flex-shrink: 0;">{{ item.rank }}</span>
             <div style="flex-grow: 1;">
               <div style="font-weight: 700; color: #0f172a;">{{ item.action }}</div>
               <div style="color: #64748b; font-size: 0.75rem; margin-top: 1px;">{{ item.reason }}</div>
@@ -678,7 +678,7 @@
         <!-- Multi-chain tabs (up to 3) -->
         <div style="display: flex; gap: 6px;">
           {% for ch in causal_map.chains %}
-          <button type="button" class="causal-tab-btn {% if loop.first %}active{% endif %}" onclick="switchCausalTab('{{ ch.id }}', this)" style="padding: 4px 10px; font-size: 0.72rem; font-weight: 700; border-radius: 4px; border: 1px solid #cbd5e1; background: {% if loop.first %}#0f172a{% else %}#ffffff{% endif %}; color: {% if loop.first %}#ffffff{% else %}#475569{% endif %}; cursor: pointer;">
+          <button type="button" class="causal-tab-btn {% if loop.first %}active{% endif %}" onclick="switchCausalTab('{{ ch.id }}', this)" style="padding: 4px 10px; font-size: 0.72rem; font-weight: 700; border-radius: 4px; border: 1px solid {% if loop.first %}#2563eb{% else %}#cbd5e1{% endif %}; background: {% if loop.first %}#2563eb{% else %}#ffffff{% endif %}; color: {% if loop.first %}#ffffff{% else %}#475569{% endif %}; cursor: pointer;">
             {{ ch.tab_title }}
           </button>
           {% endfor %}
@@ -864,10 +864,12 @@
         b.classList.remove('active');
         b.style.background = '#ffffff';
         b.style.color = '#475569';
+        b.style.borderColor = '#cbd5e1';
       });
       if (btn) {
         btn.classList.add('active');
-        btn.style.background = '#0f172a';
+        btn.style.background = '#2563eb';
+        btn.style.borderColor = '#2563eb';
         btn.style.color = '#ffffff';
       }
     }

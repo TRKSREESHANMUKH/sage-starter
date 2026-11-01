@@ -31,27 +31,27 @@
       "role": "Planner"
     },
     {
-      "action": "Prepare dispatch for order SO-229 (Widget Model X (Product 201))",
+      "action": "Prepare dispatch for order SO-231 (Widget Model X (Product 201))",
       "category": "Upcoming Order",
-      "due_date": "2026-01-05",
+      "due_date": "2026-01-04",
       "rank": 4,
-      "reason": "Order SO-229 (14 units) requested for delivery on 2026-01-05",
+      "reason": "Order SO-231 (5 units) requested for delivery on 2026-01-04",
       "role": "Planner"
     },
     {
-      "action": "Prepare receipt for PO-19 from EastCoast Components",
-      "category": "Incoming Supply",
-      "due_date": "2026-01-02",
+      "action": "Prepare dispatch for order SO-232 (Widget Model Y (Product 202))",
+      "category": "Upcoming Order",
+      "due_date": "2026-01-04",
       "rank": 5,
-      "reason": "Expected shipment of 400 units of Steel Rod 10mm (Material 101) scheduled for arrival on 2026-01-02",
-      "role": "Procurement"
+      "reason": "Order SO-232 (4 units) requested for delivery on 2026-01-04",
+      "role": "Planner"
     }
   ],
   "watchlist": [
     {
-      "item": "Tight buffer on SO-224 (Widget Model Y (Product 202))",
-      "reason": "Order due 2026-01-04 has only 6 units cushion above planned fulfillment",
-      "role": "Planner"
+      "item": "Steel Rod 10mm (Material 101) inventory monitoring",
+      "reason": "Steel Rod 10mm (Material 101) is at 150 kg (below reorder point 150 kg), tracking 1 open replenishment POs",
+      "role": "Procurement"
     }
   ]
 }

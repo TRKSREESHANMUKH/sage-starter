@@ -552,7 +552,7 @@
       </button>
     </div>
     <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 600; color: #475569; cursor: pointer; background: #ffffff; padding: 5px 10px; border-radius: 6px; border: 1px solid #cbd5e1;">
-      <input type="checkbox" id="toggle-new-events" onchange="toggleNewEvents(this)" style="cursor: pointer; accent-color: #0f172a;">
+      <input type="checkbox" id="toggle-new-events" onchange="toggleNewEvents(this)" style="cursor: pointer; accent-color: #2563eb;">
       Show only new events
     </label>
   </div>
@@ -580,7 +580,7 @@
 
     <!-- Draggable Range Slider Track -->
     <div style="position: relative; padding: 10px 0 4px 0;">
-      <input type="range" id="history-slider" min="0" max="{{ history_and_key_events.total_days_indexed - 1 }}" value="{{ history_and_key_events.total_days_indexed - 1 }}" oninput="onSliderInput(this.value)" style="width: 100%; height: 8px; border-radius: 4px; accent-color: #0f172a; cursor: pointer; background: #e2e8f0;">
+      <input type="range" id="history-slider" min="0" max="{{ history_and_key_events.total_days_indexed - 1 }}" value="{{ history_and_key_events.total_days_indexed - 1 }}" oninput="onSliderInput(this.value)" style="width: 100%; height: 8px; border-radius: 4px; accent-color: #2563eb; cursor: pointer; background: #e2e8f0;">
       <!-- Month Tick Labels Container -->
       <div style="display: flex; justify-content: space-between; margin-top: 6px; overflow-x: auto; gap: 4px;">
         {% for mt in history_and_key_events.month_ticks %}
@@ -663,7 +663,7 @@
 
       <!-- Severity Filter Chips -->
       <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="incident-filter-chips">
-        <button type="button" class="inc-chip active" onclick="filterIncidentLog('ALL', this)" style="padding: 4px 10px; font-size: 0.72rem; font-weight: 700; border-radius: 4px; border: 1px solid #cbd5e1; background: #0f172a; color: #ffffff; cursor: pointer;">
+        <button type="button" class="inc-chip active" onclick="filterIncidentLog('ALL', this)" style="padding: 4px 10px; font-size: 0.72rem; font-weight: 700; border-radius: 4px; border: 1px solid #2563eb; background: #2563eb; color: #ffffff; cursor: pointer;">
           ALL
         </button>
         <button type="button" class="inc-chip" onclick="filterIncidentLog('HIGH', this)" style="padding: 4px 10px; font-size: 0.72rem; font-weight: 700; border-radius: 4px; border: 1px solid #cbd5e1; background: #ffffff; color: #991b1b; cursor: pointer;">
@@ -681,7 +681,7 @@
     <!-- Vertical Timeline -->
     <div id="incident-log-timeline" style="position: relative; padding-left: 28px; border-left: 2px solid #e2e8f0; margin-left: 10px; display: flex; flex-direction: column; gap: 20px;">
       {% for inc in (incident_log or history_and_key_events.incident_log) %}
-      <div class="incident-entry" data-severity="{{ inc.severity }}" style="position: relative; cursor: pointer; {% if loop.index > 6 %}display:none;{% endif %}" onclick="jumpToDateStr('{{ inc.date_iso }}')">
+      <div class="incident-entry episode-row" data-severity="{{ inc.severity }}" data-is-new="{{ 'true' if inc.is_latest else 'false' }}" style="position: relative; cursor: pointer; {% if loop.index > 6 %}display:none;{% endif %}" onclick="jumpToDateStr('{{ inc.date_iso }}')">
         <!-- Dot -->
         <div style="position: absolute; left: -34px; top: 3px; width: 10px; height: 10px; border-radius: 50%; background: {{ inc.dot_color }}; border: 2px solid #ffffff; {% if inc.is_latest or inc.severity == 'HIGH' %}box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25);{% endif %}"></div>
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 3px;">
@@ -1522,12 +1522,18 @@ function selectFilterChip(filterName, btnEl) {
 function applyEpisodeFilters() {
   const onlyNew = document.getElementById('toggle-new-events')?.checked;
   const rows = document.querySelectorAll('.episode-row');
+  let visibleCount = 0;
   rows.forEach(r => {
-    const rowTier = r.getAttribute('data-tier');
+    const rowTier = r.getAttribute('data-tier') || r.getAttribute('data-severity');
     const tierMatch = (currentFilter === 'all' || rowTier === currentFilter);
     const isNew = r.getAttribute('data-is-new') === 'true';
     if (tierMatch && (!onlyNew || isNew)) {
-      r.style.display = 'flex';
+      visibleCount++;
+      if (!incidentShowAll && visibleCount > 6) {
+        r.style.display = 'none';
+      } else {
+        r.style.display = 'block';
+      }
     } else {
       r.style.display = 'none';
     }
@@ -1709,9 +1715,11 @@ function filterIncidentLog(sev, btn) {
   document.querySelectorAll('.inc-chip').forEach(b => {
     b.style.background = '#ffffff';
     b.style.color = '#475569';
+    b.style.borderColor = '#cbd5e1';
   });
   if (btn) {
-    btn.style.background = '#0f172a';
+    btn.style.background = '#2563eb';
+    btn.style.borderColor = '#2563eb';
     btn.style.color = '#ffffff';
   }
   applyIncidentVisibility();

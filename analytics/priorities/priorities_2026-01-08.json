@@ -7,60 +7,60 @@
   },
   "top_priorities": [
     {
-      "action": "Fulfil order SO-220 first",
-      "category": "Rule 1",
-      "due_date": "2026-01-08",
-      "rank": 1,
-      "reason": "Order SO-220 for Widget Model Y (Product 202) is 6 days overdue (13 units pending, due 2026-01-02)",
-      "role": "Planner"
-    },
-    {
-      "action": "Fulfil order SO-225 first",
-      "category": "Rule 1",
-      "due_date": "2026-01-08",
-      "rank": 2,
-      "reason": "Order SO-225 for Widget Model Y (Product 202) is 6 days overdue (12 units pending, due 2026-01-02)",
-      "role": "Planner"
-    },
-    {
       "action": "Fulfil order SO-226 first",
       "category": "Rule 1",
       "due_date": "2026-01-08",
-      "rank": 3,
+      "rank": 1,
       "reason": "Order SO-226 for Widget Model Y (Product 202) is 6 days overdue (9 units pending, due 2026-01-02)",
-      "role": "Planner"
-    },
-    {
-      "action": "Fulfil order SO-221 first",
-      "category": "Rule 1",
-      "due_date": "2026-01-08",
-      "rank": 4,
-      "reason": "Order SO-221 for Widget Model Y (Product 202) is 6 days overdue (8 units pending, due 2026-01-02)",
       "role": "Planner"
     },
     {
       "action": "Fulfil order SO-227 first",
       "category": "Rule 1",
       "due_date": "2026-01-08",
-      "rank": 5,
+      "rank": 2,
       "reason": "Order SO-227 for Widget Model X (Product 201) is 5 days overdue (12 units pending, due 2026-01-03)",
+      "role": "Planner"
+    },
+    {
+      "action": "Fulfil order SO-224 first",
+      "category": "Rule 1",
+      "due_date": "2026-01-08",
+      "rank": 3,
+      "reason": "Order SO-224 for Widget Model Y (Product 202) is 4 days overdue (14 units pending, due 2026-01-04)",
+      "role": "Planner"
+    },
+    {
+      "action": "Fulfil order SO-230 first",
+      "category": "Rule 1",
+      "due_date": "2026-01-08",
+      "rank": 4,
+      "reason": "Order SO-230 for Widget Model Y (Product 202) is 4 days overdue (9 units pending, due 2026-01-04)",
+      "role": "Planner"
+    },
+    {
+      "action": "Fulfil order SO-229 first",
+      "category": "Rule 1",
+      "due_date": "2026-01-08",
+      "rank": 5,
+      "reason": "Order SO-229 for Widget Model X (Product 201) is 3 days overdue (14 units pending, due 2026-01-05)",
       "role": "Planner"
     }
   ],
   "watchlist": [
     {
-      "item": "Fulfil order SO-224 first",
-      "reason": "Order SO-224 for Widget Model Y (Product 202) is 4 days overdue (14 units pending, due 2026-01-04)",
+      "item": "Fulfil order SO-228 first",
+      "reason": "Order SO-228 for Widget Model Y (Product 202) is 2 days overdue (18 units pending, due 2026-01-06)",
       "role": "Planner"
     },
     {
-      "item": "Fulfil order SO-230 first",
-      "reason": "Order SO-230 for Widget Model Y (Product 202) is 4 days overdue (9 units pending, due 2026-01-04)",
+      "item": "Tight buffer on SO-243 (Widget Model X (Product 201))",
+      "reason": "Order due 2026-01-09 has only 3 units cushion above planned fulfillment",
       "role": "Planner"
     },
     {
-      "item": "Fulfil order SO-229 first",
-      "reason": "Order SO-229 for Widget Model X (Product 201) is 3 days overdue (14 units pending, due 2026-01-05)",
+      "item": "Tight buffer on SO-245 (Widget Model Y (Product 202))",
+      "reason": "Order due 2026-01-09 has only 3 units cushion above planned fulfillment",
       "role": "Planner"
     }
   ]

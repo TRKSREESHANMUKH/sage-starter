@@ -22,8 +22,8 @@ load_dotenv()
 class TestWordingPurge(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.token_web = os.getenv("SAGE_WEB_TOKEN", "sage_dev_token_2025")
-        cls.token_ctrl = os.getenv("SAGE_CONTROLLER_TOKEN", "sage_operator_token_2025")
+        cls.token_web = os.getenv("SAGE_WEB_TOKEN", "")
+        cls.token_ctrl = os.getenv("SAGE_CONTROLLER_TOKEN", "")
 
         cls.jar_web = http.cookiejar.CookieJar()
         cls.opener_web = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cls.jar_web))

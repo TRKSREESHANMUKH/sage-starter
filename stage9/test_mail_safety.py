@@ -35,6 +35,9 @@ class TestMailSafety(unittest.TestCase):
             self.backup_sent_log = SENT_LOG_PATH.read_text(encoding="utf-8")
         self.orig_cfg = get_runtime_config()
         set_send_mode_v6("dry_run", user="test_fixture")
+        self.orig_transport = os.environ.get("SAGE_MAIL_TRANSPORT")
+        if "SAGE_MAIL_TRANSPORT" in os.environ:
+            del os.environ["SAGE_MAIL_TRANSPORT"]
         import stage9.ops as ops_mod
         ops_mod._LAST_SEND_TIMESTAMP = 0.0
 
@@ -42,6 +45,10 @@ class TestMailSafety(unittest.TestCase):
         save_runtime_config(self.orig_cfg, user="test_fixture")
         if self.backup_sent_log is not None:
             SENT_LOG_PATH.write_text(self.backup_sent_log, encoding="utf-8")
+        if self.orig_transport is not None:
+            os.environ["SAGE_MAIL_TRANSPORT"] = self.orig_transport
+        elif "SAGE_MAIL_TRANSPORT" in os.environ:
+            del os.environ["SAGE_MAIL_TRANSPORT"]
         import stage9.ops as ops_mod
         ops_mod._LAST_SEND_TIMESTAMP = 0.0
 

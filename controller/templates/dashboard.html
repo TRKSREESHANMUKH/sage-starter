@@ -822,8 +822,9 @@ async function openPreviewModal() {
     const res = await fetch(url);
     const data = await res.json();
     if (data.status === "ok") {
-      infoEl.textContent = `Date: ${data.as_of} | Subject: ${data.subject}`;
-      contentEl.innerHTML = `<iframe srcdoc="${data.html.replace(/"/g, '&quot;')}" style="width:100%; height:600px; border:none; border-radius:4px; background:#fff;"></iframe>`;
+      const rec = data.recipient || "sreeshanmukhtrk@gmail.com";
+      infoEl.innerHTML = `<strong>Subject:</strong> ${data.subject} &nbsp;|&nbsp; <strong>To:</strong> <span class="monospace">${rec}</span> &nbsp;|&nbsp; <strong>Date:</strong> ${data.as_of}`;
+      contentEl.innerHTML = data.html;
     } else {
       contentEl.innerHTML = `<div style="padding:20px; color:#ef4444">Error loading preview: ${data.detail}</div>`;
     }
@@ -900,6 +901,25 @@ async function resetDemo() {
   }
 }
 </script>
+<!-- PREVIEW MODAL -->
+<div class="modal-overlay" id="preview-modal">
+  <div class="modal" style="max-width:850px; width:95%; max-height:90vh; display:flex; flex-direction:column">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
+      <div>
+        <div class="modal-title" style="margin-bottom:2px">Email & PDF Report Preview</div>
+        <div id="preview-meta-info" style="font-size:0.82rem; color:var(--muted)">Loading preview...</div>
+      </div>
+      <button class="btn btn-ghost" type="button" onclick="closePreviewModal()" style="padding:4px 8px; font-size:0.85rem">Close</button>
+    </div>
+    <div id="preview-content-area" style="flex:1; overflow-y:auto; border:1px solid var(--border); border-radius:6px; background:#fff; padding:16px; min-height:400px; color:#0f172a;">
+      <div style="text-align:center; padding:40px; color:var(--muted)">Rendering report...</div>
+    </div>
+    <div class="modal-footer" style="margin-top:12px">
+      <button class="btn btn-ghost" type="button" onclick="closePreviewModal()">Close</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 </body>
 </html>

@@ -1,13 +1,14 @@
 SAGE DAILY BRIEF | 5 Jan 2026
 Status: ACTION NEEDED (10 items need action)
+Prepared for: Sree Shanmukh
 ======================================================================
 
 SUMMARY:
 Operations proceeded normally across all manufacturing cells today with
 all planned production schedules fully achieved. Today, 3 customer
 orders totaling 30 units were booked and 26 units were dispatched to
-customers. Steel Rod 10mm inventory stands at 215 kg providing
-approximately 7 days of forward production cover. Inbound purchase order
+customers. Steel Rod 10mm inventory stands at 63 kg providing
+approximately 2 days of forward production cover. Inbound purchase order
 #19 from EastCoast Components remains overdue since 02 January (now 3
 days late). All scheduled supplier deliveries arrived on time, an
 operational status seen end to end in receiving logs. Production
@@ -17,27 +18,35 @@ evaluation under an expert-defined causal model; it does not claim to
 prove real-world causality.
 
 TODAY'S NUMBERS IN CONTEXT:
-• Orders Due     : 0 orders due, same as yesterday (7d avg: 0.4)
+• Orders Due     : 2 orders due, same as yesterday (7d avg: 1.9)
 • Orders Late    : 7 late orders, up from 5 yesterday (7d avg: 2.3)
-• Units Short    : 77 units short, up from 54 yesterday (7d avg: 31.9)
+• Units Short    : 79 units short, up from 54 yesterday (7d avg: 32.1)
 • Materials Low  : 0 materials low, same as yesterday (7d avg: 0.1)
 • Forward-look   : Next 7 days demand: ~194 units due (likely range 165–226); 130 already booked + ~64 expected new orders.
 
 PAST ANALYSED CASES: WHAT CAUSED WHAT:
-No abnormal causal cascades observed in the trailing 7 days.
+• Chain: EastCoast delivery late → Steel Rod 10mm below safety level
+  Observed steel rod 10mm below safety level on 05 Jan is consistent with eastcoast delivery late starting on 01 Jan.
+  Confidence: Partly seen | Model check: Model check not run for this day (Not scheduled)
+• Chain: Steel Rod 10mm below safety level → Widget Model X production shortfall
+  Observed widget model x production shortfall on 05 Jan is consistent with steel rod 10mm below safety level starting on 31 Dec.
+  Confidence: Partly seen | Model check: Model check not run for this day (Not scheduled)
+• Chain: Steel Rod 10mm below safety level → Widget Model Y production shortfall
+  Observed widget model y production shortfall on 05 Jan is consistent with steel rod 10mm below safety level starting on 31 Dec.
+  Confidence: Partly seen | Model check: Model check not run for this day (Not scheduled)
 
 FOCUS TOMORROW (TOP 3 PRIORITIES):
-1. Expedite delivery for SO-220 to Coastal Traders (Customer Logistics) - Due 10:00 AM
-   Reason: 13 units of Widget Model Y are 3 days overdue (was due 02 Jan).
-2. Expedite delivery for SO-225 to Nova Retailers (Customer Logistics) - Due 10:00 AM
-   Reason: 12 units of Widget Model Y are 3 days overdue (was due 02 Jan).
-3. Expedite delivery for SO-226 to Sunrise Wholesalers (Customer Logistics) - Due 10:00 AM
-   Reason: 9 units of Widget Model Y are 3 days overdue (was due 02 Jan).
+1. Fix at the root: EastCoast delivery late (Supply Chain Lead) - Due Immediate
+   Reason: Observed steel rod 10mm below safety level on 05 Jan is consistent with eastcoast delivery late starting on 01 Jan. (Confidence: Partly seen)
+2. Fix at the root: Steel Rod 10mm below safety level (Production Supervisor) - Due Immediate
+   Reason: Observed widget model x production shortfall on 05 Jan is consistent with steel rod 10mm below safety level starting on 31 Dec. (Confidence: Partly seen)
+3. Fix at the root: Steel Rod 10mm below safety level (Production Supervisor) - Due Immediate
+   Reason: Observed widget model y production shortfall on 05 Jan is consistent with steel rod 10mm below safety level starting on 31 Dec. (Confidence: Partly seen)
 
 SUPPLIER WATCH:
 • PO-18 (EastCoast Components): 407 units Steel Rod 10mm - 144 days late (expected 14 Aug)
 • PO-19 (EastCoast Components): 400 units Steel Rod 10mm - 3 days late (expected 02 Jan)
-• PO-20 (Global Polymers Co): 250 units Plastic Granules - 1 day late (expected 04 Jan)
+• PO-20 (Global Polymers Co): 100 units Plastic Granules - 1 day late (expected 04 Jan)
 Receipts expected tomorrow: PO-21 from Copper & Co (200 units Copper Wire) expected tomorrow
 
 ======================================================================

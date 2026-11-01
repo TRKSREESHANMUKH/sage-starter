@@ -44,6 +44,19 @@ def capture_all():
         dpage = desktop_ctx.new_page()
         mpage = mobile_ctx.new_page()
 
+        # Log into viewer
+        dpage.goto("http://127.0.0.1:8000/login")
+        dpage.fill("#username_or_email", "admin")
+        dpage.fill("#password", "SageAdmin2026!")
+        dpage.click("button[type='submit']")
+        dpage.wait_for_load_state("domcontentloaded")
+
+        mpage.goto("http://127.0.0.1:8000/login")
+        mpage.fill("#username_or_email", "admin")
+        mpage.fill("#password", "SageAdmin2026!")
+        mpage.click("button[type='submit']")
+        mpage.wait_for_load_state("domcontentloaded")
+
         # 1. Day 1 (Desktop + Mobile)
         print("Capturing Viewer Day 1 (desktop & mobile)...")
         dpage.goto("http://127.0.0.1:8000/?date=2026-01-01", wait_until="domcontentloaded")
@@ -130,7 +143,8 @@ def capture_all():
         print("Capturing Controller Dashboard...")
         ctrl_page = desktop_ctx.new_page()
         ctrl_page.goto("http://127.0.0.1:8001/ctrl/login", wait_until="domcontentloaded")
-        ctrl_page.fill("input[name='token']", ctrl_token)
+        ctrl_page.fill("#username_or_email", "admin")
+        ctrl_page.fill("#password", "SageAdmin2026!")
         ctrl_page.click("button[type='submit']")
         ctrl_page.wait_for_url("**/ctrl/**")
         ctrl_page.wait_for_timeout(1000)
