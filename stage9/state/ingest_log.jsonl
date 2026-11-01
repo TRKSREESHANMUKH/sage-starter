@@ -407,3 +407,5 @@
 {"timestamp": "2026-11-01T05:31:57.026179+00:00", "pack_name": "2026-01-08", "pack_date": "2026-01-08", "rows_ingested": 52, "status": "SUCCESS"}
 {"timestamp": "2026-11-01T05:31:57.958896+00:00", "pack_name": "2026-01-09", "pack_date": "2026-01-09", "rows_ingested": 40, "status": "SUCCESS"}
 {"timestamp": "2026-11-01T05:31:59.670586+00:00", "pack_name": "2026-01-10", "pack_date": "2026-01-10", "rows_ingested": 38, "status": "SUCCESS"}
+{"timestamp": "2026-11-01T09:35:21.359087+00:00", "pack_name": "2026-01-01", "pack_date": "2026-01-01", "rows_ingested": 20, "status": "SUCCESS"}
+{"timestamp": "2026-11-01T09:35:37.210038+00:00", "pack_name": "2026-01-02", "pack_date": "2026-01-02", "rows_ingested": 22, "status": "SUCCESS"}

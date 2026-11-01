@@ -44,6 +44,12 @@ class TestWordingPurge(unittest.TestCase):
         cls.pattern = re.compile(r"\b(demo|simulat\w*)\b", re.IGNORECASE)
 
     def test_viewer_and_controller_pages(self):
+        try:
+            urllib.request.urlopen("http://127.0.0.1:8000/login", timeout=1)
+            urllib.request.urlopen("http://127.0.0.1:8001/ctrl/login", timeout=1)
+        except Exception:
+            self.skipTest("Live servers on 8000/8001 not running (run ./run_sage.sh to execute live crawler)")
+
         urls_web = [
             "/",
             "/insights",

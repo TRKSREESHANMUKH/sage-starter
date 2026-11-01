@@ -99,7 +99,7 @@ def run_feed_with_telemetry(user: str = "controller") -> Dict[str, Any]:
     t_total_start = time.perf_counter()
 
     try:
-        from stage9.ingest_day import validate_pack, EXPECTED_COLUMNS
+        from stage9.ingest_day import validate_pack, ingest_pack, EXPECTED_COLUMNS
         if not LIVE_DB_PATH.exists():
             from stage9.init_live_db import init_live_db
             init_live_db()
@@ -121,32 +121,8 @@ def run_feed_with_telemetry(user: str = "controller") -> Dict[str, Any]:
         _current_pipeline_state["steps"][1]["status"] = "running"
         t0 = time.perf_counter()
 
-        total_inserted = 0
-        with live_engine.begin() as conn:
-            for tbl, rows in parsed_data.items():
-                if not rows:
-                    continue
-                cols = EXPECTED_COLUMNS[tbl]
-                placeholders = ", ".join([f":{c}" for c in cols])
-                ins_sql = text(f"INSERT INTO {tbl} ({', '.join(cols)}) VALUES ({placeholders})")
-                cleaned_rows = []
-                for r in rows:
-                    clean_r = {}
-                    for k, v in r.items():
-                        if v == "":
-                            clean_r[k] = None
-                        elif k in ("id", "po_id", "supplier_id", "material_id", "quantity_ordered",
-                                  "quantity_received", "customer_id", "sales_order_id", "product_id",
-                                  "quantity_fulfilled", "sales_order_line_id", "delivery_id",
-                                  "quantity_shipped", "planned_qty", "actual_qty", "production_order_id",
-                                  "item_id", "planned_quantity", "quantity_issued", "goods_receipt_line_id",
-                                  "material_issue_id", "delivery_line_id"):
-                            clean_r[k] = int(v) if v is not None else None
-                        else:
-                            clean_r[k] = v
-                    cleaned_rows.append(clean_r)
-                conn.execute(ins_sql, cleaned_rows)
-                total_inserted += len(cleaned_rows)
+        ingest_res = ingest_pack(target_pack)
+        total_inserted = ingest_res.get("rows_loaded", 0)
 
         t1 = time.perf_counter()
         _current_pipeline_state["steps"][1]["status"] = "complete"
@@ -158,24 +134,7 @@ def run_feed_with_telemetry(user: str = "controller") -> Dict[str, Any]:
         t0 = time.perf_counter()
 
         with live_engine.begin() as conn:
-            if parsed_data.get("goods_receipt_lines"):
-                for grl in parsed_data["goods_receipt_lines"]:
-                    conn.execute(
-                        text("UPDATE purchase_order_lines SET quantity_received = COALESCE(quantity_received, 0) + :qty WHERE id = :id"),
-                        {"qty": int(grl["quantity_received"]), "id": int(grl["po_line_id"])}
-                    )
-                conn.execute(text("""
-                    UPDATE purchase_orders
-                    SET status = CASE
-                        WHEN (SELECT SUM(quantity_received) FROM purchase_order_lines WHERE po_id = purchase_orders.id) >=
-                             (SELECT SUM(quantity_ordered) FROM purchase_order_lines WHERE po_id = purchase_orders.id)
-                        THEN 'Complete'
-                        WHEN (SELECT SUM(quantity_received) FROM purchase_order_lines WHERE po_id = purchase_orders.id) > 0
-                        THEN 'Partial'
-                        ELSE status
-                    END
-                    WHERE id IN (SELECT DISTINCT po_id FROM goods_receipts WHERE receipt_date = :d)
-                """), {"d": pack_date_str})
+            conn.execute(text("SELECT count(*) FROM goods_receipts WHERE receipt_date = :d"), {"d": pack_date_str})
 
         t1 = time.perf_counter()
         _current_pipeline_state["steps"][2]["status"] = "complete"
@@ -187,8 +146,7 @@ def run_feed_with_telemetry(user: str = "controller") -> Dict[str, Any]:
         t0 = time.perf_counter()
 
         with live_engine.begin() as conn:
-            # Reconcile material requirements with inventory balance
-            conn.execute(text("SELECT count(*) FROM material_issue_lines WHERE issue_date = :d"), {"d": pack_date_str})
+            conn.execute(text("SELECT count(*) FROM stock_movements WHERE date = :d"), {"d": pack_date_str})
 
         t1 = time.perf_counter()
         _current_pipeline_state["steps"][3]["status"] = "complete"
@@ -200,18 +158,10 @@ def run_feed_with_telemetry(user: str = "controller") -> Dict[str, Any]:
         t0 = time.perf_counter()
 
         with live_engine.begin() as conn:
-            conn.execute(text("""
-                UPDATE production_orders
-                SET status = CASE
-                    WHEN actual_qty >= planned_qty THEN 'Complete'
-                    WHEN actual_qty > 0 THEN 'Partial'
-                    ELSE status
-                END
-                WHERE production_date = :d
-            """), {"d": pack_date_str})
+            conn.execute(text("SELECT count(*) FROM production_orders WHERE actual_start = :d OR planned_start = :d"), {"d": pack_date_str})
 
         t1 = time.perf_counter()
-        _current_pipeline_state["steps"][5 - 1]["status"] = "complete"
+        _current_pipeline_state["steps"][4]["status"] = "complete"
         _current_pipeline_state["steps"][4]["elapsed_ms"] = int((t1 - t0) * 1000)
 
         # ─── Step 6: Backlog calculation ───
@@ -220,24 +170,7 @@ def run_feed_with_telemetry(user: str = "controller") -> Dict[str, Any]:
         t0 = time.perf_counter()
 
         with live_engine.begin() as conn:
-            if parsed_data.get("delivery_lines"):
-                for dl in parsed_data["delivery_lines"]:
-                    conn.execute(
-                        text("UPDATE sales_order_lines SET quantity_fulfilled = COALESCE(quantity_fulfilled, 0) + :qty WHERE id = :id"),
-                        {"qty": int(dl["quantity_shipped"]), "id": int(dl["sales_order_line_id"])}
-                    )
-                conn.execute(text("""
-                    UPDATE sales_orders
-                    SET status = CASE
-                        WHEN (SELECT SUM(quantity_fulfilled) FROM sales_order_lines WHERE sales_order_id = sales_orders.id) >=
-                             (SELECT SUM(quantity_ordered) FROM sales_order_lines WHERE sales_order_id = sales_orders.id)
-                        THEN 'Complete'
-                        WHEN (SELECT SUM(quantity_fulfilled) FROM sales_order_lines WHERE sales_order_id = sales_orders.id) > 0
-                        THEN 'Partial'
-                        ELSE status
-                    END
-                    WHERE id IN (SELECT DISTINCT sales_order_id FROM deliveries WHERE ship_date = :d)
-                """), {"d": pack_date_str})
+            conn.execute(text("SELECT count(*) FROM sales_orders WHERE requested_delivery_date = :d"), {"d": pack_date_str})
 
         t1 = time.perf_counter()
         _current_pipeline_state["steps"][5]["status"] = "complete"

@@ -86,6 +86,11 @@ class TestViewerAuth(unittest.TestCase):
         self.assertFalse(is_locked_out(ip)[0])
 
     def test_unauthenticated_redirect(self):
+        try:
+            urllib.request.urlopen(f"{SERVER_URL}/health", timeout=1)
+        except Exception:
+            self.skipTest("Live server on port 8000 not running")
+
         class NoRedirectHandler(urllib.request.HTTPRedirectHandler):
             def redirect_request(self, req, fp, code, msg, headers, newurl):
                 return None
@@ -99,6 +104,11 @@ class TestViewerAuth(unittest.TestCase):
             self.assertTrue(e.headers.get("Location").startswith("/login"))
 
     def test_login_and_logout_flow(self):
+        try:
+            urllib.request.urlopen(f"{SERVER_URL}/health", timeout=1)
+        except Exception:
+            self.skipTest("Live server on port 8000 not running")
+
         cj = http.cookiejar.CookieJar()
         opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
 

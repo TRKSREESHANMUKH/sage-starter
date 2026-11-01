@@ -25,12 +25,28 @@ source venv/bin/activate
 ./run_sage.sh
 ```
 
-### Server URLs:
+### Server URLs & Authentication:
 * **Executive Dashboard (Viewer):** [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
-  * Authenticate by visiting: `http://127.0.0.1:8000/?token=<SAGE_WEB_TOKEN>`
-  * *(The token query parameter is saved to an HTTP-only session cookie and stripped from the browser address bar).*
+  * Authenticate at `/login` with an email and password, or visit `http://127.0.0.1:8000/?token=<SAGE_WEB_TOKEN>`.
+  * *(The session is persisted via a secure, HttpOnly, SameSite=Strict cookie `sage_session`).*
 * **Operator Control Panel (Controller):** [http://127.0.0.1:8001/ctrl/](http://127.0.0.1:8001/ctrl/)
   * Authenticate at `/ctrl/login` using `SAGE_CONTROLLER_TOKEN` from `.env`.
+
+### User Management (Creating the First User):
+To create or manage viewer accounts (roles: `viewer`, `operator`, `admin`):
+```bash
+# Seed the default admin user (sreeshanmukhtrk@gmail.com / sageadmin2026!)
+python web/manage_users.py seed
+
+# Add a custom user with secure salted scrypt password hashing
+python web/manage_users.py add user@company.com viewer
+
+# List registered users
+python web/manage_users.py list
+
+# Reset a user's password
+python web/manage_users.py passwd user@company.com
+```
 
 ### Token Configuration in `.env`:
 * Tokens are stored in `.env` as `SAGE_WEB_TOKEN` and `SAGE_CONTROLLER_TOKEN`.

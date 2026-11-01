@@ -25,24 +25,25 @@ Let's begin the live feed from the controller."
 ## Part 0.2: Five-Minute Live Demo Click Path
 
 For a concise 5-minute mentor walkthrough:
-1. **Minute 1: Baseline Morning Briefing (Day 1, 2026-01-01)**
-   - Open Viewer (`http://localhost:8000/`).
+1. **Minute 1: Authentication & Baseline Morning Briefing (Day 1, 2026-01-01)**
+   - Open Viewer (`http://localhost:8000/login`). Log in as `sreeshanmukhtrk@gmail.com` (role badge `ADMIN` appears in header next to isolated Sage emblem).
    - Point out calm Normal tier, editorial serif narrative, and the **slim forward-look strip** directly below the summary paragraph ("Next 7 days: expected demand ~75 units due (likely range 62–88)"). Note that it breaks down into already booked commitments + expected new orders.
-   - Point out zero alert cards and clean numbers strip.
+   - Point out the **Causal Chain Map** ("No active chain today") and **Recent Incidents** vertical timeline.
 2. **Minute 2: Onset of Delay & Demand Surge (Days 2 & 3)**
    - Switch to Day 2 (`/?date=2026-01-02`): Watch tier flags order surge on Widget Model X.
    - Switch to Day 3 (`/?date=2026-01-03`): Needs Attention tier flags overdue steel PO #19 from EastCoast Components while buffers hold.
 3. **Minute 3: Crisis Peak (Day 7, 2026-01-07)**
    - Switch to Day 7 (`/?date=2026-01-07`): Critical tier. Raw steel completely stocked out (0 kg). Assembly halted, 9 orders (109 units) overdue backlog.
-   - Highlight top alert: EastCoast Components PO #19 overdue.
-   - Click "Print / Download Briefing (PDF)": opens single-page A4 executive briefing.
-4. **Minute 4: Controller Operations & Safety (Port 8001)**
+   - Highlight **Causal Chain Map** with all 4 nodes active: `SUPPLIER DELAY (PO #19, 5 days overdue)` → `MATERIAL SHORTAGE (Steel Rod 9 kg vs 50 safety stock)` → `PRODUCTION DELAY (Model X output 0, shortfall 30)` → `DELIVERY IMPACT (9 orders, 109 units open)`, with evidence badge `Seen end to end`.
+   - Click "Print / Download Briefing (PDF)": opens single-page A4 executive briefing including one-line causal text.
+4. **Minute 4: Controller Operations, Dark Theme & Live Feed Showpiece (Port 8001)**
    - Navigate to Controller (`http://localhost:8001/ctrl/login`).
-   - Log in with operator token from `.env`.
-   - Click "👁 Preview today's report": renders complete briefing with mandatory scientific framing and owner recipient.
+   - Log in with operator token from `.env`. View dark industrial theme and Hero status card.
+   - Click **"Feed next day"**: Observe the live **9-step industrial execution stepper** with exact elapsed milliseconds, alongside the real-time **Causal DAG pulse** (`[PO Late] → [Stock Low] → [Shortfall] → [Backorder]`).
    - Click "Send report now": dry-run confirmation banner displays, sent log records `SUCCESS_DRY_RUN` with 0 real SMTP calls.
 5. **Minute 5: Insights & Method Honesty**
-   - Click Insights tab: show Protocol v4 forecast comparison table ([CV]/[TEST] tagged), historical tier breakdown (124/49/38/154), and key events table with the "#toggle-new-events" filter.
+   - Click Insights tab: inspect the vertical timeline **Incident Log** with severity chips (`ALL`, `HIGH`, `MEDIUM`, `LOW`) and click-to-jump to day slider.
+   - Show Protocol v4 forecast comparison table ([CV]/[TEST] tagged), historical tier breakdown (124/49/38/154), and key events table with the "#toggle-new-events" filter.
    - Open Method page: show full disclosure of scripted 1-day lead time, seed edits, and rehearsal status.
 
 ---
