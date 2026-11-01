@@ -40,8 +40,8 @@ GIT_HASH=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
 START_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 echo "Starting SAGE Platform [Commit: $GIT_HASH, Start: $START_TIME]"
 
-# 5. Reset send mode to Dry-run unconditionally on start
-"$DIR/venv/bin/python" -c "from stage9.ops import set_send_mode_v6; set_send_mode_v6('dry_run', user='run_sage')" > /dev/null 2>&1 || true
+# 5. Send mode configuration (per-action execution; no global mode reset)
+# Real SMTP in production, mock in tests.
 
 # 6. Start Viewer (127.0.0.1:8000)
 PYTHONPATH="$DIR" "$DIR/venv/bin/uvicorn" web.app:app --host 127.0.0.1 --port 8000 > "$DIR/logs/viewer.log" 2>&1 &

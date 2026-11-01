@@ -126,8 +126,8 @@ def validate_manual_recipients(recipients_raw: str | List[str]) -> Tuple[bool, L
     if not raw_list:
         return False, [], "No recipients specified."
 
-    if len(raw_list) > 3:
-        return False, [], f"Maximum 3 recipients allowed per send (got {len(raw_list)}; 4th recipient rejected)."
+    if len(raw_list) > 5:
+        return False, [], f"Maximum 5 recipients allowed per send (got {len(raw_list)})."
 
     cleaned_list = []
     for r in raw_list:
@@ -189,48 +189,7 @@ def remove_recent_recipient(email_str: str) -> List[str]:
 
 
 def check_live_send_rate_limits() -> Tuple[bool, str]:
-    """
-    Enforces live SMTP rate limits:
-    - Max 10 real sends per hour (3600s).
-    - Max 30 real sends per day (86400s).
-    Reads sent_log.jsonl directly.
-    """
-    if not SENT_LOG_PATH.exists():
-        return True, ""
-
-    now_utc = datetime.now(timezone.utc)
-    one_hour_ago = now_utc - timedelta(hours=1)
-    one_day_ago = now_utc - timedelta(days=1)
-
-    hour_count = 0
-    day_count = 0
-
-    try:
-        with open(SENT_LOG_PATH, "r", encoding="utf-8") as f:
-            for line in f:
-                if not line.strip():
-                    continue
-                try:
-                    entry = json.loads(line)
-                    if entry.get("status") == "SUCCESS_LIVE":
-                        ts_str = entry.get("timestamp", "")
-                        if ts_str.endswith("Z"):
-                            ts_str = ts_str[:-1] + "+00:00"
-                        entry_dt = datetime.fromisoformat(ts_str)
-                        if entry_dt >= one_hour_ago:
-                            hour_count += 1
-                        if entry_dt >= one_day_ago:
-                            day_count += 1
-                except Exception:
-                    continue
-    except Exception as exc:
-        logger.warning("Error reading sent_log for rate limits: %s", exc)
-
-    if hour_count >= 10:
-        return False, f"Rate limit exceeded: maximum 10 live sends per hour (current: {hour_count}/10 in past hour). Please wait before sending again."
-    if day_count >= 30:
-        return False, f"Rate limit exceeded: maximum 30 live sends per day (current: {day_count}/30 in past 24 hours). Please wait before sending again."
-
+    """Send limits removed per Part 2. Always returns permitted."""
     return True, ""
 
 
@@ -437,6 +396,16 @@ def get_allowlist() -> Set[str]:
     demo = os.getenv("SAGE_DEMO_RECIPIENT", "sreeshanmukhtrk@gmail.com").strip().lower()
     allowlist.add(owner)
     allowlist.add(demo)
+
+    try:
+        from stage9.recipients import load_saved_recipients
+        for item in load_saved_recipients():
+            em = item.get("email", "").strip().lower()
+            if em and "@" in em and not em.endswith(".local"):
+                allowlist.add(em)
+    except Exception:
+        pass
+
     return allowlist
 
 
@@ -481,16 +450,8 @@ def log_sent_event_v6(
     return entry
 
 
-_LAST_SEND_TIMESTAMP: float = 0.0
-
 def check_and_update_send_rate_limit() -> Tuple[bool, str]:
-    """Enforces at most 1 send per 10 seconds."""
-    global _LAST_SEND_TIMESTAMP
-    now = time.time()
-    elapsed = now - _LAST_SEND_TIMESTAMP
-    if elapsed < 10.0:
-        return False, f"Rate limit: At most 1 send per 10 seconds. Please wait {10.0 - elapsed:.1f}s."
-    _LAST_SEND_TIMESTAMP = now
+    """Cooldown removed per Part 2. Always returns permitted."""
     return True, ""
 
 
@@ -529,9 +490,8 @@ def dispatch_email_v6(
     if not targets:
         return {"status": "REFUSED_INVALID", "error": "No recipients specified."}
 
-    if len(targets) > 3:
-        err = f"Maximum 3 recipients allowed per send (got {len(targets)}; 4th recipient rejected)."
-        return {"status": "REFUSED_INVALID", "error": err}
+    if len(targets) > 5:
+        return {"status": "REFUSED_INVALID", "error": f"Maximum 5 recipients allowed per send (got {len(targets)})."}
 
     allowlist = get_allowlist()
     placeholder_triggers = ["example.com", ".local", "placeholder", "todo", "your_email", "changeme", "dev_dummy", "evil.com", "hacker"]
@@ -626,6 +586,35 @@ def dispatch_email_v6(
             "recipient": targets[0],
             "recipients": targets,
             "sent_at": last_log["timestamp"] if last_log else ""
+        }
+
+    # Check for Mock Transport (used in tests & verify_all)
+    mail_transport = os.getenv("SAGE_MAIL_TRANSPORT", "").strip().lower()
+    if mail_transport == "mock":
+        conn_time_ms = 12.34
+        last_log = None
+        for r in targets:
+            last_log = log_sent_event_v6(
+                job="nightly_digest",
+                as_of=as_of,
+                recipient=r,
+                status="SUCCESS_LIVE",
+                mode=mode,
+                subject=subject,
+                message_id=msg_id,
+                smtp_code=250,
+                connection_time_ms=conn_time_ms
+            )
+            logger.info("[MOCK-SMTP] Delivered email to %s (Message-ID: %s)", r, msg_id)
+        return {
+            "status": "SUCCESS_LIVE",
+            "message_id": msg_id,
+            "smtp_code": 250,
+            "connection_time_ms": conn_time_ms,
+            "recipient": targets[0],
+            "recipients": targets,
+            "sent_at": last_log["timestamp"] if last_log else "",
+            "transport": "mock"
         }
 
     # Live Delivery Path — Must fail loudly on any credential or SMTP error!
@@ -1226,7 +1215,17 @@ def send_report_now_v6(
     """
     target_d = as_of or get_current_day()
 
-    raw_target = recipients or recipient or os.getenv("SAGE_DEMO_RECIPIENT", "sreeshanmukhtrk@gmail.com")
+    raw_target = recipients or recipient
+    if not raw_target:
+        try:
+            from stage9.recipients import load_saved_recipients
+            active_contacts = [c["email"] for c in load_saved_recipients() if c.get("active", True)]
+            if active_contacts:
+                raw_target = active_contacts
+        except Exception:
+            pass
+    if not raw_target:
+        raw_target = os.getenv("SAGE_DEMO_RECIPIENT", "sreeshanmukhtrk@gmail.com")
     ok, clean_recs, err = validate_manual_recipients(raw_target)
     if not ok:
         audit_log("send_report_now", {"as_of": target_d.isoformat(), "raw_target": str(raw_target)}, f"REFUSED: {err}", user=user)
