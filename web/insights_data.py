@@ -1176,37 +1176,7 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
         delay_ledger = late_supplier_records + late_customer_records
         delay_ledger.sort(key=lambda x: x["days_late"], reverse=True)
 
-        # 7. Weekly Trend Table + Line Chart
-        weekly_trend_rows = []
-        weekly_chart_labels = []
-        weekly_chart_late_units = []
-
-        if not panel_window.empty:
-            panel_copy = panel_window.copy()
-            panel_copy["date_dt"] = pd.to_datetime(panel_copy["date"])
-            panel_copy["week"] = panel_copy["date_dt"].dt.to_period("W-SUN").apply(lambda r: r.start_time.date())
-
-            for wk_start, grp in panel_copy.groupby("week"):
-                wk_end = wk_start + timedelta(days=6)
-                dem = int(grp.get("product_201_demand_units", 0).sum() + grp.get("product_202_demand_units", 0).sum())
-                prod_u = int(grp.get("product_201_actual_production", 0).sum() + grp.get("product_202_actual_production", 0).sum())
-                shipped = int(grp.get("product_201_shipments", 0).sum() if "product_201_shipments" in grp.columns else prod_u)
-                late_u = int(grp.get("product_201_due_backlog_units", 0).max() + grp.get("product_202_due_backlog_units", 0).max())
-                low_m = int(((grp.get("material_101_stock", 300) <= 50.0) | (grp.get("material_102_stock", 250) <= 40.0) | (grp.get("material_103_stock", 200) <= 30.0)).sum())
-
-                lbl = f"{wk_start.strftime('%-d %b')} – {wk_end.strftime('%-d %b')}"
-                weekly_trend_rows.append({
-                    "week_label": lbl,
-                    "demand": dem,
-                    "produced": prod_u,
-                    "shipped": shipped,
-                    "late_units": late_u,
-                    "days_low_stock": low_m
-                })
-                weekly_chart_labels.append(lbl)
-                weekly_chart_late_units.append(late_u)
-
-        # 8. What Changed This Week (Last 7 Days vs Prior 7 Days)
+        # 7. What Changed This Week (Last 7 Days vs Prior 7 Days)
         t_now = as_of
         w_curr_start = max(date(2025, 1, 1), t_now - timedelta(days=6))
         w_prev_end = w_curr_start - timedelta(days=1)
@@ -1551,9 +1521,6 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
             "product_service": product_service,
             "top5_delayed_orders": top5_delayed_orders,
             "delay_ledger": delay_ledger,
-            "weekly_trend_rows": weekly_trend_rows,
-            "weekly_chart_labels": weekly_chart_labels,
-            "weekly_chart_late_units": weekly_chart_late_units,
             "chart_delivery_delays": {
                 "title": "Were deliveries on time?",
                 "takeaway": takeaway_delays,

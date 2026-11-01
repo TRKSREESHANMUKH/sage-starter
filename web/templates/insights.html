@@ -1122,53 +1122,6 @@
   {% endif %}
 </div>
 
-<!-- Block 4: Weekly Trend (Weekly Table + Late Units Line Chart) -->
-<div class="insight-section" id="weekly-trend-block">
-  <div class="insight-section-head">
-    <h2 class="insight-section-title">Weekly Operational Trends</h2>
-    <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 3px;">
-      Weekly aggregated demand, manufacturing throughput, and customer backlog progression.
-    </p>
-  </div>
-
-  {% if weekly_trend_rows %}
-  <div class="table-responsive" style="margin-bottom: 20px;">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Calendar Week</th>
-          <th>Demand (units)</th>
-          <th>Produced (units)</th>
-          <th>Shipped (units)</th>
-          <th>Peak Late Units</th>
-          <th>Days Buffer Low</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for wk in weekly_trend_rows %}
-        <tr>
-          <td><strong>{{ wk.week_label }}</strong></td>
-          <td>{{ wk.demand }}</td>
-          <td>{{ wk.produced }}</td>
-          <td>{{ wk.shipped }}</td>
-          <td><span style="{% if wk.late_units > 0 %}color: #dc2626; font-weight: 700;{% endif %}">{{ wk.late_units }}</span></td>
-          <td>{{ wk.days_low_stock }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-
-  <div style="position: relative; height: 200px; width: 100%;">
-    <canvas id="canvasWeeklyTrend"></canvas>
-  </div>
-  {% else %}
-  <div style="font-size: 0.88rem; color: var(--text-muted); padding: 12px 0;">
-    Insufficient multi-week data for trend visualization in selected period.
-  </div>
-  {% endif %}
-</div>
-
 <!-- Block 5: Disruption Episodes with Plain-English Stories -->
 <div class="insight-section" id="chart-disruption-episodes">
   <div class="insight-section-head">
@@ -1339,38 +1292,6 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-  // Chart: Weekly Trend
-  const wkLabels = {{ weekly_chart_labels | tojson }};
-  const wkLateUnits = {{ weekly_chart_late_units | tojson }};
-  const ctxWeekly = document.getElementById("canvasWeeklyTrend");
-  if (ctxWeekly && wkLabels.length > 0) {
-    new Chart(ctxWeekly, {
-      type: "line",
-      data: {
-        labels: wkLabels,
-        datasets: [{
-          label: "Peak Weekly Late Units",
-          data: wkLateUnits,
-          borderColor: "#dc2626",
-          backgroundColor: "rgba(220, 38, 38, 0.10)",
-          fill: true,
-          tension: 0.15,
-          pointRadius: 4,
-          pointHoverRadius: 6,
-          borderWidth: 2
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          x: { title: { display: true, text: "Calendar Week" } },
-          y: { title: { display: true, text: "Late Units" }, suggestedMin: 0 }
-        }
-      }
-    });
-  }
-
   // Chart: Episodes Timeline
   const epDates = {{ episodes.dates | tojson }};
   const epBacklog = {{ episodes.backlog_series | tojson }};
