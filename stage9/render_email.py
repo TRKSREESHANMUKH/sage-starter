@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import argparse
 from datetime import date, datetime, timedelta, timezone
+from html import escape as html_escape
 import io
 import json
 import logging
@@ -392,7 +393,8 @@ def render_nightly_digest(
     as_of: Optional[date] = None,
     base_url: Optional[str] = None,
     db_session=None,
-    return_sparkline: bool = False
+    return_sparkline: bool = False,
+    recipient_label: Optional[str] = None
 ) -> Tuple[str, str, str] | Tuple[str, str, str, bytes]:
     """
     Renders the SAGE Daily Brief email and single-page A4 document.
@@ -403,6 +405,16 @@ def render_nightly_digest(
     """
     if as_of is None:
         as_of = get_current_day()
+
+    if not recipient_label:
+        try:
+            from stage9.recipients import load_saved_recipients
+            saved = load_saved_recipients()
+            if saved:
+                r0 = saved[0]
+                recipient_label = r0.get("name") or r0.get("role") or "Operations"
+        except Exception:
+            recipient_label = "Supervisor"
 
     close_db = False
     if db_session is None:
@@ -598,7 +610,10 @@ def render_nightly_digest(
                       <span style="color: #2563eb;">SAGE</span> Daily Brief
                     </div>
                     <div style="font-size: 10px; color: #64748b; font-weight: 500; margin-top: 1px;">
-                      Synthetic operational data as of {as_of.isoformat()}
+                      Operational data as of {as_of.isoformat()}
+                    </div>
+                    <div style="font-size: 10px; color: #334155; font-weight: 600; margin-top: 2px;">
+                      Prepared for {html_escape(str(recipient_label))}
                     </div>
                   </td>
                   <td align="right">
@@ -733,6 +748,7 @@ def render_nightly_digest(
         text_lines = [
             f"SAGE DAILY BRIEF | {date_str_formatted}",
             f"Status: {status_title.upper()} ({status_summary})",
+            f"Prepared for: {recipient_label}",
             "=" * 70,
             "",
             "SUMMARY:",

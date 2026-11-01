@@ -183,10 +183,6 @@
 </nav>
 
 <div class="main">
-  <!-- PERMANENT DRY-RUN RED BANNER -->
-  <div id="dryrun-alert-banner" style="{% if send_mode == 'live' %}display:none;{% endif %} background:#fee2e2; border:1px solid #ef4444; color:#b91c1c; font-weight:700; padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:0.92rem; display:flex; align-items:center; gap:8px;">
-    DRY-RUN: emails are NOT being delivered
-  </div>
 
   <!-- ─── HERO STATUS CARD (C4) ─── -->
   <div class="card full-width hero-card" style="margin-bottom:20px; padding:24px 28px; background: linear-gradient(135deg, #131b2e 0%, #0d1527 100%); border:1px solid var(--border); border-radius:var(--radius); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; position:relative; overflow:hidden;">
@@ -340,11 +336,6 @@
         {% if case_state and case_state.is_case_mode %}
         <span class="pill pill-blue">Case {{ case_state.active_case }} / {{ case_state.total_cases }}</span>
         {% endif %}
-        {% if send_mode == "live" %}
-        <span class="pill pill-green" id="status-mode-pill">Live Send</span>
-        {% else %}
-        <span class="pill pill-amber" id="status-mode-pill">Dry Run</span>
-        {% endif %}
         {% if scheduler_paused %}
         <span class="pill pill-red">Scheduler Paused</span>
         {% else %}
@@ -354,199 +345,145 @@
     </div>
 
     <!-- ─── SEND REPORT ─── -->
-    <div class="card">
-      <div class="card-title">Send Report Now</div>
-      <p style="font-size:0.88rem; color:var(--muted); margin-bottom:12px">
-        Prepare and dispatch the daily executive brief immediately. Supports real-time live Gmail SMTP delivery.
-      </p>
-
-      <!-- Delivery Mode Selection -->
-      <div style="margin-bottom:12px; background:#0b0f19; border:1px solid var(--border); border-radius:6px; padding:10px 12px;">
-        <div style="font-size:0.75rem; font-weight:700; color:var(--muted); text-transform:uppercase; margin-bottom:6px;">Delivery Mode</div>
-        <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
-          <label style="display:flex; align-items:center; gap:6px; font-size:0.85rem; font-weight:600; color:#34d399; cursor:pointer;">
-            <input type="radio" name="send_delivery_mode" id="delivery-mode-live" value="live" checked onchange="onDeliveryModeRadioChange('live')" style="accent-color:#10b981;">
-            Live Delivery (Gmail SMTP)
-          </label>
-          <label style="display:flex; align-items:center; gap:6px; font-size:0.85rem; font-weight:600; color:var(--muted); cursor:pointer;">
-            <input type="radio" name="send_delivery_mode" id="delivery-mode-dry" value="dry_run" onchange="onDeliveryModeRadioChange('dry_run')" style="accent-color:#64748b;">
-            Safe Dry Run (Audit Log Only)
-          </label>
-        </div>
-      </div>
-
-      <!-- Recipient Target Selection -->
-      <div style="margin-bottom: 12px;">
-        <label for="send-recipient-select" style="font-size:0.82rem; font-weight:600; color:var(--muted); display:block; margin-bottom:4px">Recipient Target</label>
-        <select id="send-recipient-select" onchange="onRecipientSelectChange(this.value)" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:6px; font-size:0.85rem; background:#0b0f19; color:var(--text);">
-          <option value="all_active" selected>All Active Recipients (Manager: sreeshanmukhtrk@gmail.com, Supervisor: trksreeshanmukh026@gmail.com)</option>
-          {% if saved_recipients %}
-            {% for r in saved_recipients %}
-            <option value="{{ r.email }}">{{ r.name }}{% if r.role %} ({{ r.role }}){% endif %} &lt;{{ r.email }}&gt;</option>
-            {% endfor %}
-          {% endif %}
-          <option value="custom">-- Custom email address (Send one-off without saving) --</option>
-        </select>
-      </div>
-
-      <!-- One-off Custom Recipient Input -->
-      <div id="custom-recipient-wrapper" style="display:none; background:#0b0f19; border:1px solid #3b82f6; border-radius:6px; padding:12px; margin-bottom:12px;">
-        <label for="custom-recipient-input" style="font-size:0.75rem; font-weight:700; color:#60a5fa; display:block; margin-bottom:4px">
-          Custom Recipient Email (Send one-off without saving)
-        </label>
-        <input type="email" id="custom-recipient-input" placeholder="e.g. colleague@company.com" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.85rem; color:#fff; background:#131b2e;">
-        <div style="font-size:0.75rem; color:var(--muted); margin-top:4px;">Dispatches directly to this inbox without modifying saved briefing recipients.</div>
-      </div>
-      <div id="recipient-inline-error" style="display:none; color:#dc2626; font-size:0.80rem; font-weight:600; margin-bottom:8px;"></div>
-
-      <div style="margin-top:10px">
-        <label for="past-day-picker" style="font-size:0.82rem; font-weight:600; color:var(--muted); display:block; margin-bottom:4px">Report Date (Preview past day)</label>
-        <input type="date" id="past-day-picker" class="day-select" value="{{ current_day }}" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:6px; font-size:0.88rem; font-weight:600; color:var(--text); background:var(--surface)">
-      </div>
-      <div class="btn-row" style="margin-top:14px; gap:8px; flex-wrap:wrap">
-        <button class="btn btn-success" id="main-send-btn" onclick="openSendModal()" style="font-weight:700; padding:10px 18px; font-size:0.92rem;">
-          Send Report Now (Live Email)
-        </button>
-        <button class="btn btn-primary" onclick="openPreviewModal()">Preview</button>
-        <button class="btn btn-ghost" onclick="prepareOnly()">Prepare Only</button>
-        <button class="btn btn-ghost" type="button" id="btn-test-connection" onclick="testConnection()">Test connection</button>
-      </div>
-    </div>
-
-    <!-- ─── BRIEFING RECIPIENTS (C1) ─── -->
     <div class="card full-width">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px">
-        <div>
-          <div class="card-title" style="margin-bottom:2px">Briefing Recipients</div>
-          <div style="font-size:0.82rem; color:var(--muted)">
-            Save authorized operational recipients for daily executive digests. Only Active recipients receive nightly digests.
-          </div>
-        </div>
-        <div class="btn-row" style="margin-top:0; gap:8px;">
-          <button class="btn btn-ghost" type="button" onclick="openAddRecipientModal()" id="add-recipient-btn">
-            + Add Recipient
-          </button>
-          <button class="btn btn-primary" type="button" onclick="saveRecipientsForm()" id="save-recipients-btn">
-            Save Recipients
-          </button>
-        </div>
-      </div>
-
-      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap:14px;" id="recipients-grid">
-        {% set total_slots = [saved_recipients|length + 1, 3]|max %}
-        {% for idx in range(total_slots) %}
-          {% set rec = saved_recipients[idx] if saved_recipients and saved_recipients|length > idx else None %}
-          <div style="background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:14px; position:relative;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-              <div style="font-size:0.75rem; font-weight:700; color:var(--muted); text-transform:uppercase;">
-                Slot #{{ idx + 1 }}
-              </div>
-              <div style="display:flex; align-items:center; gap:6px;">
-                <label style="display:inline-flex; align-items:center; gap:6px; font-size:0.75rem; font-weight:600; cursor:pointer; margin:0;">
-                  <input type="checkbox" id="rec_active_{{ idx + 1 }}" {% if not rec or rec.active %}checked{% endif %} onchange="toggleSlotActiveUI({{ idx + 1 }})" style="cursor:pointer">
-                  <span id="rec_active_badge_{{ idx + 1 }}" class="pill {% if not rec or rec.active %}pill-green{% else %}pill-gray{% endif %}" style="font-size:0.72rem; padding:2px 8px;">
-                    {% if not rec or rec.active %}[Active]{% else %}[Paused]{% endif %}
-                  </span>
-                </label>
-              </div>
-            </div>
-
-            <div style="display:flex; flex-direction:column; gap:8px;">
-              <div>
-                <label style="font-size:0.75rem; color:var(--muted); display:block; margin-bottom:2px">Email Address</label>
-                <input type="email" id="rec_email_{{ idx + 1 }}" value="{{ rec.email if rec else '' }}" placeholder="name@company.com" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.84rem;">
-              </div>
-              <div>
-                <label style="font-size:0.75rem; color:var(--muted); display:block; margin-bottom:2px">Full Name</label>
-                <input type="text" id="rec_name_{{ idx + 1 }}" value="{{ rec.name if rec else '' }}" placeholder="Full Name" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.84rem;">
-              </div>
-              <div>
-                <label style="font-size:0.75rem; color:var(--muted); display:block; margin-bottom:2px">Role</label>
-                <input type="text" id="rec_role_{{ idx + 1 }}" value="{{ rec.role if rec else '' }}" placeholder="e.g. Operations Lead, VP Supply Chain" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.84rem;">
-              </div>
-            </div>
-
-            <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); padding-top:8px;">
-              <button class="btn btn-ghost" type="button" onclick="sendTestToSlot({{ idx + 1 }})" style="padding:4px 8px; font-size:0.75rem;" title="Send test report to this recipient">
-                Send Test to Me
-              </button>
-              <button class="btn btn-ghost" type="button" onclick="clearSlot({{ idx + 1 }})" style="padding:4px 8px; font-size:0.75rem; color:#dc2626;" title="Clear this slot">
-                Clear
-              </button>
-            </div>
-          </div>
-        {% endfor %}
-      </div>
-      <div id="recipients-save-status" style="font-size:0.80rem; margin-top:8px; display:none;"></div>
-
-      <!-- Send History Micro-table (C1) -->
-      <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:16px;">
-        <div style="font-size:0.85rem; font-weight:700; color:var(--text); margin-bottom:8px">Send History (Last 5 Dispatches)</div>
-        <div style="overflow-x:auto;">
-          <table style="width:100%; border-collapse:collapse; font-size:0.80rem;">
-            <thead>
-              <tr style="border-bottom:1px solid var(--border); color:var(--muted); text-align:left;">
-                <th style="padding:6px 8px;">Recipient</th>
-                <th style="padding:6px 8px;">Timestamp</th>
-                <th style="padding:6px 8px;">Status</th>
-                <th style="padding:6px 8px;">Digest Date</th>
-                <th style="padding:6px 8px;">Mode</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for item in send_history %}
-              <tr style="border-bottom:1px solid var(--border);">
-                <td style="padding:6px 8px; font-weight:500;">{{ item.recipient }}</td>
-                <td style="padding:6px 8px; color:var(--muted);">{{ item.timestamp }}</td>
-                <td style="padding:6px 8px;"><span class="{{ item.badge }}">{{ item.status }}</span></td>
-                <td style="padding:6px 8px; color:var(--muted);">{{ item.digest_date }}</td>
-                <td style="padding:6px 8px; color:var(--muted);">{{ item.mode }}</td>
-              </tr>
-              {% else %}
-              <tr><td colspan="5" style="padding:10px 8px; color:var(--muted); text-align:center;">No recent dispatch history.</td></tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ─── SEND MODE ─── -->
-    <div class="card">
-      <div class="card-title">Send Mode</div>
-      <p style="font-size:0.82rem; color:var(--muted); margin-bottom:14px">
-        <strong>Dry Run</strong>: Email is rendered and logged (SUCCESS_DRY_RUN). No SMTP.<br>
-        <strong>Live</strong>: Real Gmail SMTP with Message-ID logged (SUCCESS_LIVE).<br>
-        Live mode also requires <code>SAGE_SEND_ENABLED=true</code> in .env.
+      <div class="card-title">Send Report</div>
+      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:14px">
+        Dispatch daily operational brief to executive recipients.
       </p>
-      <div class="toggle-row">
-        <span class="toggle-label">Dry Run</span>
-        <label class="toggle">
-          <input type="checkbox" id="mode-toggle" onchange="handleModeToggleChange(this)"
-            {% if send_mode == 'live' %}checked{% endif %}>
-          <div class="toggle-slider"></div>
-        </label>
-        <span class="toggle-label">Live</span>
-      </div>
-      <div style="margin-top:12px">
-        <div class="toggle-row">
-          <span class="toggle-label">Scheduler</span>
-          <label class="toggle">
-            <input type="checkbox" id="scheduler-toggle" onchange="toggleScheduler(this.checked)"
-              {% if not scheduler_paused %}checked{% endif %}>
-            <div class="toggle-slider"></div>
-          </label>
-          <span class="toggle-label">Active</span>
+
+      <!-- Saved Contacts Selection -->
+      <div style="margin-bottom:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="font-size:0.75rem; font-weight:700; color:var(--muted); text-transform:uppercase;">
+            Saved Recipients (select up to 5)
+          </div>
+          <button type="button" class="btn btn-ghost" style="padding:2px 8px; font-size:0.75rem;" onclick="toggleAddContactForm()">
+            + Add recipient
+          </button>
         </div>
+
+        <!-- Inline Add Contact Form -->
+        <div id="inline-add-contact-form" style="display:none; background:#0b0f19; border:1px solid var(--border); border-radius:6px; padding:12px; margin-bottom:12px;">
+          <div style="font-size:0.78rem; font-weight:700; color:#60a5fa; margin-bottom:8px;">Add New Recipient</div>
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px;">
+            <div>
+              <label style="font-size:0.72rem; color:var(--muted); display:block; margin-bottom:2px;">Email *</label>
+              <input type="email" id="new-contact-email" placeholder="name@company.com" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.82rem; background:#131b2e; color:#fff;">
+            </div>
+            <div>
+              <label style="font-size:0.72rem; color:var(--muted); display:block; margin-bottom:2px;">Name</label>
+              <input type="text" id="new-contact-name" placeholder="Full name" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.82rem; background:#131b2e; color:#fff;">
+            </div>
+            <div>
+              <label style="font-size:0.72rem; color:var(--muted); display:block; margin-bottom:2px;">Role</label>
+              <input type="text" id="new-contact-role" list="role-suggestions" placeholder="Role (e.g. Supervisor)" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.82rem; background:#131b2e; color:#fff;">
+              <datalist id="role-suggestions">
+                <option value="Supervisor">
+                <option value="Manager">
+                <option value="Executive">
+                <option value="Plant manager">
+                <option value="Purchasing head">
+                <option value="Sales head">
+                <option value="Other">
+              </datalist>
+            </div>
+          </div>
+          <div style="margin-top:10px; display:flex; justify-content:flex-end; gap:8px;">
+            <button type="button" class="btn btn-ghost" onclick="toggleAddContactForm()" style="padding:4px 10px; font-size:0.78rem;">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="addNewContact()" style="padding:4px 14px; font-size:0.78rem;">Save contact</button>
+          </div>
+        </div>
+
+        <!-- Saved Contacts List -->
+        <div id="saved-contacts-container" style="display:flex; flex-direction:column; gap:8px;">
+          {% for r in saved_recipients %}
+          <div class="contact-row" id="contact-row-{{ loop.index }}" style="display:flex; align-items:center; justify-content:space-between; background:#0b0f19; border:1px solid var(--border); border-radius:6px; padding:8px 12px;">
+            <label style="display:flex; align-items:center; gap:10px; cursor:pointer; margin:0; font-size:0.86rem; color:#f8fafc;">
+              <input type="checkbox" class="contact-checkbox" value="{{ r.email }}" data-name="{{ r.name }}" data-role="{{ r.role }}" {% if r.active %}checked{% endif %} style="accent-color:#10b981; width:16px; height:16px;">
+              <span><strong>{{ r.name }}</strong> <span style="color:var(--muted); font-size:0.80rem;">({{ r.role }})</span> &lt;{{ r.email }}&gt;</span>
+            </label>
+            <button type="button" class="btn btn-ghost" onclick="deleteContact('{{ r.email }}')" style="padding:2px 8px; font-size:0.80rem; color:#ef4444;" title="Delete recipient">&times;</button>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Custom Recipient (One Time) Row -->
+      <div style="background:#0b0f19; border:1px solid var(--border); border-radius:6px; padding:12px; margin-bottom:14px;">
+        <div style="font-size:0.75rem; font-weight:700; color:var(--muted); text-transform:uppercase; margin-bottom:8px;">
+          Custom recipient (one time)
+        </div>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px;">
+          <div>
+            <label style="font-size:0.72rem; color:var(--muted); display:block; margin-bottom:2px;">Email</label>
+            <input type="email" id="custom-recipient-email" placeholder="name@company.com" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.82rem; background:#131b2e; color:#fff;">
+          </div>
+          <div>
+            <label style="font-size:0.72rem; color:var(--muted); display:block; margin-bottom:2px;">Name (optional)</label>
+            <input type="text" id="custom-recipient-name" placeholder="Full name" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.82rem; background:#131b2e; color:#fff;">
+          </div>
+          <div>
+            <label style="font-size:0.72rem; color:var(--muted); display:block; margin-bottom:2px;">Role (optional)</label>
+            <input type="text" id="custom-recipient-role" list="role-suggestions" placeholder="Role" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.82rem; background:#131b2e; color:#fff;">
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <label style="display:inline-flex; align-items:center; gap:6px; font-size:0.78rem; color:var(--muted); cursor:pointer; margin:0;">
+            <input type="checkbox" id="custom-recipient-save" style="accent-color:#3b82f6;">
+            <span>Save this contact</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Report Date -->
+      <div style="margin-bottom:14px;">
+        <label for="past-day-picker" style="font-size:0.75rem; font-weight:700; color:var(--muted); text-transform:uppercase; display:block; margin-bottom:4px;">
+          Report Date
+        </label>
+        <input type="date" id="past-day-picker" value="{{ current_day }}" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:6px; font-size:0.88rem; font-weight:600; color:var(--text); background:var(--surface)">
+      </div>
+
+      <!-- Action Buttons Row -->
+      <div class="btn-row" style="margin-top:14px; gap:8px; flex-wrap:wrap">
+        <button class="btn btn-success" id="main-send-btn" type="button" onclick="openSendModal()" style="font-weight:700; padding:10px 18px; font-size:0.92rem;">
+          Send
+        </button>
+        <button class="btn btn-primary" id="main-test-btn" type="button" onclick="runTestSend()" style="font-weight:600; padding:10px 18px; font-size:0.92rem;">
+          Test run
+        </button>
+        <button class="btn btn-ghost" type="button" onclick="openPreviewModal()">
+          Preview
+        </button>
+        <button class="btn btn-ghost" type="button" id="btn-test-connection" onclick="testConnection()">
+          Test connection
+        </button>
       </div>
     </div>
 
     <!-- ─── SCHEDULE CARD ─── -->
     <div class="card">
-      <div class="card-title">Schedule — <a href="/ctrl/schedule" style="color:var(--accent);font-size:0.8rem">Edit full schedule →</a></div>
-      <p style="font-size:0.82rem; color:var(--muted)">
-        Timezone: <strong>{{ timezone }}</strong><br>
-        Prepare: <strong>{{ prepare_time }}</strong> &nbsp;→&nbsp; Send: <strong>{{ send_time }}</strong>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div class="card-title" style="margin:0;">Schedule</div>
+        <a href="/ctrl/schedule" style="color:var(--accent); font-size:0.8rem">Edit full schedule →</a>
+      </div>
+      <div style="margin-bottom:14px; background:#0b0f19; border:1px solid var(--border); border-radius:6px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="font-size:0.85rem; font-weight:700; color:#f8fafc;">Automatic daily mail</div>
+          <div style="font-size:0.75rem; color:var(--muted); margin-top:2px;" id="auto-mail-desc">
+            {% if automatic_daily_mail %}
+            Next run: Today at {{ send_time }} {{ timezone }} (prepare at {{ prepare_time }})
+            {% else %}
+            Automatic daily mail is currently disabled
+            {% endif %}
+          </div>
+        </div>
+        <label class="toggle" style="margin:0;">
+          <input type="checkbox" id="auto-mail-toggle" onchange="toggleAutoMail(this.checked)" {% if automatic_daily_mail %}checked{% endif %}>
+          <div class="toggle-slider"></div>
+        </label>
+      </div>
+      <p style="font-size:0.80rem; color:var(--muted); margin:0;">
+        Timezone: <strong>{{ timezone }}</strong> | Prepare: <strong>{{ prepare_time }}</strong> &rarr; Send: <strong>{{ send_time }}</strong>
       </p>
     </div>
 
@@ -611,337 +548,44 @@
   </div>
 </div>
 
-<!-- SEND MODAL -->
+<!-- SEND CONFIRM MODAL -->
 <div class="modal-overlay" id="send-modal">
-  <div class="modal" style="max-width:500px">
+  <div class="modal" style="max-width:520px">
     <div class="modal-title" id="send-modal-title">Confirm Report Dispatch</div>
+    <p style="font-size:0.85rem; color:var(--muted); margin-bottom:12px;">
+      This action will dispatch live emails via SMTP to all selected recipients.
+    </p>
     <div style="background:#0b0f19; border:1px solid var(--border); border-radius:6px; padding:12px 14px; margin-bottom:14px; font-size:0.88rem;">
-      <div style="margin-bottom:6px;">
-        <span style="color:var(--muted); font-size:0.75rem; font-weight:700; text-transform:uppercase;">Recipient(s):</span><br>
-        <strong id="modal-recipient-display" style="color:#f8fafc; word-break:break-all; font-size:0.95rem;">All Active (Manager &amp; Supervisor)</strong>
+      <div style="margin-bottom:8px;">
+        <span style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase;">Recipients:</span>
+        <div id="modal-recipients-list" style="margin-top:6px; display:flex; flex-direction:column; gap:6px;">
+          <!-- Populated by JS -->
+        </div>
       </div>
-      <div>
-        <span style="color:var(--muted); font-size:0.75rem; font-weight:700; text-transform:uppercase;">As of Date:</span>
+      <div style="border-top:1px solid var(--border); padding-top:8px; margin-top:8px;">
+        <span style="color:var(--muted); font-size:0.72rem; font-weight:700; text-transform:uppercase;">Report Date:</span>
         <strong style="color:#60a5fa;" id="modal-date-display">{{ current_day }}</strong>
       </div>
     </div>
 
-    <!-- Live Delivery Toggle Checkbox -->
-    <div id="modal-live-checkbox-wrapper" style="margin-bottom:16px; background:#131b2e; border:1px solid #1e293b; padding:12px 14px; border-radius:6px;">
-      <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:0.88rem; color:#34d399; font-weight:700;">
-        <input type="checkbox" id="modal-live-confirm-checkbox" onchange="onLiveCheckboxChange(this)" checked style="accent-color:#10b981; width:18px; height:18px;">
-        <span>Deliver live email via Gmail SMTP (send real emails now)</span>
-      </label>
-      <div style="font-size:0.75rem; color:var(--muted); margin-top:4px; margin-left:28px;">
-        Checked: sends real emails to inboxes. Unchecked: safe dry-run simulation.
-      </div>
-    </div>
-
-    <div id="send-result" style="display:none; margin-bottom:12px"></div>
+    <div id="send-modal-error" style="display:none; color:#ef4444; font-size:0.80rem; margin-bottom:10px;"></div>
     <div class="modal-footer">
       <button class="btn btn-ghost" type="button" onclick="closeSendModal()">Cancel</button>
-      <button class="btn btn-success" type="button" id="confirm-send-btn" onclick="confirmSend()">
-        Dispatch Live Email
+      <button class="btn btn-success" type="button" id="confirm-send-btn" onclick="executeSend(false)">
+        Confirm Send
       </button>
-    </div>
-  </div>
-</div>
-
-<!-- SWITCH TO LIVE MODAL -->
-<div class="modal-overlay" id="switch-live-modal">
-  <div class="modal" style="max-width:480px">
-    <div class="modal-title" style="color:#b91c1c">Switch to LIVE Email Delivery</div>
-    <p style="font-size:0.86rem; color:var(--text); margin-bottom:12px; line-height:1.5">
-      In <strong>Live mode</strong>, the daily brief will be delivered via real Gmail SMTP.
-    </p>
-    <div style="background:#0b0f19; border:1px solid var(--border); border-radius:6px; padding:10px 12px; margin-bottom:14px">
-      <div style="font-size:0.75rem; font-weight:700; color:var(--muted); text-transform:uppercase; margin-bottom:6px">Configured Recipients</div>
-      {% for r in allowlist %}
-      <div style="font-size:0.82rem; font-family:monospace; color:#1e293b">• {{ r }}</div>
-      {% endfor %}
-    </div>
-    <label style="font-size:0.82rem; font-weight:600">Type <span style="color:#dc2626; font-family:monospace">LIVE</span> to confirm:</label>
-    <input type="text" id="live-confirm-input" placeholder="LIVE" style="margin-bottom:14px" oninput="checkLiveInput(this.value)">
-    <div class="modal-footer">
-      <button class="btn btn-ghost" type="button" onclick="cancelSwitchLive()">Cancel</button>
-      <button class="btn btn-danger" type="button" id="confirm-live-btn" disabled onclick="executeSwitchLive()">Switch to LIVE</button>
     </div>
   </div>
 </div>
 
 <!-- PREVIEW MODAL -->
 
-<!-- ADD RECIPIENT MODAL (C1) -->
-<div class="modal-overlay" id="add-recipient-modal">
-  <div class="modal" style="max-width:440px">
-    <div class="modal-title">Add Briefing Recipient</div>
-    <p style="font-size:0.84rem; color:var(--muted); margin-bottom:12px;">
-      Add a new operational contact. Disallowed domains (@example.com, @test.com, @placeholder.com) are rejected.
-    </p>
-    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:14px;">
-      <div>
-        <label style="font-size:0.75rem; color:var(--muted); display:block; margin-bottom:2px">Email Address</label>
-        <input type="email" id="modal-new-rec-email" placeholder="name@company.com" style="width:100%; padding:7px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.85rem;" oninput="validateModalEmail(this.value)">
-        <div id="modal-email-val-msg" style="display:none; font-size:0.75rem; color:#dc2626; margin-top:3px;"></div>
-      </div>
-      <div>
-        <label style="font-size:0.75rem; color:var(--muted); display:block; margin-bottom:2px">Full Name</label>
-        <input type="text" id="modal-new-rec-name" placeholder="Full Name" style="width:100%; padding:7px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.85rem;">
-      </div>
-      <div>
-        <label style="font-size:0.75rem; color:var(--muted); display:block; margin-bottom:2px">Role</label>
-        <input type="text" id="modal-new-rec-role" placeholder="e.g. Risk Manager" style="width:100%; padding:7px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.85rem;">
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" type="button" onclick="closeAddRecipientModal()">Cancel</button>
-      <button class="btn btn-primary" type="button" id="modal-confirm-add-rec-btn" onclick="confirmAddRecipient()">Add Contact</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="preview-modal">
-  <div class="modal" style="max-width:850px; width:95%; max-height:90vh; display:flex; flex-direction:column">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
-      <div>
-        <div class="modal-title" style="margin-bottom:2px">Email & PDF Report Preview</div>
-        <div id="preview-meta-info" style="font-size:0.82rem; color:var(--muted)">Loading preview...</div>
-      </div>
-      <button class="btn btn-ghost" type="button" onclick="closePreviewModal()" style="padding:4px 8px; font-size:0.85rem">Close</button>
-    </div>
-    <div id="preview-content-area" style="flex:1; overflow-y:auto; border:1px solid var(--border); border-radius:6px; background:#fff; padding:16px; min-height:400px">
-      <div style="text-align:center; padding:40px; color:var(--muted)">Rendering report...</div>
-    </div>
-    <div class="modal-footer" style="margin-top:12px">
-      <button class="btn btn-ghost" type="button" onclick="closePreviewModal()">Close</button>
-    </div>
-  </div>
-</div>
-
-<div id="toast"></div>
-
 <script>
-
-// ─── BRIEFING RECIPIENTS LOGIC (C1) ───
-function toggleSlotActiveUI(slotNum) {
-  const chk = document.getElementById(`rec_active_${slotNum}`);
-  const badge = document.getElementById(`rec_active_badge_${slotNum}`);
-  if (chk && badge) {
-    if (chk.checked) {
-      badge.className = "pill pill-green";
-      badge.textContent = "[Active]";
-    } else {
-      badge.className = "pill pill-gray";
-      badge.textContent = "[Paused]";
-    }
-  }
-}
-
-function clearSlot(slotNum) {
-  document.getElementById(`rec_email_${slotNum}`).value = "";
-  document.getElementById(`rec_name_${slotNum}`).value = "";
-  document.getElementById(`rec_role_${slotNum}`).value = "";
-  const chk = document.getElementById(`rec_active_${slotNum}`);
-  if (chk) chk.checked = false;
-  toggleSlotActiveUI(slotNum);
-}
-
-function openAddRecipientModal() {
-  document.getElementById("modal-new-rec-email").value = "";
-  document.getElementById("modal-new-rec-name").value = "";
-  document.getElementById("modal-new-rec-role").value = "";
-  document.getElementById("modal-email-val-msg").style.display = "none";
-  document.getElementById("add-recipient-modal").classList.add("open");
-}
-
-function closeAddRecipientModal() {
-  document.getElementById("add-recipient-modal").classList.remove("open");
-}
-
-function validateEmailSyntax(email) {
-  if (!email || !email.includes("@")) return "Email cannot be empty.";
-  if (/[\r\n\t ,;]/.test(email)) return "Email cannot contain whitespace, commas, or semicolons.";
-  const re = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+$/;
-  if (!re.test(email)) return "Invalid email address format.";
-  const domain = email.split("@")[1].toLowerCase();
-  const disallowed = ["example.com", "test.com", "placeholder.com", "sample.com", "domain.com", "localhost"];
-  if (disallowed.includes(domain) || domain.endsWith(".local") || domain === "local") {
-    return `Domain '@${domain}' is a test/placeholder domain and is rejected.`;
-  }
-  return "";
-}
-
-function validateModalEmail(val) {
-  const msgEl = document.getElementById("modal-email-val-msg");
-  const err = validateEmailSyntax(val.trim());
-  if (err) {
-    msgEl.textContent = err;
-    msgEl.style.display = "block";
-    return false;
-  } else {
-    msgEl.style.display = "none";
-    return true;
-  }
-}
-
-function confirmAddRecipient() {
-  const em = document.getElementById("modal-new-rec-email").value.trim().toLowerCase();
-  const nm = document.getElementById("modal-new-rec-name").value.trim();
-  const rl = document.getElementById("modal-new-rec-role").value.trim();
-  const err = validateEmailSyntax(em);
-  if (err) {
-    validateModalEmail(em);
-    return;
-  }
-  // Find first empty or lowest index slot
-  let targetSlot = null;
-  const inputs = document.querySelectorAll("[id^='rec_email_']");
-  for (let el of inputs) {
-    if (!el.value.trim()) {
-      targetSlot = el.id.replace("rec_email_", "");
-      break;
-    }
-  }
-  if (!targetSlot) {
-    targetSlot = inputs.length + 1;
-    const grid = document.getElementById("recipients-grid");
-    if (grid) {
-      const card = document.createElement("div");
-      card.style = "background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:14px; position:relative;";
-      card.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-          <div style="font-size:0.75rem; font-weight:700; color:var(--muted); text-transform:uppercase;">
-            Slot #${targetSlot}
-          </div>
-          <div style="display:flex; align-items:center; gap:6px;">
-            <label style="display:inline-flex; align-items:center; gap:6px; font-size:0.75rem; font-weight:600; cursor:pointer; margin:0;">
-              <input type="checkbox" id="rec_active_${targetSlot}" checked onchange="toggleSlotActiveUI(${targetSlot})" style="cursor:pointer">
-              <span id="rec_active_badge_${targetSlot}" class="pill pill-green" style="font-size:0.72rem; padding:2px 8px;">[Active]</span>
-            </label>
-          </div>
-        </div>
-        <div style="display:flex; flex-direction:column; gap:8px;">
-          <div>
-            <label style="font-size:0.75rem; color:var(--muted); display:block; margin-bottom:2px">Email Address</label>
-            <input type="email" id="rec_email_${targetSlot}" value="" placeholder="name@company.com" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.84rem;">
-          </div>
-          <div>
-            <label style="font-size:0.75rem; color:var(--muted); display:block; margin-bottom:2px">Full Name</label>
-            <input type="text" id="rec_name_${targetSlot}" value="" placeholder="Full Name" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.84rem;">
-          </div>
-          <div>
-            <label style="font-size:0.75rem; color:var(--muted); display:block; margin-bottom:2px">Role</label>
-            <input type="text" id="rec_role_${targetSlot}" value="" placeholder="e.g. Operations Lead" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.84rem;">
-          </div>
-        </div>
-        <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); padding-top:8px;">
-          <button class="btn btn-ghost" type="button" onclick="sendTestToSlot(${targetSlot})" style="padding:4px 8px; font-size:0.75rem;">Send Test to Me</button>
-          <button class="btn btn-ghost" type="button" onclick="clearSlot(${targetSlot})" style="padding:4px 8px; font-size:0.75rem; color:#dc2626;">Clear</button>
-        </div>
-      `;
-      grid.appendChild(card);
-    }
-  }
-
-  document.getElementById(`rec_email_${targetSlot}`).value = em;
-  document.getElementById(`rec_name_${targetSlot}`).value = nm || "Operator";
-  document.getElementById(`rec_role_${targetSlot}`).value = rl || "Operations Lead";
-  const chk = document.getElementById(`rec_active_${targetSlot}`);
-  if (chk) chk.checked = true;
-  toggleSlotActiveUI(targetSlot);
-
-  closeAddRecipientModal();
-  saveRecipientsForm();
-}
-
-async function saveRecipientsForm() {
-  const btn = document.getElementById("save-recipients-btn");
-  const statusEl = document.getElementById("recipients-save-status");
-  btn.disabled = true;
-  btn.textContent = "Saving…";
-  
-  const contacts = [];
-  const inputs = document.querySelectorAll("[id^='rec_email_']");
-  for (let el of inputs) {
-    const i = el.id.replace("rec_email_", "");
-    const em = el.value.trim().toLowerCase();
-    const nm = document.getElementById(`rec_name_${i}`)?.value.trim() || "";
-    const rl = document.getElementById(`rec_role_${i}`)?.value.trim() || "";
-    const act = document.getElementById(`rec_active_${i}`)?.checked ?? true;
-    if (em) {
-      const err = validateEmailSyntax(em);
-      if (err) {
-        showToast(`Slot #${i}: ${err}`, "error");
-        btn.disabled = false;
-        btn.textContent = "Save Recipients";
-        return;
-      }
-      contacts.push({ email: em, name: nm, role: rl, active: act });
-    }
-  }
-
-  try {
-    const body = new URLSearchParams({ csrf_token: CSRF });
-    contacts.forEach((c, idx) => {
-      body.append(`email_${idx+1}`, c.email);
-      body.append(`name_${idx+1}`, c.name);
-      body.append(`role_${idx+1}`, c.role);
-      body.append(`active_${idx+1}`, c.active ? "true" : "false");
-    });
-    const r = await fetch("/ctrl/api/recipients", { method: "POST", body });
-    const res = await r.json();
-    if (res.status === "ok") {
-      showToast("Briefing recipients saved successfully.", "success");
-      setTimeout(() => location.reload(), 800);
-    } else {
-      showToast("Failed to save: " + res.detail, "error");
-    }
-  } catch(err) {
-    showToast("Network error while saving recipients.", "error");
-  }
-  btn.disabled = false;
-  btn.textContent = "Save Recipients";
-}
-
-function sendTestToSlot(slotNum) {
-  const em = document.getElementById(`rec_email_${slotNum}`).value.trim().toLowerCase();
-  if (!em) {
-    showToast(`Slot #${slotNum} has no email configured.`, "error");
-    return;
-  }
-  const err = validateEmailSyntax(em);
-  if (err) {
-    showToast(`Slot #${slotNum}: ${err}`, "error");
-    return;
-  }
-
-  // Pre-select or populate target
-  const select = document.getElementById("send-recipient-select");
-  let found = false;
-  if (select) {
-    for (let opt of select.options) {
-      if (opt.value === em) {
-        select.value = em;
-        found = true;
-        break;
-      }
-    }
-    if (!found) {
-      select.value = "custom";
-      onRecipientSelectChange("custom");
-      document.getElementById("custom-recipient-input").value = em;
-    } else {
-      onRecipientSelectChange(em);
-    }
-  }
-  openSendModal();
-}
-
 const CSRF = {{ csrf | tojson }};
-let currentSendMode = {{ send_mode | tojson }};
 
 function showToast(msg, type="") {
   const t = document.getElementById("toast");
+  if (!t) return;
   t.textContent = msg;
   t.className = "show " + type;
   setTimeout(() => t.className = "", 3500);
@@ -954,81 +598,196 @@ async function postForm(url, data) {
   return r.json();
 }
 
-function updateSendModeUI(mode) {
-  currentSendMode = mode;
-  const isLive = (mode === "live");
-  
-  // Top Banner
-  const banner = document.getElementById("dryrun-alert-banner");
-  if (banner) banner.style.display = isLive ? "none" : "flex";
-
-  // Toggle Checkbox
-  const toggle = document.getElementById("mode-toggle");
-  if (toggle) toggle.checked = isLive;
-
-  // Status Pill
-  const pill = document.getElementById("status-mode-pill");
-  if (pill) {
-    pill.className = isLive ? "pill pill-green" : "pill pill-amber";
-    pill.textContent = isLive ? "[Live]" : "[Dry Run]";
-  }
-
-  // Main Send Button
-  const mainBtn = document.getElementById("main-send-btn");
-  if (mainBtn) mainBtn.textContent = isLive ? "Send Report Now [LIVE]" : "Dry Run (Nothing will be sent) [DRY-RUN]";
-
-  // Send Modal Elements
-  const dryWarn = document.getElementById("modal-dryrun-warning");
-  if (dryWarn) dryWarn.style.display = isLive ? "none" : "block";
-  const liveInfo = document.getElementById("modal-live-info");
-  if (liveInfo) liveInfo.style.display = isLive ? "block" : "none";
-  const modeDisp = document.getElementById("modal-mode-display");
-  if (modeDisp) modeDisp.textContent = mode;
-  const confirmBtn = document.getElementById("confirm-send-btn");
-  if (confirmBtn) confirmBtn.textContent = isLive ? "Confirm Send [LIVE]" : "Dry Run (Nothing will be sent) [DRY-RUN]";
-}
-
-function handleModeToggleChange(checkbox) {
-  if (checkbox.checked) {
-    checkbox.checked = false;
-    promptSwitchLive();
-  } else {
-    setSendModeDirect("dry_run");
+function toggleAddContactForm() {
+  const f = document.getElementById("inline-add-contact-form");
+  if (f) {
+    f.style.display = (f.style.display === "none" || !f.style.display) ? "block" : "none";
   }
 }
 
-function promptSwitchLive() {
-  const input = document.getElementById("live-confirm-input");
-  if (input) input.value = "";
-  const btn = document.getElementById("confirm-live-btn");
-  if (btn) btn.disabled = true;
-  document.getElementById("switch-live-modal").classList.add("open");
-}
-
-function cancelSwitchLive() {
-  document.getElementById("switch-live-modal").classList.remove("open");
-  const toggle = document.getElementById("mode-toggle");
-  if (toggle) toggle.checked = (currentSendMode === "live");
-}
-
-function checkLiveInput(val) {
-  const btn = document.getElementById("confirm-live-btn");
-  btn.disabled = (val.trim() !== "LIVE");
-}
-
-async function executeSwitchLive() {
-  document.getElementById("switch-live-modal").classList.remove("open");
-  await setSendModeDirect("live");
-}
-
-async function setSendModeDirect(mode) {
-  const res = await postForm("/ctrl/api/set-send-mode", { mode });
+async function addNewContact() {
+  const email = (document.getElementById("new-contact-email").value || "").trim().toLowerCase();
+  const name = (document.getElementById("new-contact-name").value || "").trim();
+  const role = (document.getElementById("new-contact-role").value || "").trim();
+  if (!email) {
+    showToast("Email address is required.", "error");
+    return;
+  }
+  const res = await postForm("/ctrl/api/recipient/add", { email, name, role });
   if (res.status === "ok") {
-    updateSendModeUI(mode);
-    showToast("Send mode → " + mode, "success");
+    showToast("Recipient saved successfully.", "success");
+    setTimeout(() => window.location.reload(), 800);
   } else {
-    showToast("Error: " + res.detail, "error");
-    updateSendModeUI(currentSendMode);
+    showToast("Error adding recipient: " + (res.detail || "Invalid format"), "error");
+  }
+}
+
+async function deleteContact(email) {
+  if (!confirm("Remove recipient " + email + "?")) return;
+  const res = await postForm("/ctrl/api/recipient/delete", { email });
+  if (res.status === "ok") {
+    showToast("Recipient removed.", "success");
+    setTimeout(() => window.location.reload(), 800);
+  } else {
+    showToast("Error removing recipient: " + (res.detail || "Failed"), "error");
+  }
+}
+
+function getSelectedRecipients() {
+  const selected = [];
+  const checkboxes = document.querySelectorAll(".contact-checkbox:checked");
+  checkboxes.forEach(cb => {
+    selected.push({
+      email: cb.value,
+      name: cb.dataset.name || "",
+      role: cb.dataset.role || ""
+    });
+  });
+
+  const customEmail = (document.getElementById("custom-recipient-email")?.value || "").trim().toLowerCase();
+  if (customEmail) {
+    const customName = (document.getElementById("custom-recipient-name")?.value || "").trim();
+    const customRole = (document.getElementById("custom-recipient-role")?.value || "").trim();
+    selected.push({
+      email: customEmail,
+      name: customName,
+      role: customRole
+    });
+  }
+  return selected;
+}
+
+function openSendModal() {
+  const recs = getSelectedRecipients();
+  if (recs.length === 0) {
+    showToast("Please select at least one recipient.", "error");
+    return;
+  }
+  if (recs.length > 5) {
+    showToast("Maximum 5 recipients allowed per send (selected " + recs.length + ").", "error");
+    return;
+  }
+
+  const listEl = document.getElementById("modal-recipients-list");
+  listEl.innerHTML = "";
+  recs.forEach(r => {
+    const item = document.createElement("div");
+    item.style.cssText = "font-size:0.86rem; color:#f8fafc; padding:3px 0; border-bottom:1px solid #1e293b;";
+    item.innerHTML = `<strong>${r.name || r.email}</strong> <span style="color:#94a3b8; font-size:0.80rem;">(${r.role || 'Recipient'})</span> &lt;<span style="color:#60a5fa;">${r.email}</span>&gt;`;
+    listEl.appendChild(item);
+  });
+
+  const datePicker = document.getElementById("past-day-picker");
+  const modalDate = document.getElementById("modal-date-display");
+  if (modalDate && datePicker) {
+    modalDate.textContent = datePicker.value || "{{ current_day }}";
+  }
+
+  const errEl = document.getElementById("send-modal-error");
+  if (errEl) errEl.style.display = "none";
+
+  document.getElementById("send-modal").classList.add("open");
+}
+
+function closeSendModal() {
+  document.getElementById("send-modal").classList.remove("open");
+}
+
+async function executeSend(isTestRun = false) {
+  const recs = getSelectedRecipients();
+  if (recs.length === 0) {
+    showToast("Please select at least one recipient.", "error");
+    return;
+  }
+  if (recs.length > 5) {
+    showToast("Maximum 5 recipients allowed per send.", "error");
+    return;
+  }
+
+  const sendBtn = document.getElementById("confirm-send-btn");
+  const testBtn = document.getElementById("main-test-btn");
+  const mainBtn = document.getElementById("main-send-btn");
+
+  if (sendBtn) { sendBtn.disabled = true; sendBtn.textContent = "Sending..."; }
+  if (testBtn) { testBtn.disabled = true; }
+  if (mainBtn) { mainBtn.disabled = true; }
+
+  const customEmail = (document.getElementById("custom-recipient-email")?.value || "").trim().toLowerCase();
+  const customName = (document.getElementById("custom-recipient-name")?.value || "").trim();
+  const customRole = (document.getElementById("custom-recipient-role")?.value || "").trim();
+  const customSave = document.getElementById("custom-recipient-save")?.checked ? "true" : "false";
+  const pastDay = document.getElementById("past-day-picker")?.value || "";
+
+  const emailsOnly = recs.map(r => r.email);
+
+  try {
+    const res = await postForm("/ctrl/api/send-now", {
+      recipients: JSON.stringify(emailsOnly),
+      is_test_run: isTestRun ? "true" : "false",
+      as_of: pastDay,
+      custom_email: customEmail,
+      custom_name: customName,
+      custom_role: customRole,
+      save_custom: customSave
+    });
+
+    if (res.status === "ok") {
+      closeSendModal();
+      if (isTestRun) {
+        showToast("Test run completed: Report and PDF prepared (0 emails sent, SUCCESS_DRY_RUN logged).", "success");
+      } else {
+        showToast("Email dispatched successfully to " + emailsOnly.length + " recipient(s).", "success");
+      }
+      setTimeout(() => window.location.reload(), 1500);
+    } else {
+      const errDetail = res.detail || "Dispatch failed";
+      showToast("Send failed: " + errDetail, "error");
+      const errEl = document.getElementById("send-modal-error");
+      if (errEl) { errEl.textContent = errDetail; errEl.style.display = "block"; }
+    }
+  } catch (err) {
+    showToast("Network error during send: " + err, "error");
+  } finally {
+    if (sendBtn) { sendBtn.disabled = false; sendBtn.textContent = "Confirm Send"; }
+    if (testBtn) { testBtn.disabled = false; }
+    if (mainBtn) { mainBtn.disabled = false; }
+  }
+}
+
+async function runTestSend() {
+  await executeSend(true);
+}
+
+async function toggleAutoMail(enabled) {
+  const res = await postForm("/ctrl/api/toggle-automatic-mail", { enabled: enabled ? "true" : "false" });
+  if (res.status === "ok") {
+    const desc = document.getElementById("auto-mail-desc");
+    if (desc) {
+      desc.textContent = enabled ?
+        "Next run: Today at {{ send_time }} {{ timezone }} (prepare at {{ prepare_time }})" :
+        "Automatic daily mail is currently disabled";
+    }
+    showToast("Automatic daily mail: " + (enabled ? "On" : "Off"), "success");
+  } else {
+    showToast("Failed to update auto mail: " + res.detail, "error");
+    document.getElementById("auto-mail-toggle").checked = !enabled;
+  }
+}
+
+async function testConnection() {
+  const btn = document.getElementById("btn-test-connection");
+  if (btn) { btn.disabled = true; btn.textContent = "Connecting..."; }
+  try {
+    const res = await postForm("/ctrl/api/test-connection", {});
+    if (res.status === "ok") {
+      showToast("SMTP Connection Successful: " + res.detail, "success");
+    } else {
+      showToast("SMTP Error: " + (res.detail || "Connection failed"), "error");
+    }
+  } catch (err) {
+    showToast("Network error during SMTP test: " + err, "error");
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = "Test connection"; }
   }
 }
 
@@ -1038,25 +797,22 @@ async function openPreviewModal() {
   const contentEl = document.getElementById("preview-content-area");
   const pickerEl = document.getElementById("past-day-picker");
   const selectedDate = pickerEl ? pickerEl.value : "";
+
   modal.classList.add("open");
-  infoEl.textContent = "Generating / verifying report...";
-  contentEl.innerHTML = '<div style="text-align:center; padding:40px; color:var(--muted)">Building snapshot, priorities, narration, and PDF...</div>';
+  contentEl.innerHTML = '<div style="padding:40px; text-align:center; color:var(--muted)">Loading preview...</div>';
 
   try {
-    const url = selectedDate ? `/ctrl/api/preview?as_of=${encodeURIComponent(selectedDate)}` : "/ctrl/api/preview";
-    const resp = await fetch(url);
-    const data = await resp.json();
+    const url = selectedDate ? `/ctrl/api/preview?as_of=${selectedDate}` : "/ctrl/api/preview";
+    const res = await fetch(url);
+    const data = await res.json();
     if (data.status === "ok") {
-      const rec = data.recipient || "sreeshanmukhtrk@gmail.com";
-      infoEl.innerHTML = `<strong>Subject:</strong> ${data.subject} &nbsp;|&nbsp; <strong>To:</strong> <span class="monospace">${rec}</span> &nbsp;|&nbsp; <strong>PDF:</strong> <span class="pill pill-green">${data.pdf_pages} page (A4)</span> &nbsp;|&nbsp; <strong>Date:</strong> ${data.as_of}`;
-      contentEl.innerHTML = data.html;
+      infoEl.textContent = `Date: ${data.as_of} | Subject: ${data.subject}`;
+      contentEl.innerHTML = `<iframe srcdoc="${data.html.replace(/"/g, '&quot;')}" style="width:100%; height:600px; border:none; border-radius:4px; background:#fff;"></iframe>`;
     } else {
-      infoEl.innerHTML = `<span class="pill pill-red">Preview Error</span>`;
-      contentEl.innerHTML = `<div style="color:#b91c1c; padding:20px">${data.detail}</div>`;
+      contentEl.innerHTML = `<div style="padding:20px; color:#ef4444">Error loading preview: ${data.detail}</div>`;
     }
-  } catch(err) {
-    infoEl.innerHTML = `<span class="pill pill-red">Network Error</span>`;
-    contentEl.innerHTML = `<div style="color:#b91c1c; padding:20px">Failed to load preview: ${err.message}</div>`;
+  } catch (err) {
+    contentEl.innerHTML = `<div style="padding:20px; color:#ef4444">Network error: ${err}</div>`;
   }
 }
 
@@ -1066,447 +822,38 @@ function closePreviewModal() {
 
 async function feedNextDay() {
   const btn = document.getElementById("feed-next-btn");
-  if (btn) btn.disabled = true;
-  const sbox = document.getElementById("live-stepper-box");
-  const stitle = document.getElementById("stepper-title");
-  const ssub = document.getElementById("stepper-sub");
-  const stime = document.getElementById("stepper-total-time");
-  const dag = document.getElementById("mini-causal-dag");
+  const btnAll = document.getElementById("feed-all-btn");
+  if (btn) { btn.disabled = true; btn.textContent = "Ingesting..."; }
+  if (btnAll) { btnAll.disabled = true; }
   const status = document.getElementById("feed-status");
-
-  if (sbox) sbox.style.display = "block";
-  if (dag) dag.style.display = "none";
-  if (status) { status.style.display = "none"; status.textContent = ""; }
-
-  // Reset all 9 steps to pending
-  for (let i = 0; i < 9; i++) {
-    const card = document.getElementById(`step-card-${i}`);
-    const dot = document.getElementById(`step-dot-${i}`);
-    const name = document.getElementById(`step-name-${i}`);
-    const timeEl = document.getElementById(`step-time-${i}`);
-    if (card) { card.className = "stepper-step-card"; card.style.background = "#131b2e"; card.style.borderColor = "#1e293b"; }
-    if (dot) dot.className = "";
-    if (name) name.style.color = "#94a3b8";
-    if (timeEl) { timeEl.textContent = "pending"; timeEl.style.color = "#64748b"; }
-  }
-
-  // Poll progress state
-  let isDone = false;
-  const pollInterval = setInterval(async () => {
-    if (isDone) return;
-    try {
-      const pr = await fetch("/ctrl/api/feed-next-day/progress");
-      const p = await pr.json();
-      if (!p || !p.steps) return;
-
-      p.steps.forEach((st, idx) => {
-        const card = document.getElementById(`step-card-${idx}`);
-        const dot = document.getElementById(`step-dot-${idx}`);
-        const name = document.getElementById(`step-name-${idx}`);
-        const timeEl = document.getElementById(`step-time-${idx}`);
-
-        if (st.status === "running") {
-          if (card) { card.classList.add("step-running"); }
-          if (dot) dot.className = "dot-running";
-          if (name) name.style.color = "#60a5fa";
-          if (timeEl) { timeEl.textContent = "running..."; timeEl.style.color = "#60a5fa"; }
-          if (idx === 6 && dag) {
-            dag.style.display = "block";
-            pulseDagNodes();
-          }
-        } else if (st.status === "complete") {
-          if (card) { card.classList.remove("step-running"); card.style.borderColor = "#10b981"; card.style.background = "rgba(16, 185, 129, 0.08)"; }
-          if (dot) dot.className = "dot-complete";
-          if (name) name.style.color = "#f8fafc";
-          if (timeEl) { timeEl.textContent = `+${st.elapsed_ms}ms`; timeEl.style.color = "#34d399"; }
-        }
-      });
-    } catch (_) {}
-  }, 120);
-
-  function pulseDagNodes() {
-    const nodes = ["dag-node-po", "dag-node-stock", "dag-node-shortfall", "dag-node-backorder"];
-    nodes.forEach((id, i) => {
-      setTimeout(() => {
-        const el = document.getElementById(id);
-        if (el) el.className = "dag-node dag-node-active";
-      }, i * 150);
-      setTimeout(() => {
-        const el = document.getElementById(id);
-        if (el) el.className = "dag-node dag-node-complete";
-      }, (i + 1) * 150 + 100);
-    });
-  }
+  if (status) { status.style.display = "block"; status.textContent = "Ingesting next day..."; }
 
   try {
     const res = await postForm("/ctrl/api/feed-next-day", {});
-    isDone = true;
-    clearInterval(pollInterval);
-
     if (res.status === "ok") {
-      const totalMs = res.result?.total_elapsed_ms || 1200;
-      const totalSec = (totalMs / 1000).toFixed(2);
-      if (stime) stime.textContent = `Completed in ${totalSec}s (${totalMs}ms)`;
-
-      // Ensure all 9 steps show complete with actual ms
-      (res.result?.steps || []).forEach((st, idx) => {
-        const card = document.getElementById(`step-card-${idx}`);
-        const dot = document.getElementById(`step-dot-${idx}`);
-        const name = document.getElementById(`step-name-${idx}`);
-        const timeEl = document.getElementById(`step-time-${idx}`);
-        if (card) { card.classList.remove("step-running"); card.style.borderColor = "#10b981"; card.style.background = "rgba(16, 185, 129, 0.08)"; }
-        if (dot) dot.className = "dot-complete";
-        if (name) name.style.color = "#f8fafc";
-        if (timeEl) { timeEl.textContent = `+${st.elapsed_ms}ms`; timeEl.style.color = "#34d399"; }
-      });
-
-      if (dag) {
-        dag.style.display = "block";
-        ["dag-node-po", "dag-node-stock", "dag-node-shortfall", "dag-node-backorder"].forEach(id => {
-          const el = document.getElementById(id);
-          if (el) el.className = "dag-node dag-node-complete";
-        });
-      }
-
-      showToast(`Ingested day ${res.result?.day || 'next day'} in ${totalSec}s`, "success");
-      setTimeout(() => location.reload(), 1500);
+      showToast("Ingested Day: " + (res.day || "Next"), "success");
+      setTimeout(() => window.location.reload(), 800);
     } else {
-      if (status) { status.style.display = "block"; status.textContent = "[Error] " + (res.detail || "Error"); }
-      showToast("Feed failed: " + res.detail, "error");
-      if (btn) btn.disabled = false;
+      showToast("Feed error: " + (res.detail || "Failed"), "error");
     }
-  } catch(err) {
-    isDone = true;
-    clearInterval(pollInterval);
-    if (status) { status.style.display = "block"; status.textContent = "[Error] Network error"; }
-    showToast("Network error", "error");
-    if (btn) btn.disabled = false;
-  }
-}
-
-async function runCase(k) {
-  const wrap = document.getElementById("case-progress-wrap");
-  const bar = document.getElementById("case-progress");
-  const status = document.getElementById("case-status");
-  wrap.style.display = "block";
-  status.style.display = "block";
-  status.textContent = `Switching to Case ${k} (re-initialising database & ingesting pack)…`;
-  bar.style.width = "40%";
-  try {
-    const res = await postForm("/ctrl/api/run-case", { case_num: k });
-    bar.style.width = "100%";
-    if (res.status === "ok") {
-      status.textContent = `[Done] Switched to Case ${k} (${res.case.date})`;
-      showToast(`Case ${k} active!`, "success");
-      setTimeout(() => location.reload(), 1000);
-    } else {
-      status.textContent = "[Error] " + (res.detail || "Error");
-      showToast("Case failed: " + res.detail, "error");
-    }
-  } catch(err) {
-    status.textContent = "[Error] Network error";
-    showToast("Network error", "error");
-  }
-}
-
-async function runNextCase() {
-  const btn = document.getElementById("next-case-btn");
-  btn.disabled = true;
-  try {
-    const res = await postForm("/ctrl/api/next-case", {});
-    if (res.status === "ok") {
-      showToast(`Advanced to Case ${res.case.active_case}!`, "success");
-      setTimeout(() => location.reload(), 1000);
-    } else {
-      showToast("Next case failed: " + res.detail, "error");
-      btn.disabled = false;
-    }
-  } catch(err) {
-    showToast("Network error", "error");
-    btn.disabled = false;
-  }
-}
-
-async function loadYearReview() {
-  const btn = document.getElementById("year-review-btn");
-  btn.disabled = true;
-  try {
-    const res = await postForm("/ctrl/api/year-review", {});
-    if (res.status === "ok") {
-      showToast("Loaded full-year review (31 Dec 2025)!", "success");
-      setTimeout(() => location.reload(), 1000);
-    } else {
-      showToast("Year review failed: " + res.detail, "error");
-      btn.disabled = false;
-    }
-  } catch(err) {
-    showToast("Network error", "error");
-    btn.disabled = false;
+  } catch (err) {
+    showToast("Network error during feed: " + err, "error");
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = "Feed next day →"; }
+    if (btnAll) { btnAll.disabled = false; }
   }
 }
 
 async function resetDemo() {
-  if (!confirm("Reset to start? This restores the live DB to 2025-12-31 and refills the queue with 10 packs.")) return;
-  try {
-    const res = await postForm("/ctrl/api/reset-start", {});
-    if (res.status === "ok") {
-      showToast("Reset in " + res.result.elapsed_seconds + "s", "success");
-      setTimeout(() => location.reload(), 1200);
-    } else {
-      showToast("Reset failed: " + res.detail, "error");
-    }
-  } catch(err) {
-    showToast("Network error", "error");
-  }
-}
-
-function toggleRecipientType(type) {
-  const defWrap = document.getElementById("default-recipient-wrapper");
-  const custWrap = document.getElementById("custom-recipient-wrapper");
-  if (type === "custom") {
-    defWrap.style.display = "none";
-    custWrap.style.display = "block";
-    document.getElementById("custom-recipient-input").focus();
-  } else {
-    defWrap.style.display = "block";
-    custWrap.style.display = "none";
-  }
-}
-
-function onSelectRecentRecipient(val) {
-  if (val) {
-    document.getElementById("custom-recipient-input").value = val;
-  }
-}
-
-async function removeSelectedRecentRecipient() {
-  const sel = document.getElementById("recent-recipients-select");
-  const val = sel.value;
-  if (!val) {
-    showToast("Please choose a recent recipient to remove", "error");
-    return;
-  }
-  try {
-    const res = await postForm("/ctrl/api/recent-recipients/remove", { recipient: val });
-    if (res.status === "ok") {
-      sel.innerHTML = '<option value="">-- Choose recent recipient --</option>';
-      (res.recent_recipients || []).forEach(r => {
-        const opt = document.createElement("option");
-        opt.value = r;
-        opt.textContent = r;
-        sel.appendChild(opt);
-      });
-      document.getElementById("custom-recipient-input").value = "";
-      showToast("Removed recipient: " + val, "success");
-    } else {
-      showToast("Failed to remove: " + res.detail, "error");
-    }
-  } catch (err) {
-    showToast("Network error", "error");
-  }
-}
-
-function onRecipientSelectChange(val) {
-  const customWrap = document.getElementById("custom-recipient-wrapper");
-  if (customWrap) {
-    customWrap.style.display = (val === "custom") ? "block" : "none";
-  }
-}
-
-function getActiveRecipient() {
-  const sel = document.getElementById("send-recipient-select");
-  if (!sel) return "all_active";
-  if (sel.value === "custom") {
-    const customInp = document.getElementById("custom-recipient-input");
-    const val = customInp ? customInp.value.trim().toLowerCase() : "";
-    if (!val) {
-      showToast("Please enter an email address for custom recipient", "error");
-      return null;
-    }
-    if (/[\r\n\t ,;]/.test(val)) {
-      showToast("Recipient contains invalid whitespace, newlines, commas or semicolons", "error");
-      return null;
-    }
-    const emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
-    if (!emailRegex.test(val) || val.endsWith(".local") || val.endsWith("@local")) {
-      showToast("Please enter a valid email address (RFC format, no .local)", "error");
-      return null;
-    }
-    return val;
-  }
-  return sel.value;
-}
-
-function onDeliveryModeRadioChange(mode) {
-  const isLive = (mode === "live");
-  const mainBtn = document.getElementById("main-send-btn");
-  if (mainBtn) {
-    mainBtn.textContent = isLive ? "Send Report Now (Live Email)" : "Dry Run (Nothing will be sent) [DRY-RUN]";
-  }
-  const modalLiveChk = document.getElementById("modal-live-confirm-checkbox");
-  if (modalLiveChk) {
-    modalLiveChk.checked = isLive;
-  }
-}
-
-function onLiveCheckboxChange(cb) {
-  const btn = document.getElementById("confirm-send-btn");
-  if (btn) {
-    btn.textContent = cb.checked ? "Dispatch Live Email" : "Dispatch Dry-Run";
-  }
-}
-
-function openSendModal() {
-  const rec = getActiveRecipient();
-  if (!rec) return;
-
-  const display = (rec === "all_active") ? "All Active (Manager: sreeshanmukhtrk@gmail.com, Supervisor: trksreeshanmukh026@gmail.com)" : rec;
-  const dispEl = document.getElementById("modal-recipient-display");
-  if (dispEl) dispEl.textContent = display;
-  const dateEl = document.getElementById("modal-date-display");
-  const pastPicker = document.getElementById("past-day-picker");
-  if (dateEl && pastPicker) dateEl.textContent = pastPicker.value;
-
-  document.getElementById("send-modal").classList.add("open");
-  document.getElementById("send-result").style.display = "none";
-
-  const radioLive = document.getElementById("delivery-mode-live");
-  const isLive = radioLive ? radioLive.checked : true;
-  const chk = document.getElementById("modal-live-confirm-checkbox");
-  if (chk) chk.checked = isLive;
-  const btn = document.getElementById("confirm-send-btn");
-  if (btn) {
-    btn.disabled = false;
-    btn.textContent = isLive ? "Dispatch Live Email" : "Dispatch Dry-Run";
-  }
-}
-
-function closeSendModal() {
-  document.getElementById("send-modal").classList.remove("open");
-}
-
-async function confirmSend() {
-  const rec = getActiveRecipient();
-  if (!rec) return;
-
-  const resultEl = document.getElementById("send-result");
-  const btn = document.getElementById("confirm-send-btn");
-  btn.disabled = true;
-  btn.textContent = "Sending…";
-
-  try {
-    const liveRadio = document.getElementById("delivery-mode-live");
-    const liveChk = document.getElementById("modal-live-confirm-checkbox");
-    const isLive = liveChk ? liveChk.checked : (liveRadio ? liveRadio.checked : true);
-    const pastPicker = document.getElementById("past-day-picker");
-    const reqDate = pastPicker ? pastPicker.value : "";
-    const res = await postForm("/ctrl/api/send-now", { recipient: rec, force_live: isLive ? "true" : "false", as_of: reqDate });
-    resultEl.style.display = "block";
-    if (res.status === "ok") {
-      const st = res.result?.status || "ok";
-      if (st === "SUCCESS_LIVE") {
-        const sentTime = res.result?.sent_at || new Date().toLocaleTimeString();
-        const recLabel = (rec === "all_active") ? "Manager & Supervisor" : rec;
-        resultEl.innerHTML = `<span class="pill pill-green">Delivered Live to ${recLabel}</span> at ${sentTime}`;
-        showToast(`Delivered Live to ${recLabel}`, "success");
-      } else if (st === "SUCCESS_DRY_RUN") {
-        resultEl.innerHTML = `<span class="pill pill-amber">Dry run complete</span> Nothing was sent.`;
-        showToast("Dry run complete. Nothing was sent.", "success");
-      } else {
-        resultEl.innerHTML = `<span class="pill pill-green">${st}</span>`;
-        showToast("Complete: " + st, "success");
-      }
-    } else {
-      resultEl.innerHTML = `<span class="pill pill-red">Failed</span> ${res.detail || 'Error'}`;
-      showToast(res.detail || "Error", "error");
-    }
-  } catch(err) {
-    resultEl.style.display = "block";
-    resultEl.innerHTML = `<span class="pill pill-red">Error</span> ${err.message}`;
-    showToast(err.message, "error");
-  } finally {
-    btn.disabled = false;
-  }
-}
-        const sentTime = res.result?.sent_at || new Date().toLocaleTimeString();
-        resultEl.innerHTML = `<span class="pill pill-green">Sent to ${rec}</span> at ${sentTime}`;
-        showToast(`Sent to ${rec} at ${sentTime}`, "success");
-      } else {
-        resultEl.innerHTML = `<span class="pill pill-green">${st}</span>`;
-        showToast("Complete: " + st, "success");
-      }
-      const sel = document.getElementById("recent-recipients-select");
-      if (sel && rec) {
-        let exists = false;
-        for (let opt of sel.options) {
-          if (opt.value === rec) { exists = true; break; }
-        }
-        if (!exists) {
-          const opt = document.createElement("option");
-          opt.value = rec;
-          opt.textContent = rec;
-          sel.insertBefore(opt, sel.children[1] || null);
-        }
-      }
-    } else {
-      resultEl.innerHTML = `<span class="pill pill-red">[Failed] ${res.detail}</span>`;
-      showToast("Send failed: " + res.detail, "error");
-    }
-  } catch(err) {
-    resultEl.innerHTML = `<span class="pill pill-red">Network error</span>`;
-    showToast("Network error", "error");
-  }
-  btn.disabled = false;
-  btn.textContent = (currentSendMode === "live") ? "Confirm Send [LIVE]" : "Dry Run (Nothing will be sent) [DRY-RUN]";
-}
-
-async function prepareOnly() {
-  const res = await postForm("/ctrl/api/prepare", {});
+  if (!confirm("Reset to start? This restores the DB to 2025-12-31 and refills the queue with 10 feed days.")) return;
+  const res = await postForm("/ctrl/api/reset-start", {});
   if (res.status === "ok") {
-    showToast("Report prepared. PDF pages: " + (res.result?.pdf_pages || "?"), "success");
+    showToast("Reset to start complete.", "success");
+    setTimeout(() => window.location.reload(), 1000);
   } else {
-    showToast("Prepare failed: " + res.detail, "error");
+    showToast("Reset failed: " + res.detail, "error");
   }
 }
-
-async function testConnection() {
-  const btn = document.getElementById("btn-test-connection");
-  if (btn) {
-    btn.disabled = true;
-    btn.textContent = "Testing…";
-  }
-  try {
-    const res = await postForm("/ctrl/api/test-connection", {});
-    if (res.status === "ok") {
-      showToast(res.message || "SMTP connection successful.", "success");
-    } else {
-      showToast(res.detail || "SMTP connection failed.", "error");
-    }
-  } catch(err) {
-    showToast("Network error testing connection: " + err.message, "error");
-  } finally {
-    if (btn) {
-      btn.disabled = false;
-      btn.textContent = "Test connection";
-    }
-  }
-}
-
-async function toggleScheduler(active) {
-  const res = await postForm("/ctrl/api/pause-scheduler", { paused: active ? "false" : "true" });
-  if (res.status === "ok") showToast("Scheduler " + (active ? "resumed" : "paused"), "success");
-  else showToast("Error: " + res.detail, "error");
-}
-
-// Auto-refresh status every 30s
-setInterval(async () => {
-  try {
-    const r = await fetch("/ctrl/api/status");
-    const d = await r.json();
-    const el = document.getElementById("current-day-val");
-    if (el) el.textContent = d.current_day;
-  } catch(_) {}
-}, 30000);
 </script>
 </body>
 </html>

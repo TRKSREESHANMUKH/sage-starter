@@ -70,7 +70,10 @@ from stage9.ops import (
 from stage9.recipients import (
     load_saved_recipients,
     save_recipients,
+    add_recipient,
+    delete_recipient,
     validate_recipient_email,
+    validate_name_and_role,
     load_send_history,
 )
 from stage9.pipeline_runner import run_feed_with_telemetry, get_pipeline_state
@@ -278,8 +281,10 @@ def _base_ctx(request: Request, sess: Optional[Dict] = None) -> Dict[str, Any]:
         "next_queue_label": next_queue_label,
         "send_mode": cfg.get("send_mode", "dry_run"),
         "scheduler_paused": cfg.get("scheduler_paused", False),
+        "automatic_daily_mail": cfg.get("automatic_daily_mail", True),
         "prepare_time": cfg.get("prepare_time", "19:45"),
         "send_time": cfg.get("send_time", "20:00"),
+        "automatic_daily_mail": cfg.get("automatic_daily_mail", True),
         "timezone": cfg.get("timezone", "Asia/Kolkata"),
         "recipients": cfg.get("recipients", {}).get("nightly_digest", []),
         "recent_recipients": get_recent_recipients(),
@@ -508,32 +513,118 @@ async def api_test_connection(
 # API: Send Now
 # ─────────────────────────────────────────────────────────────
 
+@app.post("/ctrl/api/toggle-automatic-mail")
+async def api_toggle_automatic_mail(
+    request: Request,
+    csrf_token: str = Form(...),
+    enabled: str = Form(...),
+    sess: Dict = Depends(_require_session),
+):
+    _check_csrf(csrf_token, sess["csrf"])
+    is_on = enabled.lower() in ("true", "1", "yes", "on")
+    cfg = get_runtime_config()
+    cfg["automatic_daily_mail"] = is_on
+    save_runtime_config(cfg, user=sess.get("user", "controller"))
+    audit_log("toggle_automatic_daily_mail", {"enabled": is_on}, "SUCCESS", user=sess.get("user", "controller"))
+    return JSONResponse({"status": "ok", "enabled": is_on})
+
+
+@app.post("/ctrl/api/recipient/add")
+async def api_add_recipient(
+    request: Request,
+    csrf_token: str = Form(...),
+    email: str = Form(...),
+    name: str = Form(""),
+    role: str = Form(""),
+    sess: Dict = Depends(_require_session),
+):
+    _check_csrf(csrf_token, sess["csrf"])
+    ok, msg = add_recipient(email, name, role, active=True, user=sess.get("user", "controller"))
+    if not ok:
+        return JSONResponse({"status": "error", "detail": msg}, status_code=400)
+    audit_log("add_recipient", {"email": email, "name": name, "role": role}, "SUCCESS", user=sess.get("user", "controller"))
+    return JSONResponse({"status": "ok", "message": msg, "recipients": load_saved_recipients()})
+
+
+@app.post("/ctrl/api/recipient/delete")
+async def api_delete_recipient(
+    request: Request,
+    csrf_token: str = Form(...),
+    email: str = Form(...),
+    sess: Dict = Depends(_require_session),
+):
+    _check_csrf(csrf_token, sess["csrf"])
+    ok, msg = delete_recipient(email, user=sess.get("user", "controller"))
+    if not ok:
+        return JSONResponse({"status": "error", "detail": msg}, status_code=400)
+    audit_log("delete_recipient", {"email": email}, "SUCCESS", user=sess.get("user", "controller"))
+    return JSONResponse({"status": "ok", "message": msg, "recipients": load_saved_recipients()})
+
+
 @app.post("/ctrl/api/send-now")
 async def api_send_now(
     request: Request,
     csrf_token: str = Form(...),
-    recipient: str = Form(...),
+    recipient: Optional[str] = Form(None),
+    recipients: Optional[str] = Form(None),
+    is_test_run: str = Form("false"),
     force_live: str = Form("false"),
     as_of: Optional[str] = Form(None),
+    custom_email: Optional[str] = Form(None),
+    custom_name: Optional[str] = Form(None),
+    custom_role: Optional[str] = Form(None),
+    save_custom: str = Form("false"),
     sess: Dict = Depends(_require_session),
 ):
     _check_csrf(csrf_token, sess["csrf"])
-    fl = force_live.lower() in ("true", "1", "yes")
+    test_run = is_test_run.lower() in ("true", "1", "yes")
 
-    if recipient.strip().lower() in ("all_active", "all", ""):
-        from stage9.recipients import load_saved_recipients
-        active_recs = [r["email"] for r in load_saved_recipients() if r.get("active", True)]
-        if not active_recs:
-            active_recs = ["sreeshanmukhtrk@gmail.com", "trksreeshanmukh026@gmail.com"]
-        targets = active_recs
-    else:
-        ok, clean_rec, err = validate_recipient_email(recipient)
+    targets = []
+    # 1. Custom recipient if provided
+    if custom_email and custom_email.strip():
+        ok, clean_c_em, err_c_em = validate_recipient_email(custom_email.strip())
         if not ok:
-            return JSONResponse(
-                {"status": "error", "detail": err},
-                status_code=400,
-            )
-        targets = [clean_rec]
+            return JSONResponse({"status": "error", "detail": f"Custom recipient error: {err_c_em}"}, status_code=400)
+        ok_nr, err_nr = validate_name_and_role(custom_name or "", custom_role or "")
+        if not ok_nr:
+            return JSONResponse({"status": "error", "detail": f"Custom recipient name/role error: {err_nr}"}, status_code=400)
+        
+        if save_custom.lower() in ("true", "1", "yes"):
+            add_recipient(clean_c_em, custom_name or "", custom_role or "", active=True, user=sess.get("user", "controller"))
+
+        targets.append(clean_c_em)
+
+    # 2. Selected recipients
+    raw_recs = []
+    if recipients and recipients.strip():
+        try:
+            parsed = json.loads(recipients.strip())
+            if isinstance(parsed, list):
+                raw_recs.extend(parsed)
+            else:
+                raw_recs.append(str(parsed))
+        except Exception:
+            raw_recs.extend([r.strip() for r in recipients.split(",") if r.strip()])
+    elif recipient and recipient.strip():
+        if recipient.strip().lower() in ("all_active", "all"):
+            raw_recs.extend([r["email"] for r in load_saved_recipients() if r.get("active", True)])
+        else:
+            raw_recs.append(recipient.strip())
+
+    for r in raw_recs:
+        em = r.get("email") if isinstance(r, dict) else str(r)
+        if em and em.strip():
+            ok, clean_em, err = validate_recipient_email(em.strip())
+            if not ok:
+                return JSONResponse({"status": "error", "detail": err}, status_code=400)
+            if clean_em not in targets:
+                targets.append(clean_em)
+
+    if not targets:
+        return JSONResponse({"status": "error", "detail": "No recipients specified."}, status_code=400)
+
+    if len(targets) > 5:
+        return JSONResponse({"status": "error", "detail": f"Maximum 5 recipients allowed per send (got {len(targets)})."}, status_code=400)
 
     try:
         as_of_d = None
@@ -542,7 +633,12 @@ async def api_send_now(
                 as_of_d = date.fromisoformat(as_of.strip())
             except Exception:
                 pass
-        result = send_report_now_v6(as_of=as_of_d, recipients=targets, force_live=fl, user="controller")
+        
+        if test_run:
+            result = send_report_now_v6(as_of=as_of_d, recipients=targets, force_live=False, force_dry_run=True, user=sess.get("user", "controller"))
+        else:
+            result = send_report_now_v6(as_of=as_of_d, recipients=targets, force_live=True, force_dry_run=False, user=sess.get("user", "controller"))
+
         if result.get("status") == "FAILED_SMTP":
             return JSONResponse({"status": "error", "detail": result.get("error", "SMTP send failed"), "result": result}, status_code=500)
         if result.get("status") in ("REFUSED_INVALID", "REFUSED_PLACEHOLDER"):
@@ -718,6 +814,7 @@ async def api_status(request: Request, sess: Dict = Depends(_require_session)):
         "queue_next": queue_days[0] if queue_days else None,
         "send_mode": cfg.get("send_mode", "dry_run"),
         "scheduler_paused": cfg.get("scheduler_paused", False),
+        "automatic_daily_mail": cfg.get("automatic_daily_mail", True),
         "prepare_time": cfg.get("prepare_time", "19:45"),
         "send_time": cfg.get("send_time", "20:00"),
         "server_time_ist": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),

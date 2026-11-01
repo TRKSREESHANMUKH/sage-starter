@@ -17,6 +17,13 @@ from stage9.recipients import (
 
 class TestControllerRecipients(unittest.TestCase):
 
+    def setUp(self):
+        self._orig_data = RECIPIENTS_FILE.read_bytes() if RECIPIENTS_FILE.exists() else None
+
+    def tearDown(self):
+        if self._orig_data is not None:
+            RECIPIENTS_FILE.write_bytes(self._orig_data)
+
     def test_email_validation_valid(self):
         ok, clean, err = validate_recipient_email("admin@sage-ops.com")
         self.assertTrue(ok)
@@ -60,14 +67,14 @@ class TestControllerRecipients(unittest.TestCase):
         self.assertEqual(loaded[1]["email"], "ops2@sage-ops.com")
         self.assertFalse(loaded[1]["active"])
 
-        # Max 3 enforcement
-        too_many = [
-            {"email": f"user{i}@sage-ops.com", "name": f"User {i}", "role": "Staff"}
+        # Multiple recipients (no 3-slot cap)
+        more_contacts = [
+            {"email": f"user{i}@sage-ops.com", "name": f"Staff Member", "role": "Staff", "active": True}
             for i in range(4)
         ]
-        ok, msg = save_recipients(too_many)
-        self.assertFalse(ok)
-        self.assertIn("Maximum 3", msg)
+        ok, msg = save_recipients(more_contacts)
+        self.assertTrue(ok)
+        self.assertEqual(len(load_saved_recipients()), 4)
 
     def test_send_history(self):
         history = load_send_history(limit=5)

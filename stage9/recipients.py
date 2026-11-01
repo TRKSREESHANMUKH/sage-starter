@@ -22,6 +22,25 @@ REJECTED_DOMAINS = {
     "example.com", "test.com", "placeholder.com", "sample.com", "domain.com", "localhost"
 }
 
+_NAME_ROLE_REGEX = re.compile(r"^[a-zA-Z\s.\-']*$")
+
+
+def validate_name_and_role(name: str = "", role: str = "") -> Tuple[bool, str]:
+    """Validates name (max 60 chars) and role (max 40 chars) allowing letters, spaces, ., -, '."""
+    name_clean = str(name or "").strip()
+    role_clean = str(role or "").strip()
+    if name_clean:
+        if len(name_clean) > 60:
+            return False, "Name cannot exceed 60 characters."
+        if not _NAME_ROLE_REGEX.match(name_clean):
+            return False, "Name can only contain letters, spaces, dots, dashes, and apostrophes."
+    if role_clean:
+        if len(role_clean) > 40:
+            return False, "Role cannot exceed 40 characters."
+        if not _NAME_ROLE_REGEX.match(role_clean):
+            return False, "Role can only contain letters, spaces, dots, dashes, and apostrophes."
+    return True, ""
+
 
 def validate_recipient_email(addr_str: str) -> Tuple[bool, str, str]:
     """
@@ -62,8 +81,14 @@ def get_default_recipients() -> List[Dict[str, Any]]:
     return [
         {
             "email": "sreeshanmukhtrk@gmail.com",
-            "name": "Operations Lead",
-            "role": "VP Supply Chain",
+            "name": "Sree Shanmukh",
+            "role": "Supervisor",
+            "active": True
+        },
+        {
+            "email": "trksreeshanmukh026@gmail.com",
+            "name": "TRK Sree Shanmukh",
+            "role": "Manager",
             "active": True
         }
     ]
@@ -79,7 +104,7 @@ def load_saved_recipients() -> List[Dict[str, Any]]:
         data = json.loads(RECIPIENTS_FILE.read_text(encoding="utf-8"))
         if isinstance(data, list):
             cleaned = []
-            for item in data[:3]:
+            for item in data:
                 if isinstance(item, dict) and "email" in item:
                     ok, clean_em, _ = validate_recipient_email(item.get("email", ""))
                     if ok:
@@ -106,8 +131,8 @@ def save_recipients(contacts: List[Dict[str, Any]], user: str = "operator") -> T
     if not isinstance(contacts, list):
         return False, "Contacts must be a list."
 
-    if len(contacts) > 3:
-        return False, "Maximum 3 briefing recipients allowed."
+    if len(contacts) > 50:
+        return False, "Maximum 50 briefing recipients allowed."
 
     cleaned_contacts = []
     seen_emails = set()
@@ -125,19 +150,57 @@ def save_recipients(contacts: List[Dict[str, Any]], user: str = "operator") -> T
             return False, f"Duplicate recipient email '{clean_em}'."
         seen_emails.add(clean_em)
 
-        name = str(c.get("name", "")).strip()[:80]
-        role = str(c.get("role", "")).strip()[:80]
+        name = str(c.get("name", "")).strip()
+        role = str(c.get("role", "")).strip()
+        ok_nr, err_nr = validate_name_and_role(name, role)
+        if not ok_nr:
+            return False, f"Contact row {idx} error: {err_nr}"
         active = bool(c.get("active", True))
         cleaned_contacts.append({
             "email": clean_em,
-            "name": name,
-            "role": role,
+            "name": name[:60],
+            "role": role[:40],
             "active": active
         })
 
     RECIPIENTS_FILE.parent.mkdir(parents=True, exist_ok=True)
     RECIPIENTS_FILE.write_text(json.dumps(cleaned_contacts, indent=2), encoding="utf-8")
     return True, f"Saved {len(cleaned_contacts)} briefing recipients."
+
+
+def add_recipient(email: str, name: str = "", role: str = "", active: bool = True, user: str = "operator") -> Tuple[bool, str]:
+    """Adds or updates a single contact in recipients.json."""
+    existing = load_saved_recipients()
+    ok_em, clean_em, err_em = validate_recipient_email(email)
+    if not ok_em:
+        return False, err_em
+    ok_nr, err_nr = validate_name_and_role(name, role)
+    if not ok_nr:
+        return False, err_nr
+    for c in existing:
+        if c.get("email") == clean_em:
+            c["name"] = name[:60]
+            c["role"] = role[:40]
+            c["active"] = active
+            return save_recipients(existing, user=user)
+    existing.append({
+        "email": clean_em,
+        "name": name[:60],
+        "role": role[:40],
+        "active": active
+    })
+    return save_recipients(existing, user=user)
+
+
+def delete_recipient(email: str, user: str = "operator") -> Tuple[bool, str]:
+    """Deletes a contact by email from recipients.json."""
+    existing = load_saved_recipients()
+    clean_em = email.strip().lower()
+    updated = [c for c in existing if c.get("email") != clean_em]
+    if len(updated) == len(existing):
+        return False, f"Contact '{email}' not found."
+    return save_recipients(updated, user=user)
+
 
 
 def load_send_history(limit: int = 5) -> List[Dict[str, Any]]:
