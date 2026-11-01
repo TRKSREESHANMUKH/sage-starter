@@ -420,7 +420,10 @@ def render_nightly_digest(
         records_7d, kpi_ctx = get_trailing_7d_metrics(as_of, db_session)
         sparkline_png = generate_7d_sparkline_png(records_7d)
         from stage9.trace import compute_cause_trace, compute_focus_list
+        from stage9.causal_map import get_causal_chain_map
         cause_chains = compute_cause_trace(as_of)
+        causal_map_info = get_causal_chain_map(as_of)
+        causal_chain_one_line = causal_map_info.get("one_line_text") if causal_map_info.get("has_active_chain") else "No active causal chain today"
         focus_items = compute_focus_list(as_of, db_session=db_session)
 
         # 3. Supplier watch
@@ -615,6 +618,14 @@ def render_nightly_digest(
               <div style="font-size: 11px; line-height: 1.45; color: #0f172a; font-weight: 500;">
                 {summary_text}
               </div>
+            </td>
+          </tr>
+
+          <!-- Causal Chain Map (One-line version for Email & PDF) -->
+          <tr>
+            <td style="padding: 5px 16px; background-color: #ffffff; border-bottom: 1px solid #e2e8f0; font-size: 9.5px; color: #475569;">
+              <strong style="color: #0f172a; text-transform: uppercase; font-size: 8.5px; letter-spacing: 0.05em;">Causal Chain:</strong>
+              <span style="font-family: monospace; font-size: 9px; color: #1e293b; margin-left: 6px;">{causal_chain_one_line}</span>
             </td>
           </tr>
 

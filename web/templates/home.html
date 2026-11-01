@@ -420,6 +420,22 @@
     margin-top: 32px;
     line-height: 1.5;
   }
+  /* Part E1: Causal Chain Map styles */
+  .causal-tab-btn.active {
+    background: #0f172a !important;
+    color: #ffffff !important;
+  }
+  @media (max-width: 640px) {
+    .causal-nodes-row {
+      flex-direction: column !important;
+      align-items: stretch !important;
+    }
+    .causal-connector {
+      transform: rotate(90deg);
+      align-self: center;
+      margin: 4px 0;
+    }
+  }
 </style>
 {% endblock %}
 
@@ -651,6 +667,67 @@
     </div>
   </section>
 
+  <!-- ─── CAUSAL CHAIN MAP (Part E1) ─── -->
+  <section class="causal-map-section" style="margin-bottom: 24px;">
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+        <span style="font-family: Georgia, Cambria, 'Times New Roman', serif; font-variant: small-caps; letter-spacing: 0.12em; font-size: 0.92rem; font-weight: 700; color: #1e293b; text-transform: uppercase;">
+          Causal Chain Map
+        </span>
+        {% if causal_map.has_active_chain and causal_map.chains|length > 1 %}
+        <!-- Multi-chain tabs (up to 3) -->
+        <div style="display: flex; gap: 6px;">
+          {% for ch in causal_map.chains %}
+          <button type="button" class="causal-tab-btn {% if loop.first %}active{% endif %}" onclick="switchCausalTab('{{ ch.id }}', this)" style="padding: 4px 10px; font-size: 0.72rem; font-weight: 700; border-radius: 4px; border: 1px solid #cbd5e1; background: {% if loop.first %}#0f172a{% else %}#ffffff{% endif %}; color: {% if loop.first %}#ffffff{% else %}#475569{% endif %}; cursor: pointer;">
+            {{ ch.tab_title }}
+          </button>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+      {% if not causal_map.has_active_chain %}
+      <div style="padding: 12px 16px; background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 6px; font-size: 0.82rem; color: #64748b; font-style: italic;">
+        {{ causal_map.empty_message }}
+      </div>
+      {% else %}
+      {% for ch in causal_map.chains %}
+      <div id="{{ ch.id }}" class="causal-chain-container" style="{% if not loop.first %}display:none;{% endif %}">
+        <div class="causal-nodes-row" style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: nowrap;">
+          {% for node in ch.nodes %}
+          <div class="causal-node-card" style="flex: 1; min-width: 140px; background: {% if node.is_dashed %}#f8fafc{% else %}#ffffff{% endif %}; border: 1px {% if node.is_dashed %}dashed #cbd5e1{% else %}solid #cbd5e1{% endif %}; opacity: {% if node.is_dashed %}0.65{% else %}1{% endif %}; border-radius: 6px; padding: 12px 14px; box-shadow: {% if node.is_dashed %}none{% else %}0 1px 3px rgba(0,0,0,0.04){% endif %}; text-align: left;">
+            <div style="font-size: 0.68rem; font-weight: 700; color: #64748b; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px;">
+              NODE {{ node.node_number }}
+            </div>
+            <div style="font-size: 0.80rem; font-weight: 800; color: #0f172a; letter-spacing: 0.02em; margin-bottom: 4px; text-transform: uppercase;">
+              {{ node.title }}
+            </div>
+            <div style="font-size: 0.74rem; color: #475569; line-height: 1.35;">
+              {{ node.subtext }}
+            </div>
+          </div>
+          {% if not loop.last %}
+          <div class="causal-connector" style="color: #94a3b8; font-weight: 700; font-size: 1.05rem; flex-shrink: 0; padding: 0 2px;">&rarr;</div>
+          {% endif %}
+          {% endfor %}
+        </div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 12px; font-size: 0.75rem; color: #64748b; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <span style="font-weight: 600; color: #334155;">Evidence:</span>
+            <span style="display: inline-block; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.72rem; color: {{ ch.evidence_color }}; background: {{ ch.evidence_bg }}; border: 1px solid {{ ch.evidence_border }}; margin-left: 4px;">
+              {{ ch.evidence_label }}
+            </span>
+          </div>
+          <div style="font-style: italic; color: #64748b; font-size: 0.72rem;">
+            {{ ch.narrative }}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      {% endif %}
+    </div>
+  </section>
+
   <!-- 6. Alert Cards or Calm Day Banner -->
   <section class="section-h">
     <div class="section-h-title">Operational Status</div>
@@ -740,8 +817,59 @@
     </div>
   </div>
 
+  <!-- ─── RECENT INCIDENTS (Part E2) ─── -->
+  <section class="section-h" style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 24px;">
+    <div class="section-h-title" style="font-family: Georgia, Cambria, serif;">Recent Incidents</div>
+    <a href="/insights" style="font-size: 0.80rem; font-weight: 700; color: #2563eb; text-decoration: none;">View all &rarr;</a>
+  </section>
+
+  <div class="card" style="margin-bottom: 24px; padding: 18px 24px; border: 1px solid #cbd5e1; background: #ffffff; border-radius: 8px;">
+    {% if not recent_incidents %}
+    <div style="font-size: 0.82rem; color: #64748b; font-style: italic;">
+      No operational incidents recorded up to this date.
+    </div>
+    {% else %}
+    <div style="position: relative; padding-left: 26px; border-left: 2px solid #e2e8f0; margin-left: 8px; display: flex; flex-direction: column; gap: 18px;">
+      {% for inc in recent_incidents %}
+      <div style="position: relative;">
+        <!-- Timeline dot -->
+        <div style="position: absolute; left: -32px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: {{ inc.dot_color }}; border: 2px solid #ffffff; {% if inc.is_latest %}box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25);{% endif %}"></div>
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 3px;">
+          <span style="font-size: 0.70rem; font-weight: 700; color: #64748b; letter-spacing: 0.05em;">{{ inc.date_display }}</span>
+          <span style="font-size: 0.65rem; font-weight: 700; padding: 1px 6px; border-radius: 3px; color: {{ inc.badge_color }}; background: {{ inc.badge_bg }};">{{ inc.severity }}</span>
+        </div>
+        <div style="font-family: Georgia, Cambria, serif; font-size: 0.90rem; font-weight: 700; color: #0f172a; margin-bottom: 2px;">
+          {{ inc.title }}
+        </div>
+        <div style="font-size: 0.76rem; color: #64748b; line-height: 1.35;">
+          {{ inc.description }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
   <!-- Verbatim Framing Footer -->
   <div class="framing-footer">
     {{ framing }}
   </div>
+
+  <script>
+    function switchCausalTab(tabId, btn) {
+      document.querySelectorAll('.causal-chain-container').forEach(el => el.style.display = 'none');
+      const target = document.getElementById(tabId);
+      if (target) target.style.display = 'block';
+      document.querySelectorAll('.causal-tab-btn').forEach(b => {
+        b.classList.remove('active');
+        b.style.background = '#ffffff';
+        b.style.color = '#475569';
+      });
+      if (btn) {
+        btn.classList.add('active');
+        btn.style.background = '#0f172a';
+        btn.style.color = '#ffffff';
+      }
+    }
+  </script>
 {% endblock %}

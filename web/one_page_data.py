@@ -51,6 +51,7 @@ from stage9.priorities import compute_priorities, PRIORITIES_DIR
 from stage9.trace import get_model_check_summary
 from stage9.ops import get_case_state
 from stage9.status import RESEARCH_FRAMING
+from stage9.causal_map import get_causal_chain_map, get_incident_log
 
 logger = logging.getLogger("web.one_page_data")
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -1253,6 +1254,8 @@ def build_one_page_context(selected_date_str: Optional[str] = None) -> Dict[str,
             "framing": RESEARCH_FRAMING,
             "snapshot": snap,
             "steel_stock": int(float(snap.get("materials", {}).get("101", {}).get("stock", 0.0))),
+            "causal_map": get_causal_chain_map(cur_d),
+            "recent_incidents": get_incident_log(cur_d, limit=4),
         }
     finally:
         db.close()

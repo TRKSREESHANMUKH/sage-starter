@@ -237,6 +237,7 @@ def build_history_and_key_events(as_of: date) -> Dict[str, Any]:
         })
 
     from stage9.build_day_index import get_episodes
+    from stage9.causal_map import get_incident_log, get_causal_chain_map
     episodes = get_episodes(days_dict)
     episodes_display = []
     for ep in sorted(episodes, key=lambda e: e["start_date"], reverse=True):
@@ -285,6 +286,8 @@ def build_history_and_key_events(as_of: date) -> Dict[str, Any]:
             "Normal": counts.get("Normal", 0)
         },
         "key_events": episodes_display,
+        "incident_log": get_incident_log(as_of),
+        "causal_map": get_causal_chain_map(as_of),
         "past_day_dates": past_dates,
         "total_days_indexed": len(days_dict),
         "total_episodes": len(episodes_display)
@@ -1513,6 +1516,8 @@ def compute_insights_payload(as_of: date, period_str: str, is_demo: bool, source
             "is_demo_full_year": (period_str == "full_year" and is_demo),
             "summary_strip": summary_strip,
             "history_and_key_events": history_events,
+            "incident_log": history_events.get("incident_log", []),
+            "causal_map": history_events.get("causal_map", {}),
             "forecast_section": forecast_sec,
             "fulfillment_buckets": fulfillment_buckets,
             "what_changed_strip": what_changed_strip,
