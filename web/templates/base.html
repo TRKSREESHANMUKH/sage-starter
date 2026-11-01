@@ -226,9 +226,10 @@
     <div class="header-inner">
       <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
         <a href="/?date={{ selected_date }}" class="brand-wrap">
+          {% if active_tab != 'today' %}
           <img src="/static/img/sage_logo.png" alt="SAGE" class="brand-icon" style="height:28px; width:auto; vertical-align:middle; object-fit:contain; border-radius:4px; background:#0f172a; padding:2px;">
+          {% endif %}
           <span class="brand-name">SAGE</span>
-          <span class="sim-tag">Synthetic Data</span>
         </a>
         <nav class="nav-tabs" aria-label="Main Navigation" style="display: inline-flex; gap: 4px; background: #f1f5f9; padding: 4px; border-radius: 8px; border: 1px solid var(--surface-border);">
           <a href="/?date={{ selected_date }}" class="tab-link {% if active_tab == 'today' %}active{% endif %}" id="nav-tab-today" style="font-size: 0.90rem; font-weight: 600; padding: 5px 12px; border-radius: 6px; text-decoration: none; color: {% if active_tab == 'today' %}var(--accent){% else %}var(--text-muted){% endif %}; background: {% if active_tab == 'today' %}#ffffff{% else %}transparent{% endif %}; box-shadow: {% if active_tab == 'today' %}0 1px 2px rgba(0,0,0,0.05){% else %}none{% endif %};">Today</a>
@@ -265,18 +266,16 @@
           Controller ↗
         </a>
 
-        <!-- Mode Controls -->
-        {% if demo_mode %}
-          <button type="button" class="header-btn header-btn-primary" id="btn-send-email" onclick="sendReportEmail('{{ selected_date }}')">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            Send this day's report by email
-          </button>
-          <button type="button" class="header-btn" id="btn-load-next-day" onclick="loadNextDay()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            Load next day
-          </button>
-          <span id="send-status-msg" style="font-size: 0.80rem; font-weight: 600; margin-left: 4px;"></span>
-        {% endif %}
+        <!-- Actions -->
+        <button type="button" class="header-btn header-btn-primary" id="btn-send-email" onclick="sendReportEmail('{{ selected_date }}')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Send this day's report by email
+        </button>
+        <button type="button" class="header-btn" id="btn-load-next-day" onclick="loadNextDay()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Load next day
+        </button>
+        <span id="send-status-msg" style="font-size: 0.80rem; font-weight: 600; margin-left: 4px;"></span>
 
         <!-- User Menu (Part B) -->
         {% set active_user = current_user %}
@@ -301,7 +300,7 @@
         <strong>Research Framing:</strong> {{ framing }}
       </div>
       <div>
-        Synthetic operational data as of <strong>{{ selected_date }}</strong> &bull; Executive Delivery Layer
+        Operational data as of <strong>{{ selected_date }}</strong> &bull; Executive Delivery Layer
       </div>
       <details class="footer-details">
         <summary>About this analysis &amp; operational limits</summary>
@@ -334,33 +333,41 @@
         alert("Please wait at least 10 seconds between email sends.");
         return;
       }
-      const confirmed = confirm(`Send the report for ${targetDate} to sreeshanmukhtrk@gmail.com?`);
-      if (!confirmed) return;
+      const target = prompt(`Send the report for ${targetDate} by email.\n\nLeave blank to deliver live to active recipients (Manager & Supervisor: sreeshanmukhtrk@gmail.com, trksreeshanmukh026@gmail.com)\n\nOR enter a custom recipient email address:`, "");
+      if (target === null) return;
 
       const btn = document.getElementById("btn-send-email");
       const statusSpan = document.getElementById("send-status-msg");
       if (btn) btn.disabled = true;
       if (statusSpan) {
         statusSpan.style.color = "#2563eb";
-        statusSpan.textContent = "Sending...";
+        statusSpan.textContent = "Dispatching live email...";
       }
 
-      fetch(`/api/feed/send-report?date=${targetDate}`, {
+      const recParam = target.trim() ? `&recipient=${encodeURIComponent(target.trim())}` : "";
+      fetch(`/api/feed/send-report?date=${targetDate}&live=true${recParam}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" }
       })
       .then(res => res.json())
       .then(data => {
         lastSendTimestamp = Date.now();
-        if (data.status === "ok") {
+        const st = data.status || "";
+        if (st === "SUCCESS_LIVE" || st === "ok") {
           if (statusSpan) {
             statusSpan.style.color = "#16a34a";
-            statusSpan.textContent = `Sent at ${data.sent_at}`;
+            const sentAt = data.sent_at || new Date().toLocaleTimeString();
+            statusSpan.textContent = `Sent live at ${sentAt}`;
+          }
+        } else if (st === "SUCCESS_DRY_RUN") {
+          if (statusSpan) {
+            statusSpan.style.color = "#d97706";
+            statusSpan.textContent = "Dry-run complete (Nothing sent)";
           }
         } else {
           if (statusSpan) {
             statusSpan.style.color = "#dc2626";
-            statusSpan.textContent = `Failed: ${data.detail || data.error || 'error'}`;
+            statusSpan.textContent = `Failed: ${data.detail || data.error || st || 'error'}`;
           }
         }
       })

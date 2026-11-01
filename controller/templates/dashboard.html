@@ -233,26 +233,42 @@
         <div>
           <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
             <span style="font-size:0.75rem; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; color:#3b82f6; background:rgba(59,130,246,0.15); padding:2px 8px; border-radius:4px; border:1px solid rgba(59,130,246,0.3);">PRIMARY ENGINE</span>
-            <div class="card-title" style="margin:0; font-size:1.20rem; color:#f8fafc;">Feed (1–10 January 2026)</div>
+            <div class="card-title" style="margin:0; font-size:1.20rem; color:#f8fafc;">Feed</div>
           </div>
           <div style="font-size:0.86rem; color:var(--muted)">
-            {% if next_queue_label %}
-            Next in queue: <strong style="color:#f8fafc;">{{ next_queue_label }}</strong> &bull; <span class="pill pill-blue" style="font-weight:700;">{{ queue_remaining }} packs waiting</span>
-            {% else %}
-            <span class="pill pill-green">Queue complete: all 10 feed days ingested.</span>
-            {% endif %}
+            Data through <strong style="color:#f8fafc;">{{ current_day }}</strong> | Next: <strong style="color:#60a5fa;">{{ next_queue_label if next_queue_label else 'Queue complete (Day 10 of 10 reached)' }}</strong>
           </div>
         </div>
-        <div class="btn-row" style="margin-top:0; gap:10px;">
+        <div class="btn-row" style="margin-top:0; gap:10px; flex-wrap:wrap;">
           {% if queue_remaining > 0 %}
-          <button class="btn btn-primary" type="button" onclick="feedNextDay()" id="feed-next-btn" style="font-size:0.95rem; font-weight:700; padding:10px 24px; box-shadow:0 0 16px rgba(59,130,246,0.4);">
+          <button class="btn btn-primary" type="button" onclick="feedNextDay()" id="feed-next-btn" style="font-size:0.95rem; font-weight:700; padding:10px 20px; box-shadow:0 0 16px rgba(59,130,246,0.4);">
             Feed next day &rarr;
+          </button>
+          <button class="btn btn-ghost" type="button" onclick="feedAllRemainingDays()" id="feed-all-btn" style="padding:10px 18px; font-weight:600;">
+            Feed all remaining days
           </button>
           {% else %}
           <button class="btn btn-ghost" type="button" disabled style="padding:10px 18px;">Queue Complete</button>
           {% endif %}
           <button class="btn btn-ghost" type="button" onclick="resetDemo()" style="padding:10px 16px;">Reset to start</button>
         </div>
+      </div>
+
+      <!-- 10-Step Day Stepper -->
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); gap:6px; margin: 12px 0 16px 0;">
+        {% for d in range(1, 11) %}
+          {% set day_str = "2026-01-%02d"|format(d) %}
+          {% set is_ingested = current_day >= day_str %}
+          {% set is_next = (next_queue_label and ("Day " ~ d ~ " of 10") in next_queue_label) %}
+          <div style="text-align:center; padding:8px 4px; border-radius:6px; border:1px solid {% if is_ingested %}#10b981{% elif is_next %}#3b82f6{% else %}#1e293b{% endif %}; background:{% if is_ingested %}rgba(16,185,129,0.12){% elif is_next %}rgba(59,130,246,0.18){% else %}#0b0f19{% endif %};">
+            <div style="font-size:0.72rem; font-weight:700; color:{% if is_ingested %}#34d399{% elif is_next %}#60a5fa{% else %}#64748b{% endif %};">
+              Day {{ d }}
+            </div>
+            <div style="font-size:0.65rem; color:var(--muted); margin-top:2px;">
+              {% if is_ingested %}Ingested{% elif is_next %}Next{% else %}Queued{% endif %}
+            </div>
+          </div>
+        {% endfor %}
       </div>
 
       <!-- ─── LIVE STEPPER & CAUSAL DAG (Part D) ─── -->
@@ -841,6 +857,35 @@ async function feedNextDay() {
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = "Feed next day →"; }
     if (btnAll) { btnAll.disabled = false; }
+  }
+}
+
+async function feedAllRemainingDays() {
+  const btn = document.getElementById("feed-all-btn");
+  const btnNext = document.getElementById("feed-next-btn");
+  if (!confirm("Feed all remaining days in the queue?")) return;
+  if (btn) { btn.disabled = true; btn.textContent = "Feeding all..."; }
+  if (btnNext) { btnNext.disabled = true; }
+  const status = document.getElementById("feed-status");
+  if (status) { status.style.display = "block"; status.textContent = "Feeding remaining days..."; }
+
+  try {
+    while (true) {
+      const res = await postForm("/ctrl/api/feed-next-day", {});
+      if (res.status === "ok") {
+        if (res.remaining === 0) break;
+      } else {
+        showToast("Feed error: " + (res.detail || "Failed"), "error");
+        break;
+      }
+    }
+    showToast("All days ingested successfully.", "success");
+    setTimeout(() => window.location.reload(), 800);
+  } catch (err) {
+    showToast("Network error during feed: " + err, "error");
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = "Feed all remaining days"; }
+    if (btnNext) { btnNext.disabled = false; }
   }
 }
 
