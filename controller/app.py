@@ -463,7 +463,7 @@ async def api_save_recipients(
             csrf = form.get("csrf_token", "")
             _check_csrf(csrf, sess["csrf"])
             contacts = []
-            for i in range(1, 4):
+            for i in range(1, 51):
                 em = str(form.get(f"email_{i}", "")).strip()
                 nm = str(form.get(f"name_{i}", "")).strip()
                 rl = str(form.get(f"role_{i}", "")).strip()
@@ -484,6 +484,27 @@ async def api_save_recipients(
 
 
 # ─────────────────────────────────────────────────────────────
+# API: Test Connection
+# ─────────────────────────────────────────────────────────────
+
+@app.post("/ctrl/api/test-connection")
+async def api_test_connection(
+    request: Request,
+    csrf_token: str = Form(...),
+    sess: Dict = Depends(_require_session),
+):
+    _check_csrf(csrf_token, sess["csrf"])
+    from stage9.send_check import test_smtp_connection
+    ok, msg = test_smtp_connection()
+    if ok:
+        audit_log("smtp_test_connection", {}, "SUCCESS", user=sess.get("user", "controller"))
+        return JSONResponse({"status": "ok", "message": msg})
+    else:
+        audit_log("smtp_test_connection", {}, f"FAILED: {msg}", user=sess.get("user", "controller"))
+        return JSONResponse({"status": "error", "detail": msg}, status_code=500)
+
+
+# ─────────────────────────────────────────────────────────────
 # API: Send Now
 # ─────────────────────────────────────────────────────────────
 
@@ -493,18 +514,35 @@ async def api_send_now(
     csrf_token: str = Form(...),
     recipient: str = Form(...),
     force_live: str = Form("false"),
+    as_of: Optional[str] = Form(None),
     sess: Dict = Depends(_require_session),
 ):
     _check_csrf(csrf_token, sess["csrf"])
-    ok, clean_rec, err = validate_recipient_email(recipient)
-    if not ok:
-        return JSONResponse(
-            {"status": "error", "detail": err},
-            status_code=400,
-        )
+    fl = force_live.lower() in ("true", "1", "yes")
+
+    if recipient.strip().lower() in ("all_active", "all", ""):
+        from stage9.recipients import load_saved_recipients
+        active_recs = [r["email"] for r in load_saved_recipients() if r.get("active", True)]
+        if not active_recs:
+            active_recs = ["sreeshanmukhtrk@gmail.com", "trksreeshanmukh026@gmail.com"]
+        targets = active_recs
+    else:
+        ok, clean_rec, err = validate_recipient_email(recipient)
+        if not ok:
+            return JSONResponse(
+                {"status": "error", "detail": err},
+                status_code=400,
+            )
+        targets = [clean_rec]
+
     try:
-        fl = force_live.lower() in ("true", "1", "yes")
-        result = send_report_now_v6(recipients=[clean_rec], force_live=fl, user="controller")
+        as_of_d = None
+        if as_of and as_of.strip():
+            try:
+                as_of_d = date.fromisoformat(as_of.strip())
+            except Exception:
+                pass
+        result = send_report_now_v6(as_of=as_of_d, recipients=targets, force_live=fl, user="controller")
         if result.get("status") == "FAILED_SMTP":
             return JSONResponse({"status": "error", "detail": result.get("error", "SMTP send failed"), "result": result}, status_code=500)
         if result.get("status") in ("REFUSED_INVALID", "REFUSED_PLACEHOLDER"):

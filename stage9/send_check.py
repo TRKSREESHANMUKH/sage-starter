@@ -30,12 +30,70 @@ if env_file.exists():
 from stage9.ops import ensure_report, send_report_now_v6, get_allowlist
 
 
+def test_smtp_connection():
+    import smtplib
+    if os.getenv("SAGE_MAIL_TRANSPORT", "").lower() == "mock":
+        return True, "Mock SMTP connection successful (test mode)."
+
+    host = os.getenv("SMTP_HOST", "smtp.gmail.com")
+    try:
+        port = int(os.getenv("SMTP_PORT", "587"))
+    except Exception:
+        port = 587
+    user = os.getenv("SMTP_USER", "").strip()
+    password = os.getenv("SMTP_PASSWORD", "").strip()
+
+    if not user:
+        return False, "SMTP configuration error: SMTP_USER is unset in .env"
+    if not password or password == "dev_dummy_password":
+        return False, "SMTP configuration error: SMTP_PASSWORD is unset or placeholder in .env"
+
+    try:
+        if port == 465:
+            server = smtplib.SMTP_SSL(host, port, timeout=10)
+            server.ehlo()
+        else:
+            server = smtplib.SMTP(host, port, timeout=10)
+            server.ehlo()
+            server.starttls()
+            server.ehlo()
+    except (smtplib.SMTPConnectError, ConnectionRefusedError, OSError) as exc:
+        return False, f"Network error connecting to {host}:{port}: {exc}"
+    except Exception as exc:
+        return False, f"TLS / Handshake error with {host}:{port}: {exc}"
+
+    try:
+        server.login(user, password)
+    except smtplib.SMTPAuthenticationError as exc:
+        err_msg = exc.smtp_error.decode() if isinstance(exc.smtp_error, bytes) else str(exc.smtp_error)
+        return False, f"SMTP authentication failed: check the app password in .env ({err_msg})"
+    except Exception as exc:
+        return False, f"SMTP login failed: {exc}"
+    finally:
+        try:
+            server.quit()
+        except Exception:
+            pass
+
+    return True, f"OK: Connected and authenticated to {host}:{port} as {user}"
+
+
 def main():
     parser = argparse.ArgumentParser(description="SAGE Email Delivery Verification Tool")
+    parser.add_argument("--smtp-test", action="store_true", help="Connect, start TLS and authenticate without sending message")
     parser.add_argument("--live", action="store_true", help="Execute live SMTP delivery via Gmail")
     parser.add_argument("--as-of", type=str, default="2025-12-31", help="Report as-of date (YYYY-MM-DD)")
     parser.add_argument("--recipient", type=str, default=None, help="Recipient email address")
     args = parser.parse_args()
+
+    if args.smtp_test:
+        ok, msg = test_smtp_connection()
+        if ok:
+            print(msg)
+            sys.exit(0)
+        else:
+            print(f"FAILED: {msg}", file=sys.stderr)
+            sys.exit(1)
 
     as_of = date.fromisoformat(args.as_of)
     recipient = args.recipient or os.getenv("SAGE_DEMO_RECIPIENT", "sreeshanmukhtrk@gmail.com").strip()

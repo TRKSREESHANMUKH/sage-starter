@@ -231,6 +231,104 @@
 
 
   <div class="grid">
+    <!-- ─── FEED ENGINE & LIVE PIPELINE SHOWPIECE (PROMINENT AT TOP) ─── -->
+    <div class="card full-width feed-showpiece-card" style="border: 2px solid #3b82f6; box-shadow: 0 6px 28px rgba(59, 130, 246, 0.18); background: #131b2e; padding: 22px 26px; margin-bottom: 6px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:12px">
+        <div>
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
+            <span style="font-size:0.75rem; font-weight:800; letter-spacing:0.08em; text-transform:uppercase; color:#3b82f6; background:rgba(59,130,246,0.15); padding:2px 8px; border-radius:4px; border:1px solid rgba(59,130,246,0.3);">PRIMARY ENGINE</span>
+            <div class="card-title" style="margin:0; font-size:1.20rem; color:#f8fafc;">Feed (1–10 January 2026)</div>
+          </div>
+          <div style="font-size:0.86rem; color:var(--muted)">
+            {% if next_queue_label %}
+            Next in queue: <strong style="color:#f8fafc;">{{ next_queue_label }}</strong> &bull; <span class="pill pill-blue" style="font-weight:700;">{{ queue_remaining }} packs waiting</span>
+            {% else %}
+            <span class="pill pill-green">Queue complete: all 10 feed days ingested.</span>
+            {% endif %}
+          </div>
+        </div>
+        <div class="btn-row" style="margin-top:0; gap:10px;">
+          {% if queue_remaining > 0 %}
+          <button class="btn btn-primary" type="button" onclick="feedNextDay()" id="feed-next-btn" style="font-size:0.95rem; font-weight:700; padding:10px 24px; box-shadow:0 0 16px rgba(59,130,246,0.4);">
+            Feed next day &rarr;
+          </button>
+          {% else %}
+          <button class="btn btn-ghost" type="button" disabled style="padding:10px 18px;">Queue Complete</button>
+          {% endif %}
+          <button class="btn btn-ghost" type="button" onclick="resetDemo()" style="padding:10px 16px;">Reset to start</button>
+        </div>
+      </div>
+
+      <!-- ─── LIVE STEPPER & CAUSAL DAG (Part D) ─── -->
+      <div id="live-stepper-box" style="display:none; background:#0b0f19; border:1px solid var(--border); border-radius:8px; padding:16px; margin-top:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+          <div>
+            <div style="font-size:0.84rem; font-weight:700; color:#f8fafc;" id="stepper-title">
+              Live Engine Pipeline &bull; 9 Stages Running
+            </div>
+            <div style="font-size:0.75rem; color:var(--muted);" id="stepper-sub">
+              Ingesting pack telemetry into physical constraints model
+            </div>
+          </div>
+          <div id="stepper-total-time" style="font-size:0.78rem; font-family:monospace; color:#3b82f6; font-weight:700; background:rgba(59,130,246,0.1); padding:3px 10px; border-radius:6px; border:1px solid rgba(59,130,246,0.3);">
+            Executing...
+          </div>
+        </div>
+
+        <!-- 9 Engine Steps Grid -->
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap:10px;" id="stepper-steps-grid">
+          {% set step_names = [
+            "Validate pack",
+            "Ingest ERP events",
+            "Material balance check",
+            "BOM explosion",
+            "Production reconciliation",
+            "Backlog calculation",
+            "Stage 7 GCM fit",
+            "Stage 8 Narration",
+            "Daily brief render"
+          ] %}
+          {% for sname in step_names %}
+          <div id="step-card-{{ loop.index0 }}" class="stepper-step-card" style="background:#131b2e; border:1px solid #1e293b; border-radius:6px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span id="step-dot-{{ loop.index0 }}" style="width:8px; height:8px; border-radius:50%; background:#475569; display:inline-block;"></span>
+              <span id="step-name-{{ loop.index0 }}" style="font-size:0.78rem; font-weight:600; color:#94a3b8;">{{ loop.index }}. {{ sname }}</span>
+            </div>
+            <span id="step-time-{{ loop.index0 }}" style="font-size:0.72rem; font-family:monospace; color:#64748b;">pending</span>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Mini Causal DAG Visualizer (Pulses during Stage 7) -->
+        <div id="mini-causal-dag" style="display:none; margin-top:16px; padding:14px; background:#131b2e; border:1px solid #1e293b; border-radius:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <span style="font-size:0.75rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.05em;">
+              Stage 7 &bull; Expert Causal DAG Propagation
+            </span>
+            <span style="font-size:0.70rem; color:#60a5fa; font-weight:600;">Evaluating structural equations...</span>
+          </div>
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; flex-wrap:wrap;">
+            <div id="dag-node-po" class="dag-node" style="padding:6px 14px; border-radius:6px; background:#0b0f19; border:1px solid #1e293b; font-size:0.78rem; font-weight:700; color:#64748b; transition:all 0.25s;">
+              PO Late
+            </div>
+            <span class="dag-arrow" style="color:#475569; font-weight:800;">&rarr;</span>
+            <div id="dag-node-stock" class="dag-node" style="padding:6px 14px; border-radius:6px; background:#0b0f19; border:1px solid #1e293b; font-size:0.78rem; font-weight:700; color:#64748b; transition:all 0.25s;">
+              Stock Low
+            </div>
+            <span class="dag-arrow" style="color:#475569; font-weight:800;">&rarr;</span>
+            <div id="dag-node-shortfall" class="dag-node" style="padding:6px 14px; border-radius:6px; background:#0b0f19; border:1px solid #1e293b; font-size:0.78rem; font-weight:700; color:#64748b; transition:all 0.25s;">
+              Shortfall
+            </div>
+            <span class="dag-arrow" style="color:#475569; font-weight:800;">&rarr;</span>
+            <div id="dag-node-backorder" class="dag-node" style="padding:6px 14px; border-radius:6px; background:#0b0f19; border:1px solid #1e293b; font-size:0.78rem; font-weight:700; color:#64748b; transition:all 0.25s;">
+              Backorder
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="feed-status" style="font-size:0.82rem; color:var(--muted); margin-top:8px; display:none"></div>
+    </div>
+
     <!-- ─── STATUS CARD ─── -->
     <div class="card">
       <div class="card-title">System Status</div>
@@ -259,29 +357,45 @@
     <div class="card">
       <div class="card-title">Send Report Now</div>
       <p style="font-size:0.88rem; color:var(--muted); margin-bottom:12px">
-        Prepare and dispatch today's brief immediately. Respects current send mode.
+        Prepare and dispatch the daily executive brief immediately. Supports real-time live Gmail SMTP delivery.
       </p>
 
-      <!-- Recipient Selection (C1) -->
-      <div style="margin-bottom: 8px;">
+      <!-- Delivery Mode Selection -->
+      <div style="margin-bottom:12px; background:#0b0f19; border:1px solid var(--border); border-radius:6px; padding:10px 12px;">
+        <div style="font-size:0.75rem; font-weight:700; color:var(--muted); text-transform:uppercase; margin-bottom:6px;">Delivery Mode</div>
+        <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
+          <label style="display:flex; align-items:center; gap:6px; font-size:0.85rem; font-weight:600; color:#34d399; cursor:pointer;">
+            <input type="radio" name="send_delivery_mode" id="delivery-mode-live" value="live" checked onchange="onDeliveryModeRadioChange('live')" style="accent-color:#10b981;">
+            Live Delivery (Gmail SMTP)
+          </label>
+          <label style="display:flex; align-items:center; gap:6px; font-size:0.85rem; font-weight:600; color:var(--muted); cursor:pointer;">
+            <input type="radio" name="send_delivery_mode" id="delivery-mode-dry" value="dry_run" onchange="onDeliveryModeRadioChange('dry_run')" style="accent-color:#64748b;">
+            Safe Dry Run (Audit Log Only)
+          </label>
+        </div>
+      </div>
+
+      <!-- Recipient Target Selection -->
+      <div style="margin-bottom: 12px;">
         <label for="send-recipient-select" style="font-size:0.82rem; font-weight:600; color:var(--muted); display:block; margin-bottom:4px">Recipient Target</label>
-        <select id="send-recipient-select" onchange="onRecipientSelectChange(this.value)" style="width:100%; padding:7px 10px; border:1px solid var(--border); border-radius:6px; font-size:0.85rem;">
+        <select id="send-recipient-select" onchange="onRecipientSelectChange(this.value)" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:6px; font-size:0.85rem; background:#0b0f19; color:var(--text);">
+          <option value="all_active" selected>All Active Recipients (Manager: sreeshanmukhtrk@gmail.com, Supervisor: trksreeshanmukh026@gmail.com)</option>
           {% if saved_recipients %}
             {% for r in saved_recipients %}
             <option value="{{ r.email }}">{{ r.name }}{% if r.role %} ({{ r.role }}){% endif %} &lt;{{ r.email }}&gt;</option>
             {% endfor %}
-            <option value="custom">-- Custom email address --</option>
-          {% else %}
-            <option value="custom" selected>-- Custom email address --</option>
           {% endif %}
+          <option value="custom">-- Custom email address (Send one-off without saving) --</option>
         </select>
       </div>
 
-      <div id="custom-recipient-wrapper" style="{% if saved_recipients %}display:none;{% else %}display:block;{% endif %} background:#0b0f19; border:1px solid var(--border); border-radius:6px; padding:10px; margin-bottom:8px;">
-        <label for="custom-recipient-input" style="font-size:0.75rem; font-weight:700; color:var(--text); display:block; margin-bottom:4px">
-          Custom Email Address
+      <!-- One-off Custom Recipient Input -->
+      <div id="custom-recipient-wrapper" style="display:none; background:#0b0f19; border:1px solid #3b82f6; border-radius:6px; padding:12px; margin-bottom:12px;">
+        <label for="custom-recipient-input" style="font-size:0.75rem; font-weight:700; color:#60a5fa; display:block; margin-bottom:4px">
+          Custom Recipient Email (Send one-off without saving)
         </label>
-        <input type="email" id="custom-recipient-input" placeholder="name@company.com" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.85rem;">
+        <input type="email" id="custom-recipient-input" placeholder="e.g. colleague@company.com" style="width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.85rem; color:#fff; background:#131b2e;">
+        <div style="font-size:0.75rem; color:var(--muted); margin-top:4px;">Dispatches directly to this inbox without modifying saved briefing recipients.</div>
       </div>
       <div id="recipient-inline-error" style="display:none; color:#dc2626; font-size:0.80rem; font-weight:600; margin-bottom:8px;"></div>
 
@@ -289,12 +403,13 @@
         <label for="past-day-picker" style="font-size:0.82rem; font-weight:600; color:var(--muted); display:block; margin-bottom:4px">Report Date (Preview past day)</label>
         <input type="date" id="past-day-picker" class="day-select" value="{{ current_day }}" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:6px; font-size:0.88rem; font-weight:600; color:var(--text); background:var(--surface)">
       </div>
-      <div class="btn-row" style="margin-top:12px; gap:8px; flex-wrap:wrap">
-        <button class="btn btn-success" id="main-send-btn" onclick="openSendModal()">
-          {% if send_mode == 'live' %}Send Report Now [LIVE]{% else %}Dry Run (Nothing will be sent) [DRY-RUN]{% endif %}
+      <div class="btn-row" style="margin-top:14px; gap:8px; flex-wrap:wrap">
+        <button class="btn btn-success" id="main-send-btn" onclick="openSendModal()" style="font-weight:700; padding:10px 18px; font-size:0.92rem;">
+          Send Report Now (Live Email)
         </button>
         <button class="btn btn-primary" onclick="openPreviewModal()">Preview</button>
         <button class="btn btn-ghost" onclick="prepareOnly()">Prepare Only</button>
+        <button class="btn btn-ghost" type="button" id="btn-test-connection" onclick="testConnection()">Test connection</button>
       </div>
     </div>
 
@@ -304,7 +419,7 @@
         <div>
           <div class="card-title" style="margin-bottom:2px">Briefing Recipients</div>
           <div style="font-size:0.82rem; color:var(--muted)">
-            Save up to 3 authorized operational recipients for daily executive digests. Only Active recipients receive nightly digests.
+            Save authorized operational recipients for daily executive digests. Only Active recipients receive nightly digests.
           </div>
         </div>
         <div class="btn-row" style="margin-top:0; gap:8px;">
@@ -318,7 +433,8 @@
       </div>
 
       <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap:14px;" id="recipients-grid">
-        {% for idx in [0, 1, 2] %}
+        {% set total_slots = [saved_recipients|length + 1, 3]|max %}
+        {% for idx in range(total_slots) %}
           {% set rec = saved_recipients[idx] if saved_recipients and saved_recipients|length > idx else None %}
           <div style="background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:14px; position:relative;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -393,99 +509,6 @@
           </table>
         </div>
       </div>
-    </div>
-
-    <!-- ─── FEED (STAGE 9 FINAL 3: 1–10 JAN 2026) ─── -->
-    <div class="card full-width">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px">
-        <div>
-          <div class="card-title" style="margin-bottom:4px">Feed (1–10 January 2026)</div>
-          <div style="font-size:0.85rem; color:var(--muted)">
-            {% if next_queue_label %}
-            Next in queue: <strong>{{ next_queue_label }}</strong> ({{ queue_remaining }} packs waiting)
-            {% else %}
-            Queue complete: all 10 feed days ingested.
-            {% endif %}
-          </div>
-        </div>
-        <div class="btn-row" style="margin-top:0">
-          {% if queue_remaining > 0 %}
-          <button class="btn btn-primary" type="button" onclick="feedNextDay()" id="feed-next-btn">Feed next day</button>
-          {% else %}
-          <button class="btn btn-ghost" type="button" disabled>Queue Complete</button>
-          {% endif %}
-          <button class="btn btn-ghost" type="button" onclick="resetDemo()">Reset to start</button>
-        </div>
-      </div>
-
-      <!-- ─── LIVE STEPPER & CAUSAL DAG (Part D) ─── -->
-      <div id="live-stepper-box" style="display:none; background:#0b0f19; border:1px solid var(--border); border-radius:8px; padding:16px; margin-top:14px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
-          <div>
-            <div style="font-size:0.84rem; font-weight:700; color:#f8fafc;" id="stepper-title">
-              Live Engine Pipeline &bull; 9 Stages Running
-            </div>
-            <div style="font-size:0.75rem; color:var(--muted);" id="stepper-sub">
-              Ingesting pack telemetry into physical constraints model
-            </div>
-          </div>
-          <div id="stepper-total-time" style="font-size:0.78rem; font-family:monospace; color:#3b82f6; font-weight:700; background:rgba(59,130,246,0.1); padding:3px 10px; border-radius:6px; border:1px solid rgba(59,130,246,0.3);">
-            Executing...
-          </div>
-        </div>
-
-        <!-- 9 Engine Steps Grid -->
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap:10px;" id="stepper-steps-grid">
-          {% set step_names = [
-            "Validate pack",
-            "Ingest ERP events",
-            "Material balance check",
-            "BOM explosion",
-            "Production reconciliation",
-            "Backlog calculation",
-            "Stage 7 GCM fit",
-            "Stage 8 Narration",
-            "Daily brief render"
-          ] %}
-          {% for sname in step_names %}
-          <div id="step-card-{{ loop.index0 }}" class="stepper-step-card" style="background:#131b2e; border:1px solid #1e293b; border-radius:6px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;">
-            <div style="display:flex; align-items:center; gap:8px;">
-              <span id="step-dot-{{ loop.index0 }}" style="width:8px; height:8px; border-radius:50%; background:#475569; display:inline-block;"></span>
-              <span id="step-name-{{ loop.index0 }}" style="font-size:0.78rem; font-weight:600; color:#94a3b8;">{{ loop.index }}. {{ sname }}</span>
-            </div>
-            <span id="step-time-{{ loop.index0 }}" style="font-size:0.72rem; font-family:monospace; color:#64748b;">pending</span>
-          </div>
-          {% endfor %}
-        </div>
-
-        <!-- Mini Causal DAG Visualizer (Pulses during Stage 7) -->
-        <div id="mini-causal-dag" style="display:none; margin-top:16px; padding:14px; background:#131b2e; border:1px solid #1e293b; border-radius:8px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <span style="font-size:0.75rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.05em;">
-              Stage 7 &bull; Expert Causal DAG Propagation
-            </span>
-            <span style="font-size:0.70rem; color:#60a5fa; font-weight:600;">Evaluating structural equations...</span>
-          </div>
-          <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; flex-wrap:wrap;">
-            <div id="dag-node-po" class="dag-node" style="padding:6px 14px; border-radius:6px; background:#0b0f19; border:1px solid #1e293b; font-size:0.78rem; font-weight:700; color:#64748b; transition:all 0.25s;">
-              PO Late
-            </div>
-            <span class="dag-arrow" style="color:#475569; font-weight:800;">&rarr;</span>
-            <div id="dag-node-stock" class="dag-node" style="padding:6px 14px; border-radius:6px; background:#0b0f19; border:1px solid #1e293b; font-size:0.78rem; font-weight:700; color:#64748b; transition:all 0.25s;">
-              Stock Low
-            </div>
-            <span class="dag-arrow" style="color:#475569; font-weight:800;">&rarr;</span>
-            <div id="dag-node-shortfall" class="dag-node" style="padding:6px 14px; border-radius:6px; background:#0b0f19; border:1px solid #1e293b; font-size:0.78rem; font-weight:700; color:#64748b; transition:all 0.25s;">
-              Shortfall
-            </div>
-            <span class="dag-arrow" style="color:#475569; font-weight:800;">&rarr;</span>
-            <div id="dag-node-backorder" class="dag-node" style="padding:6px 14px; border-radius:6px; background:#0b0f19; border:1px solid #1e293b; font-size:0.78rem; font-weight:700; color:#64748b; transition:all 0.25s;">
-              Backorder
-            </div>
-          </div>
-        </div>
-      </div>
-      <div id="feed-status" style="font-size:0.82rem; color:var(--muted); margin-top:8px; display:none"></div>
     </div>
 
     <!-- ─── SEND MODE ─── -->
@@ -590,38 +613,35 @@
 
 <!-- SEND MODAL -->
 <div class="modal-overlay" id="send-modal">
-  <div class="modal" style="max-width:480px">
-    <div class="modal-title" id="send-modal-title">Confirm Dispatch</div>
-    <div id="modal-dryrun-warning" style="{% if send_mode == 'live' %}display:none;{% endif %} background:rgba(245, 158, 11, 0.12); border:1px solid rgba(245, 158, 11, 0.3); color:#fbbf24; padding:10px 14px; border-radius:6px; font-size:0.85rem; margin-bottom:14px; line-height:1.4">
-      <strong>Dry-run mode:</strong> no email will be sent. Switch to Live to deliver.<br>
-      <button class="btn btn-ghost" type="button" style="margin-top:8px; padding:4px 10px; font-size:0.78rem; border-color:#d97706; color:#b45309" onclick="closeSendModal(); promptSwitchLive();">Switch to Live →</button>
-    </div>
-    <div id="modal-live-info" style="{% if send_mode != 'live' %}display:none;{% endif %} background:rgba(16, 185, 129, 0.12); border:1px solid rgba(16, 185, 129, 0.3); color:#34d399; padding:10px 14px; border-radius:6px; font-size:0.85rem; margin-bottom:14px; line-height:1.4">
-      <strong>Live mode active:</strong> Email will be delivered via Gmail SMTP.
-    </div>
-    <div style="background:#0b0f19; border:1px solid var(--border); border-radius:6px; padding:10px 14px; margin-bottom:14px; font-size:0.88rem;">
-      <div style="margin-bottom:4px;">
-        <span style="color:var(--muted); font-size:0.80rem; font-weight:600; text-transform:uppercase;">Send to:</span><br>
-        <strong id="modal-recipient-display" style="color:#0f172a; word-break:break-all;">—</strong>
+  <div class="modal" style="max-width:500px">
+    <div class="modal-title" id="send-modal-title">Confirm Report Dispatch</div>
+    <div style="background:#0b0f19; border:1px solid var(--border); border-radius:6px; padding:12px 14px; margin-bottom:14px; font-size:0.88rem;">
+      <div style="margin-bottom:6px;">
+        <span style="color:var(--muted); font-size:0.75rem; font-weight:700; text-transform:uppercase;">Recipient(s):</span><br>
+        <strong id="modal-recipient-display" style="color:#f8fafc; word-break:break-all; font-size:0.95rem;">All Active (Manager &amp; Supervisor)</strong>
       </div>
       <div>
-        <span style="color:var(--muted); font-size:0.80rem; font-weight:600; text-transform:uppercase;">Mode:</span>
-        <strong id="modal-mode-display">{{ send_mode }}</strong>
+        <span style="color:var(--muted); font-size:0.75rem; font-weight:700; text-transform:uppercase;">As of Date:</span>
+        <strong style="color:#60a5fa;" id="modal-date-display">{{ current_day }}</strong>
       </div>
     </div>
 
-    <!-- Live Confirmation Checkbox (Required for live sends) -->
-    <div id="modal-live-checkbox-wrapper" style="{% if send_mode != 'live' %}display:none;{% endif %} margin-bottom:14px; background:#fff7ed; border:1px solid #fed7aa; padding:10px 12px; border-radius:6px;">
-      <label style="display:flex; align-items:flex-start; gap:8px; cursor:pointer; font-size:0.82rem; color:#9a3412; font-weight:600;">
-        <input type="checkbox" id="modal-live-confirm-checkbox" onchange="onLiveCheckboxChange(this)" style="margin-top:2px;">
-        <span>I confirm dispatching a real live email to the exact address(es) listed above.</span>
+    <!-- Live Delivery Toggle Checkbox -->
+    <div id="modal-live-checkbox-wrapper" style="margin-bottom:16px; background:#131b2e; border:1px solid #1e293b; padding:12px 14px; border-radius:6px;">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:0.88rem; color:#34d399; font-weight:700;">
+        <input type="checkbox" id="modal-live-confirm-checkbox" onchange="onLiveCheckboxChange(this)" checked style="accent-color:#10b981; width:18px; height:18px;">
+        <span>Deliver live email via Gmail SMTP (send real emails now)</span>
       </label>
+      <div style="font-size:0.75rem; color:var(--muted); margin-top:4px; margin-left:28px;">
+        Checked: sends real emails to inboxes. Unchecked: safe dry-run simulation.
+      </div>
     </div>
+
     <div id="send-result" style="display:none; margin-bottom:12px"></div>
     <div class="modal-footer">
       <button class="btn btn-ghost" type="button" onclick="closeSendModal()">Cancel</button>
       <button class="btn btn-success" type="button" id="confirm-send-btn" onclick="confirmSend()">
-        {% if send_mode == 'live' %}Confirm Send [LIVE]{% else %}Dry Run (Nothing will be sent) [DRY-RUN]{% endif %}
+        Dispatch Live Email
       </button>
     </div>
   </div>
@@ -775,14 +795,53 @@ function confirmAddRecipient() {
   }
   // Find first empty or lowest index slot
   let targetSlot = null;
-  for (let i = 1; i <= 3; i++) {
-    const existing = document.getElementById(`rec_email_${i}`).value.trim();
-    if (!existing) {
-      targetSlot = i;
+  const inputs = document.querySelectorAll("[id^='rec_email_']");
+  for (let el of inputs) {
+    if (!el.value.trim()) {
+      targetSlot = el.id.replace("rec_email_", "");
       break;
     }
   }
-  if (!targetSlot) targetSlot = 3; // overwrite slot 3 if all full
+  if (!targetSlot) {
+    targetSlot = inputs.length + 1;
+    const grid = document.getElementById("recipients-grid");
+    if (grid) {
+      const card = document.createElement("div");
+      card.style = "background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:14px; position:relative;";
+      card.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <div style="font-size:0.75rem; font-weight:700; color:var(--muted); text-transform:uppercase;">
+            Slot #${targetSlot}
+          </div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <label style="display:inline-flex; align-items:center; gap:6px; font-size:0.75rem; font-weight:600; cursor:pointer; margin:0;">
+              <input type="checkbox" id="rec_active_${targetSlot}" checked onchange="toggleSlotActiveUI(${targetSlot})" style="cursor:pointer">
+              <span id="rec_active_badge_${targetSlot}" class="pill pill-green" style="font-size:0.72rem; padding:2px 8px;">[Active]</span>
+            </label>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div>
+            <label style="font-size:0.75rem; color:var(--muted); display:block; margin-bottom:2px">Email Address</label>
+            <input type="email" id="rec_email_${targetSlot}" value="" placeholder="name@company.com" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.84rem;">
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--muted); display:block; margin-bottom:2px">Full Name</label>
+            <input type="text" id="rec_name_${targetSlot}" value="" placeholder="Full Name" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.84rem;">
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--muted); display:block; margin-bottom:2px">Role</label>
+            <input type="text" id="rec_role_${targetSlot}" value="" placeholder="e.g. Operations Lead" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.84rem;">
+          </div>
+        </div>
+        <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); padding-top:8px;">
+          <button class="btn btn-ghost" type="button" onclick="sendTestToSlot(${targetSlot})" style="padding:4px 8px; font-size:0.75rem;">Send Test to Me</button>
+          <button class="btn btn-ghost" type="button" onclick="clearSlot(${targetSlot})" style="padding:4px 8px; font-size:0.75rem; color:#dc2626;">Clear</button>
+        </div>
+      `;
+      grid.appendChild(card);
+    }
+  }
 
   document.getElementById(`rec_email_${targetSlot}`).value = em;
   document.getElementById(`rec_name_${targetSlot}`).value = nm || "Operator";
@@ -802,10 +861,12 @@ async function saveRecipientsForm() {
   btn.textContent = "Saving…";
   
   const contacts = [];
-  for (let i = 1; i <= 3; i++) {
-    const em = document.getElementById(`rec_email_${i}`).value.trim().toLowerCase();
-    const nm = document.getElementById(`rec_name_${i}`).value.trim();
-    const rl = document.getElementById(`rec_role_${i}`).value.trim();
+  const inputs = document.querySelectorAll("[id^='rec_email_']");
+  for (let el of inputs) {
+    const i = el.id.replace("rec_email_", "");
+    const em = el.value.trim().toLowerCase();
+    const nm = document.getElementById(`rec_name_${i}`)?.value.trim() || "";
+    const rl = document.getElementById(`rec_role_${i}`)?.value.trim() || "";
     const act = document.getElementById(`rec_active_${i}`)?.checked ?? true;
     if (em) {
       const err = validateEmailSyntax(em);
@@ -1245,10 +1306,19 @@ async function removeSelectedRecentRecipient() {
   }
 }
 
+function onRecipientSelectChange(val) {
+  const customWrap = document.getElementById("custom-recipient-wrapper");
+  if (customWrap) {
+    customWrap.style.display = (val === "custom") ? "block" : "none";
+  }
+}
+
 function getActiveRecipient() {
-  const isCustom = document.querySelector('input[name="recipient_type"]:checked')?.value === "custom";
-  if (isCustom) {
-    const val = document.getElementById("custom-recipient-input").value.trim().toLowerCase();
+  const sel = document.getElementById("send-recipient-select");
+  if (!sel) return "all_active";
+  if (sel.value === "custom") {
+    const customInp = document.getElementById("custom-recipient-input");
+    const val = customInp ? customInp.value.trim().toLowerCase() : "";
     if (!val) {
       showToast("Please enter an email address for custom recipient", "error");
       return null;
@@ -1263,14 +1333,26 @@ function getActiveRecipient() {
       return null;
     }
     return val;
-  } else {
-    return document.getElementById("send-recipient").value;
+  }
+  return sel.value;
+}
+
+function onDeliveryModeRadioChange(mode) {
+  const isLive = (mode === "live");
+  const mainBtn = document.getElementById("main-send-btn");
+  if (mainBtn) {
+    mainBtn.textContent = isLive ? "Send Report Now (Live Email)" : "Dry Run (Nothing will be sent) [DRY-RUN]";
+  }
+  const modalLiveChk = document.getElementById("modal-live-confirm-checkbox");
+  if (modalLiveChk) {
+    modalLiveChk.checked = isLive;
   }
 }
 
 function onLiveCheckboxChange(cb) {
-  if (currentSendMode === "live") {
-    document.getElementById("confirm-send-btn").disabled = !cb.checked;
+  const btn = document.getElementById("confirm-send-btn");
+  if (btn) {
+    btn.textContent = cb.checked ? "Dispatch Live Email" : "Dispatch Dry-Run";
   }
 }
 
@@ -1278,24 +1360,24 @@ function openSendModal() {
   const rec = getActiveRecipient();
   if (!rec) return;
 
-  document.getElementById("modal-recipient-display").textContent = rec;
+  const display = (rec === "all_active") ? "All Active (Manager: sreeshanmukhtrk@gmail.com, Supervisor: trksreeshanmukh026@gmail.com)" : rec;
+  const dispEl = document.getElementById("modal-recipient-display");
+  if (dispEl) dispEl.textContent = display;
+  const dateEl = document.getElementById("modal-date-display");
+  const pastPicker = document.getElementById("past-day-picker");
+  if (dateEl && pastPicker) dateEl.textContent = pastPicker.value;
+
   document.getElementById("send-modal").classList.add("open");
   document.getElementById("send-result").style.display = "none";
 
-  const isLive = (currentSendMode === "live");
-  const chkWrap = document.getElementById("modal-live-checkbox-wrapper");
+  const radioLive = document.getElementById("delivery-mode-live");
+  const isLive = radioLive ? radioLive.checked : true;
   const chk = document.getElementById("modal-live-confirm-checkbox");
+  if (chk) chk.checked = isLive;
   const btn = document.getElementById("confirm-send-btn");
-
-  if (isLive) {
-    chkWrap.style.display = "block";
-    chk.checked = false;
-    btn.disabled = true;
-    btn.textContent = "Confirm Send [LIVE]";
-  } else {
-    chkWrap.style.display = "none";
+  if (btn) {
     btn.disabled = false;
-    btn.textContent = "Dry Run (Nothing will be sent) [DRY-RUN]";
+    btn.textContent = isLive ? "Dispatch Live Email" : "Dispatch Dry-Run";
   }
 }
 
@@ -1313,15 +1395,39 @@ async function confirmSend() {
   btn.textContent = "Sending…";
 
   try {
-    const isLive = (currentSendMode === "live");
-    const res = await postForm("/ctrl/api/send-now", { recipient: rec, force_live: isLive ? "true" : "false" });
+    const liveRadio = document.getElementById("delivery-mode-live");
+    const liveChk = document.getElementById("modal-live-confirm-checkbox");
+    const isLive = liveChk ? liveChk.checked : (liveRadio ? liveRadio.checked : true);
+    const pastPicker = document.getElementById("past-day-picker");
+    const reqDate = pastPicker ? pastPicker.value : "";
+    const res = await postForm("/ctrl/api/send-now", { recipient: rec, force_live: isLive ? "true" : "false", as_of: reqDate });
     resultEl.style.display = "block";
     if (res.status === "ok") {
       const st = res.result?.status || "ok";
-      if (st === "SUCCESS_DRY_RUN") {
+      if (st === "SUCCESS_LIVE") {
+        const sentTime = res.result?.sent_at || new Date().toLocaleTimeString();
+        const recLabel = (rec === "all_active") ? "Manager & Supervisor" : rec;
+        resultEl.innerHTML = `<span class="pill pill-green">Delivered Live to ${recLabel}</span> at ${sentTime}`;
+        showToast(`Delivered Live to ${recLabel}`, "success");
+      } else if (st === "SUCCESS_DRY_RUN") {
         resultEl.innerHTML = `<span class="pill pill-amber">Dry run complete</span> Nothing was sent.`;
         showToast("Dry run complete. Nothing was sent.", "success");
-      } else if (st === "SUCCESS_LIVE") {
+      } else {
+        resultEl.innerHTML = `<span class="pill pill-green">${st}</span>`;
+        showToast("Complete: " + st, "success");
+      }
+    } else {
+      resultEl.innerHTML = `<span class="pill pill-red">Failed</span> ${res.detail || 'Error'}`;
+      showToast(res.detail || "Error", "error");
+    }
+  } catch(err) {
+    resultEl.style.display = "block";
+    resultEl.innerHTML = `<span class="pill pill-red">Error</span> ${err.message}`;
+    showToast(err.message, "error");
+  } finally {
+    btn.disabled = false;
+  }
+}
         const sentTime = res.result?.sent_at || new Date().toLocaleTimeString();
         resultEl.innerHTML = `<span class="pill pill-green">Sent to ${rec}</span> at ${sentTime}`;
         showToast(`Sent to ${rec} at ${sentTime}`, "success");
@@ -1360,6 +1466,29 @@ async function prepareOnly() {
     showToast("Report prepared. PDF pages: " + (res.result?.pdf_pages || "?"), "success");
   } else {
     showToast("Prepare failed: " + res.detail, "error");
+  }
+}
+
+async function testConnection() {
+  const btn = document.getElementById("btn-test-connection");
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "Testing…";
+  }
+  try {
+    const res = await postForm("/ctrl/api/test-connection", {});
+    if (res.status === "ok") {
+      showToast(res.message || "SMTP connection successful.", "success");
+    } else {
+      showToast(res.detail || "SMTP connection failed.", "error");
+    }
+  } catch(err) {
+    showToast("Network error testing connection: " + err.message, "error");
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = "Test connection";
+    }
   }
 }
 
