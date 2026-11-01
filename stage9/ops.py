@@ -55,6 +55,8 @@ from stage9.status import RESEARCH_FRAMING
 
 logger = logging.getLogger("stage9.ops")
 
+_MOCK_DISPATCH_EVENTS: List[Dict[str, Any]] = []
+
 QUEUE_DIR = ROOT_DIR / "demo_data" / "queue"
 PACKS_DIR = ROOT_DIR / "demo_data" / "packs"
 REPORTS_DIR = ROOT_DIR / "reports"
@@ -606,7 +608,7 @@ def dispatch_email_v6(
                 connection_time_ms=conn_time_ms
             )
             logger.info("[MOCK-SMTP] Delivered email to %s (Message-ID: %s)", r, msg_id)
-        return {
+        mock_result = {
             "status": "SUCCESS_LIVE",
             "message_id": msg_id,
             "smtp_code": 250,
@@ -616,6 +618,8 @@ def dispatch_email_v6(
             "sent_at": last_log["timestamp"] if last_log else "",
             "transport": "mock"
         }
+        _MOCK_DISPATCH_EVENTS.append(mock_result)
+        return mock_result
 
     # Live Delivery Path — Must fail loudly on any credential or SMTP error!
     t0 = time.time()
