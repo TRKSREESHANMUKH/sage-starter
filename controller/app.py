@@ -75,6 +75,8 @@ from stage9.recipients import (
 )
 from stage9.current_day import get_current_day, get_ingested_days
 from stage9.clock import get_as_of_date
+from stage9.snapshot import compute_daily_snapshot
+from web.one_page_data import build_one_page_context
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger("controller")
@@ -212,9 +214,63 @@ def _base_ctx(request: Request, sess: Optional[Dict] = None) -> Dict[str, Any]:
             next_queue_label = f"Day {d_num} of 10 — {d_obj.strftime('%-d %b %Y')}"
         except Exception:
             next_queue_label = queue_days[0]
+    # Hero card metrics (Part C4)
+    hero = {
+        "status_label": "CALM",
+        "status_color": "#10b981",
+        "status_sub": "Plant operational telemetry within normal physical bounds.",
+        "day_label": "Operational Baseline",
+        "backorder_val": "0 units (On track)",
+        "weakest_material_val": "Steel (Normal)",
+        "queue_val": f"{len(queue_days)} packs remaining" if queue_days else "Queue complete",
+    }
+    try:
+        snap_file = Path("analytics/snapshots") / f"snapshot_{current_day}.json"
+        if snap_file.exists():
+            snap = json.loads(snap_file.read_text(encoding="utf-8"))
+        else:
+            snap = compute_daily_snapshot(current_day)
+        kpis = snap.get("kpis", {})
+        backlog_units = kpis.get("total_backlog_units", 0)
+        overdue_orders = kpis.get("total_overdue_orders", 0)
+        sev = snap.get("plant_severity", "NORMAL")
+
+        if sev == "NORMAL":
+            hero["status_label"] = "CALM"
+            hero["status_color"] = "#10b981"
+            hero["status_sub"] = "Plant operational telemetry within normal physical bounds."
+        elif sev == "WATCH":
+            hero["status_label"] = "WATCH"
+            hero["status_color"] = "#f59e0b"
+            hero["status_sub"] = "Early inventory or production friction detected."
+        else:
+            hero["status_label"] = "ALERT"
+            hero["status_color"] = "#ef4444"
+            hero["status_sub"] = "Active delivery or capacity constraint requires intervention."
+
+        d_str = current_day.isoformat() if current_day else ""
+        if d_str.startswith("2026-01-"):
+            d_num = int(d_str.split("-")[2])
+            hero["day_label"] = f"Operational Day {d_num} of 10 — {current_day.strftime('%-d %b %Y')}"
+        elif current_day:
+            hero["day_label"] = f"Operational Baseline — {current_day.strftime('%-d %b %Y')}"
+
+        if backlog_units > 0 or overdue_orders > 0:
+            hero["backorder_val"] = f"{backlog_units} units ({overdue_orders} orders)"
+        else:
+            hero["backorder_val"] = "0 units (On track)"
+
+        one_ctx = build_one_page_context(d_str)
+        steel = one_ctx.get("steel_stock", "—")
+        hero["weakest_material_val"] = f"Steel ({steel} kg)" if steel != "—" else "Steel (Normal)"
+        hero["queue_val"] = f"{len(queue_days)} packs in queue" if queue_days else "Queue complete (10/10)"
+    except Exception as _e:
+        logger.warning("Hero context build error: %s", _e)
+
     return {
         "request": request,
         "csrf": sess["csrf"] if sess else "",
+        "hero": hero,
         "current_day": current_day.isoformat() if current_day else "—",
         "queue_remaining": len(queue_days),
         "queue_days": queue_days[:3],  # show first 3

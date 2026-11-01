@@ -7,68 +7,72 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #f8fafc; --surface: #fff; --border: #e2e8f0;
-      --text: #1e293b; --muted: #64748b; --accent: #2563eb;
-      --green: #16a34a; --amber: #d97706; --red: #dc2626;
+      --bg: #0b0f19;
+      --surface: #131b2e;
+      --border: #1e293b;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #3b82f6;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --red: #ef4444;
       --radius: 10px;
     }
-    body { background: var(--bg); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-           color: var(--text); }
+    body { background: var(--bg); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+           color: var(--text); -webkit-font-smoothing: antialiased; }
     /* NAV */
-    nav { background: #1e293b; color: #fff; padding: 0 28px; display: flex;
-          align-items: center; gap: 20px; height: 52px; }
+    nav { background: #0f172a; color: #fff; padding: 0 28px; display: flex;
+          align-items: center; gap: 20px; height: 52px; border-bottom: 1px solid var(--border); }
     .nav-logo { font-size: 1.1rem; font-weight: 800; color: #fff; letter-spacing: -0.02em; flex: 1; }
     .nav-logo span { color: #60a5fa; }
     .nav-item { font-size: 0.85rem; color: #94a3b8; text-decoration: none; }
     .nav-item:hover { color: #fff; }
-    .nav-badge { font-size: 0.72rem; background: #f59e0b; color: #1e293b;
-                 padding: 2px 7px; border-radius: 20px; font-weight: 700; }
-    .logout-btn { background: none; border: 1px solid #475569; color: #94a3b8;
+    .nav-badge { font-size: 0.72rem; background: rgba(245, 158, 11, 0.2); color: #fbbf24;
+                 border: 1px solid rgba(245, 158, 11, 0.4); padding: 2px 8px; border-radius: 20px; font-weight: 700; }
+    .logout-btn { background: none; border: 1px solid #334155; color: #94a3b8;
                   padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.82rem; }
-    .logout-btn:hover { background: #334155; color: #fff; }
+    .logout-btn:hover { background: #1e293b; color: #fff; }
     /* LAYOUT */
     .main { max-width: 1100px; margin: 0 auto; padding: 28px 24px; }
-    .framing-bar { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px;
-                   padding: 10px 16px; font-size: 0.78rem; color: #1d4ed8; margin-bottom: 24px;
-                   font-style: italic; }
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
     .card { background: var(--surface); border: 1px solid var(--border);
             border-radius: var(--radius); padding: 22px 24px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
     .card-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
                   letter-spacing: 0.06em; color: var(--muted); margin-bottom: 14px; }
     .stat-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; }
-    .stat-val { font-size: 1.8rem; font-weight: 800; }
+    .stat-val { font-size: 1.8rem; font-weight: 800; color: #f8fafc; }
     .stat-label { font-size: 0.88rem; color: var(--muted); }
     /* PILLS */
     .pill { display: inline-flex; align-items: center; gap: 5px;
             padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
-    .pill-green { background: #dcfce7; color: var(--green); }
-    .pill-amber { background: #fef3c7; color: var(--amber); }
-    .pill-red { background: #fee2e2; color: var(--red); }
-    .pill-blue { background: #dbeafe; color: var(--accent); }
+    .pill-green { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .pill-amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .pill-red { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .pill-blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .pill-gray { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3); }
     /* BUTTONS */
     .btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px;
            border-radius: 8px; font-size: 0.88rem; font-weight: 700; cursor: pointer;
            border: none; transition: background 0.15s; }
     .btn-primary { background: var(--accent); color: #fff; }
-    .btn-primary:hover { background: #1d4ed8; }
-    .btn-success { background: var(--green); color: #fff; }
-    .btn-success:hover { background: #15803d; }
+    .btn-primary:hover { background: #2563eb; }
+    .btn-success { background: #059669; color: #fff; }
+    .btn-success:hover { background: #047857; }
     .btn-warning { background: var(--amber); color: #fff; }
     .btn-warning:hover { background: #b45309; }
     .btn-danger { background: var(--red); color: #fff; }
     .btn-danger:hover { background: #b91c1c; }
-    .btn-ghost { background: var(--bg); border: 1px solid var(--border); color: var(--text); }
-    .btn-ghost:hover { background: var(--border); }
+    .btn-ghost { background: #0b0f19; border: 1px solid var(--border); color: var(--text); }
+    .btn-ghost:hover { background: #1e293b; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
     /* FORM INPUTS */
     input, select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px;
-                    font-size: 0.9rem; width: 100%; }
+                    font-size: 0.9rem; width: 100%; background: #0b0f19; color: var(--text); }
     input:focus, select:focus { border-color: var(--accent); outline: none;
-                                box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+                                box-shadow: 0 0 0 3px rgba(59,130,246,0.2); background: #0f172a; }
     label { font-size: 0.78rem; font-weight: 600; color: var(--muted);
             text-transform: uppercase; letter-spacing: 0.04em; display: block;
             margin-bottom: 5px; margin-top: 12px; }
@@ -76,39 +80,39 @@
     #toast { position: fixed; bottom: 24px; right: 24px; min-width: 260px;
              background: #1e293b; color: #fff; padding: 12px 18px; border-radius: 10px;
              font-size: 0.88rem; opacity: 0; transform: translateY(8px);
-             transition: all 0.25s; z-index: 9999; pointer-events: none; }
+             transition: all 0.25s; z-index: 9999; pointer-events: none; border: 1px solid var(--border); }
     #toast.show { opacity: 1; transform: translateY(0); }
-    #toast.success { background: var(--green); }
-    #toast.error { background: var(--red); }
+    #toast.success { background: #065f46; color: #34d399; border-color: #059669; }
+    #toast.error { background: #7f1d1d; color: #fca5a5; border-color: #dc2626; }
     /* AUDIT LOG */
     .audit-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 8px; }
-    .audit-table th { text-align: left; padding: 6px 10px; font-size: 0.72rem;
+    .audit-table th { text-align: left; padding: 8px 10px; font-size: 0.72rem;
                       color: var(--muted); border-bottom: 1px solid var(--border);
                       text-transform: uppercase; letter-spacing: 0.05em; }
-    .audit-table td { padding: 6px 10px; border-bottom: 1px solid #f1f5f9;
-                      vertical-align: top; }
+    .audit-table td { padding: 8px 10px; border-bottom: 1px solid #1e293b;
+                      vertical-align: top; color: var(--text); }
     .audit-table tr:last-child td { border-bottom: none; }
-    .monospace { font-family: "SF Mono", monospace; font-size: 0.75rem; }
+    .monospace { font-family: "SF Mono", monospace; font-size: 0.75rem; color: #94a3b8; }
     /* MODAL */
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4);
-                     z-index: 1000; align-items: center; justify-content: center; }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65);
+                     z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
     .modal-overlay.open { display: flex; }
-    .modal { background: var(--surface); border-radius: var(--radius); padding: 28px;
-             min-width: 380px; max-width: 500px; box-shadow: 0 8px 40px rgba(0,0,0,0.18); }
-    .modal-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; }
+    .modal { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px;
+             min-width: 380px; max-width: 500px; box-shadow: 0 8px 40px rgba(0,0,0,0.5); color: var(--text); }
+    .modal-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; color: #f8fafc; }
     .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
     /* PROGRESS */
-    .progress-bar-wrap { height: 6px; background: #e2e8f0; border-radius: 4px;
+    .progress-bar-wrap { height: 6px; background: #1e293b; border-radius: 4px;
                          margin-top: 8px; overflow: hidden; }
     .progress-bar { height: 100%; background: var(--accent); border-radius: 4px;
                     width: 0%; transition: width 0.4s; }
     /* TOGGLE */
     .toggle-row { display: flex; align-items: center; justify-content: space-between;
                   gap: 16px; }
-    .toggle-label { font-size: 0.9rem; }
+    .toggle-label { font-size: 0.9rem; color: var(--text); }
     .toggle { position: relative; width: 44px; height: 24px; }
     .toggle input { opacity: 0; width: 0; height: 0; }
-    .toggle-slider { position: absolute; inset: 0; background: #cbd5e1; border-radius: 24px;
+    .toggle-slider { position: absolute; inset: 0; background: #334155; border-radius: 24px;
                      cursor: pointer; transition: background 0.2s; }
     .toggle input:checked + .toggle-slider { background: var(--accent); }
     .toggle-slider::before { content: ""; position: absolute; height: 18px; width: 18px;
@@ -121,8 +125,8 @@
                  padding-bottom: 8px; margin: 24px 0 16px; }
     .full-width { grid-column: 1 / -1; }
     /* ALLOWLIST */
-    .allowlist-item { display: inline-block; background: #f1f5f9; border-radius: 6px;
-                      padding: 3px 10px; font-size: 0.8rem; margin: 3px; }
+    .allowlist-item { display: inline-block; background: #0b0f19; border: 1px solid var(--border); border-radius: 6px;
+                      padding: 3px 10px; font-size: 0.8rem; margin: 3px; color: var(--text); }
   </style>
 </head>
 <body>
@@ -150,6 +154,48 @@
   <div id="dryrun-alert-banner" style="{% if send_mode == 'live' %}display:none;{% endif %} background:#fee2e2; border:1px solid #ef4444; color:#b91c1c; font-weight:700; padding:12px 16px; border-radius:8px; margin-bottom:16px; font-size:0.92rem; display:flex; align-items:center; gap:8px;">
     DRY-RUN: emails are NOT being delivered
   </div>
+
+  <!-- ─── HERO STATUS CARD (C4) ─── -->
+  <div class="card full-width hero-card" style="margin-bottom:20px; padding:24px 28px; background: linear-gradient(135deg, #131b2e 0%, #0d1527 100%); border:1px solid var(--border); border-radius:var(--radius); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; position:relative; overflow:hidden;">
+    <div style="flex:1; min-width:300px; z-index:2;">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+        <span class="status-indicator-dot" style="display:inline-block; width:12px; height:12px; border-radius:50%; background:{{ hero.status_color if hero else '#10b981' }}; box-shadow: 0 0 10px {{ hero.status_color if hero else '#10b981' }};"></span>
+        <span style="font-size:0.75rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:{{ hero.status_color if hero else '#10b981' }}; background:rgba(0,0,0,0.3); padding:3px 10px; border-radius:20px; border:1px solid {{ hero.status_color if hero else '#10b981' }}40;">
+          {{ hero.status_label if hero else 'CALM' }}
+        </span>
+        <span style="font-size:0.82rem; color:var(--muted); font-weight:500;">
+          {{ hero.status_sub if hero else 'Factory telemetry nominal.' }}
+        </span>
+      </div>
+
+      <h1 style="font-size:1.6rem; font-weight:800; letter-spacing:-0.02em; color:#f8fafc; margin-bottom:6px;">
+        {{ hero.day_label if hero else current_day }}
+      </h1>
+      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:18px; line-height:1.4;">
+        Strategic Analytics for Guided Execution &bull; Operator Control Console
+      </p>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <div style="background:rgba(15, 23, 42, 0.7); border:1px solid var(--border); border-radius:8px; padding:8px 14px; display:inline-flex; flex-direction:column;">
+          <span style="font-size:0.70rem; color:var(--muted); text-transform:uppercase; font-weight:700;">Active Backorders</span>
+          <span style="font-size:0.92rem; font-weight:700; color:#f8fafc;">{{ hero.backorder_val if hero else '0 units' }}</span>
+        </div>
+        <div style="background:rgba(15, 23, 42, 0.7); border:1px solid var(--border); border-radius:8px; padding:8px 14px; display:inline-flex; flex-direction:column;">
+          <span style="font-size:0.70rem; color:var(--muted); text-transform:uppercase; font-weight:700;">Weakest Material</span>
+          <span style="font-size:0.92rem; font-weight:700; color:#f8fafc;">{{ hero.weakest_material_val if hero else 'Steel (Normal)' }}</span>
+        </div>
+        <div style="background:rgba(15, 23, 42, 0.7); border:1px solid var(--border); border-radius:8px; padding:8px 14px; display:inline-flex; flex-direction:column;">
+          <span style="font-size:0.70rem; color:var(--muted); text-transform:uppercase; font-weight:700;">Queue Position</span>
+          <span style="font-size:0.92rem; font-weight:700; color:#f8fafc;">{{ hero.queue_val if hero else '10 packs remaining' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="width:180px; display:flex; justify-content:center; align-items:center; z-index:1;">
+      <img src="/static/img/sage_logo_card.png" alt="SAGE Figure" style="max-height:150px; width:auto; object-fit:contain; opacity:0.92; filter: drop-shadow(0 0 16px rgba(59, 130, 246, 0.25));">
+    </div>
+  </div>
+
 
   <div class="grid">
     <!-- ─── STATUS CARD ─── -->
@@ -198,11 +244,11 @@
         </select>
       </div>
 
-      <div id="custom-recipient-wrapper" style="{% if saved_recipients %}display:none;{% else %}display:block;{% endif %} background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:10px; margin-bottom:8px;">
-        <label for="custom-recipient-input" style="font-size:0.75rem; font-weight:700; color:#1e293b; display:block; margin-bottom:4px">
+      <div id="custom-recipient-wrapper" style="{% if saved_recipients %}display:none;{% else %}display:block;{% endif %} background:#0b0f19; border:1px solid var(--border); border-radius:6px; padding:10px; margin-bottom:8px;">
+        <label for="custom-recipient-input" style="font-size:0.75rem; font-weight:700; color:var(--text); display:block; margin-bottom:4px">
           Custom Email Address
         </label>
-        <input type="email" id="custom-recipient-input" placeholder="name@company.com" style="width:100%; padding:6px 10px; border:1px solid #94a3b8; border-radius:4px; font-size:0.85rem;">
+        <input type="email" id="custom-recipient-input" placeholder="name@company.com" style="width:100%; padding:6px 10px; border:1px solid var(--border); border-radius:4px; font-size:0.85rem;">
       </div>
       <div id="recipient-inline-error" style="display:none; color:#dc2626; font-size:0.80rem; font-weight:600; margin-bottom:8px;"></div>
 
@@ -340,7 +386,7 @@
       </div>
 
       <!-- Feed Progress Ticks -->
-      <div id="feed-progress-box" style="display:none; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px; margin-top:12px">
+      <div id="feed-progress-box" style="display:none; background:#0b0f19; border:1px solid var(--border); border-radius:8px; padding:12px; margin-top:12px">
         <div style="font-size:0.82rem; font-weight:700; margin-bottom:8px; color:#334155" id="feed-status-title">Feeding Progress:</div>
         <div style="display:flex; gap:16px; font-size:0.8rem; color:#64748b; flex-wrap:wrap">
           <span id="tick-validate">[Pending] Validate pack</span>
@@ -457,14 +503,14 @@
 <div class="modal-overlay" id="send-modal">
   <div class="modal" style="max-width:480px">
     <div class="modal-title" id="send-modal-title">Confirm Dispatch</div>
-    <div id="modal-dryrun-warning" style="{% if send_mode == 'live' %}display:none;{% endif %} background:#fffbeb; border:1px solid #fde68a; color:#92400e; padding:10px 14px; border-radius:6px; font-size:0.85rem; margin-bottom:14px; line-height:1.4">
+    <div id="modal-dryrun-warning" style="{% if send_mode == 'live' %}display:none;{% endif %} background:rgba(245, 158, 11, 0.12); border:1px solid rgba(245, 158, 11, 0.3); color:#fbbf24; padding:10px 14px; border-radius:6px; font-size:0.85rem; margin-bottom:14px; line-height:1.4">
       <strong>Dry-run mode:</strong> no email will be sent. Switch to Live to deliver.<br>
       <button class="btn btn-ghost" type="button" style="margin-top:8px; padding:4px 10px; font-size:0.78rem; border-color:#d97706; color:#b45309" onclick="closeSendModal(); promptSwitchLive();">Switch to Live →</button>
     </div>
-    <div id="modal-live-info" style="{% if send_mode != 'live' %}display:none;{% endif %} background:#ecfdf5; border:1px solid #a7f3d0; color:#065f46; padding:10px 14px; border-radius:6px; font-size:0.85rem; margin-bottom:14px; line-height:1.4">
+    <div id="modal-live-info" style="{% if send_mode != 'live' %}display:none;{% endif %} background:rgba(16, 185, 129, 0.12); border:1px solid rgba(16, 185, 129, 0.3); color:#34d399; padding:10px 14px; border-radius:6px; font-size:0.85rem; margin-bottom:14px; line-height:1.4">
       <strong>Live mode active:</strong> Email will be delivered via Gmail SMTP.
     </div>
-    <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:6px; padding:10px 14px; margin-bottom:14px; font-size:0.88rem;">
+    <div style="background:#0b0f19; border:1px solid var(--border); border-radius:6px; padding:10px 14px; margin-bottom:14px; font-size:0.88rem;">
       <div style="margin-bottom:4px;">
         <span style="color:var(--muted); font-size:0.80rem; font-weight:600; text-transform:uppercase;">Send to:</span><br>
         <strong id="modal-recipient-display" style="color:#0f172a; word-break:break-all;">—</strong>
@@ -499,7 +545,7 @@
     <p style="font-size:0.86rem; color:var(--text); margin-bottom:12px; line-height:1.5">
       In <strong>Live mode</strong>, the daily brief will be delivered via real Gmail SMTP.
     </p>
-    <div style="background:#f8fafc; border:1px solid var(--border); border-radius:6px; padding:10px 12px; margin-bottom:14px">
+    <div style="background:#0b0f19; border:1px solid var(--border); border-radius:6px; padding:10px 12px; margin-bottom:14px">
       <div style="font-size:0.75rem; font-weight:700; color:var(--muted); text-transform:uppercase; margin-bottom:6px">Configured Recipients</div>
       {% for r in allowlist %}
       <div style="font-size:0.82rem; font-family:monospace; color:#1e293b">• {{ r }}</div>
