@@ -77,18 +77,22 @@ sage-starter/
 ├── controller/              # Operator Control Console (FastAPI + Jinja2)
 │   ├── app.py               # Administrative actions, test-runs, and email controls
 │   └── templates/           # Dark-themed operator control interfaces
-├── stage7/                  # Expert Structural Causal Model (SCM)
+├── causal_model/ (stage7)   # Expert Structural Causal Model (SCM)
 │   ├── build_causal_model.py# 32-node, 40-edge DAG construction & DoWhy fitting
 │   └── fitted_causal_model.pkl # Serialized causal model parameters
-├── stage9/                  # Daily Operational Engine & Dispatch
+├── narration_engine/ (stage8)# Verifiable Grounded Narration Engine
+│   ├── common.py            # Evidence packet definitions & validation rules
+│   └── run_narration.py     # Deterministic text generation pipeline
+├── ops_engine/ (stage9)     # Daily Operational Engine & Dispatch
 │   ├── snapshot.py          # Daily panel computation, status tier assignment
 │   ├── smtp_sender.py       # Production email dispatch with idempotency guards
 │   ├── state/               # SQLite operational store, users, and audit logs
 │   └── config/rules.yaml    # Pre-registered business rules & safety thresholds
-├── stage10/                 # Continuous Evaluation & Visualization
+├── eval_benchmarks/ (stage10)# Continuous Evaluation & Visualization
 │   ├── demo_feed/           # 10-day disruption feed (2026-01-01 to 2026-01-10)
 │   ├── figures/             # Graphviz/NetworkX causal DAG figure generators
 │   └── demo_feed_results.md # Benchmark evaluation reports
+├── app/                     # Relational ERP Data Models & Schema
 ├── live/                    # ACID-compliant SQLite operational database (sage_live.db)
 ├── analytics/               # 365-day baseline panel (daily_panel_baseline.parquet)
 ├── reports/                 # Compiled A4 PDF and HTML daily briefs
