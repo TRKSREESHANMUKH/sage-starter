@@ -1,7 +1,7 @@
 {
   "pack_date": "2026-01-08",
   "day_number": 8,
-  "scenario_name": "Inbound Recovery & Production Restart",
+  "scenario_name": "Inbound Recovery & Full Backlog Clearance",
   "scenario_type": "recovery",
   "is_simulated": true,
   "label": "SIMULATED ERP OPERATIONAL PACK",
@@ -10,25 +10,25 @@
   "row_counts": {
     "purchase_orders": 1,
     "purchase_order_lines": 1,
-    "goods_receipts": 2,
-    "goods_receipt_lines": 2,
+    "goods_receipts": 3,
+    "goods_receipt_lines": 3,
     "sales_orders": 3,
     "sales_order_lines": 3,
-    "deliveries": 8,
-    "delivery_lines": 8,
+    "deliveries": 12,
+    "delivery_lines": 12,
     "production_orders": 2,
     "material_issues": 5,
-    "stock_movements": 17
+    "stock_movements": 22
   },
-  "total_events": 52,
+  "total_events": 67,
   "closing_stock_simulated": {
     "materials": {
-      "101": 336.0,
-      "102": 317.0,
-      "103": 268.0
+      "101": 189.0,
+      "102": 285.0,
+      "103": 231.0
     },
     "finished_goods": {
-      "201": 0,
+      "201": 4,
       "202": 0
     }
   }

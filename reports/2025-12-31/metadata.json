@@ -1,12 +1,12 @@
 {
   "status": "PREPARED",
   "as_of": "2025-12-31",
-  "prepared_at": "2026-11-01T14:19:10.892909+00:00",
+  "prepared_at": "2026-11-22T10:34:08.676131+00:00",
   "subject": "SAGE Daily Brief | 31 Dec 2025 | 1 need action",
   "no_new_data": false,
   "for_owner_only": false,
   "pdf_pages": 1,
   "pdf_path": "reports/2025-12-31/SAGE_Daily_Brief_2025-12-31.pdf",
   "sparkline_bytes": 15115,
-  "input_hash": "dd03e3f485bfd790"
+  "input_hash": "70a35cd56e6ed873"
 }

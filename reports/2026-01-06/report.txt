@@ -1,12 +1,12 @@
 SAGE DAILY BRIEF | 6 Jan 2026
-Status: ACTION NEEDED (13 items need action)
+Status: ACTION NEEDED (11 items need action)
 Prepared for: Sree Shanmukh
 ======================================================================
 
 SUMMARY:
 Operations proceeded normally across all manufacturing cells today with
 all planned production schedules fully achieved. Today, 3 customer
-orders totaling 30 units were booked and 21 units were dispatched to
+orders totaling 30 units were booked and 19 units were dispatched to
 customers. Steel Rod 10mm inventory stands at 50 kg providing
 approximately 2 days of forward production cover. Inbound purchase order
 #19 from EastCoast Components remains overdue since 02 January (now 4
@@ -19,10 +19,10 @@ prove real-world causality.
 
 TODAY'S NUMBERS IN CONTEXT:
 • Orders Due     : 2 orders due, same as yesterday (7d avg: 1.9)
-• Orders Late    : 9 late orders, up from 7 yesterday (7d avg: 3.6)
-• Units Short    : 99 units short, up from 79 yesterday (7d avg: 46.3)
+• Orders Late    : 7 late orders, up from 4 yesterday (7d avg: 2.1)
+• Units Short    : 75 units short, up from 46 yesterday (7d avg: 30.4)
 • Materials Low  : 1 material low, up from 0 yesterday (7d avg: 0.1)
-• Forward-look   : Next 7 days demand: ~193 units due (likely range 160–228); 121 already booked + ~72 expected new orders.
+• Forward-look   : Next 7 days demand: ~197 units due (likely range 163–233); 123 already booked + ~74 expected new orders.
 
 PAST ANALYSED CASES: WHAT CAUSED WHAT:
 • Chain: EastCoast delivery late → Steel Rod 10mm below safety level

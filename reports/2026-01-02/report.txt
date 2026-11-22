@@ -6,12 +6,12 @@ Prepared for: Sree Shanmukh
 SUMMARY:
 Operations proceeded normally across all manufacturing cells today with
 all planned production schedules fully achieved. Today, 4 customer
-orders totaling 44 units were booked while manufacturing completed 16
-finished goods units. Steel Rod 10mm inventory stands at 150 kg
-providing approximately 5 days of forward production cover. All inbound
-supplier shipments and raw component inventories remain within normal
-operating tolerances. All scheduled supplier deliveries arrived on time,
-an operational status seen end to end in receiving logs. Production
+orders totaling 44 units were booked and 12 units were dispatched to
+customers. Steel Rod 10mm inventory stands at 150 kg providing
+approximately 5 days of forward production cover. All inbound supplier
+shipments and raw component inventories remain within normal operating
+tolerances. All scheduled supplier deliveries arrived on time, an
+operational status seen end to end in receiving logs. Production
 planning will lead shift review at 09:00 to maintain planned assembly
 targets. SAGE performs controlled synthetic causal-attribution
 evaluation under an expert-defined causal model; it does not claim to
@@ -22,7 +22,7 @@ TODAY'S NUMBERS IN CONTEXT:
 • Orders Late    : 0 late orders, same as yesterday (7d avg: 0.0)
 • Units Short    : 0 units short, same as yesterday (7d avg: 7.1)
 • Materials Low  : 0 materials low, same as yesterday (7d avg: 0.6)
-• Forward-look   : Next 7 days demand: ~166 units due (likely range 147–186); 124 already booked + ~42 expected new orders.
+• Forward-look   : Next 7 days demand: ~173 units due (likely range 154–194); 130 already booked + ~43 expected new orders.
 
 PAST ANALYSED CASES: WHAT CAUSED WHAT:
 • Chain: EastCoast delivery late → Steel Rod 10mm below safety level

@@ -6,9 +6,9 @@ Prepared for: Sree Shanmukh
 SUMMARY:
 Operations proceeded normally across all manufacturing cells today with
 all planned production schedules fully achieved. Today, 3 customer
-orders totaling 29 units were booked and 74 units were dispatched to
-customers. Steel Rod 10mm inventory stands at 227 kg providing
-approximately 8 days of forward production cover. Standing customer
+orders totaling 29 units were booked and 28 units were dispatched to
+customers. Steel Rod 10mm inventory stands at 51 kg providing
+approximately 2 days of forward production cover. Standing customer
 backorders stand at 5 units across 0 orders in open fulfillment queues.
 All scheduled supplier deliveries arrived on time, an operational status
 seen end to end in receiving logs. Production planning will lead shift
@@ -18,10 +18,10 @@ defined causal model; it does not claim to prove real-world causality.
 
 TODAY'S NUMBERS IN CONTEXT:
 • Orders Due     : 2 orders due, same as yesterday (7d avg: 2.0)
-• Orders Late    : 0 late orders, down from 3 yesterday (7d avg: 5.6)
-• Units Short    : 5 units short, down from 46 yesterday (7d avg: 68.9)
+• Orders Late    : 0 late orders, same as yesterday (7d avg: 2.6)
+• Units Short    : 5 units short, up from 0 yesterday (7d avg: 33.7)
 • Materials Low  : 0 materials low, same as yesterday (7d avg: 0.3)
-• Forward-look   : Next 7 days demand: ~206 units due (likely range 162–255); 108 already booked + ~98 expected new orders.
+• Forward-look   : Next 7 days demand: ~203 units due (likely range 158–252); 104 already booked + ~99 expected new orders.
 
 PAST ANALYSED CASES: WHAT CAUSED WHAT:
 • Chain: Widget Model X orders late

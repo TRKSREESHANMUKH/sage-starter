@@ -1,0 +1,252 @@
+# SAGE Causal DAG Node Labels & Group Mappings
+# Source of truth: Stage 7 expert causal model (32 nodes, 40 edges)
+# Groups:
+#   1. Calendar and demand
+#   2. Suppliers and purchasing
+#   3. Material stock
+#   4. Production
+#   5. Finished goods and orders
+#   6. Delivery and customer outcome
+
+nodes:
+  # ─────────────────────────────────────────────────────────────
+  # Group 1: Calendar and demand
+  # ─────────────────────────────────────────────────────────────
+  weekday:
+    label: "Day of the Week"
+    technical_name: "weekday"
+    group: "Calendar and demand"
+    description: "Day of the week (Monday through Sunday) capturing weekly order rhythm."
+    is_lag: false
+
+  month:
+    label: "Calendar Month"
+    technical_name: "month"
+    group: "Calendar and demand"
+    description: "Calendar month (1 through 12) capturing seasonal purchasing cycles and Q4 surges."
+    is_lag: false
+
+  product_201_demand_units:
+    label: "Widget Model X Customer Demand"
+    technical_name: "product_201_demand_units"
+    group: "Calendar and demand"
+    description: "Daily customer order intake volume for Widget Model X (units ordered)."
+    is_lag: false
+
+  product_202_demand_units:
+    label: "Widget Model Y Customer Demand"
+    technical_name: "product_202_demand_units"
+    group: "Calendar and demand"
+    description: "Daily customer order intake volume for Widget Model Y (units ordered)."
+    is_lag: false
+
+  # ─────────────────────────────────────────────────────────────
+  # Group 2: Suppliers and purchasing
+  # ─────────────────────────────────────────────────────────────
+  supplier_1_po_delay_days:
+    label: "Sri Materials Delivery Delay"
+    technical_name: "supplier_1_po_delay_days"
+    group: "Suppliers and purchasing"
+    description: "Days late beyond committed delivery date for Sri Materials (Steel & Copper backup)."
+    is_lag: false
+
+  supplier_1_receipt_fill_rate:
+    label: "Sri Materials Fulfillment Rate"
+    technical_name: "supplier_1_receipt_fill_rate"
+    group: "Suppliers and purchasing"
+    description: "Ratio of delivered units to ordered units on purchase orders from Sri Materials."
+    is_lag: false
+
+  supplier_2_po_delay_days:
+    label: "Bharat Steel Delivery Delay"
+    technical_name: "supplier_2_po_delay_days"
+    group: "Suppliers and purchasing"
+    description: "Days late beyond committed delivery date for Bharat Steel Works (Steel backup)."
+    is_lag: false
+
+  supplier_2_receipt_fill_rate:
+    label: "Bharat Steel Fulfillment Rate"
+    technical_name: "supplier_2_receipt_fill_rate"
+    group: "Suppliers and purchasing"
+    description: "Ratio of delivered units to ordered units on purchase orders from Bharat Steel Works."
+    is_lag: false
+
+  supplier_3_po_delay_days:
+    label: "Global Polymers Delivery Delay"
+    technical_name: "supplier_3_po_delay_days"
+    group: "Suppliers and purchasing"
+    description: "Days late beyond committed delivery date for Global Polymers Co (Plastic Granules)."
+    is_lag: false
+
+  supplier_3_receipt_fill_rate:
+    label: "Global Polymers Fulfillment Rate"
+    technical_name: "supplier_3_receipt_fill_rate"
+    group: "Suppliers and purchasing"
+    description: "Ratio of delivered units to ordered units on purchase orders from Global Polymers Co."
+    is_lag: false
+
+  supplier_4_po_delay_days:
+    label: "EastCoast Components Delivery Delay"
+    technical_name: "supplier_4_po_delay_days"
+    group: "Suppliers and purchasing"
+    description: "Days late beyond committed delivery date for EastCoast Components (Steel & Plastic primary)."
+    is_lag: false
+
+  supplier_4_receipt_fill_rate:
+    label: "EastCoast Components Fulfillment Rate"
+    technical_name: "supplier_4_receipt_fill_rate"
+    group: "Suppliers and purchasing"
+    description: "Ratio of delivered units to ordered units on purchase orders from EastCoast Components."
+    is_lag: false
+
+  supplier_5_po_delay_days:
+    label: "Copper & Co Delivery Delay"
+    technical_name: "supplier_5_po_delay_days"
+    group: "Suppliers and purchasing"
+    description: "Days late beyond committed delivery date for Copper & Co (Copper Wire primary)."
+    is_lag: false
+
+  supplier_5_receipt_fill_rate:
+    label: "Copper & Co Fulfillment Rate"
+    technical_name: "supplier_5_receipt_fill_rate"
+    group: "Suppliers and purchasing"
+    description: "Ratio of delivered units to ordered units on purchase orders from Copper & Co."
+    is_lag: false
+
+  # ─────────────────────────────────────────────────────────────
+  # Group 3: Material stock
+  # ─────────────────────────────────────────────────────────────
+  material_101_stock:
+    label: "Steel Rod 10mm Physical Inventory"
+    technical_name: "material_101_stock"
+    group: "Material stock"
+    description: "End-of-day available stock level of Steel Rod 10mm in factory raw stores (units)."
+    is_lag: false
+
+  material_101_stock_lag1:
+    label: "Steel Rod 10mm Prior Closing Stock"
+    technical_name: "material_101_stock_lag1"
+    group: "Material stock"
+    description: "Autoregressive inventory state carried forward from day t-1."
+    is_lag: true
+
+  material_102_stock:
+    label: "Plastic Granules Physical Inventory"
+    technical_name: "material_102_stock"
+    group: "Material stock"
+    description: "End-of-day available stock level of Plastic Granules in factory raw stores (units)."
+    is_lag: false
+
+  material_102_stock_lag1:
+    label: "Plastic Granules Prior Closing Stock"
+    technical_name: "material_102_stock_lag1"
+    group: "Material stock"
+    description: "Autoregressive inventory state carried forward from day t-1."
+    is_lag: true
+
+  material_103_stock:
+    label: "Copper Wire Physical Inventory"
+    technical_name: "material_103_stock"
+    group: "Material stock"
+    description: "End-of-day available stock level of Copper Wire in factory raw stores (units)."
+    is_lag: false
+
+  material_103_stock_lag1:
+    label: "Copper Wire Prior Closing Stock"
+    technical_name: "material_103_stock_lag1"
+    group: "Material stock"
+    description: "Autoregressive inventory state carried forward from day t-1."
+    is_lag: true
+
+  # ─────────────────────────────────────────────────────────────
+  # Group 4: Production
+  # ─────────────────────────────────────────────────────────────
+  product_201_planned_production:
+    label: "Widget Model X Planned Output"
+    technical_name: "product_201_planned_production"
+    group: "Production"
+    description: "Scheduled daily manufacturing target for Widget Model X from Master Production Schedule."
+    is_lag: false
+
+  product_201_capacity_shortfall_units:
+    label: "Widget Model X Capacity Shortfall"
+    technical_name: "product_201_capacity_shortfall_units"
+    group: "Production"
+    description: "Lost production capacity on Line 1 from mechanical downtime or labor disruption (units)."
+    is_lag: false
+
+  product_201_actual_production:
+    label: "Widget Model X Actual Output"
+    technical_name: "product_201_actual_production"
+    group: "Production"
+    description: "Actual finished units of Widget Model X produced by Line 1 on day t."
+    is_lag: false
+
+  product_202_planned_production:
+    label: "Widget Model Y Planned Output"
+    technical_name: "product_202_planned_production"
+    group: "Production"
+    description: "Scheduled daily manufacturing target for Widget Model Y from Master Production Schedule."
+    is_lag: false
+
+  product_202_capacity_shortfall_units:
+    label: "Widget Model Y Capacity Shortfall"
+    technical_name: "product_202_capacity_shortfall_units"
+    group: "Production"
+    description: "Lost production capacity on Line 2 from mechanical downtime or labor disruption (units)."
+    is_lag: false
+
+  product_202_actual_production:
+    label: "Widget Model Y Actual Output"
+    technical_name: "product_202_actual_production"
+    group: "Production"
+    description: "Actual finished units of Widget Model Y produced by Line 2 on day t."
+    is_lag: false
+
+  # ─────────────────────────────────────────────────────────────
+  # Group 5: Finished goods and orders
+  # ─────────────────────────────────────────────────────────────
+  product_201_fg_stock:
+    label: "Widget Model X Warehouse Inventory"
+    technical_name: "product_201_fg_stock"
+    group: "Finished goods and orders"
+    description: "End-of-day warehouse inventory of completed Widget Model X units."
+    is_lag: false
+
+  product_201_fg_stock_lag1:
+    label: "Widget Model X Prior Warehouse Stock"
+    technical_name: "product_201_fg_stock_lag1"
+    group: "Finished goods and orders"
+    description: "Autoregressive finished goods stock carried forward from day t-1."
+    is_lag: true
+
+  product_202_fg_stock:
+    label: "Widget Model Y Warehouse Inventory"
+    technical_name: "product_202_fg_stock"
+    group: "Finished goods and orders"
+    description: "End-of-day warehouse inventory of completed Widget Model Y units."
+    is_lag: false
+
+  product_202_fg_stock_lag1:
+    label: "Widget Model Y Prior Warehouse Stock"
+    technical_name: "product_202_fg_stock_lag1"
+    group: "Finished goods and orders"
+    description: "Autoregressive finished goods stock carried forward from day t-1."
+    is_lag: true
+
+  # ─────────────────────────────────────────────────────────────
+  # Group 6: Delivery and customer outcome
+  # ─────────────────────────────────────────────────────────────
+  product_201_due_backlog_units:
+    label: "Widget Model X Order Backlog"
+    technical_name: "product_201_due_backlog_units"
+    group: "Delivery and customer outcome"
+    description: "Total customer order volume overdue and unshipped for Widget Model X (backlogged units)."
+    is_lag: false
+
+  product_202_due_backlog_units:
+    label: "Widget Model Y Order Backlog"
+    technical_name: "product_202_due_backlog_units"
+    group: "Delivery and customer outcome"
+    description: "Total customer order volume overdue and unshipped for Widget Model Y (backlogged units)."
+    is_lag: false

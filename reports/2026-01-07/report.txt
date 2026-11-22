@@ -6,7 +6,7 @@ Prepared for: Sree Shanmukh
 SUMMARY:
 Operations proceeded normally across all manufacturing cells today with
 all planned production schedules fully achieved. Today, 3 customer
-orders totaling 30 units were booked and 18 units were dispatched to
+orders totaling 30 units were booked and 10 units were dispatched to
 customers. Steel Rod 10mm inventory stands at 0 kg providing
 approximately 0 days of forward production cover. Inbound purchase order
 #19 from EastCoast Components remains overdue since 02 January (now 5
@@ -19,10 +19,10 @@ prove real-world causality.
 
 TODAY'S NUMBERS IN CONTEXT:
 • Orders Due     : 2 orders due, same as yesterday (7d avg: 2.0)
-• Orders Late    : 9 late orders, same as yesterday (7d avg: 4.9)
-• Units Short    : 123 units short, up from 99 yesterday (7d avg: 56.7)
+• Orders Late    : 8 late orders, up from 7 yesterday (7d avg: 3.3)
+• Units Short    : 93 units short, up from 75 yesterday (7d avg: 36.6)
 • Materials Low  : 1 material low, same as yesterday (7d avg: 0.3)
-• Forward-look   : Next 7 days demand: ~200 units due (likely range 165–239); 121 already booked + ~79 expected new orders.
+• Forward-look   : Next 7 days demand: ~206 units due (likely range 170–247); 125 already booked + ~81 expected new orders.
 
 PAST ANALYSED CASES: WHAT CAUSED WHAT:
 • Chain: EastCoast delivery late → Steel Rod 10mm below safety level → Widget Model X production shortfall
@@ -47,6 +47,7 @@ SUPPLIER WATCH:
 • PO-18 (EastCoast Components): 407 units Steel Rod 10mm - 146 days late (expected 14 Aug)
 • PO-19 (EastCoast Components): 400 units Steel Rod 10mm - 5 days late (expected 02 Jan)
 • PO-20 (Global Polymers Co): 100 units Plastic Granules - 3 days late (expected 04 Jan)
+• PO-21 (Copper & Co): 200 units Copper Wire - 1 day late (expected 06 Jan)
 
 ======================================================================
 FRAMING: SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.

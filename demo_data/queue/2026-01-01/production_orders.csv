@@ -1,3 +1,0 @@
-id,product_id,planned_start,planned_end,actual_start,actual_end,planned_qty,actual_qty,status
-153,201,2026-01-01,2026-01-01,2026-01-01,2026-01-01,10,10,Completed
-154,202,2026-01-01,2026-01-01,2026-01-01,2026-01-01,4,4,Completed

@@ -1,0 +1,10 @@
+{
+  "source_dag_nodes": 32,
+  "source_dag_edges": 40,
+  "a3_rendered_nodes": 32,
+  "a3_rendered_edges": 40,
+  "a3_node_collisions": 0,
+  "a3_min_font_pt": 7.0,
+  "overview_min_font_pt": 11.0,
+  "all_checks_passed": true
+}

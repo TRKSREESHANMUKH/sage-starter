@@ -1,7 +1,7 @@
 {
   "pack_date": "2026-01-04",
   "day_number": 4,
-  "scenario_name": "Partial Receipt & Ongoing Steel Delay",
+  "scenario_name": "Partial Receipt, Steel Delay & Demand Spike",
   "scenario_type": "partial_receipt_and_delay",
   "is_simulated": true,
   "label": "SIMULATED ERP OPERATIONAL PACK",
@@ -28,8 +28,8 @@
       "103": 89.0
     },
     "finished_goods": {
-      "201": 57,
-      "202": 28
+      "201": 44,
+      "202": 11
     }
   }
 }

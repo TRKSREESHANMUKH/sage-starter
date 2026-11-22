@@ -14,13 +14,13 @@
     "goods_receipt_lines": 0,
     "sales_orders": 4,
     "sales_order_lines": 4,
-    "deliveries": 0,
-    "delivery_lines": 0,
+    "deliveries": 1,
+    "delivery_lines": 1,
     "production_orders": 2,
     "material_issues": 5,
-    "stock_movements": 7
+    "stock_movements": 8
   },
-  "total_events": 22,
+  "total_events": 25,
   "closing_stock_simulated": {
     "materials": {
       "101": 150.0,
@@ -28,8 +28,8 @@
       "103": 99.0
     },
     "finished_goods": {
-      "201": 47,
-      "202": 28
+      "201": 35,
+      "202": 20
     }
   }
 }

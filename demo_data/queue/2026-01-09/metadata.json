@@ -1,8 +1,8 @@
 {
   "pack_date": "2026-01-09",
   "day_number": 9,
-  "scenario_name": "Seasonal Demand Peak & Backlog Burn-Down",
-  "scenario_type": "seasonal_control",
+  "scenario_name": "Operational Recovery: Return to Normal",
+  "scenario_type": "operational_recovery",
   "is_simulated": true,
   "label": "SIMULATED ERP OPERATIONAL PACK",
   "framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
@@ -12,24 +12,24 @@
     "purchase_order_lines": 0,
     "goods_receipts": 0,
     "goods_receipt_lines": 0,
-    "sales_orders": 4,
-    "sales_order_lines": 4,
-    "deliveries": 6,
-    "delivery_lines": 6,
+    "sales_orders": 3,
+    "sales_order_lines": 3,
+    "deliveries": 3,
+    "delivery_lines": 3,
     "production_orders": 2,
     "material_issues": 5,
-    "stock_movements": 13
+    "stock_movements": 10
   },
-  "total_events": 40,
+  "total_events": 29,
   "closing_stock_simulated": {
     "materials": {
-      "101": 271.0,
-      "102": 303.0,
-      "103": 252.0
+      "101": 125.0,
+      "102": 265.0,
+      "103": 219.0
     },
     "finished_goods": {
-      "201": 0,
-      "202": 0
+      "201": 2,
+      "202": 3
     }
   }
 }

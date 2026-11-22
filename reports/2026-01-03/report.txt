@@ -1,28 +1,28 @@
 SAGE DAILY BRIEF | 3 Jan 2026
-Status: ACTION NEEDED (6 items need action)
+Status: ACTION NEEDED (4 items need action)
 Prepared for: Sree Shanmukh
 ======================================================================
 
 SUMMARY:
 Operations proceeded normally across all manufacturing cells today with
 all planned production schedules fully achieved. Today, 3 customer
-orders totaling 30 units were booked while manufacturing completed 14
-finished goods units. Steel Rod 10mm inventory stands at 120 kg
-providing approximately 4 days of forward production cover. Inbound
-purchase order #19 from EastCoast Components remains overdue since 02
-January (now 1 day late). All scheduled supplier deliveries arrived on
-time, an operational status seen end to end in receiving logs.
-Production planning will lead shift review at 09:00 to maintain planned
-assembly targets. SAGE performs controlled synthetic causal-attribution
+orders totaling 28 units were booked and 13 units were dispatched to
+customers. Steel Rod 10mm inventory stands at 120 kg providing
+approximately 4 days of forward production cover. Inbound purchase order
+#19 from EastCoast Components remains overdue since 02 January (now 1
+day late). All scheduled supplier deliveries arrived on time, an
+operational status seen end to end in receiving logs. Production
+planning will lead shift review at 09:00 to maintain planned assembly
+targets. SAGE performs controlled synthetic causal-attribution
 evaluation under an expert-defined causal model; it does not claim to
 prove real-world causality.
 
 TODAY'S NUMBERS IN CONTEXT:
 • Orders Due     : 2 orders due, same as yesterday (7d avg: 1.4)
-• Orders Late    : 4 late orders, up from 0 yesterday (7d avg: 0.6)
-• Units Short    : 42 units short, up from 0 yesterday (7d avg: 13.1)
+• Orders Late    : 2 late orders, up from 0 yesterday (7d avg: 0.3)
+• Units Short    : 21 units short, up from 0 yesterday (7d avg: 10.1)
 • Materials Low  : 0 materials low, same as yesterday (7d avg: 0.4)
-• Forward-look   : Next 7 days demand: ~191 units due (likely range 169–216); 142 already booked + ~49 expected new orders.
+• Forward-look   : Next 7 days demand: ~196 units due (likely range 174–221); 146 already booked + ~50 expected new orders.
 
 PAST ANALYSED CASES: WHAT CAUSED WHAT:
 • Chain: EastCoast delivery late → Steel Rod 10mm below safety level
@@ -40,8 +40,8 @@ FOCUS TOMORROW (TOP 3 PRIORITIES):
    Reason: Observed steel rod 10mm below safety level on 03 Jan is consistent with eastcoast delivery late starting on 01 Jan. (Confidence: Partly seen)
 2. Fix at the root: Customer demand spike for Widget Model Y (Production Supervisor) - Due Immediate
    Reason: Observed widget model y orders late on 03 Jan is consistent with customer demand spike for widget model y starting on 29 Dec. (Confidence: Partly seen)
-3. Expedite delivery for SO-220 to Coastal Traders (Customer Logistics) - Due 10:00 AM
-   Reason: 13 units of Widget Model Y are 1 days overdue (was due 02 Jan).
+3. Expedite delivery for SO-225 to Nova Retailers (Customer Logistics) - Due 10:00 AM
+   Reason: 12 units of Widget Model Y are 1 days overdue (was due 02 Jan).
 
 SUPPLIER WATCH:
 • PO-18 (EastCoast Components): 407 units Steel Rod 10mm - 142 days late (expected 14 Aug)

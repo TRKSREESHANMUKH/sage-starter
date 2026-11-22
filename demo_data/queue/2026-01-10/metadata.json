@@ -1,7 +1,7 @@
 {
   "pack_date": "2026-01-10",
   "day_number": 10,
-  "scenario_name": "Dual Independent Operational Shortfalls",
+  "scenario_name": "Dual Independent Issues: Assembly Variance & Inbound Partial Delivery",
   "scenario_type": "dual_unrelated_issues",
   "is_simulated": true,
   "label": "SIMULATED ERP OPERATIONAL PACK",
@@ -10,26 +10,26 @@
   "row_counts": {
     "purchase_orders": 0,
     "purchase_order_lines": 0,
-    "goods_receipts": 0,
-    "goods_receipt_lines": 0,
+    "goods_receipts": 1,
+    "goods_receipt_lines": 1,
     "sales_orders": 3,
     "sales_order_lines": 3,
-    "deliveries": 6,
-    "delivery_lines": 6,
+    "deliveries": 3,
+    "delivery_lines": 3,
     "production_orders": 2,
     "material_issues": 5,
-    "stock_movements": 13
+    "stock_movements": 11
   },
-  "total_events": 38,
+  "total_events": 32,
   "closing_stock_simulated": {
     "materials": {
-      "101": 227.0,
-      "102": 295.0,
-      "103": 240.0
+      "101": 51.0,
+      "102": 335.0,
+      "103": 203.0
     },
     "finished_goods": {
-      "201": 0,
-      "202": 0
+      "201": 2,
+      "202": 15
     }
   }
 }

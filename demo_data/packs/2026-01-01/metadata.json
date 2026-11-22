@@ -1,8 +1,8 @@
 {
   "pack_date": "2026-01-01",
   "day_number": 1,
-  "scenario_name": "Normal Operations",
-  "scenario_type": "routine",
+  "scenario_name": "Quiet Start: Rush Order Demand Intake",
+  "scenario_type": "rush_order_intake",
   "is_simulated": true,
   "label": "SIMULATED ERP OPERATIONAL PACK",
   "framing": "SAGE performs controlled synthetic causal-attribution evaluation under an expert-defined causal model; it does not claim to prove real-world causality.",
@@ -14,13 +14,13 @@
     "goods_receipt_lines": 0,
     "sales_orders": 3,
     "sales_order_lines": 3,
-    "deliveries": 0,
-    "delivery_lines": 0,
+    "deliveries": 1,
+    "delivery_lines": 1,
     "production_orders": 2,
     "material_issues": 5,
-    "stock_movements": 7
+    "stock_movements": 8
   },
-  "total_events": 20,
+  "total_events": 23,
   "closing_stock_simulated": {
     "materials": {
       "101": 185.0,
@@ -29,7 +29,7 @@
     },
     "finished_goods": {
       "201": 35,
-      "202": 24
+      "202": 16
     }
   }
 }

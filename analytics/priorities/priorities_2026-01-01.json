@@ -15,18 +15,10 @@
       "role": "Planner"
     },
     {
-      "action": "Prepare dispatch for order SO-221 (Widget Model Y (Product 202))",
-      "category": "Upcoming Order",
-      "due_date": "2026-01-02",
-      "rank": 2,
-      "reason": "Order SO-221 (8 units) requested for delivery on 2026-01-02",
-      "role": "Planner"
-    },
-    {
       "action": "Prepare dispatch for order SO-225 (Widget Model Y (Product 202))",
       "category": "Upcoming Order",
       "due_date": "2026-01-02",
-      "rank": 3,
+      "rank": 2,
       "reason": "Order SO-225 (12 units) requested for delivery on 2026-01-02",
       "role": "Planner"
     },
@@ -34,7 +26,7 @@
       "action": "Prepare dispatch for order SO-226 (Widget Model Y (Product 202))",
       "category": "Upcoming Order",
       "due_date": "2026-01-02",
-      "rank": 4,
+      "rank": 3,
       "reason": "Order SO-226 (9 units) requested for delivery on 2026-01-02",
       "role": "Planner"
     },
@@ -42,10 +34,34 @@
       "action": "Prepare dispatch for order SO-227 (Widget Model X (Product 201))",
       "category": "Upcoming Order",
       "due_date": "2026-01-03",
-      "rank": 5,
+      "rank": 4,
       "reason": "Order SO-227 (12 units) requested for delivery on 2026-01-03",
+      "role": "Planner"
+    },
+    {
+      "action": "Prepare dispatch for order SO-224 (Widget Model Y (Product 202))",
+      "category": "Upcoming Order",
+      "due_date": "2026-01-04",
+      "rank": 5,
+      "reason": "Order SO-224 (14 units) requested for delivery on 2026-01-04",
       "role": "Planner"
     }
   ],
-  "watchlist": []
+  "watchlist": [
+    {
+      "item": "Tight buffer on SO-220 (Widget Model Y (Product 202))",
+      "reason": "Order due 2026-01-02 has only 7 units cushion above planned fulfillment",
+      "role": "Planner"
+    },
+    {
+      "item": "Tight buffer on SO-225 (Widget Model Y (Product 202))",
+      "reason": "Order due 2026-01-02 has only 8 units cushion above planned fulfillment",
+      "role": "Planner"
+    },
+    {
+      "item": "Tight buffer on SO-224 (Widget Model Y (Product 202))",
+      "reason": "Order due 2026-01-04 has only 6 units cushion above planned fulfillment",
+      "role": "Planner"
+    }
+  ]
 }

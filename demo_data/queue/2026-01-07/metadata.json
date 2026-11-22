@@ -1,7 +1,7 @@
 {
   "pack_date": "2026-01-07",
   "day_number": 7,
-  "scenario_name": "Severe Disruption: Steel Stock-out & Production Halt",
+  "scenario_name": "Severe Disruption: Steel Stock-out, Production Halt & Late Shipment",
   "scenario_type": "severe_stockout",
   "is_simulated": true,
   "label": "SIMULATED ERP OPERATIONAL PACK",
@@ -25,11 +25,11 @@
     "materials": {
       "101": 0.0,
       "102": 233.0,
-      "103": 283.0
+      "103": 83.0
     },
     "finished_goods": {
-      "201": 25,
-      "202": 13
+      "201": 12,
+      "202": 4
     }
   }
 }

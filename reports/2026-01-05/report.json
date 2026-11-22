@@ -1,12 +1,12 @@
 {
   "as_of": "2026-01-05",
-  "subject": "SAGE Daily Brief | 5 Jan 2026 | 10 need action",
+  "subject": "SAGE Daily Brief | 5 Jan 2026 | 7 need action",
   "kpis": {
-    "total_backlog_units": 77,
-    "total_overdue_orders": 7,
-    "yest_backlog_units": 54,
-    "total_due_today_units": 22,
-    "total_due_today_orders": 2,
+    "total_backlog_units": 44,
+    "total_overdue_orders": 4,
+    "yest_backlog_units": 21,
+    "total_due_today_units": 23,
+    "total_due_today_orders": 3,
     "backlog_rising": true,
     "oldest_overdue_date": "2026-01-02",
     "total_production_shortfall": 2,

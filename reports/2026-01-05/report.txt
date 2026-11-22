@@ -1,5 +1,5 @@
 SAGE DAILY BRIEF | 5 Jan 2026
-Status: ACTION NEEDED (10 items need action)
+Status: ACTION NEEDED (7 items need action)
 Prepared for: Sree Shanmukh
 ======================================================================
 
@@ -19,10 +19,10 @@ prove real-world causality.
 
 TODAY'S NUMBERS IN CONTEXT:
 • Orders Due     : 2 orders due, same as yesterday (7d avg: 1.9)
-• Orders Late    : 7 late orders, up from 5 yesterday (7d avg: 2.3)
-• Units Short    : 79 units short, up from 54 yesterday (7d avg: 32.1)
+• Orders Late    : 4 late orders, up from 2 yesterday (7d avg: 1.1)
+• Units Short    : 46 units short, up from 21 yesterday (7d avg: 19.7)
 • Materials Low  : 0 materials low, same as yesterday (7d avg: 0.1)
-• Forward-look   : Next 7 days demand: ~194 units due (likely range 165–226); 130 already booked + ~64 expected new orders.
+• Forward-look   : Next 7 days demand: ~198 units due (likely range 168–231); 132 already booked + ~66 expected new orders.
 
 PAST ANALYSED CASES: WHAT CAUSED WHAT:
 • Chain: EastCoast delivery late → Steel Rod 10mm below safety level

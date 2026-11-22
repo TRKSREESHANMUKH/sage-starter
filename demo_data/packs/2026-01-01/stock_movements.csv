@@ -6,3 +6,4 @@ id,item_id,date,movement_type,quantity,goods_receipt_line_id,material_issue_id,p
 493,1,2026-01-01,OUT,5,,207,,
 494,3,2026-01-01,OUT,2,,208,,
 495,5,2026-01-01,IN,4,,,154,
+496,5,2026-01-01,OUT,8,,,,177
